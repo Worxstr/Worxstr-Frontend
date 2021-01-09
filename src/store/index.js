@@ -9,7 +9,7 @@ Vue.use(Vuex)
 
 axios.defaults.withCredentials = true
 
-const baseUrl = 'http://test-env.eba-mpgwjudd.us-east-1.elasticbeanstalk.com/api'
+const baseUrl = 'https://api.worxstr.com/api'
 
 const store = new Vuex.Store({
   state: {
