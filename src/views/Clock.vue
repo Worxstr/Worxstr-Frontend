@@ -6,16 +6,23 @@
       class="mx-15 d-flex align-center align-md-start flex-column justify-center"
       style="margin-top: 20vh; margin-bottom: 15vh; top: 60px; position: sticky"
     >
-      <h6 class="text-h6">Your shift ends at</h6>
+      <h6 class="text-h6">
+        Your shift
+        {{nextShift.shiftActive ? 'ends' : 'begins'}}
+        at
+        {{nextShift.site_location}}
+        at
+      </h6>
+
       <h3 class="text-h3 py-2 font-weight-bold">
         {{
-          nextEvent.timestamp
+          (nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin)
             .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
             .replace(/^0(?:0:0?)?/, "")
         }}
       </h3>
       <p class="text-subtitle-2 text-center text-md-left">
-        <countdown :end-time="nextEvent.timestamp">
+        <countdown :end-time="nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin">
           <template v-slot:process="props">
             <span>
               That's in
@@ -163,15 +170,6 @@ import { mapState, mapGetters, mapActions } from "vuex";
 
 Vue.use(vueAwesomeCountdown, "vac");
 
-const shiftBegin = new Date();
-// shiftBegin.setDate(shiftBegin.getDate() + 1) // Add a day
-shiftBegin.setHours(9);
-shiftBegin.setMinutes(0);
-shiftBegin.setSeconds(0);
-
-const shiftEnd = shiftBegin;
-shiftEnd.setHours(17);
-
 export default {
   name: "Clock",
   data: () => ({
@@ -180,20 +178,17 @@ export default {
       cameraLoading: false,
       code: "",
     },
-    nextEvent: {
-      timestamp: shiftEnd,
-      type: "shift_end",
-    },
   }),
   components: {
     QrcodeStream,
   },
   mounted() {
     if (!this.clockHistory.length) this.loadClockHistory();
+    this.$store.dispatch("loadNextShift");
   },
   computed: {
     ...mapState(["clock"]),
-    ...mapGetters(["clockHistory"]),
+    ...mapGetters(["clockHistory", "nextShift"]),
     clocked() {
       const lastClockEvent = this.clockHistory.find(
         (event) => event.action == 1 || event.action == 2

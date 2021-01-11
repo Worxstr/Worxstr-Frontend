@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
@@ -10,8 +11,8 @@ Vue.use(Vuex)
 axios.defaults.withCredentials = true
 
 const baseUrl = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:5000/api'
-  : 'https://api.worxstr.com/api'
+  ? 'http://localhost:5000'
+  : 'https://api.worxstr.com'
 
 const store = new Vuex.Store({
   state: {
@@ -27,6 +28,9 @@ const store = new Vuex.Store({
         all: [],
         byId: {}
       },
+    },
+    shifts: {
+      next: null
     }
   },
   mutations: {
@@ -52,6 +56,9 @@ const store = new Vuex.Store({
     },
     INCREMENT_CLOCK_HISTORY_OFFSET(state) {
       state.clock.history.lastLoadedOffset++
+    },
+    SET_NEXT_SHIFT(state, { shift }) {
+      state.shifts.next = shift
     },
     CLOCK_IN(state) {
       state.clock.clocked = true
@@ -134,7 +141,12 @@ const store = new Vuex.Store({
       commit('INCREMENT_CLOCK_HISTORY_OFFSET')
     },
 
-    async clockIn({ commit, dispatch }, { code }) {
+    async loadNextShift({ commit }) {
+      const { data } = await axios.get(`${baseUrl}/shifts/next`)
+      commit('SET_NEXT_SHIFT', { shift: data.event })
+    },
+
+    async clockIn({ commit }, { code }) {
       console.log(`got code ${code}`)
       try {
         const { data } = await axios({
@@ -202,6 +214,22 @@ const store = new Vuex.Store({
         last = current
         return ret
       })
+    },
+    nextShift: (state) => {
+      if (!state.shifts.next) return {}
+
+      const begin = new Date(state.shifts.next.time_begin),
+            end = new Date(state.shifts.next.time_end),
+            now = new Date()
+      
+      const shiftActive = (begin <= now && now <= end)
+
+      return {
+        ...state.shifts.next,
+        time_begin: begin,
+        time_end: end,
+        shiftActive,
+      }
     }
   },
   modules: {
