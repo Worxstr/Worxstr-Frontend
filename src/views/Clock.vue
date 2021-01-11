@@ -82,33 +82,33 @@
         </v-dialog>
 
         <v-expand-x-transition>
-          <div v-if="!this.clock.break" class="py-2">
+          <div v-if="!this.break" class="py-2">
             <v-btn
               raised
-              :color="clock.clocked ? 'pink' : 'green'"
-              @click="clock.clocked ? clockOut() : openVerifyDialog()"
+              :color="clocked ? 'pink' : 'green'"
+              @click="clocked ? clockOut() : openVerifyDialog()"
               class="pa-6 mr-2"
               width="130px"
               dark
               style="transition: background-color 0.3s"
             >
-              Clock {{ clock.clocked ? "out" : "in" }}
+              Clock {{ clocked ? "out" : "in" }}
             </v-btn>
           </div>
         </v-expand-x-transition>
 
         <v-expand-x-transition>
-          <div v-if="clock.clocked" class="py-2">
+          <div v-if="clocked" class="py-2">
             <v-btn
               raised
-              :color="this.clock.break ? 'green' : 'amber'"
+              :color="this.break ? 'green' : 'amber'"
               @click="toggleBreak()"
               class="pa-6"
               width="130px"
               dark
               style="transition: background-color 0.3s"
             >
-              {{ this.clock.break ? "End" : "Start" }} break
+              {{ this.break ? "End" : "Start" }} break
             </v-btn>
           </div>
         </v-expand-x-transition>
@@ -194,6 +194,18 @@ export default {
   computed: {
     ...mapState(["clock"]),
     ...mapGetters(["clockHistory"]),
+    clocked() {
+      const lastClockEvent = this.clockHistory.find(
+        (event) => event.action == 1 || event.action == 2
+      );
+      return lastClockEvent ? lastClockEvent.event == 1 : null;
+    },
+    break() {
+      const lastBreakEvent = this.clockHistory.find(
+        (event) => event.action == 3 || event.action == 4
+      );
+      return lastBreakEvent ? lastBreakEvent.event == 3 : null;
+    },
   },
   methods: {
     ...mapActions(["clockIn", "clockOut"]),

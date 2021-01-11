@@ -22,8 +22,6 @@ const store = new Vuex.Store({
     },
     authenticatedUser: null,
     clock: {
-      clocked: true,
-      break: false,
       history: {
         lastLoadedOffset: 0,
         all: [],
