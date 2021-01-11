@@ -39,35 +39,42 @@
 
       <div class="d-flex flex-row">
         <v-dialog
-          v-model="verifyDialog"
-          fullscreen
-          hide-overlay
-          transition="dialog-bottom-transition"
+          v-model="verifyDialog.opened"
+          :fullscreen="$vuetify.breakpoint.smAndDown"
+          max-width="500"
         >
-          <v-card
-            class="sign-in fill-height d-flex flex-column justify-center align-center"
-          >
-            <form @submit.prevent="signIn">
+          <v-card class="sign-in fill-height">
+            <form @submit.prevent="submitCode(verifyDialog.code)">
               <v-card-title>Scan your clock in QR code</v-card-title>
 
-              <v-card-text>
-                <v-progress-circular indeterminate v-if="qrLoading" />
+              <div>
                 <qrcode-stream
-                  @decode="onDecode"
+                  @decode="submitCode"
                   @init="qrInit"
                 ></qrcode-stream>
-                <qrcode-drop-zone></qrcode-drop-zone>
-                <qrcode-capture></qrcode-capture>
+              </div>
+
+              <v-card-text>
+                <v-text-field
+                  label="Or enter the clock in code"
+                  v-model="verifyDialog.code"
+                  hide-details
+                />
               </v-card-text>
 
               <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn text color="primary" type="submit">Sign in</v-btn>
+                <v-spacer />
+                <v-btn text @click="verifyDialog.opened = false">Cancel</v-btn>
+                <v-btn text color="primary" type="submit">Submit</v-btn>
               </v-card-actions>
             </form>
 
             <v-fade-transition>
-              <v-overlay absolute opacity="0.2" v-if="loading">
+              <v-overlay
+                absolute
+                opacity="0.2"
+                v-if="verifyDialog.cameraLoading"
+              >
                 <v-progress-circular indeterminate />
               </v-overlay>
             </v-fade-transition>
@@ -151,7 +158,7 @@
 <script>
 import Vue from "vue";
 import vueAwesomeCountdown from "vue-awesome-countdown";
-import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from "vue-qrcode-reader";
+import { QrcodeStream } from "vue-qrcode-reader";
 import { mapState, mapGetters, mapActions } from "vuex";
 
 Vue.use(vueAwesomeCountdown, "vac");
@@ -168,8 +175,11 @@ shiftEnd.setHours(17);
 export default {
   name: "Clock",
   data: () => ({
-    verifyDialog: false,
-    qrLoading: false,
+    verifyDialog: {
+      opened: false,
+      cameraLoading: false,
+      code: "",
+    },
     nextEvent: {
       timestamp: shiftEnd,
       type: "shift_end",
@@ -177,8 +187,6 @@ export default {
   }),
   components: {
     QrcodeStream,
-    QrcodeDropZone,
-    QrcodeCapture,
   },
   mounted() {
     if (!this.clockHistory.length) this.loadClockHistory();
@@ -190,10 +198,10 @@ export default {
   methods: {
     ...mapActions(["clockIn", "clockOut"]),
     openVerifyDialog() {
-      this.verifyDialog = true;
+      this.verifyDialog.opened = true;
     },
     async qrInit(promise) {
-      this.qrLoading = true;
+      this.verifyDialog.cameraLoading = true;
       try {
         /* const { capabilities } = */ await promise;
       } catch (error) {
@@ -212,14 +220,13 @@ export default {
           // browser seems to be lacking features
         }
       } finally {
-        this.qrLoading = false;
+        this.verifyDialog.cameraLoading = false;
       }
     },
-    async onDecode(decodedString) {
-      console.log(`got string ${decodedString}`)
+    async submitCode(code) {
       // TODO: Handle incorrect code
-      await this.$store.dispatch("clockIn", { code: decodedString })
-      this.verifyDialog = false
+      await this.$store.dispatch("clockIn", { code });
+      this.verifyDialog.opened = false;
     },
     eventType(eventEnum) {
       switch (eventEnum) {
