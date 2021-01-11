@@ -227,6 +227,7 @@ export default {
       // TODO: Handle incorrect code
       await this.$store.dispatch("clockIn", { code });
       this.verifyDialog.opened = false;
+      // TODO: Stop camera on close
     },
     eventType(eventEnum) {
       switch (eventEnum) {
