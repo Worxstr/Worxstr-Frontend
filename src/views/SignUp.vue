@@ -3,7 +3,7 @@
     class="sign-in fill-height d-flex flex-column justify-center align-center"
   >
     <v-card width="500">
-      <form @submit.prevent="signUp">
+      <v-form @submit.prevent="signUp" v-model="isValid">
         <v-card-title>Sign up</v-card-title>
 
         <v-card-text>
@@ -33,7 +33,11 @@
             :rules="rules.phone"
             required
           />
-          <v-text-field label="Manager ID" v-model="form.manager_id" />
+          <v-text-field
+            label="Manager ID"
+            v-model="form.manager_id"
+            :rules="rules.managerId"
+          />
           <v-text-field
             label="Password"
             type="password"
@@ -46,6 +50,7 @@
             type="password"
             v-model="form.confirm_password"
             :rules="[
+              ...rules.confirmPassword,
               (value) => value == form.password || 'Passwords must match',
             ]"
             required
@@ -54,9 +59,11 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" type="submit">Sign up</v-btn>
+          <v-btn text color="primary" type="submit" :disabled="!isValid"
+            >Sign up</v-btn
+          >
         </v-card-actions>
-      </form>
+      </v-form>
 
       <v-fade-transition>
         <v-overlay absolute opacity="0.2" v-if="loading">
@@ -82,6 +89,7 @@ export default {
       password: "",
       confirm_password: "",
     },
+    isValid: false,
     rules: {
       firstName: [(value) => !!value || "First name required"],
       lastName: [(value) => !!value || "Last name required"],
@@ -102,9 +110,13 @@ export default {
           return pattern.test(value) || "Invalid email";
         },
       ],
+      managerId: [(value) => !!value || "Manager ID required"],
       password: [
         (value) => !!value || "Password required",
         (value) => value.length >= 8 || "Password must be 8 characters",
+      ],
+      confirmPassword: [
+        (value) => !!value || "Password confirmation required",
       ],
     },
     loading: false,

@@ -3,7 +3,7 @@
     class="sign-in fill-height d-flex flex-column justify-center align-center"
   >
     <v-card width="500">
-      <form @submit.prevent="signIn">
+      <v-form @submit.prevent="signIn" v-model="isValid">
         <v-card-title>Sign in</v-card-title>
 
         <v-card-text>
@@ -25,9 +25,9 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" type="submit">Sign in</v-btn>
+          <v-btn text color="primary" type="submit" :disabled="!isValid">Sign in</v-btn>
         </v-card-actions>
-      </form>
+      </v-form>
 
       <v-fade-transition>
         <v-overlay absolute opacity="0.2" v-if="loading">
@@ -46,6 +46,7 @@ export default {
       email: "",
       password: "",
     },
+    isValid: false,
     emailRules: [
       (value) => !!value || "Email required",
       (value) => {
