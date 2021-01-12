@@ -1,19 +1,29 @@
 <template>
-  <v-container class="home fill-height d-flex flex-column justify-center align-center">
-    <h2 class="text-h2 font-weight-bold mb-2">Aprovals</h2>
+  <v-container class="approvals">
+    <h4 class="text-h4 font-weight-bold mb-2">Approvals</h4>
+
+    <div v-for="timecard in timecards" :key="timecard.id">
+      <code>
+        {{ timecard }}
+      </code>
+    </div>
   </v-container>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
-  name: 'approvals',
+  name: "approvals",
+  mounted() {
+    this.$store.dispatch("loadApprovals");
+  },
   computed: {
-    ...mapState(['authenticatedUser'])
+    ...mapState(["authenticatedUser"]),
+    ...mapGetters(["timecards"]),
   },
   methods: {
-    ...mapActions(['signOut'])
-  }
-}
+    ...mapActions(["signOut"]),
+  },
+};
 </script>

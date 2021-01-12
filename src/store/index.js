@@ -29,6 +29,12 @@ const store = new Vuex.Store({
         byId: {}
       },
     },
+    approvals: {
+      timecards: {
+        all: [],
+        byId: {}
+      }
+    },
     shifts: {
       next: null
     }
@@ -41,7 +47,7 @@ const store = new Vuex.Store({
         show: true,
       }
     },
-    SET_AUTHENTICATED_USER(state, { user }) {
+    SET_AUTHENTICATED_USER(state, user) {
       state.authenticatedUser = user
       localStorage.setItem('authenticatedUser', JSON.stringify(user))
     },
@@ -57,7 +63,7 @@ const store = new Vuex.Store({
     INCREMENT_CLOCK_HISTORY_OFFSET(state) {
       state.clock.history.lastLoadedOffset++
     },
-    SET_NEXT_SHIFT(state, { shift }) {
+    SET_NEXT_SHIFT(state, shift) {
       state.shifts.next = shift
     },
     CLOCK_IN(state) {
@@ -65,6 +71,11 @@ const store = new Vuex.Store({
     },
     CLOCK_OUT(state) {
       state.clock.clocked = false
+    },
+    ADD_TIMECARD(state, timecard) {
+      Vue.set(state.approvals.timecards.byId, timecard.id, timecard)
+      if (!state.approvals.timecards.all.includes(timecard.id))
+        state.approvals.timecards.all.push(timecard.id)
     }
   },
   actions: {
@@ -122,7 +133,7 @@ const store = new Vuex.Store({
         url: `${baseUrl}/users/me`,
 
       })
-      commit('SET_AUTHENTICATED_USER', { user: data.authenticated_user })
+      commit('SET_AUTHENTICATED_USER', data.authenticated_user)
     },
 
     async loadClockHistory({ state, commit }) {
@@ -144,7 +155,7 @@ const store = new Vuex.Store({
 
     async loadNextShift({ commit }) {
       const { data } = await axios.get(`${baseUrl}/shifts/next`)
-      commit('SET_NEXT_SHIFT', { shift: data.event })
+      commit('SET_NEXT_SHIFT', data.event)
     },
 
     async clockIn({ commit }, { code }) {
@@ -181,6 +192,18 @@ const store = new Vuex.Store({
       })
       commit('ADD_CLOCK_EVENT', data.event)
       commit('CLOCK_OUT')
+    },
+
+    async loadApprovals({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/clock/timecards`
+      })
+      console.log(data)
+      data.timecards.forEach(timecard => {
+        // TODO: Normalize nested data
+        commit('ADD_TIMECARD', timecard)
+      })
     }
   },
   getters: {
@@ -231,6 +254,12 @@ const store = new Vuex.Store({
         time_end: end,
         shiftActive,
       }
+    },
+    timecard: (state) => id=> {
+      return state.approvals.timecards.byId[id]
+    },
+    timecards: (state, getters) => {
+      return state.approvals.timecards.all.map(id => getters.timecard(id))
     }
   },
   modules: {

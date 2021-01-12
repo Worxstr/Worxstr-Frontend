@@ -13,6 +13,8 @@ import Conversation from '../views/messages/Conversation.vue'
 
 Vue.use(VueRouter)
 
+import store from '../store'
+
 const EMPLOYEE = 1, MANAGER = 2
 
 const routes = [
@@ -85,12 +87,14 @@ const router = new VueRouter({
   routes
 })
 
-const userRole = 1
-
-router.beforeEach((to, from, next) => {
-  if (to.meta.showInNav && !to.meta.showInNav.includes(userRole))
+/* router.beforeEach((to, from, next) => {
+  if (store.state.authenticatedUser && to.meta.showInNav && !to.meta.showInNav.some(
+    (role) => store.state.authenticatedUser.roles.map(r => r.id).includes(role)
+  )) {
+    console.log('fuck u')
     next({ name: 'home' })
+  }
   else next()
-})
+}) */
 
 export default router
