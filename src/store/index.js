@@ -128,9 +128,10 @@ const store = new Vuex.Store({
     async loadClockHistory({ state, commit }) {
       const { data } = await axios.get(`${baseUrl}/clock/history`, {
         params: {
-          'week_offset': state.clock.history.lastLoadedOffset + 1
+          'week_offset': state.clock.history.lastLoadedOffset
         }
       })
+      console.log(state.clock.history.lastLoadedOffset)
       data.history.forEach(event => {
         // TODO: Normalize nested data
         commit('ADD_CLOCK_EVENT', normalizeRelations(event, [/*'user'*/]))

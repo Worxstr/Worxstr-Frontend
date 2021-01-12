@@ -201,8 +201,8 @@ export default {
     QrcodeStream,
   },
   mounted() {
-    if (!this.clockHistory.length) this.loadClockHistory();
-    this.$store.dispatch("loadNextShift");
+    if (!this.clockHistory.length) this.loadClockHistory()
+    this.$store.dispatch("loadNextShift")
   },
   computed: {
     ...mapState(["clock"]),
