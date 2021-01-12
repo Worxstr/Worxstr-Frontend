@@ -248,7 +248,7 @@ axios.interceptors.response.use(response => {
   console.log(error.request)
 
   // TODO: this is stupid, don't keep this. use custom axios config
-  if (error.request.responseURL == 'http://localhost:5000/api/users/me') return
+  if (error.request.responseURL == 'http://localhost:5000/users/me') return
 
   if (res.message || res.response.error) {
     message = res.message || res.response.error

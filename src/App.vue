@@ -20,12 +20,19 @@
           "
         >
           <v-btn
-            v-for="link in links"
-            :key="link.label"
+            v-for="route in $router.options.routes.filter(
+              (r) =>
+                r.meta &&
+                r.meta.showInNav &&
+                r.meta.showInNav.some(
+                  (role) => authenticatedUser.roles.map(r => r.id).includes(role)
+                )
+            )"
+            :key="route.name"
             text
-            :to="{ name: link.label }"
+            :to="{ name: route.name }"
             active-class="primary--text"
-            >{{ link.label }}</v-btn
+            >{{ route.name }}</v-btn
           >
         </div>
 
@@ -157,10 +164,10 @@ export default Vue.extend({
     if (storedUser) {
       this.$store.commit("SET_AUTHENTICATED_USER", {
         user: JSON.parse(storedUser),
-			});
-		}
-		// Refresh user data in case of an update
-		this.$store.dispatch("getAuthenticatedUser");
+      });
+    }
+    // Refresh user data in case of an update
+    this.$store.dispatch("getAuthenticatedUser");
   },
   methods: {
     signOut() {
