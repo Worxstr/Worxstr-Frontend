@@ -39,6 +39,7 @@ const routes = [
     name: 'clock',
     component: Clock,
     meta: {
+      icon: 'mdi-clock-outline',
       showInNav: [EMPLOYEE]
     }
   },
@@ -47,6 +48,7 @@ const routes = [
     name: 'approvals',
     component: Approvals,
     meta: {
+      icon: 'mdi-clock-check-outline',
       showInNav: [MANAGER]
     }
   },
@@ -55,6 +57,7 @@ const routes = [
     name: 'availability',
     component: Availability,
     meta: {
+      icon: 'mdi-calendar-check',
       showInNav: [EMPLOYEE, MANAGER]
     }
   },
@@ -63,6 +66,7 @@ const routes = [
     name: 'schedule',
     component: Schedule,
     meta: {
+      icon: 'mdi-calendar-multiselect',
       showInNav: [EMPLOYEE, MANAGER]
     }
   },
@@ -71,6 +75,7 @@ const routes = [
     name: 'messages',
     component: Messages,
     meta: {
+      icon: 'mdi-message-text-outline',
       showInNav: [EMPLOYEE, MANAGER]
     },
     children: [{

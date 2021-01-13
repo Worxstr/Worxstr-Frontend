@@ -129,14 +129,21 @@
         grow
       >
         <v-btn
-          v-for="(link, index) in links"
-          :key="index"
-          :value="link.label"
-          :to="{ name: link.label }"
+          v-for="route in $router.options.routes.filter(
+              (r) =>
+                r.meta &&
+                r.meta.showInNav &&
+                r.meta.showInNav.some(
+                  (role) => authenticatedUser.roles.map(r => r.id).includes(role)
+                )
+            )"
+          :key="route.name"
+          :value="route.name"
+          :to="{ name: route.name }"
         >
-          <span>{{ link.label | capitalize }}</span>
+          <span>{{ route.name | capitalize }}</span>
 
-          <v-icon>{{ link.icon }}</v-icon>
+          <v-icon>{{ route.meta.icon }}</v-icon>
         </v-btn>
       </v-bottom-navigation>
     </transition>
