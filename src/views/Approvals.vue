@@ -2,41 +2,127 @@
   <v-container class="approvals">
     <h4 class="text-h4 font-weight-bold mb-2">Approvals</h4>
 
-    <v-card
-      v-for="(timecard, index) in timecards"
-      :key="timecard.id"
-      class="my-4"
+    <v-expansion-panels popout>
+      <v-expansion-panel
+        v-for="(timecard, index) in timecards"
+        :key="timecard.id"
+      >
+        <v-expansion-panel-header>
+          <span class="text-h6">
+            {{ timecard.first_name }} {{ timecard.last_name }}
+          </span>
+          <span>
+            {{ timecard.time_in | time }}
+            -
+            {{ timecard.time_out | time }}
+          </span>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-card-text class="text-body-1">
+            <p>
+              Worked for
+              {{ timeDiff(timecard.time_in, timecard.time_out) }}
+            </p>
+
+            <p>{{ timecard.time_break }} minute break</p>
+
+            <p>${{ timecard.total_payment }} earned</p>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn text @click="openEditDialog(index)">Edit</v-btn>
+            <v-btn text color="green" @click="openConfirmDialog(index)"
+              >Approve</v-btn
+            >
+            <v-btn text color="red">Deny</v-btn>
+          </v-card-actions>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
+    <v-dialog
+      v-model="editDialog"
+      :fullscreen="$vuetify.breakpoint.smAndDown"
+      max-width="500"
     >
-      <v-card-title>
-        {{ timecard.first_name }} {{ timecard.last_name }}
-      </v-card-title>
+      <v-card>
+        <v-toolbar flat>
+          <v-btn icon @click="editDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>
+            Edit timecard for
+            {{ timecards[selectedTimecard].first_name }}
+            {{ timecards[selectedTimecard].last_name }}
+          </v-toolbar-title>
+        </v-toolbar>
 
-      <v-card-text>
-        <p>
-          {{ timecard.time_in | time }}
-          -
-          {{ timecard.time_out | time }}
-        </p>
+        <v-card-text>
+          <v-text-field
+            dense
+            outlined
+            label="Time in"
+            type="time"
+            v-model="timecards[selectedTimecard].time_in"
+          />
 
-        <p>
-          Worked for
-          {{ timeDiff(timecard.time_in, timecard.time_out) }}
-        </p>
+          <div class="mb-5" v-for="(breakItem, index) in breaks" :key="index">
+            <v-row class="align-center">
+              <v-col>
+                <v-text-field
+                  dense
+                  outlined
+                  hide-details
+                  :label="`Break ${index + 1} start`"
+                  type="time"
+                  v-model="timecards[selectedTimecard].time_in"
+                />
+              </v-col>
+              <v-col>
+                <v-text-field
+                  dense
+                  outlined
+                  hide-details
+                  :label="`Break ${index + 1} end`"
+                  type="time"
+                  v-model="timecards[selectedTimecard].time_out"
+                />
+              </v-col>
+							<v-btn icon v-if="breaks.length > 1" @click="breaks.splice(index, 1)">
+								<v-icon>mdi-close</v-icon>
+							</v-btn>
+            </v-row>
+          </div>
+          <v-row class="mb-5">
+            <v-spacer />
+            <v-btn
+              text
+              dense
+              color="primary"
+              @click="breaks.push({})"
+            >
+              <v-icon>mdi-plus</v-icon>
+              Add break
+            </v-btn>
+          </v-row>
 
-        <p>{{ timecard.time_break }} minute break</p>
+          <v-text-field
+            dense
+            outlined
+            label="Time out"
+            type="time"
+            v-model="timecards[selectedTimecard].time_out"
+          />
+        </v-card-text>
 
-        <p>${{ timecard.total_payment }} earned</p>
-      </v-card-text>
-
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text>Edit</v-btn>
-        <v-btn text color="green" @click="openConfirmDialog(index)"
-          >Approve</v-btn
-        >
-        <v-btn text color="red">Deny</v-btn>
-      </v-card-actions>
-    </v-card>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="editDialog = false">Cancel</v-btn>
+          <v-btn text color="primary">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-dialog
       v-model="confirmDialog"
@@ -52,33 +138,19 @@
         </v-toolbar>
 
         <v-card-text>
-          <p>
+          <p class="text-subtitle-1">
+            Sending ${{ timecards[selectedTimecard].total_payment }}
+            to
             {{ timecards[selectedTimecard].first_name }}
             {{ timecards[selectedTimecard].last_name }}
           </p>
-          <p>
-            {{ timecards[selectedTimecard].time_in | time }}
-            -
-            {{ timecards[selectedTimecard].time_out | time }}
-          </p>
 
-          <p>
-            Worked for
-            {{
-              timeDiff(
-                timecards[selectedTimecard].time_in,
-                timecards[selectedTimecard].time_out
-              )
-            }}
-          </p>
+          <v-checkbox v-model="cashPayment" label="Send cash payment" />
 
-          <p>{{ timecards[selectedTimecard].time_break }} minute break</p>
-
-          <p>${{ timecards[selectedTimecard].total_payment }} earned</p>
-
-          <v-checkbox v-model="payWithCash" label="Pay with cash" />
-
-          <paypal-buttons v-if="!payWithCash" [props]="{createOrder: createOrder, onApprove: onApprove}"/>
+          <paypal-buttons
+            v-if="!cashPayment"
+            [props]="{createOrder: createOrder, onApprove: onApprove}"
+          />
         </v-card-text>
 
         <v-card-actions>
@@ -95,12 +167,12 @@
 import { mapState, mapGetters, mapActions } from "vuex";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import Vue from 'vue'
+import Vue from "vue";
 
 dayjs.extend(duration);
 
 // eslint-disable-next-line no-undef
-const PayPalButton  = paypal.Buttons.driver("vue", Vue);
+const PayPalButton = paypal.Buttons.driver("vue", Vue);
 
 export default {
   name: "approvals",
@@ -112,8 +184,10 @@ export default {
   },
   data: () => ({
     selectedTimecard: 0,
+    editDialog: false,
     confirmDialog: false,
-    payWithCash: false,
+    cashPayment: false,
+    breaks: [{}],
   }),
   computed: {
     ...mapState(["authenticatedUser"]),
@@ -151,6 +225,10 @@ export default {
     openConfirmDialog(timecardIndex) {
       this.selectedTimecard = timecardIndex;
       this.confirmDialog = true;
+    },
+    openEditDialog(timecardIndex) {
+      this.selectedTimecard = timecardIndex;
+      this.editDialog = true;
     },
   },
 };
