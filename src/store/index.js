@@ -204,6 +204,10 @@ const store = new Vuex.Store({
         // TODO: Normalize nested data
         commit('ADD_TIMECARD', timecard)
       })
+    },
+
+    async approveTimecard() {
+
     }
   },
   getters: {
