@@ -5,15 +5,13 @@ import Home from '../views/Home.vue'
 import SignIn from '../views/SignIn.vue'
 import SignUp from '../views/SignUp.vue'
 import Clock from '../views/Clock.vue'
-import Approvals from '../views/Approvals.vue'
+import Approvals from '../views/approvals/Approvals.vue'
 import Availability from '../views/Availability.vue'
 import Schedule from '../views/Schedule.vue'
 import Messages from '../views/messages/Messages.vue'
 import Conversation from '../views/messages/Conversation.vue'
 
 Vue.use(VueRouter)
-
-import store from '../store'
 
 const EMPLOYEE = 1, MANAGER = 2
 

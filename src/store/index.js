@@ -206,8 +206,8 @@ const store = new Vuex.Store({
       })
     },
 
-    async approveTimecard() {
-
+    async approveTimecard(timecardId) {
+      return null
     }
   },
   getters: {
