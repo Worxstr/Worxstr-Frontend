@@ -211,13 +211,13 @@ export default {
       const lastClockEvent = this.clockHistory.find(
         (event) => event.action == 1 || event.action == 2
       );
-      return lastClockEvent ? lastClockEvent.event == 1 : null;
+      return lastClockEvent ? lastClockEvent.action == 1 : null;
     },
     break() {
       const lastBreakEvent = this.clockHistory.find(
         (event) => event.action == 3 || event.action == 4
       );
-      return lastBreakEvent ? lastBreakEvent.event == 3 : null;
+      return lastBreakEvent ? lastBreakEvent.action == 3 : null;
     },
   },
   methods: {

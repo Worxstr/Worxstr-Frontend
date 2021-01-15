@@ -10,7 +10,7 @@ Vue.use(Vuex)
 
 axios.defaults.withCredentials = true
 
-const baseUrl = process.env.NODE_ENV === 'development'
+const baseUrl = process.env.API_BASE_URL || process.env.NODE_ENV === 'development'
   ? 'http://localhost:5000'
   : 'https://api.worxstr.com'
 

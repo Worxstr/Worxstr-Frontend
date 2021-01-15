@@ -1,6 +1,53 @@
 <template>
   <v-container class="approvals">
-    <h4 class="text-h4 font-weight-bold mb-2">Approvals</h4>
+    <v-toolbar flat color="transparent">
+      <v-toolbar-title class="text-h6">Approved timecards</v-toolbar-title>
+      <v-spacer />
+      <v-toolbar-actions>
+        <v-btn text @click="openConfirmDialog(1)">
+          <v-icon>mdi-currency-usd</v-icon>
+          Complete payments
+        </v-btn>
+      </v-toolbar-actions>
+    </v-toolbar>
+
+    <v-expansion-panels popout>
+      <v-expansion-panel v-for="timecard in timecards" :key="timecard.id">
+        <v-expansion-panel-header>
+          <span class="text-subtitle-1">
+            {{ timecard.first_name }} {{ timecard.last_name }}
+          </span>
+          <span>
+            {{ timecard.time_in | time }}
+            -
+            {{ timecard.time_out | time }}
+          </span>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-card-text class="text-body-1">
+            <p>
+              Worked for
+              {{ timeDiff(timecard.time_in, timecard.time_out) }}
+            </p>
+
+            <p>{{ timecard.time_break }} minute break</p>
+
+            <p>${{ timecard.total_payment }} earned</p>
+          </v-card-text>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
+    <v-toolbar flat color="transparent" class="mt-5">
+      <v-toolbar-title class="text-h6">Unapproved timecards</v-toolbar-title>
+      <v-spacer />
+      <v-toolbar-actions>
+        <v-btn text color="green">
+          <v-icon>mdi-check</v-icon>
+          Approve all
+        </v-btn>
+      </v-toolbar-actions>
+    </v-toolbar>
 
     <v-expansion-panels popout>
       <v-expansion-panel
@@ -8,7 +55,7 @@
         :key="timecard.id"
       >
         <v-expansion-panel-header>
-          <span class="text-h6">
+          <span class="text-subtitle-1">
             {{ timecard.first_name }} {{ timecard.last_name }}
           </span>
           <span>
@@ -32,8 +79,7 @@
           <v-card-actions>
             <v-spacer />
             <v-btn text @click="openEditDialog(index)">Edit</v-btn>
-            <v-btn text color="green" @click="openConfirmDialog(index)"
-              >Approve</v-btn
+            <v-btn text color="green">Approve</v-btn
             >
             <v-btn text color="red">Deny</v-btn>
           </v-card-actions>
@@ -89,19 +135,18 @@
                   v-model="timecards[selectedTimecard].time_out"
                 />
               </v-col>
-							<v-btn icon v-if="breaks.length > 1" @click="breaks.splice(index, 1)">
-								<v-icon>mdi-close</v-icon>
-							</v-btn>
+              <v-btn
+                icon
+                v-if="breaks.length > 1"
+                @click="breaks.splice(index, 1)"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
             </v-row>
           </div>
           <v-row class="mb-5">
             <v-spacer />
-            <v-btn
-              text
-              dense
-              color="primary"
-              @click="breaks.push({})"
-            >
+            <v-btn text dense color="primary" @click="breaks.push({})">
               <v-icon>mdi-plus</v-icon>
               Add break
             </v-btn>
