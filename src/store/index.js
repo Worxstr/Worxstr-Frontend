@@ -10,7 +10,7 @@ Vue.use(Vuex)
 
 axios.defaults.withCredentials = true
 
-const baseUrl = process.env.VUE_APPAPI_BASE_URL
+const baseUrl = process.env.VUE_APP_API_BASE_URL
 
 const store = new Vuex.Store({
   state: {
