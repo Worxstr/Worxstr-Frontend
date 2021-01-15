@@ -84,7 +84,9 @@ export default {
   },
   methods: {
 		calculateFormValues() {
+			
 			const events = this.timecard.time_clocks
+			
 			this.form.data.timeIn = events[0]
 			this.form.data.timeOut = events[events.length - 1]
 

@@ -4,12 +4,10 @@
       <v-toolbar flat color="transparent">
         <v-toolbar-title class="text-h6">Approved timecards</v-toolbar-title>
         <v-spacer />
-        <v-toolbar-actions>
-          <v-btn text @click="openConfirmDialog(1)">
-            <v-icon>mdi-currency-usd</v-icon>
-            Complete payments
-          </v-btn>
-        </v-toolbar-actions>
+        <v-btn text @click="openConfirmDialog(1)">
+          <v-icon>mdi-currency-usd</v-icon>
+          Complete payments
+        </v-btn>
       </v-toolbar>
 
       <v-expansion-panels popout>
@@ -47,12 +45,10 @@
       <v-toolbar flat color="transparent">
         <v-toolbar-title class="text-h6">Unapproved timecards</v-toolbar-title>
         <v-spacer />
-        <v-toolbar-actions>
-          <v-btn text color="green">
-            <v-icon>mdi-check</v-icon>
-            Approve all
-          </v-btn>
-        </v-toolbar-actions>
+        <v-btn text color="green">
+          <v-icon>mdi-check</v-icon>
+          Approve all
+        </v-btn>
       </v-toolbar>
 
       <v-expansion-panels popout>
@@ -62,7 +58,7 @@
         >
           <v-expansion-panel-header>
             <span class="text-subtitle-1">
-              {{ timecard.id }} {{ timecard.first_name }}
+              {{ timecard.first_name }}
               {{ timecard.last_name }}
             </span>
             <span>
@@ -118,12 +114,7 @@
         </v-toolbar>
 
         <v-card-text>
-          <p class="text-subtitle-1">
-            Sending ${{ timecards[selectedTimecard].total_payment }}
-            to
-            {{ timecards[selectedTimecard].first_name }}
-            {{ timecards[selectedTimecard].last_name }}
-          </p>
+          <p class="text-subtitle-1">Send payments</p>
 
           <v-checkbox v-model="cashPayment" label="Send cash payment" />
 

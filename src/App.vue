@@ -15,17 +15,15 @@
 
         <div
           class="d-flex flex-row"
-          v-if="
-            $store.state.authenticatedUser && !$vuetify.breakpoint.smAndDown
-          "
+          v-if="authenticatedUser && authenticatedUser.roles && !$vuetify.breakpoint.smAndDown"
         >
           <v-btn
             v-for="route in $router.options.routes.filter(
               (r) =>
                 r.meta &&
                 r.meta.showInNav &&
-                r.meta.showInNav.some(
-                  (role) => authenticatedUser.roles.map(r => r.id).includes(role)
+                r.meta.showInNav.some((role) =>
+                  authenticatedUser.roles.map((r) => r.id).includes(role)
                 )
             )"
             :key="route.name"
@@ -38,7 +36,7 @@
 
         <v-spacer />
 
-        <div v-if="$store.state.authenticatedUser">
+        <div v-if="authenticatedUser">
           <v-menu v-model="menu" :close-on-content-click="false" bottom left>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon>
@@ -121,7 +119,7 @@
         :input-value="active"
         v-if="
           $vuetify.breakpoint.smAndDown &&
-          $store.state.authenticatedUser &&
+          authenticatedUser && authenticatedUser.roles &&
           $route.name != 'home' &&
           $route.name != 'conversation'
         "
@@ -130,13 +128,13 @@
       >
         <v-btn
           v-for="route in $router.options.routes.filter(
-              (r) =>
-                r.meta &&
-                r.meta.showInNav &&
-                r.meta.showInNav.some(
-                  (role) => authenticatedUser.roles.map(r => r.id).includes(role)
-                )
-            )"
+            (r) =>
+              r.meta &&
+              r.meta.showInNav &&
+              r.meta.showInNav.some((role) =>
+                authenticatedUser.roles.map((r) => r.id).includes(role)
+              )
+          )"
           :key="route.name"
           :value="route.name"
           :to="{ name: route.name }"
@@ -178,7 +176,6 @@ export default Vue.extend({
   },
   methods: {
     signOut() {
-      console.log("sign out");
       this.$store.dispatch("signOut");
     },
   },
