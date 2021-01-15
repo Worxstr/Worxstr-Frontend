@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-form>
+    <v-form @submit.prevent="updateTimecard" v-model="form.isValid">
       <v-toolbar flat>
         <v-btn icon @click="editDialog = false">
           <v-icon>mdi-close</v-icon>
@@ -13,15 +13,19 @@
       </v-toolbar>
 
       <v-card-text>
-        <time-input required :date="timeIn" label="Time in" />
+        <time-input v-model="form.data.timeIn.time" label="Time in"/>
 
-        <div class="mb-5" v-for="(breakItem, index) in breaks" :key="index">
-          <v-row class="align-center">
+        <div
+          class="mb-5"
+          v-for="(breakItem, index) in form.data.breaks"
+          :key="index"
+        >
+          <v-row>
             <v-col>
               <time-input
                 required
                 hide-details
-                :date="breakItem.start"
+                v-model="breakItem.start.time"
                 :label="`Break ${index + 1} start`"
               />
             </v-col>
@@ -29,30 +33,20 @@
               <time-input
                 required
                 hide-details
-                :date="breakItem.end"
+                v-model="breakItem.end.time"
                 :label="`Break ${index + 1} end`"
               />
             </v-col>
-            <v-btn icon @click="breaks.splice(index, 1)">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
           </v-row>
         </div>
-        <v-row class="mb-5">
-          <v-spacer />
-          <v-btn text dense color="primary" @click="breaks.push({})">
-            <v-icon>mdi-plus</v-icon>
-            Add break
-          </v-btn>
-        </v-row>
 
-        <time-input required :date="timeOut" label="Time out" />
+        <time-input required v-model="form.data.timeOut.time" label="Time out" />
       </v-card-text>
 
       <v-card-actions>
         <v-spacer />
         <v-btn text @click="editDialog = false">Cancel</v-btn>
-        <v-btn text color="primary">Save</v-btn>
+        <v-btn text color="primary" @click="updateTimecard">Save</v-btn>
       </v-card-actions>
     </v-form>
   </v-card>
@@ -66,44 +60,45 @@ import TimeInput from "@/components/TimeInput.vue";
 
 dayjs.extend(duration);
 
-function localeTimeString(date) {
-  return new Date(date); //.toLocaleTimeString([], { hour12: false})
-}
-function localeToUTC(localeTime) {
-  const [hour, minute, second] = localeTime.split(":");
-
-  return new Date().toTimeString([], { hour12: false });
-}
-
 export default {
   components: { TimeInput },
   name: "approvals",
   data: () => ({
-    timeIn: null,
-    timeOut: null,
-    breaks: [],
+    form: {
+      isValid: false,
+      data: {
+        timeIn: null,
+        timeOut: null,
+        breaks: [],
+      },
+    },
   }),
-  props: ["timecard"],
-  mounted() {
-    const events = this.timecard.time_clocks;
-    this.timeIn = events[0].time;
-    this.timeOut = events[events.length - 1].time;
-
-    const breakEvents = events.slice(1, events.length - 1),
-      breaks = [];
-
-    for (let i = 0; i < breakEvents.length; i += 2) {
-      breaks.push({
-        start: breakEvents[i].time,
-        end: breakEvents[i + 1].time,
-      });
-    }
-
-    console.log(breaks);
-
-    this.breaks = breaks;
+	props: ["timecard"],
+	mounted() {
+		this.calculateFormValues()
+	},
+  watch: {
+		timecard: function(newVal, oldVal) {
+			this.calculateFormValues()
+		}
   },
   methods: {
+		calculateFormValues() {
+			const events = this.timecard.time_clocks
+			this.form.data.timeIn = events[0]
+			this.form.data.timeOut = events[events.length - 1]
+
+			const breakEvents = events.slice(1, events.length - 1),
+				breaks = [];
+
+			for (let i = 0; i < breakEvents.length; i += 2) {
+				breaks.push({
+					start: breakEvents[i],
+					end: breakEvents[i + 1],
+				});
+			}
+			this.form.data.breaks = breaks;
+		},
     timeDiff(timeIn, timeOut) {
       timeIn = dayjs(timeIn);
       timeOut = dayjs(timeOut);
@@ -115,6 +110,23 @@ export default {
       return `${hours} hour${hours == 1 ? "" : "s"}, ${minutes} minute${
         minutes == 1 ? "" : "s"
       }`;
+		},
+    updateTimecard() {
+			const newTimeclockEvents = []
+
+			newTimeclockEvents.push(this.form.data.timeIn)
+			this.form.data.breaks.forEach(breakItem => {
+				newTimeclockEvents.push(breakItem.start)
+				newTimeclockEvents.push(breakItem.end)
+			})
+			newTimeclockEvents.push(this.form.data.timeOut)
+
+			console.log({newTimeclockEvents})
+
+      this.$store.dispatch("updateTimecard", {
+				timecardId: this.timecard.id,
+				events: newTimeclockEvents
+			});
     },
   },
 };

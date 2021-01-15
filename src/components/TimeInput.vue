@@ -1,13 +1,13 @@
 <template>
   <v-text-field
+    type="time"
     dense
     outlined
-		:required="required"
+    :required="required"
     :hide-details="hideDetails"
     :label="label"
-    type="time"
-    v-model="timeString"
-    @change="updateDate"
+    :value="timeString"
+    @input="updateDate"
   />
 </template>
 
@@ -15,28 +15,24 @@
 export default {
   name: "timeInput",
   props: {
-    date: String,
+    value: String,
     label: String,
-		hideDetails: Boolean,
-		required: Boolean
+    hideDetails: Boolean,
+    required: Boolean,
   },
   computed: {
-    timeString(date) {
-      return new Date(this.date).toLocaleTimeString([], { hour12: false });
+    timeString() {
+      return new Date(this.value).toLocaleTimeString([], { hour12: false });
     },
   },
-  mounted() {
-    // Convert to ISO string on init
-    setTimeout(() => this.updateDate(), 0);
-  },
   methods: {
-    updateDate() {
-      const newDate = new Date(this.date);
-      const [hours, minutes, seconds] = this.timeString.split(":");
+    updateDate: function (value) {
+      const newDate = new Date(this.value);
+      const [hours, minutes, seconds] = value.split(":");
       newDate.setHours(hours);
       newDate.setMinutes(minutes);
       newDate.setSeconds(seconds);
-      this.date = newDate.toISOString();
+      this.$emit("input", newDate.toISOString());
     },
   },
 };

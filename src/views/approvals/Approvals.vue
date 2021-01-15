@@ -57,12 +57,13 @@
 
       <v-expansion-panels popout>
         <v-expansion-panel
-          v-for="(timecard, index) in unapprovedTimecards"
+          v-for="timecard in unapprovedTimecards"
           :key="timecard.id"
         >
           <v-expansion-panel-header>
             <span class="text-subtitle-1">
-              {{ timecard.first_name }} {{ timecard.last_name }}
+              {{ timecard.id }} {{ timecard.first_name }}
+              {{ timecard.last_name }}
             </span>
             <span>
               {{ timecard.time_in | time }}
@@ -84,7 +85,7 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn text @click="openEditDialog(index)">Edit</v-btn>
+              <v-btn text @click="openEditDialog(timecard)">Edit</v-btn>
               <v-btn text color="green" @click="approveTimecard(timecard)"
                 >Approve</v-btn
               >
@@ -100,7 +101,7 @@
       :fullscreen="$vuetify.breakpoint.smAndDown"
       max-width="500"
     >
-      <edit-dialog :timecard="timecards[selectedTimecard]"/>
+      <edit-dialog :timecard="timecards[selectedTimecard]" />
     </v-dialog>
 
     <v-dialog
@@ -147,7 +148,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import Vue from "vue";
-import EditDialog from './EditDialog'
+import EditDialog from "./EditDialog";
 
 dayjs.extend(duration);
 
@@ -209,17 +210,18 @@ export default {
         minutes == 1 ? "" : "s"
       }`;
     },
-    openConfirmDialog(timecardIndex) {
-      this.selectedTimecard = timecardIndex;
+    openConfirmDialog() {
       this.confirmDialog = true;
     },
-    openEditDialog(timecardIndex) {
-      this.selectedTimecard = timecardIndex;
+    openEditDialog(timecard) {
+      this.selectedTimecard = this.timecards
+        .map((t) => t.id)
+        .indexOf(timecard.id);
       this.editDialog = true;
     },
     approveTimecard(timecard) {
-      this.$store.dispatch('approveTimecard', {  })
-    }
+      this.$store.dispatch("approveTimecard", {});
+    },
   },
 };
 </script>

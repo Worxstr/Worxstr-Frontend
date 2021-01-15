@@ -197,11 +197,23 @@ const store = new Vuex.Store({
         method: 'GET',
         url: `${baseUrl}/clock/timecards`
       })
-      console.log(data)
       data.timecards.forEach(timecard => {
         // TODO: Normalize nested data
         commit('ADD_TIMECARD', timecard)
       })
+    },
+
+    async updateTimecard({ commit }, { timecardId, events }) {
+      console.log(timecardId, events)
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/clock/timecards/${timecardId}`,
+        data: {
+          changes: events
+        },
+      })
+      commit('ADD_TIMECARD', data.timecard)
+
     },
 
     async approveTimecard(timecardId) {
