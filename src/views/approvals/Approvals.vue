@@ -53,7 +53,7 @@
       <v-toolbar flat color="transparent">
         <v-toolbar-title class="text-h6">Unapproved timecards</v-toolbar-title>
         <v-spacer />
-        <v-btn text color="green">
+        <v-btn text color="green" @click="approveAllDialog = true">
           <v-icon>mdi-check</v-icon>
           Approve all with paypal
         </v-btn>
@@ -126,6 +126,14 @@
     </v-dialog>
 
     <v-dialog
+      v-model="approveAllDialog"
+      :fullscreen="$vuetify.breakpoint.smAndDown"
+      max-width="500"
+    > 
+      <approve-all-dialog/>
+    </v-dialog>
+
+    <v-dialog
       v-model="confirmDialog"
       :fullscreen="$vuetify.breakpoint.smAndDown"
       max-width="500"
@@ -172,6 +180,7 @@ import duration from "dayjs/plugin/duration";
 import Vue from "vue";
 import EditDialog from "./EditDialog";
 import ApproveDialog from "./ApproveDialog";
+import ApproveAllDialog from "./ApproveAllDialog";
 
 dayjs.extend(duration);
 
@@ -187,11 +196,13 @@ export default {
     "paypal-buttons": PayPalButton,
     EditDialog,
     ApproveDialog,
+    ApproveAllDialog,
   },
   data: () => ({
     selectedTimecard: 0,
     editDialog: false,
     approveDialog: false,
+    approveAllDialog: false,
     confirmDialog: false,
     cashPayment: false,
     breaks: [{}],
