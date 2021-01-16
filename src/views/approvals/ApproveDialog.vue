@@ -8,17 +8,31 @@
     <v-card>
       <v-card-title class="headline"> Approve this timecard? </v-card-title>
       <v-card-text>
-        {{ timecard.first_name }} {{ timecard.last_name }} will be paid ${{
+        <span v-if="!payWithCash">
+				{{ timecard.first_name }} {{ timecard.last_name }} will be paid ${{
           timecard.total_payment
         }}
         for this shift.
+				</span>
 
-        <v-checkbox label="Make this a cash payment" v-model="payWithCash" />
+        <v-checkbox label="Make a cash payment" v-model="payWithCash" />
+
+				<span class="text-subtitle-2 red--text d-flex align-center" v-if="payWithCash">
+					<v-icon color="red" class="mr-2">
+						mdi-alert-circle-outline
+						</v-icon>
+					Be sure to pay
+					{{timecard.first_name}} {{timecard.last_name}}
+					<span class="font-weight-black mx-1">${{timecard.total_payment}}</span>
+					in cash.
+				</span>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn text @click="closeDialog"> Cancel </v-btn>
-        <v-btn color="green" text @click="approveTimecard"> Approve </v-btn>
+        <v-btn color="green" text @click="approveTimecard">
+					{{ payWithCash ? 'Confirm cash payment' : 'Approve'}}
+				</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
