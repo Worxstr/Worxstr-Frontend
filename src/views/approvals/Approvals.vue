@@ -4,7 +4,7 @@
       <v-toolbar flat color="transparent">
         <v-toolbar-title class="text-h6">Approved timecards</v-toolbar-title>
         <v-spacer />
-        <v-btn text @click="openConfirmDialog(1)">
+        <v-btn text @click="paymentDialog = true">
           <v-icon>mdi-currency-usd</v-icon>
           Complete payments
         </v-btn>
@@ -15,8 +15,11 @@
           v-for="timecard in approvedTimecards"
           :key="timecard.id"
         >
-          <v-expansion-panel-header>
+          <v-expansion-panel-header
+            v-if="timecard.time_clocks && timecard.time_clocks.length"
+          >
             <span class="text-subtitle-1">
+              {{ timecard.id }}
               {{ timecard.first_name }} {{ timecard.last_name }}
             </span>
             <span>
@@ -28,7 +31,9 @@
               }}
             </span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content
+            v-if="timecard.time_clocks && timecard.time_clocks.length"
+          >
             <v-card-text class="text-body-1">
               <p>
                 Worked for
@@ -64,11 +69,14 @@
           v-for="timecard in unapprovedTimecards"
           :key="timecard.id"
         >
-          <v-expansion-panel-header>
+          <v-expansion-panel-header
+            v-if="timecard.time_clocks && timecard.time_clocks.length"
+          >
             <span class="text-subtitle-1">
               {{ timecard.id }}
               {{ timecard.first_name }}
               {{ timecard.last_name }}
+              {{ timecard.approved }}
             </span>
             <span v-if="timecard.time_clocks.length">
               {{ timecard.time_clocks[0].time | time }}
@@ -79,7 +87,9 @@
               }}
             </span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content
+            v-if="timecard.time_clocks && timecard.time_clocks.length"
+          >
             <v-card-text class="text-body-1">
               <p v-if="timecard.time_clocks.length">
                 Worked for
@@ -109,67 +119,19 @@
       </v-expansion-panels>
     </div>
 
-    <v-dialog
-      v-model="editDialog"
-      :fullscreen="$vuetify.breakpoint.smAndDown"
-      max-width="500"
-    >
-      <edit-dialog :timecard="timecards[selectedTimecard]" />
-    </v-dialog>
+    <edit-dialog
+      :opened.sync="editDialog"
+      :timecard="unapprovedTimecards[selectedTimecard]"
+    />
 
-    <v-dialog
-      v-model="approveDialog"
-      :fullscreen="$vuetify.breakpoint.smAndDown"
-      max-width="500"
-    > 
-      <approve-dialog :timecard="timecards[selectedTimecard]"/>
-    </v-dialog>
+    <approve-dialog
+      :opened.sync="approveDialog"
+      :timecard="unapprovedTimecards[selectedTimecard]"
+    />
 
-    <v-dialog
-      v-model="approveAllDialog"
-      :fullscreen="$vuetify.breakpoint.smAndDown"
-      max-width="500"
-    > 
-      <approve-all-dialog/>
-    </v-dialog>
+    <approve-all-dialog :opened.sync="approveAllDialog" />
 
-    <v-dialog
-      v-model="confirmDialog"
-      :fullscreen="$vuetify.breakpoint.smAndDown"
-      max-width="500"
-    >
-      <v-card>
-        <v-toolbar flat>
-          <v-btn icon @click="confirmDialog = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <v-toolbar-title>Confirm payment</v-toolbar-title>
-        </v-toolbar>
-
-        <v-card-text>
-          <p class="text-subtitle-1">
-            Send payment
-            <span v-if="approvedTimecards.length != 1">s</span>
-             to
-            <span v-for="(timecard, index) in approvedTimecards" :key="timecard.id">
-              {{timecard.first_name}} {{timecard.last_name}}
-              <span v-if="index != approvedTimecards.length - 1">, </span>  
-            </span>  
-          </p>
-
-          <paypal-buttons
-            v-if="!cashPayment"
-            [props]="{createOrder: createOrder, onApprove: onApprove}"
-          />
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn text @click="confirmDialog = false">Cancel</v-btn>
-          <v-btn text color="primary">Send payment</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <payment-dialog :opened.sync="paymentDialog"/>
   </v-container>
 </template>
 
@@ -177,15 +139,13 @@
 import { mapState, mapGetters, mapActions } from "vuex";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import Vue from "vue";
+
 import EditDialog from "./EditDialog";
 import ApproveDialog from "./ApproveDialog";
 import ApproveAllDialog from "./ApproveAllDialog";
+import PaymentDialog from './PaymentDialog.vue';
 
 dayjs.extend(duration);
-
-// eslint-disable-next-line no-undef
-const PayPalButton = paypal.Buttons.driver("vue", Vue);
 
 export default {
   name: "approvals",
@@ -193,10 +153,10 @@ export default {
     this.$store.dispatch("loadApprovals");
   },
   components: {
-    "paypal-buttons": PayPalButton,
     EditDialog,
     ApproveDialog,
     ApproveAllDialog,
+    PaymentDialog,
   },
   data: () => ({
     selectedTimecard: 0,
@@ -204,18 +164,12 @@ export default {
     approveDialog: false,
     approveAllDialog: false,
     confirmDialog: false,
-    cashPayment: false,
+    paymentDialog: false,
     breaks: [{}],
   }),
   computed: {
     ...mapState(["authenticatedUser"]),
-    ...mapGetters(["timecards"]),
-    approvedTimecards: function () {
-      return this.timecards.filter((timecard) => timecard.approved);
-    },
-    unapprovedTimecards: function () {
-      return this.timecards.filter((timecard) => !timecard.approved);
-    },
+    ...mapGetters(["approvedTimecards", "unapprovedTimecards"]),
     createOrder: function (data, actions) {
       return actions.order.create({
         // eslint-disable-next-line @typescript-eslint/camelcase
@@ -246,17 +200,14 @@ export default {
         minutes == 1 ? "" : "s"
       }`;
     },
-    openConfirmDialog() {
-      this.confirmDialog = true;
-    },
     openEditDialog(timecard) {
-      this.selectedTimecard = this.timecards
+      this.selectedTimecard = this.unapprovedTimecards
         .map((t) => t.id)
         .indexOf(timecard.id);
       this.editDialog = true;
     },
     openApproveDialog(timecard) {
-      this.selectedTimecard = this.timecards
+      this.selectedTimecard = this.unapprovedTimecards
         .map((t) => t.id)
         .indexOf(timecard.id);
       this.approveDialog = true;

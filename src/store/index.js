@@ -236,13 +236,18 @@ const store = new Vuex.Store({
       commit('ADD_TIMECARD', data.timecard)
     },
 
-    async approveTimecard({ commit }, timecards) {
+    async approveTimecards({ commit }, timecards) {
       const { data } = await axios({
         method: 'PUT',
-        url: `${baseUrl}/clock/timecards/approve`,
-        data: timecards
+        url: `${baseUrl}/payments/approve`,
+        data: {
+          timecards
+        }
       })
-      commit('ADD_TIMECARD', data.timecard)
+      data.event.forEach(timecard => {
+        // TODO: Normalize nested data
+        commit('ADD_TIMECARD', timecard)
+      })
     }
   },
   getters: {
@@ -299,7 +304,13 @@ const store = new Vuex.Store({
     },
     timecards: (state, getters) => {
       return state.approvals.timecards.all.map(id => getters.timecard(id))
-    }
+    },
+    approvedTimecards: (state, getters) => {
+      return getters.timecards.filter((timecard) => timecard.approved);
+    },
+    unapprovedTimecards: (state, getters) => {
+      return getters.timecards.filter((timecard) => !timecard.approved);
+    },
   },
   modules: {
   }
