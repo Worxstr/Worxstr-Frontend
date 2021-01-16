@@ -2,7 +2,9 @@
   <v-container class="approvals">
     <div v-if="approvedTimecards.length" class="mb-5">
       <v-toolbar flat color="transparent">
-        <v-toolbar-title class="text-h6">Approved timecards</v-toolbar-title>
+        <v-toolbar-title class="text-h6"
+          >Pending payments ({{ approvedTimecards.length }})</v-toolbar-title
+        >
         <v-spacer />
         <v-btn text @click="paymentDialog = true">
           <v-icon>mdi-currency-usd</v-icon>
@@ -15,14 +17,15 @@
           v-for="timecard in approvedTimecards"
           :key="timecard.id"
         >
-          <v-expansion-panel-header
-            v-if="timecard.time_clocks && timecard.time_clocks.length"
-          >
-            <span class="text-subtitle-1">
-              {{ timecard.id }}
+          <v-expansion-panel-header class="d-flex">
+            <span class="text-subtitle-1 flex-grow-0">
               {{ timecard.first_name }} {{ timecard.last_name }}
             </span>
-            <span>
+            <v-spacer />
+            <span
+              class="flex-grow-0"
+              v-if="timecard.time_clocks && timecard.time_clocks.length"
+            >
               {{ timecard.time_clocks[0].time | time }}
               -
               {{
@@ -31,11 +34,9 @@
               }}
             </span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content
-            v-if="timecard.time_clocks && timecard.time_clocks.length"
-          >
+          <v-expansion-panel-content>
             <v-card-text class="text-body-1">
-              <p>
+              <p v-if="timecard.time_clocks && timecard.time_clocks.length">
                 Worked for
                 {{
                   timeDiff(
@@ -56,11 +57,15 @@
 
     <div v-if="unapprovedTimecards.length" class="mb-5">
       <v-toolbar flat color="transparent">
-        <v-toolbar-title class="text-h6">Unapproved timecards</v-toolbar-title>
+        <v-toolbar-title class="text-h6"
+          >Unapproved timecards ({{
+            unapprovedTimecards.length
+          }})</v-toolbar-title
+        >
         <v-spacer />
         <v-btn text color="green" @click="approveAllDialog = true">
           <v-icon>mdi-check</v-icon>
-          Approve all with paypal
+          Approve all
         </v-btn>
       </v-toolbar>
 
@@ -69,16 +74,13 @@
           v-for="timecard in unapprovedTimecards"
           :key="timecard.id"
         >
-          <v-expansion-panel-header
-            v-if="timecard.time_clocks && timecard.time_clocks.length"
-          >
-            <span class="text-subtitle-1">
-              {{ timecard.id }}
+          <v-expansion-panel-header>
+            <span class="text-subtitle-1 flex-grow-0">
               {{ timecard.first_name }}
               {{ timecard.last_name }}
-              {{ timecard.approved }}
             </span>
-            <span v-if="timecard.time_clocks.length">
+            <v-spacer/>
+            <span class="flex-grow-0" v-if="timecard.time_clocks && timecard.time_clocks.length">
               {{ timecard.time_clocks[0].time | time }}
               -
               {{
@@ -87,11 +89,9 @@
               }}
             </span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content
-            v-if="timecard.time_clocks && timecard.time_clocks.length"
-          >
+          <v-expansion-panel-content>
             <v-card-text class="text-body-1">
-              <p v-if="timecard.time_clocks.length">
+              <p v-if="timecard.time_clocks && timecard.time_clocks.length">
                 Worked for
                 {{
                   timeDiff(
@@ -131,7 +131,7 @@
 
     <approve-all-dialog :opened.sync="approveAllDialog" />
 
-    <payment-dialog :opened.sync="paymentDialog"/>
+    <payment-dialog :opened.sync="paymentDialog" />
   </v-container>
 </template>
 
@@ -143,7 +143,7 @@ import duration from "dayjs/plugin/duration";
 import EditDialog from "./EditDialog";
 import ApproveDialog from "./ApproveDialog";
 import ApproveAllDialog from "./ApproveAllDialog";
-import PaymentDialog from './PaymentDialog.vue';
+import PaymentDialog from "./PaymentDialog.vue";
 
 dayjs.extend(duration);
 

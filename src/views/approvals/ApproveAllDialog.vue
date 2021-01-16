@@ -7,7 +7,7 @@
   >
     <v-card>
       <v-card-title class="headline"> Approve all timecards? </v-card-title>
-      <v-card-text> This will approve all unapproved timecards </v-card-text>
+      <v-card-text> This will approve all pending timecards using Paypal as their payment method. </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn text @click="closeDialog()"> Cancel </v-btn>

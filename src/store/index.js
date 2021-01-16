@@ -306,7 +306,7 @@ const store = new Vuex.Store({
       return state.approvals.timecards.all.map(id => getters.timecard(id))
     },
     approvedTimecards: (state, getters) => {
-      return getters.timecards.filter((timecard) => timecard.approved);
+      return getters.timecards.filter((timecard) => timecard.approved && !timecard.paid);
     },
     unapprovedTimecards: (state, getters) => {
       return getters.timecards.filter((timecard) => !timecard.approved);
