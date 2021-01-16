@@ -96,7 +96,7 @@
           </v-dialog>
 
           <v-expand-x-transition>
-            <div v-if="!this.break" class="py-2">
+            <div v-if="!onBreak" class="py-2">
               <v-btn
                 raised
                 :color="clocked ? 'pink' : 'green'"
@@ -115,14 +115,14 @@
             <div v-if="clocked" class="py-2">
               <v-btn
                 raised
-                :color="this.break ? 'green' : 'amber'"
-                @click="toggleBreak()"
+                :color="onBreak ? 'green' : 'amber'"
+                @click="toggleBreak(!!onBreak)"
                 class="pa-6"
                 width="130px"
                 dark
                 style="transition: background-color 0.3s"
               >
-                {{ this.break ? "End" : "Start" }} break
+                {{ onBreak ? "End" : "Start" }} break
               </v-btn>
             </div>
           </v-expand-x-transition>
@@ -213,7 +213,7 @@ export default {
       );
       return lastClockEvent ? lastClockEvent.action == 1 : null;
     },
-    break() {
+    onBreak() {
       const lastBreakEvent = this.clockHistory.find(
         (event) => event.action == 3 || event.action == 4
       );
@@ -221,7 +221,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["clockIn", "clockOut"]),
+    ...mapActions(["clockIn", "clockOut", 'toggleBreak']),
     openVerifyDialog() {
       this.verifyDialog.opened = true;
     },

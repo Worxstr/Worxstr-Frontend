@@ -21,6 +21,8 @@ const store = new Vuex.Store({
     },
     authenticatedUser: null,
     clock: {
+      clocked: false,
+      break: false,
       history: {
         lastLoadedOffset: 0,
         all: [],
@@ -69,6 +71,12 @@ const store = new Vuex.Store({
     },
     CLOCK_OUT(state) {
       state.clock.clocked = false
+    },
+    START_BREAK(state) {
+      state.clock.break = true
+    },
+    END_BREAK(state) {
+      state.clock.break = false
     },
     ADD_TIMECARD(state, timecard) {
       Vue.set(state.approvals.timecards.byId, timecard.id, timecard)
@@ -201,6 +209,20 @@ const store = new Vuex.Store({
         // TODO: Normalize nested data
         commit('ADD_TIMECARD', timecard)
       })
+    },
+
+    async toggleBreak({ commit }, breakState) {
+
+      
+      const action = breakState ? 'end' : 'start'
+      console.log(action)
+
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/clock/${action}-break`,
+      })
+      commit('ADD_CLOCK_EVENT', data.data)
+      commit(`${action.toUpperCase()}_BREAK`)
     },
 
     async updateTimecard({ commit }, { timecardId, events }) {
