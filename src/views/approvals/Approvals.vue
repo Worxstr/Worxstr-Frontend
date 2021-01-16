@@ -6,7 +6,7 @@
           >Pending payments ({{ approvedTimecards.length }})</v-toolbar-title
         >
         <v-spacer />
-        <v-btn text @click="paymentDialog = true">
+        <v-btn text @click="openPaymentDialog(approvedTimecards)">
           <v-icon>mdi-currency-usd</v-icon>
           Complete payments
         </v-btn>
@@ -115,11 +115,14 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn text @click="openEditDialog(timecard)">Edit</v-btn>
-              <v-btn text color="green" @click="openApproveDialog([timecard])"
-                >Approve</v-btn
+              <v-btn text @click="openEditDialog(timecard)"> Edit</v-btn>
+              <v-btn text color="green" @click="openApproveDialog([timecard])">
+                <v-icon>mdi-check</v-icon>
+                Approve
+              </v-btn>
+              <v-btn text color="red" @click="openDenyDialog(timecard)">
+                <v-icon>mdi-close</v-icon>Deny</v-btn
               >
-              <v-btn text color="red" @click="openDenyDialog(timecard)">Deny</v-btn>
             </v-card-actions>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -127,9 +130,15 @@
     </div>
 
     <edit-dialog :opened.sync="editDialog" :timecard="selectedTimecards[0]" />
-    <approve-dialog :opened.sync="approveDialog" :timecards="selectedTimecards" />
+    <approve-dialog
+      :opened.sync="approveDialog"
+      :timecards="selectedTimecards"
+    />
     <deny-dialog :opened.sync="denyDialog" :timecard="selectedTimecards[0]" />
-    <payment-dialog :opened.sync="paymentDialog" />
+    <payment-dialog
+      :opened.sync="paymentDialog"
+      :timecards="selectedTimecards"
+    />
   </v-container>
 </template>
 
@@ -167,21 +176,6 @@ export default {
   computed: {
     ...mapState(["authenticatedUser"]),
     ...mapGetters(["approvedTimecards", "unapprovedTimecards"]),
-    createOrder: function (data, actions) {
-      return actions.order.create({
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        purchase_units: [
-          {
-            amount: {
-              value: "0.01",
-            },
-          },
-        ],
-      });
-    },
-    onAuthorize: function (data, actions) {
-      return actions.order.capture();
-    },
   },
   methods: {
     ...mapActions(["signOut"]),
@@ -208,7 +202,11 @@ export default {
     openDenyDialog(timecard) {
       this.selectedTimecards = [timecard];
       this.denyDialog = true;
-    }
+    },
+    openPaymentDialog(timecards) {
+      this.selectedTimecards = timecards;
+      this.paymentDialog = true;
+    },
   },
 };
 </script>

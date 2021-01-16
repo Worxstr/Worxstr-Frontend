@@ -11,15 +11,17 @@
         {{ timecards.length == 1 ? "this timecard" : "these timecards" }}?
       </v-card-title>
       <v-card-text>
-        <span v-if="!payWithCash">
+        <span>
           <span v-if="timecards.length == 1">
-            {{ timecards[0].first_name }} {{ timecards[0].last_name }} will be
-            paid ${{ timecards[0].total_payment }}
+            You are approving {{ timecards[0].first_name }}
+            {{ timecards[0].last_name }} for ${{ timecards[0].total_payment }}
             for this shift.
           </span>
           <span v-else>
-            {{ timecards.length }} employees will be paid ${{ totalPayment }} in
-            total
+            You are approving {{ timecards.length }} employees for ${{
+              totalPayment
+            }}
+            in total.
           </span>
         </span>
 
@@ -28,24 +30,21 @@
           v-model="payWithCash"
         />
 
-        <span v-if="payWithCash"
-          ><span
+        <span v-if="payWithCash">
+					<span
             class="text-subtitle-2 red--text d-flex align-center my-2"
             v-for="timecard in timecards"
             :key="timecard.id"
           >
             <v-icon color="red" class="mr-2"> mdi-alert-circle-outline </v-icon>
-
             Be sure to pay
 
             {{ timecard.first_name }} {{ timecard.last_name }}
 
-            <span class="font-weight-black mx-1"
-              >${{ timecard.total_payment }}</span
-            >
+            <span class="font-weight-black mx-1">${{ timecard.total_payment }}</span>
             in cash.
-          </span></span
-        >
+          </span>
+				</span>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -86,11 +85,14 @@ export default {
       this.$emit("update:opened", false);
     },
     async approveTimecard() {
-      await this.$store.dispatch("approveTimecards", this.timecards.map(t => ({
-				id: t.id,
-				approved: true,
-				paypal: !this.payWithCash
-			})));
+      await this.$store.dispatch(
+        "approveTimecards",
+        this.timecards.map((t) => ({
+          id: t.id,
+          approved: true,
+          paypal: !this.payWithCash,
+        }))
+      );
       this.closeDialog();
     },
   },
