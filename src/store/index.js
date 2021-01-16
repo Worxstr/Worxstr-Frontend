@@ -82,6 +82,10 @@ const store = new Vuex.Store({
       Vue.set(state.approvals.timecards.byId, timecard.id, timecard)
       if (!state.approvals.timecards.all.includes(timecard.id))
         state.approvals.timecards.all.push(timecard.id)
+    },
+    REMOVE_TIMECARD(state, timecardId) {
+      Vue.delete(state.approvals.timecards.byId, timecardId)
+      Vue.delete(state.approvals.timecards.all, state.approvals.timecards.all.indexOf(timecardId))
     }
   },
   actions: {
@@ -250,9 +254,19 @@ const store = new Vuex.Store({
       })
     },
 
-    // async denyTimecard({ commit }, timecardId) {
-
-    // }
+    async denyTimecards({ commit }, timecards) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/payments/deny`,
+        data: {
+          timecards
+        }
+      })
+      data.event.forEach(timecard => {
+        // TODO: Normalize nested data
+        commit('REMOVE_TIMECARD', timecard.id)
+      })
+    }
   },
   getters: {
     // TODO: Transform this and add labels, separated by day of week

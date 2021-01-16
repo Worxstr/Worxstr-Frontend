@@ -63,7 +63,11 @@
           }})</v-toolbar-title
         >
         <v-spacer />
-        <v-btn text color="green" @click="openApproveDialog(unapprovedTimecards)">
+        <v-btn
+          text
+          color="green"
+          @click="openApproveDialog(unapprovedTimecards)"
+        >
           <v-icon>mdi-check</v-icon>
           Approve all
         </v-btn>
@@ -79,8 +83,11 @@
               {{ timecard.first_name }}
               {{ timecard.last_name }}
             </span>
-            <v-spacer/>
-            <span class="flex-grow-0" v-if="timecard.time_clocks && timecard.time_clocks.length">
+            <v-spacer />
+            <span
+              class="flex-grow-0"
+              v-if="timecard.time_clocks && timecard.time_clocks.length"
+            >
               {{ timecard.time_clocks[0].time | time }}
               -
               {{
@@ -112,23 +119,16 @@
               <v-btn text color="green" @click="openApproveDialog([timecard])"
                 >Approve</v-btn
               >
-              <v-btn text color="red">Deny</v-btn>
+              <v-btn text color="red" @click="openDenyDialog(timecard)">Deny</v-btn>
             </v-card-actions>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
     </div>
 
-    <edit-dialog
-      :opened.sync="editDialog"
-      :timecard="selectedTimecards[0]"
-    />
-
-    <approve-dialog
-      :opened.sync="approveDialog"
-      :timecards="selectedTimecards"
-    />
-
+    <edit-dialog :opened.sync="editDialog" :timecard="selectedTimecards[0]" />
+    <approve-dialog :opened.sync="approveDialog" :timecards="selectedTimecards" />
+    <deny-dialog :opened.sync="denyDialog" :timecard="selectedTimecards[0]" />
     <payment-dialog :opened.sync="paymentDialog" />
   </v-container>
 </template>
@@ -140,6 +140,7 @@ import duration from "dayjs/plugin/duration";
 
 import EditDialog from "./EditDialog";
 import ApproveDialog from "./ApproveDialog";
+import DenyDialog from "./DenyDialog.vue";
 import PaymentDialog from "./PaymentDialog.vue";
 
 dayjs.extend(duration);
@@ -153,12 +154,13 @@ export default {
     EditDialog,
     ApproveDialog,
     PaymentDialog,
+    DenyDialog,
   },
   data: () => ({
     selectedTimecards: [],
     editDialog: false,
     approveDialog: false,
-    confirmDialog: false,
+    denyDialog: false,
     paymentDialog: false,
     breaks: [{}],
   }),
@@ -196,13 +198,17 @@ export default {
       }`;
     },
     openEditDialog(timecard) {
-      this.selectedTimecards = [timecard]
+      this.selectedTimecards = [timecard];
       this.editDialog = true;
     },
     openApproveDialog(timecards) {
-      this.selectedTimecards = timecards
+      this.selectedTimecards = timecards;
       this.approveDialog = true;
     },
+    openDenyDialog(timecard) {
+      this.selectedTimecards = [timecard];
+      this.denyDialog = true;
+    }
   },
 };
 </script>

@@ -54,7 +54,7 @@
           {{
             payWithCash
               ? `Confirm cash payment${timecards.length == 1 ? "" : "s"}`
-              : "Approve"
+              : "Yes, Approve"
           }}
         </v-btn>
       </v-card-actions>
