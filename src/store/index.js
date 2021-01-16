@@ -248,7 +248,11 @@ const store = new Vuex.Store({
         // TODO: Normalize nested data
         commit('ADD_TIMECARD', timecard)
       })
-    }
+    },
+
+    // async denyTimecard({ commit }, timecardId) {
+
+    // }
   },
   getters: {
     // TODO: Transform this and add labels, separated by day of week

@@ -18,7 +18,8 @@
             for this shift.
           </span>
           <span v-else>
-						{{timecards.length}} employees will be paid ${{totalPayment}} in total
+            {{ timecards.length }} employees will be paid ${{ totalPayment }} in
+            total
           </span>
         </span>
 
@@ -50,7 +51,11 @@
         <v-spacer></v-spacer>
         <v-btn text @click="closeDialog"> Cancel </v-btn>
         <v-btn color="green" text @click="approveTimecard">
-          {{ payWithCash ? "Confirm cash payment" : "Approve" }}
+          {{
+            payWithCash
+              ? `Confirm cash payment${timecards.length == 1 ? "" : "s"}`
+              : "Approve"
+          }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -66,28 +71,26 @@ export default {
   },
   data: () => ({
     payWithCash: false,
-	}),
-	computed: {
-		totalPayment() {
-			const total = this.timecards.reduce((total, current) => {
-				return total + parseFloat(current.total_payment)
-			}, 0)
+  }),
+  computed: {
+    totalPayment() {
+      const total = this.timecards.reduce((total, current) => {
+        return total + parseFloat(current.total_payment);
+      }, 0);
 
-			return Math.round(total * 100) / 100
-		}
-	},
+      return Math.round(total * 100) / 100;
+    },
+  },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
     },
     async approveTimecard() {
-      await this.$store.dispatch("approveTimecards", [
-        {
-          id: this.timecard.id,
-          approved: true,
-          paypal: !this.payWithCash,
-        },
-      ]);
+      await this.$store.dispatch("approveTimecards", this.timecards.map(t => ({
+				id: t.id,
+				approved: true,
+				paypal: !this.payWithCash
+			})));
       this.closeDialog();
     },
   },
