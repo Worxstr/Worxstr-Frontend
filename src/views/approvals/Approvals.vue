@@ -63,7 +63,7 @@
           }})</v-toolbar-title
         >
         <v-spacer />
-        <v-btn text color="green" @click="approveAllDialog = true">
+        <v-btn text color="green" @click="openApproveDialog(unapprovedTimecards)">
           <v-icon>mdi-check</v-icon>
           Approve all
         </v-btn>
@@ -109,7 +109,7 @@
             <v-card-actions>
               <v-spacer />
               <v-btn text @click="openEditDialog(timecard)">Edit</v-btn>
-              <v-btn text color="green" @click="openApproveDialog(timecard)"
+              <v-btn text color="green" @click="openApproveDialog([timecard])"
                 >Approve</v-btn
               >
               <v-btn text color="red">Deny</v-btn>
@@ -121,15 +121,13 @@
 
     <edit-dialog
       :opened.sync="editDialog"
-      :timecard="unapprovedTimecards[selectedTimecard]"
+      :timecard="selectedTimecards[0]"
     />
 
     <approve-dialog
       :opened.sync="approveDialog"
-      :timecard="unapprovedTimecards[selectedTimecard]"
+      :timecards="selectedTimecards"
     />
-
-    <approve-all-dialog :opened.sync="approveAllDialog" />
 
     <payment-dialog :opened.sync="paymentDialog" />
   </v-container>
@@ -142,7 +140,6 @@ import duration from "dayjs/plugin/duration";
 
 import EditDialog from "./EditDialog";
 import ApproveDialog from "./ApproveDialog";
-import ApproveAllDialog from "./ApproveAllDialog";
 import PaymentDialog from "./PaymentDialog.vue";
 
 dayjs.extend(duration);
@@ -155,14 +152,12 @@ export default {
   components: {
     EditDialog,
     ApproveDialog,
-    ApproveAllDialog,
     PaymentDialog,
   },
   data: () => ({
-    selectedTimecard: 0,
+    selectedTimecards: [],
     editDialog: false,
     approveDialog: false,
-    approveAllDialog: false,
     confirmDialog: false,
     paymentDialog: false,
     breaks: [{}],
@@ -201,15 +196,11 @@ export default {
       }`;
     },
     openEditDialog(timecard) {
-      this.selectedTimecard = this.unapprovedTimecards
-        .map((t) => t.id)
-        .indexOf(timecard.id);
+      this.selectedTimecards = [timecard]
       this.editDialog = true;
     },
-    openApproveDialog(timecard) {
-      this.selectedTimecard = this.unapprovedTimecards
-        .map((t) => t.id)
-        .indexOf(timecard.id);
+    openApproveDialog(timecards) {
+      this.selectedTimecards = timecards
       this.approveDialog = true;
     },
   },
