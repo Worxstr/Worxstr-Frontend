@@ -38,15 +38,15 @@ export default {
     closeDialog() {
       this.$emit("update:opened", false);
     },
-    approveTimecard() {
-      console.log(this.timecard.id);
-      this.$store.dispatch("approveTimecards", [
+    async approveTimecard() {
+      await this.$store.dispatch("approveTimecards", [
         {
           id: this.timecard.id,
           approved: true,
           paypal: !this.payWithCash,
         },
-      ]);
+			]);
+			this.closeDialog()
     },
   },
 };
