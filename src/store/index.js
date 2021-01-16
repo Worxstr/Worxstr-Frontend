@@ -204,7 +204,6 @@ const store = new Vuex.Store({
     },
 
     async updateTimecard({ commit }, { timecardId, events }) {
-      console.log(timecardId, events)
       const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/clock/timecards/${timecardId}`,
@@ -213,11 +212,15 @@ const store = new Vuex.Store({
         },
       })
       commit('ADD_TIMECARD', data.timecard)
-
     },
 
-    async approveTimecard(timecardId) {
-      return null
+    async approveTimecard({ commit }, timecards) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/clock/timecards/approve`,
+        data: timecards
+      })
+      commit('ADD_TIMECARD', data.timecard)
     }
   },
   getters: {

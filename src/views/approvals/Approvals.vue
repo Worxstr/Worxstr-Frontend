@@ -20,16 +20,24 @@
               {{ timecard.first_name }} {{ timecard.last_name }}
             </span>
             <span>
-              {{ timecard.time_in | time }}
+              {{ timecard.time_clocks[0].time | time }}
               -
-              {{ timecard.time_out | time }}
+              {{
+                timecard.time_clocks[timecard.time_clocks.length - 1].time
+                  | time
+              }}
             </span>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-card-text class="text-body-1">
               <p>
                 Worked for
-                {{ timeDiff(timecard.time_in, timecard.time_out) }}
+                {{
+                  timeDiff(
+                    timecard.time_clocks[0].time,
+                    timecard.time_clocks[timecard.time_clocks.length - 1].time
+                  )
+                }}
               </p>
 
               <p>{{ timecard.time_break }} minute break</p>
@@ -47,7 +55,7 @@
         <v-spacer />
         <v-btn text color="green">
           <v-icon>mdi-check</v-icon>
-          Approve all
+          Approve all with paypal
         </v-btn>
       </v-toolbar>
 
@@ -58,20 +66,29 @@
         >
           <v-expansion-panel-header>
             <span class="text-subtitle-1">
+              {{ timecard.id }}
               {{ timecard.first_name }}
               {{ timecard.last_name }}
             </span>
-            <span>
-              {{ timecard.time_in | time }}
+            <span v-if="timecard.time_clocks.length">
+              {{ timecard.time_clocks[0].time | time }}
               -
-              {{ timecard.time_out | time }}
+              {{
+                timecard.time_clocks[timecard.time_clocks.length - 1].time
+                  | time
+              }}
             </span>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-card-text class="text-body-1">
-              <p>
+              <p v-if="timecard.time_clocks.length">
                 Worked for
-                {{ timeDiff(timecard.time_in, timecard.time_out) }}
+                {{
+                  timeDiff(
+                    timecard.time_clocks[0].time,
+                    timecard.time_clocks[timecard.time_clocks.length - 1].time
+                  )
+                }}
               </p>
 
               <p>{{ timecard.time_break }} minute break</p>
@@ -82,7 +99,7 @@
             <v-card-actions>
               <v-spacer />
               <v-btn text @click="openEditDialog(timecard)">Edit</v-btn>
-              <v-btn text color="green" @click="approveTimecard(timecard)"
+              <v-btn text color="green" @click="openApproveDialog(timecard)"
                 >Approve</v-btn
               >
               <v-btn text color="red">Deny</v-btn>
@@ -101,6 +118,14 @@
     </v-dialog>
 
     <v-dialog
+      v-model="approveDialog"
+      :fullscreen="$vuetify.breakpoint.smAndDown"
+      max-width="500"
+    > 
+      <approve-dialog :timecard="timecards[selectedTimecard]"/>
+    </v-dialog>
+
+    <v-dialog
       v-model="confirmDialog"
       :fullscreen="$vuetify.breakpoint.smAndDown"
       max-width="500"
@@ -114,9 +139,15 @@
         </v-toolbar>
 
         <v-card-text>
-          <p class="text-subtitle-1">Send payments</p>
-
-          <v-checkbox v-model="cashPayment" label="Send cash payment" />
+          <p class="text-subtitle-1">
+            Send payment
+            <span v-if="approvedTimecards.length != 1">s</span>
+             to
+            <span v-for="(timecard, index) in approvedTimecards" :key="timecard.id">
+              {{timecard.first_name}} {{timecard.last_name}}
+              <span v-if="index != approvedTimecards.length - 1">, </span>  
+            </span>  
+          </p>
 
           <paypal-buttons
             v-if="!cashPayment"
@@ -140,6 +171,7 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import Vue from "vue";
 import EditDialog from "./EditDialog";
+import ApproveDialog from "./ApproveDialog";
 
 dayjs.extend(duration);
 
@@ -154,10 +186,12 @@ export default {
   components: {
     "paypal-buttons": PayPalButton,
     EditDialog,
+    ApproveDialog,
   },
   data: () => ({
     selectedTimecard: 0,
     editDialog: false,
+    approveDialog: false,
     confirmDialog: false,
     cashPayment: false,
     breaks: [{}],
@@ -210,8 +244,11 @@ export default {
         .indexOf(timecard.id);
       this.editDialog = true;
     },
-    approveTimecard(timecard) {
-      this.$store.dispatch("approveTimecard", {});
+    openApproveDialog(timecard) {
+      this.selectedTimecard = this.timecards
+        .map((t) => t.id)
+        .indexOf(timecard.id);
+      this.approveDialog = true;
     },
   },
 };
