@@ -164,14 +164,14 @@ const store = new Vuex.Store({
       commit('SET_NEXT_SHIFT', data.event)
     },
 
-    async clockIn({ commit }, { code }) {
+    async clockIn({ commit, state }, { code }) {
       console.log(`got code ${code}`)
       try {
         const { data } = await axios({
           method: 'POST',
           url: `${baseUrl}/clock/clock-in`,
           params: {
-            'shift_id': 2
+            'shift_id': state.shifts.next.id
           },
           data: {
             code
@@ -188,12 +188,12 @@ const store = new Vuex.Store({
       }
     },
 
-    async clockOut({ commit }) {
+    async clockOut({ commit, state }) {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/clock/clock-out`,
         params: {
-          'shift_id': 2
+          'shift_id': state.shifts.next.id
         },
       })
       commit('ADD_CLOCK_EVENT', data.event)
