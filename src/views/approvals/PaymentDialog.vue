@@ -17,9 +17,9 @@
         <p class="text-subtitle-1">
           {{ timecards.length }}
           employee{{ timecards.length == 1 ? "" : "s" }} will be paid ${{
-            totalPayment
+            wagePayment
           }}
-          in total.
+          in total. A ${{ feesPayment }} fee will be applied.<br> Your total is ${{ totalPayment }}.
         </p>
 
         <paypal-buttons
@@ -62,13 +62,27 @@ export default {
     transaction: null,
   },
   computed: {
-    totalPayment() {
-      const total = this.timecards.reduce((total, current) => {
+		totalPayment() {
+			const total = this.timecards.reduce((total, current) => {
         return total + parseFloat(current.total_payment);
       }, 0);
 
       return Math.round(total * 100) / 100;
-    },
+		},
+		wagePayment() {
+			const total = this.timecards.reduce((total, current) => {
+        return total + parseFloat(current.wage_payment);
+      }, 0);
+
+      return Math.round(total * 100) / 100;
+		},
+		feesPayment() {
+			const total = this.timecards.reduce((total, current) => {
+        return total + parseFloat(current.fees_payment);
+      }, 0);
+
+      return Math.round(total * 100) / 100;
+		},
   },
   methods: {
     closeDialog() {
