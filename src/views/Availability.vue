@@ -25,7 +25,7 @@
 
 <script>
 export default {
-  name: "Availability",
+  name: "availability",
   data: () => ({
     menu: false,
     availability: {

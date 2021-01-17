@@ -20,7 +20,7 @@
 // @ is an alias to /src
 
 export default {
-  name: "Home",
+  name: "schedule",
   data: () => ({
     type: "week",
     types: ["month", "week", "day", "4day"],

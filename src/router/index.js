@@ -7,6 +7,7 @@ import SignUp from '../views/SignUp.vue'
 import Clock from '../views/Clock.vue'
 import Approvals from '../views/approvals/Approvals.vue'
 import Availability from '../views/Availability.vue'
+import Jobs from '../views/Jobs.vue'
 import Schedule from '../views/Schedule.vue'
 import Messages from '../views/messages/Messages.vue'
 import Conversation from '../views/messages/Conversation.vue'
@@ -56,7 +57,16 @@ const routes = [
     component: Availability,
     meta: {
       icon: 'mdi-calendar-check',
-      showInNav: [EMPLOYEE, MANAGER]
+      showInNav: [EMPLOYEE]
+    }
+  },
+  {
+    path: '/jobs',
+    name: 'jobs',
+    component: Jobs,
+    meta: {
+      icon: 'mdi-calendar-check',
+      showInNav: [MANAGER]
     }
   },
   {

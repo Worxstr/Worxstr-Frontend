@@ -189,7 +189,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 Vue.use(vueAwesomeCountdown, "vac");
 
 export default {
-  name: "Clock",
+  name: "clock",
   data: () => ({
     verifyDialog: {
       opened: false,
