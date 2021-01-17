@@ -25,22 +25,22 @@
         <paypal-buttons
           :createOrder="createOrder"
           :onApprove="onApprove"
-					v-if="!transaction"
+          v-if="!transaction"
         ></paypal-buttons>
 
-				<div v-else>
-					<p class="text-subtitle-2 green--text d-flex align-center my-2">
-						Payment successful.
-            Your PayPal order ID is:
+        <div v-else>
+          <p class="text-subtitle-2 green--text d-flex align-center my-2">
+            Payment successful. Your PayPal order ID is:
           </p>
-					<p class="green--text font-weight-black mx-1">{{ transaction.orderID }}</p>
-				</div>
+          <p class="green--text font-weight-black mx-1">
+            {{ transaction.orderID }}
+          </p>
+        </div>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer />
         <v-btn text @click="closeDialog">Cancel</v-btn>
-        <v-btn text color="primary" :disabled="!transaction">Complete payment</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -58,8 +58,8 @@ export default {
   },
   props: {
     opened: Boolean,
-		timecards: Array,
-		transaction: null,
+    timecards: Array,
+    transaction: null,
   },
   computed: {
     totalPayment() {
@@ -75,8 +75,8 @@ export default {
       this.$emit("update:opened", false);
     },
     createOrder(data, actions) {
-			console.log({data, actions})
-			
+      console.log({ data, actions });
+
       return actions.order.create({
         // eslint-disable-next-line @typescript-eslint/camelcase
         purchase_units: [
@@ -88,10 +88,13 @@ export default {
         ],
       });
     },
-    onApprove(data, actions) {
-			
-			this.transaction = data
-			
+    async onApprove(data, actions) {
+      this.transaction = data;
+      this.closeDialog();
+      this.$store.dispatch("approvePayment", {
+        timecards: this.timecards,
+        transaction: data,
+      });
       return actions.order.capture();
     },
   },

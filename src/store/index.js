@@ -217,7 +217,7 @@ const store = new Vuex.Store({
 
     async toggleBreak({ commit }, breakState) {
 
-      
+
       const action = breakState ? 'end' : 'start'
       console.log(action)
 
@@ -266,6 +266,20 @@ const store = new Vuex.Store({
         // TODO: Normalize nested data
         commit('REMOVE_TIMECARD', timecard.id)
       })
+    },
+
+    async approvePayment({ commit }, { timecards, transaction }) {
+      await axios({
+        method: 'PUT',
+        url: `${baseUrl}/payments/complete`,
+        data: {
+          timecards,
+          transaction
+        }
+      })
+      timecards.forEach(timecard => {
+        commit('REMOVE_TIMECARD', timecard.id)
+      })
     }
   },
   getters: {
@@ -278,7 +292,7 @@ const store = new Vuex.Store({
       events = events.sort((a, b) => {
         return (new Date(b.time)) - (new Date(a.time))
       })
-      
+
       let last
 
       return events.flatMap((event, i) => {
@@ -305,9 +319,9 @@ const store = new Vuex.Store({
       if (!state.shifts.next) return {}
 
       const begin = new Date(state.shifts.next.time_begin),
-            end = new Date(state.shifts.next.time_end),
-            now = new Date()
-      
+        end = new Date(state.shifts.next.time_end),
+        now = new Date()
+
       const shiftActive = (begin <= now && now <= end)
 
       return {
@@ -317,7 +331,7 @@ const store = new Vuex.Store({
         shiftActive,
       }
     },
-    timecard: (state) => id=> {
+    timecard: (state) => id => {
       return state.approvals.timecards.byId[id]
     },
     timecards: (state, getters) => {
