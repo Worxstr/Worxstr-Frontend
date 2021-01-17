@@ -22,8 +22,9 @@
               {{ timecard.first_name }} {{ timecard.last_name }}
             </span>
             <v-spacer />
+            <span class="flex-grow-0 px-2 font-weight-bold">${{timecard.total_payment}}</span>
             <span
-              class="flex-grow-0"
+              class="flex-grow-0 px-2"
               v-if="timecard.time_clocks && timecard.time_clocks.length"
             >
               {{ timecard.time_clocks[0].time | time }}
@@ -84,8 +85,9 @@
               {{ timecard.last_name }}
             </span>
             <v-spacer />
+            <span class="flex-grow-0 px-2 font-weight-bold">${{timecard.total_payment}}</span>
             <span
-              class="flex-grow-0"
+              class="flex-grow-0 px-2"
               v-if="timecard.time_clocks && timecard.time_clocks.length"
             >
               {{ timecard.time_clocks[0].time | time }}

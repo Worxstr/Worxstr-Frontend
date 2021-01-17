@@ -63,11 +63,7 @@ export default {
   },
   computed: {
 		totalPayment() {
-			const total = this.timecards.reduce((total, current) => {
-        return total + parseFloat(current.total_payment);
-      }, 0);
-
-      return Math.round(total * 100) / 100;
+			return this.wagePayment + this.feesPayment;
 		},
 		wagePayment() {
 			const total = this.timecards.reduce((total, current) => {
