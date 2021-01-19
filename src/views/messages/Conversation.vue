@@ -52,24 +52,39 @@
 </template>
 
 <script>
-let id = 6
+let id = 6;
 
 export default {
   name: "Messages",
   mounted() {
     // TODO: doesnt' work
-    this.$refs.message.$el.focus()
+    this.$refs.message.$el.focus();
   },
   methods: {
     sendMessage() {
-      this.messages.unshift({
+      console.log(this.message);
+      console.log(this.$socket);
+
+      this.$socket.emit("message", {
         text: this.message,
+      });
+
+      
+    },
+  },
+  sockets: {
+    connect: function () {
+      console.log("socket connected");
+    },
+    newMessage: function ({message}) {
+      this.messages.unshift({
+        text: message,
         pos: "right",
-        id
+        id,
       });
       id++;
-      this.message = ""
-    }
+      this.message = "";
+    },
   },
   data: () => ({
     message: "",
@@ -78,32 +93,32 @@ export default {
       {
         text: "Love u",
         pos: "right",
-        id: 5
+        id: 5,
       },
       {
         text: "Ok do good work lol",
         pos: "left",
-        id: 4
+        id: 4,
       },
       {
         text: "Nothing my shift is starting",
         pos: "right",
-        id: 3
+        id: 3,
       },
       {
         text: "What's up",
         pos: "left",
-        id: 2
+        id: 2,
       },
       {
         text: "Hi",
         pos: "right",
-        id: 1
+        id: 1,
       },
       {
         text: "Hello!",
         pos: "left",
-        id: 0
+        id: 0,
       },
     ],
   }),
