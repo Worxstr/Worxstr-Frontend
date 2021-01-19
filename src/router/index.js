@@ -7,7 +7,8 @@ import SignUp from '../views/SignUp.vue'
 import Clock from '../views/Clock.vue'
 import Approvals from '../views/approvals/Approvals.vue'
 import Availability from '../views/Availability.vue'
-import Jobs from '../views/Jobs.vue'
+import Jobs from '../views/jobs/Jobs.vue'
+import Job from '../views/jobs/Job.vue'
 import Schedule from '../views/Schedule.vue'
 import Messages from '../views/messages/Messages.vue'
 import Conversation from '../views/messages/Conversation.vue'
@@ -39,7 +40,7 @@ const routes = [
     component: Clock,
     meta: {
       icon: 'mdi-clock-outline',
-      showInNav: [EMPLOYEE]
+      restrict: [EMPLOYEE]
     }
   },
   {
@@ -48,7 +49,7 @@ const routes = [
     component: Approvals,
     meta: {
       icon: 'mdi-clock-check-outline',
-      showInNav: [MANAGER]
+      restrict: [MANAGER]
     }
   },
   {
@@ -57,7 +58,7 @@ const routes = [
     component: Availability,
     meta: {
       icon: 'mdi-calendar-check',
-      showInNav: [EMPLOYEE]
+      restrict: [EMPLOYEE]
     }
   },
   {
@@ -66,7 +67,15 @@ const routes = [
     component: Jobs,
     meta: {
       icon: 'mdi-calendar-check',
-      showInNav: [MANAGER]
+      restrict: [MANAGER]
+    }
+  },
+  {
+    path: '/job/:jobId',
+    name: 'job',
+    component: Job,
+    meta: {
+      restrict: [MANAGER]
     }
   },
   {
@@ -75,7 +84,7 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      showInNav: [EMPLOYEE, MANAGER]
+      restrict: [EMPLOYEE, MANAGER]
     }
   },
   {
@@ -84,7 +93,7 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      showInNav: [EMPLOYEE, MANAGER]
+      restrict: [EMPLOYEE, MANAGER]
     },
     children: [{
       name: 'conversation',

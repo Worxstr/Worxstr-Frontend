@@ -15,16 +15,22 @@
 
         <div
           class="d-flex flex-row"
-          v-if="authenticatedUser && authenticatedUser.roles && !$vuetify.breakpoint.smAndDown"
+          v-if="
+            authenticatedUser &&
+            authenticatedUser.roles &&
+            !$vuetify.breakpoint.smAndDown
+          "
         >
           <v-btn
             v-for="route in $router.options.routes.filter(
               (r) =>
                 r.meta &&
-                r.meta.showInNav &&
-                r.meta.showInNav.some((role) =>
-                  authenticatedUser.roles.map((r) => r.id).includes(role)
-                )
+                ((r.meta.icon && !r.meta.restrict) ||
+                  (r.meta.icon &&
+                    r.meta.restrict &&
+                    r.meta.restrict.some((role) =>
+                      authenticatedUser.roles.map((r) => r.id).includes(role)
+                    )))
             )"
             :key="route.name"
             text
@@ -119,7 +125,8 @@
         :input-value="active"
         v-if="
           $vuetify.breakpoint.smAndDown &&
-          authenticatedUser && authenticatedUser.roles &&
+          authenticatedUser &&
+          authenticatedUser.roles &&
           $route.name != 'home' &&
           $route.name != 'conversation'
         "
@@ -130,10 +137,12 @@
           v-for="route in $router.options.routes.filter(
             (r) =>
               r.meta &&
-              r.meta.showInNav &&
-              r.meta.showInNav.some((role) =>
-                authenticatedUser.roles.map((r) => r.id).includes(role)
-              )
+              ((r.meta.icon && !r.meta.restrict) ||
+                (r.meta.icon &&
+                  r.meta.restrict &&
+                  r.meta.restrict.some((role) =>
+                    authenticatedUser.roles.map((r) => r.id).includes(role)
+                  )))
           )"
           :key="route.name"
           :value="route.name"

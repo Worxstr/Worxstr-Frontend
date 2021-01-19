@@ -117,7 +117,7 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn text @click="openEditDialog(timecard)"> Edit</v-btn>
+              <v-btn text @click="openEditTimecardDialog(timecard)"> Edit</v-btn>
               <v-btn text color="green" @click="openApproveDialog([timecard])">
                 <v-icon>mdi-check</v-icon>
                 Approve
@@ -131,7 +131,7 @@
       </v-expansion-panels>
     </div>
 
-    <edit-dialog :opened.sync="editDialog" :timecard="selectedTimecards[0]" />
+    <edit-timecard-dialog :opened.sync="editTimecardDialog" :timecard="selectedTimecards[0]" />
     <approve-dialog
       :opened.sync="approveDialog"
       :timecards="selectedTimecards"
@@ -149,7 +149,7 @@ import { mapState, mapGetters, mapActions } from "vuex";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 
-import EditDialog from "./EditDialog";
+import EditTimecardDialog from "./EditTimecardDialog";
 import ApproveDialog from "./ApproveDialog";
 import DenyDialog from "./DenyDialog.vue";
 import PaymentDialog from "./PaymentDialog.vue";
@@ -162,14 +162,14 @@ export default {
     this.$store.dispatch("loadApprovals");
   },
   components: {
-    EditDialog,
+    EditTimecardDialog,
     ApproveDialog,
     PaymentDialog,
     DenyDialog,
   },
   data: () => ({
     selectedTimecards: [],
-    editDialog: false,
+    editTimecardDialog: false,
     approveDialog: false,
     denyDialog: false,
     paymentDialog: false,
@@ -193,9 +193,9 @@ export default {
         minutes == 1 ? "" : "s"
       }`;
     },
-    openEditDialog(timecard) {
+    openEditTimecardDialog(timecard) {
       this.selectedTimecards = [timecard];
-      this.editDialog = true;
+      this.editTimecardDialog = true;
     },
     openApproveDialog(timecards) {
       this.selectedTimecards = timecards;
