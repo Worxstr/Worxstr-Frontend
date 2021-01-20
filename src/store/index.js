@@ -37,6 +37,14 @@ const store = new Vuex.Store({
     },
     shifts: {
       next: null
+    },
+    jobs: {
+      all: [],
+      byId: {}
+    },
+    users: {
+      all: [],
+      byId: []
     }
   },
   mutations: {
@@ -86,6 +94,11 @@ const store = new Vuex.Store({
     REMOVE_TIMECARD(state, timecardId) {
       Vue.delete(state.approvals.timecards.byId, timecardId)
       Vue.delete(state.approvals.timecards.all, state.approvals.timecards.all.indexOf(timecardId))
+    },
+    ADD_JOB(state, job) {
+      Vue.set(state.jobs.byId, job.id, job)
+      if (!state.jobs.all.includes(job.id))
+        state.jobs.all.push(job.id)
     }
   },
   actions: {
@@ -216,8 +229,6 @@ const store = new Vuex.Store({
     },
 
     async toggleBreak({ commit }, breakState) {
-
-
       const action = breakState ? 'end' : 'start'
       console.log(action)
 
@@ -280,6 +291,44 @@ const store = new Vuex.Store({
       timecards.forEach(timecard => {
         commit('REMOVE_TIMECARD', timecard.id)
       })
+    },
+
+    async loadJobs({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/jobs`,
+      })
+      data.direct_jobs.forEach(job => {
+        // TODO: Normalize nested data
+        commit('ADD_JOB', {
+          ...job,
+          direct: true,
+        })
+      })
+      data.indirect_jobs.forEach(job => {
+        commit('ADD_JOB', {
+          ...job,
+          direct: false,
+        })
+      })
+    },
+
+    async loadJob({ commit, getters }, jobId) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/jobs/${jobId}`,
+      })
+
+      console.log(data)
+
+      // Preserve direct property
+      const existingJob = getters.job(jobId)
+      if (existingJob)
+        data.job.direct = existingJob.direct
+
+      console.log({job: data.job})
+
+      commit('ADD_JOB', data.job)
     }
   },
   getters: {
@@ -342,6 +391,18 @@ const store = new Vuex.Store({
     },
     unapprovedTimecards: (state, getters) => {
       return getters.timecards.filter((timecard) => !timecard.approved);
+    },
+    job: (state) => id => {
+      return state.jobs.byId[id]
+    },
+    jobs: (state, getters) => {
+      return state.jobs.all.map(id => getters.job(id))
+    },
+    directJobs: (state, getters) => {
+      return getters.jobs.filter((job) => job.direct);
+    },
+    indirectJobs: (state, getters) => {
+      return getters.jobs.filter((job) => !job.direct);
     },
   },
   modules: {
