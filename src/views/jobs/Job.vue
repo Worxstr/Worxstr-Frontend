@@ -12,7 +12,7 @@
       <l-map
         class="align-self-stretch"
         style="height: 400px; z-index: 0"
-        :zoom="18"
+        :zoom="16"
         :center="location"
         :options="mapOptions"
       >
