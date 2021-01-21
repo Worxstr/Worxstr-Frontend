@@ -24,26 +24,26 @@ v-dialog(
           dense,
           label="Employee"
         )
-          v-text-field(
-            v-model="editedShift.site_location",
-            label="Location",
-            :rules="rules.location",
-            outlined,
-            dense
-          )
-            v-row
-              v-col
-                time-input(
-                  required,
-                  v-model="editedShift.time_begin",
-                  label="Start time"
-                )
-              v-col
-                time-input(
-                  required,
-                  v-model="editedShift.time_end",
-                  label="End time"
-                )
+        v-text-field(
+          v-model="editedShift.site_location",
+          label="Location",
+          :rules="rules.location",
+          outlined,
+          dense
+        )
+        v-row
+          v-col
+            time-input(
+              required,
+              v-model="editedShift.time_begin",
+              label="Start time"
+            )
+          v-col
+            time-input(
+              required,
+              v-model="editedShift.time_end",
+              label="End time"
+            )
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel

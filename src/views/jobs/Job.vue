@@ -16,7 +16,7 @@ v-container.approvals(v-if="job")
       :options="mapOptions"
     )
       l-tile-layer(:url="url", :attribution="attribution")
-        l-marker(:lat-lng="location", :icon="markerIcon")
+      l-marker(:lat-lng="location", :icon="markerIcon")
 
     v-card-text
       p
@@ -30,9 +30,11 @@ v-container.approvals(v-if="job")
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Organizational manager
         p {{ organizationManagerName(job.organization_manager_id) }}
+
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Employee manager
         p {{ employeeManagerName(job.employee_manager_id) }}
+
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Consultant
         p
@@ -66,11 +68,11 @@ v-container.approvals(v-if="job")
           v-btn(text, @click="openEditShiftDialog(shift)") Edit
 
   edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
-    edit-shift-dialog(
-      :opened.sync="editShiftDialog",
-      :shift.sync="selectedShift",
-      :employees="job.employees"
-    )
+  edit-shift-dialog(
+    :opened.sync="editShiftDialog",
+    :shift.sync="selectedShift",
+    :employees="job.employees"
+  )
 </template>
 
 <script>
