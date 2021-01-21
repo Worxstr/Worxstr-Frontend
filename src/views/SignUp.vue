@@ -1,77 +1,68 @@
-<template>
-  <v-container
-    class="sign-in fill-height d-flex flex-column justify-center align-center"
-  >
-    <v-card width="500">
-      <v-form @submit.prevent="signUp" v-model="isValid">
-        <v-card-title>Sign up</v-card-title>
-
-        <v-card-text>
-          <v-text-field
-            label="First name"
-            v-model="form.first_name"
-            :rules="rules.firstName"
+<template lang="pug">
+  v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
+    v-card(width='500')
+      v-form(@submit.prevent='signUp' v-model='isValid')
+        v-card-title Sign up
+        v-card-text
+          v-text-field(
+            label='First name'
+            v-model='form.first_name'
+            :rules='rules.firstName'
             required
-          />
-          <v-text-field
-            label="Last name"
-            v-model="form.last_name"
-            :rules="rules.lastName"
+          )
+          v-text-field(
+            label='Last name'
+            v-model='form.last_name'
+            :rules='rules.lastName' 
             required
-          />
-          <v-text-field
-            label="Email"
-            type="email"
-            :rules="rules.email"
-            v-model="form.email"
+          )
+          v-text-field(
+            label='Email'
+            type='email'
+            :rules='rules.email'
+            v-model='form.email'
             required
-          />
-          <v-text-field
-            label="Phone"
-            type="phone"
-            v-model="form.phone"
-            :rules="rules.phone"
+          )
+          v-text-field(
+            label='Phone'
+            type='phone' 
+            v-model='form.phone'
+            :rules='rules.phone'
             required
-          />
-          <v-text-field
-            label="Manager ID"
-            v-model="form.manager_id"
-            :rules="rules.managerId"
-          />
-          <v-text-field
-            label="Password"
-            type="password"
-            v-model="form.password"
-            :rules="rules.password"
+          )
+          v-text-field(
+            label='Manager ID'
+            v-model='form.manager_id'
+            :rules='rules.managerId'
+          )
+          v-text-field(
+            label='Password'
+            type='password'
+            v-model='form.password'
+            :rules='rules.password'
             required
-          />
-          <v-text-field
-            label="Confirm password"
-            type="password"
-            v-model="form.confirm_password"
-            :rules="[
-              ...rules.confirmPassword,
-              (value) => value == form.password || 'Passwords must match',
+          )
+          v-text-field(
+            label='Confirm password'
+            type='password'
+            v-model='form.confirm_password'
+            :rules="[\
+              ...rules.confirmPassword,\
+              (value) => value == form.password || 'Passwords must match',\
             ]"
             required
-          />
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text color="primary" type="submit" :disabled="!isValid"
-            >Sign up</v-btn
-          >
-        </v-card-actions>
-      </v-form>
-
-      <v-fade-transition>
-        <v-overlay absolute opacity="0.2" v-if="loading">
-          <v-progress-circular indeterminate />
-        </v-overlay>
-      </v-fade-transition>
-    </v-card>
-  </v-container>
+          )
+        v-card-actions
+          v-spacer
+          v-btn(
+            text
+            color='primary'
+            type='submit'
+            :disabled='!isValid'
+          ) Sign up
+      v-fade-transition
+        v-overlay(absolute opacity='0.2' v-if='loading')
+          v-progress-circular(indeterminate)
 </template>
 
 <script>
@@ -115,9 +106,7 @@ export default {
         (value) => !!value || "Password required",
         (value) => value.length >= 8 || "Password must be 8 characters",
       ],
-      confirmPassword: [
-        (value) => !!value || "Password confirmation required",
-      ],
+      confirmPassword: [(value) => !!value || "Password confirmation required"],
     },
     loading: false,
   }),

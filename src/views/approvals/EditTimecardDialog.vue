@@ -1,64 +1,45 @@
-<template>
-  <v-dialog
-    v-model="opened"
-    :fullscreen="$vuetify.breakpoint.smAndDown"
-    max-width="500"
-    persistent
-  >
-
-    <v-card>
-      <v-form @submit.prevent="updateTimecard" v-model="form.isValid">
-        <v-toolbar flat>
-          <v-toolbar-title>
-            Editing timecard for
-            {{ timecard.first_name }}
-            {{ timecard.last_name }}
-          </v-toolbar-title>
-        </v-toolbar>
-
-        <v-card-text>
-          <time-input v-model="form.data.timeIn.time" label="Time in" />
-
-          <div
-            class="mb-5"
-            v-for="(breakItem, index) in form.data.breaks"
-            :key="index"
-          >
-            <v-row>
-              <v-col>
-                <time-input
-                  required
-                  hide-details
-                  v-model="breakItem.start.time"
+<template lang="pug">
+v-dialog(
+  v-model="opened",
+  :fullscreen="$vuetify.breakpoint.smAndDown",
+  max-width="500",
+  persistent
+)
+  v-card
+    v-form(@submit.prevent="updateTimecard", v-model="form.isValid")
+      v-toolbar(flat)
+        v-toolbar-title
+          | Editing timecard for
+          | {{ timecard.first_name }}
+          | {{ timecard.last_name }}
+          
+      v-card-text
+        time-input(v-model="form.data.timeIn.time", label="Time in")
+          .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
+            v-row
+              v-col
+                time-input(
+                  required,
+                  hide-details,
+                  v-model="breakItem.start.time",
                   :label="`Break ${index + 1} start`"
-                />
-              </v-col>
-              <v-col>
-                <time-input
-                  required
-                  hide-details
-                  v-model="breakItem.end.time"
+                )
+              v-col
+                time-input(
+                  required,
+                  hide-details,
+                  v-model="breakItem.end.time",
                   :label="`Break ${index + 1} end`"
-                />
-              </v-col>
-            </v-row>
-          </div>
-
-          <time-input
-            required
-            v-model="form.data.timeOut.time"
+                )
+          time-input(
+            required,
+            v-model="form.data.timeOut.time",
             label="Time out"
-          />
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn text @click="closeDialog">Cancel</v-btn>
-          <v-btn text color="primary" @click="updateTimecard">Save</v-btn>
-        </v-card-actions>
-      </v-form>
-    </v-card>
-  </v-dialog>
+          )
+      v-card-actions
+        v-spacer
+        v-btn(text, @click="closeDialog") Cancel
+        v-btn(text, color="primary", @click="updateTimecard") Save
 </template>
 
 <script>
@@ -89,16 +70,15 @@ export default {
     timecard: function (newVal, oldVal) {
       this.calculateFormValues();
     },
-		opened(newVal, oldVal) {
-			if (newVal == true)
-        this.calculateFormValues()
-		},
+    opened(newVal, oldVal) {
+      if (newVal == true) this.calculateFormValues();
+    },
   },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
     },
-    
+
     calculateFormValues() {
       const events = this.timecard.time_clocks;
 

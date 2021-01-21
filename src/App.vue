@@ -1,170 +1,101 @@
-<template>
-  <v-app class="d-flex flex-column fill-height">
-    <v-app-bar
-      color="white"
-      class="flex-grow-0"
-      elevate-on-scroll
-      scroll-target="#scroll-target"
-    >
-      <v-container class="py-0 fill-height">
-        <router-link to="/" style="text-decoration: none">
-          <v-avatar class="mr-10" color="grey darken-1" size="32">
-            <span class="white--text">W</span>
-          </v-avatar>
-        </router-link>
+<template lang="pug">
+v-app.d-flex.flex-column.fill-height
+  v-app-bar.flex-grow-0(color='white' elevate-on-scroll='' scroll-target='#scroll-target')
+    v-container.py-0.fill-height
+      router-link(to='/' style='text-decoration: none')
+        v-avatar.mr-10(color='grey darken-1' size='32')
+          span.white--text W
+      .d-flex.flex-row(v-if='\
+      authenticatedUser &&\
+      authenticatedUser.roles &&\
+      !$vuetify.breakpoint.smAndDown\
+      ')
+        v-btn(v-for='route in $router.options.routes.filter(\
+          r =>\
+          r.meta &&\
+          (\
+            (r.meta.icon && !r.meta.restrict) ||\
+            (r.meta.icon &&\
+            r.meta.restrict &&\
+            r.meta.restrict.some((role) =>\
+            authenticatedUser.roles.map((r) => r.id).includes(role)\
+            ))\
+          )\
+        )'
+        :key='route.name'
+        text=''
+        :to='{ name: route.name }'
+        active-class='primary--text')
+          | {{ route.name }}
 
-        <div
-          class="d-flex flex-row"
-          v-if="
-            authenticatedUser &&
-            authenticatedUser.roles &&
-            !$vuetify.breakpoint.smAndDown
-          "
-        >
-          <v-btn
-            v-for="route in $router.options.routes.filter(
-              (r) =>
-                r.meta &&
-                ((r.meta.icon && !r.meta.restrict) ||
-                  (r.meta.icon &&
-                    r.meta.restrict &&
-                    r.meta.restrict.some((role) =>
-                      authenticatedUser.roles.map((r) => r.id).includes(role)
-                    )))
-            )"
-            :key="route.name"
-            text
-            :to="{ name: route.name }"
-            active-class="primary--text"
-            >{{ route.name }}</v-btn
-          >
-        </div>
+      v-spacer
 
-        <v-spacer />
+      div(v-if='authenticatedUser')
+        v-menu(v-model='menu' :close-on-content-click='false' bottom='' left='')
+          template(v-slot:activator='{ on, attrs }')
+            v-btn(icon='')
+              v-icon(v-bind='attrs' v-on='on') mdi-bell-outline
 
-        <div v-if="authenticatedUser">
-          <v-menu v-model="menu" :close-on-content-click="false" bottom left>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn icon>
-                <v-icon v-bind="attrs" v-on="on">mdi-bell-outline</v-icon>
-              </v-btn>
-            </template>
+          v-card
+            v-list(two-line='')
+              v-list-item-group
+                template(v-for='(item, index) in notifs')
+                  v-list-item(:key='item.title')
+                    template(v-slot:default='')
+                      v-list-item-content
+                        v-list-item-title(v-text='item.title')
+                        v-list-item-subtitle.text--primary(v-text='item.headline')
+                        v-list-item-subtitle(v-text='item.subtitle')
+                      v-list-item-action
+                        v-list-item-action-text(v-text='item.action')
+                        v-icon(color='yellow darken-3')  mdi-star 
+                  v-divider(v-if='index < notifs.length - 1' :key='index')
 
-            <v-card>
-              <v-list two-line>
-                <v-list-item-group>
-                  <template v-for="(item, index) in notifs">
-                    <v-list-item :key="item.title">
-                      <template v-slot:default>
-                        <v-list-item-content>
-                          <v-list-item-title
-                            v-text="item.title"
-                          ></v-list-item-title>
+        v-btn(icon='' @click='signOut')
+          v-icon mdi-logout-variant
 
-                          <v-list-item-subtitle
-                            class="text--primary"
-                            v-text="item.headline"
-                          ></v-list-item-subtitle>
+      div(v-else='')
+        v-btn(text='' :to="{ name: 'signIn' }" active-class='primary--text')
+          | Sign in
+        v-btn(text='' :to="{ name: 'signUp' }" active-class='primary--text')
+          | Sign up
 
-                          <v-list-item-subtitle
-                            v-text="item.subtitle"
-                          ></v-list-item-subtitle>
-                        </v-list-item-content>
+  v-main#scroll-target.grey.lighten-3.d-flex.flex-column.fill-height
+    v-container.pa-0.fill-height.align-start(fluid='')
+      transition(appear='' name='slide-y-transition' mode='out-in')
+        router-view
 
-                        <v-list-item-action>
-                          <v-list-item-action-text
-                            v-text="item.action"
-                          ></v-list-item-action-text>
+  transition(name='slide-fade')
+    v-bottom-navigation(v-model='value' :input-value='active' v-if="\
+    $vuetify.breakpoint.smAndDown &&\
+    authenticatedUser &&\
+    authenticatedUser.roles &&\
+    $route.name != 'home' &&\
+    $route.name != 'conversation'\
+    " color='indigo' grow='')
+      v-btn(v-for='route in $router.options.routes.filter(\
+      (r) =>\
+      r.meta &&\
+      ((r.meta.icon && !r.meta.restrict) ||\
+      (r.meta.icon &&\
+      r.meta.restrict &&\
+      r.meta.restrict.some((role) =>\
+      authenticatedUser.roles.map((r) => r.id).includes(role)\
+      )))\
+      )'
+      :key='route.name'
+      :value='route.name'
+      :to='{ name: route.name }'
+    )
+        span {{ route.name | capitalize }}
+        v-icon {{ route.meta.icon }}
 
-                          <v-icon color="yellow darken-3"> mdi-star </v-icon>
-                        </v-list-item-action>
-                      </template>
-                    </v-list-item>
+  v-snackbar(app='' v-model='snackbar.show' :timeout='snackbar.timeout')
+    | {{ snackbar.text }}
+    template(v-slot:action='{ attrs }' v-if='snackbar.action')
+      v-btn(color='blue' text='' v-bind='attrs' @click='snackbar.show = false')
+        | Close
 
-                    <v-divider
-                      v-if="index < notifs.length - 1"
-                      :key="index"
-                    ></v-divider>
-                  </template>
-                </v-list-item-group>
-              </v-list>
-            </v-card>
-          </v-menu>
-
-          <v-btn icon @click="signOut">
-            <v-icon>mdi-logout-variant</v-icon>
-          </v-btn>
-        </div>
-
-        <div v-else>
-          <v-btn text :to="{ name: 'signIn' }" active-class="primary--text">
-            Sign in
-          </v-btn>
-
-          <v-btn text :to="{ name: 'signUp' }" active-class="primary--text">
-            Sign up
-          </v-btn>
-        </div>
-      </v-container>
-    </v-app-bar>
-
-    <v-main
-      id="scroll-target"
-      class="grey lighten-3 d-flex flex-column fill-height"
-    >
-      <v-container fluid class="pa-0 fill-height align-start">
-        <transition appear name="slide-y-transition" mode="out-in">
-          <router-view />
-        </transition>
-      </v-container>
-    </v-main>
-
-    <transition name="slide-fade">
-      <v-bottom-navigation
-        v-model="value"
-        :input-value="active"
-        v-if="
-          $vuetify.breakpoint.smAndDown &&
-          authenticatedUser &&
-          authenticatedUser.roles &&
-          $route.name != 'home' &&
-          $route.name != 'conversation'
-        "
-        color="indigo"
-        grow
-      >
-        <v-btn
-          v-for="route in $router.options.routes.filter(
-            (r) =>
-              r.meta &&
-              ((r.meta.icon && !r.meta.restrict) ||
-                (r.meta.icon &&
-                  r.meta.restrict &&
-                  r.meta.restrict.some((role) =>
-                    authenticatedUser.roles.map((r) => r.id).includes(role)
-                  )))
-          )"
-          :key="route.name"
-          :value="route.name"
-          :to="{ name: route.name }"
-        >
-          <span>{{ route.name | capitalize }}</span>
-
-          <v-icon>{{ route.meta.icon }}</v-icon>
-        </v-btn>
-      </v-bottom-navigation>
-    </transition>
-
-    <v-snackbar app v-model="snackbar.show" :timeout="snackbar.timeout">
-      {{ snackbar.text }}
-
-      <template v-slot:action="{ attrs }" v-if="snackbar.action">
-        <v-btn color="blue" text v-bind="attrs" @click="snackbar.show = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
-  </v-app>
 </template>
 
 <script lang="ts">

@@ -1,64 +1,53 @@
-<template>
-  <v-dialog
-    v-model="opened"
-    :fullscreen="$vuetify.breakpoint.smAndDown"
-    max-width="500"
-    persistent
-  >
-    <v-card>
-      <v-card-title class="headline">
-        Approve
-        {{ timecards.length == 1 ? "this timecard" : "these timecards" }}?
-      </v-card-title>
-      <v-card-text>
-        <span>
-          <span v-if="timecards.length == 1">
-            You are approving {{ timecards[0].first_name }}
-            {{ timecards[0].last_name }} for ${{ timecards[0].total_payment }}
-            for this shift.
-          </span>
-          <span v-else>
-            You are approving {{ timecards.length }} employees for ${{
-              totalPayment
-            }}
-            in total.
-          </span>
-        </span>
+<template lang="pug">
+v-dialog(
+  v-model="opened",
+  :fullscreen="$vuetify.breakpoint.smAndDown",
+  max-width="500",
+  persistent
+)
+  v-card
+    v-card-title.headline
+      | Approve
+      | {{ timecards.length == 1 ? 'this timecard' : 'these timecards' }}?
+    v-card-text
+      span
+        span(v-if="timecards.length == 1")
+          | You are approving {{ timecards[0].first_name }}
+          | {{ timecards[0].last_name }} for ${{ timecards[0].total_payment }}
+          | for this shift.
+        span(v-else)
+          | You are approving {{ timecards.length }} employees for ${{
+          | totalPayment
+          | }}
+          | in total.
 
-        <v-checkbox
-          :label="`Make a cash payment${timecards.length == 1 ? '' : 's'}`"
-          v-model="payWithCash"
-        />
-
-        <span v-if="payWithCash">
-					<span
-            class="text-subtitle-2 red--text d-flex align-center my-2"
-            v-for="timecard in timecards"
+      v-checkbox(
+        :label="`Make a cash payment${timecards.length == 1 ? '' : 's'}`",
+        v-model="payWithCash"
+      )
+        span(v-if="payWithCash")
+          span.text-subtitle-2.red--text.d-flex.align-center.my-2(
+            v-for="timecard in timecards",
             :key="timecard.id"
-          >
-            <v-icon color="red" class="mr-2"> mdi-alert-circle-outline </v-icon>
-            Be sure to pay
-
-            {{ timecard.first_name }} {{ timecard.last_name }}
-
-            <span class="font-weight-black mx-1">${{ timecard.total_payment }}</span>
-            in cash.
-          </span>
-				</span>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text @click="closeDialog"> Cancel </v-btn>
-        <v-btn color="green" text @click="approveTimecard">
-          {{
-            payWithCash
-              ? `Confirm cash payment${timecards.length == 1 ? "" : "s"}`
-              : "Yes, Approve"
-          }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+          )
+            v-icon.mr-2(color="red") mdi-alert-circle-outline
+            |
+            | Be sure to pay
+            |
+            | {{ timecard.first_name }} {{ timecard.last_name }}
+            span.font-weight-black.mx-1 ${{ timecard.total_payment }}
+            |
+            | in cash.
+            
+    v-card-actions
+      v-spacer
+      v-btn(text, @click="closeDialog") Cancel
+      v-btn(color="green", text, @click="approveTimecard")
+        | {{
+        | payWithCash
+        | ? `Confirm cash payment${timecards.length == 1 ? "" : "s"}`
+        | : "Yes, Approve"
+        | }}
 </template>
 
 <script>

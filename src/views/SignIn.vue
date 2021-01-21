@@ -1,41 +1,29 @@
-<template>
-  <v-container
-    class="sign-in fill-height d-flex flex-column justify-center align-center"
-  >
-    <v-card width="500">
-      <v-form @submit.prevent="signIn" v-model="isValid">
-        <v-card-title>Sign in</v-card-title>
-
-        <v-card-text>
-          <v-text-field
-            label="Email"
-            type="email"
-            required
-            v-model="form.email"
-            :rules="emailRules"
-          />
-          <v-text-field
-            label="Password"
-            type="password"
-            required
-            v-model="form.password"
-            :rules="passwordRules"
-          />
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text color="primary" type="submit" :disabled="!isValid">Sign in</v-btn>
-        </v-card-actions>
-      </v-form>
-
-      <v-fade-transition>
-        <v-overlay absolute opacity="0.2" v-if="loading">
-          <v-progress-circular indeterminate />
-        </v-overlay>
-      </v-fade-transition>
-    </v-card>
-  </v-container>
+<template lang="pug">
+v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
+  v-card(width="500")
+    v-form(@submit.prevent="signIn", v-model="isValid")
+      v-card-title Sign in
+      v-card-text
+        v-text-field(
+          label="Email",
+          type="email",
+          required="",
+          v-model="form.email",
+          :rules="emailRules"
+        )
+        v-text-field(
+          label="Password",
+          type="password",
+          required="",
+          v-model="form.password",
+          :rules="passwordRules"
+        )
+      v-card-actions
+        v-spacer
+        v-btn(text="", color="primary", type="submit", :disabled="!isValid") Sign in
+    v-fade-transition
+      v-overlay(absolute="", opacity="0.2", v-if="loading")
+        v-progress-circular(indeterminate="")
 </template>
 
 <script>

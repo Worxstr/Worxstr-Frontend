@@ -1,183 +1,117 @@
-<template>
-  <v-container
-    class="clock d-flex flex-column flex-md-row-reverse justify-md-center align-md-start"
-  >
-    <div
-      class="mx-15 d-flex align-center align-md-start flex-column justify-center"
-      style="margin-top: 20vh; margin-bottom: 15vh; top: 60px; position: sticky"
-    >
-      <div v-if="nextShift && nextShift.time_begin && nextShift.time_end">
-        <h6 class="text-h6">
-          Your shift
-          {{ nextShift.shiftActive ? "ends" : "begins" }}
-          at
-          {{ nextShift.site_location }}
-          at
-        </h6>
+<template lang="pug">
+  v-container.clock.d-flex.flex-column.flex-md-row-reverse.justify-md-center.align-md-start
+    .mx-15.d-flex.align-center.align-md-start.flex-column.justify-center(
+      style='margin-top: 20vh; margin-bottom: 15vh; top: 60px; position: sticky'
+    )
+      div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
+        h6.text-h6
+          | Your shift
+          | {{ nextShift.shiftActive ? "ends" : "begins" }}
+          | at
+          | {{ nextShift.site_location }}
+          | at
 
-        <h3 class="text-h3 py-2 font-weight-bold">
-          {{
-            (nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin)
-              .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-              .replace(/^0(?:0:0?)?/, "")
-          }}
-        </h3>
-        <p class="text-subtitle-2 text-center text-md-left">
-          <countdown
-            :end-time="
-              nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin
-            "
-          >
-            <template v-slot:process="props">
-              <span>
-                That's in
-                <span v-if="props.timeObj.d != 0"
-                  >{{ props.timeObj.d }} days,
-                </span>
-                <span v-if="props.timeObj.h != 0"
-                  >{{ props.timeObj.h }} hours,
-                </span>
-                <span v-if="props.timeObj.m != 0"
-                  >{{ props.timeObj.m }} minutes,
-                </span>
-                {{ props.timeObj.s }} seconds.
-              </span>
-            </template>
-            <template v-slot:finish>
-              <span>That's right now!</span>
-            </template>
-          </countdown>
-        </p>
+        h3.text-h3.py-2.font-weight-bold
+          | {{
+          | (nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin)
+          | .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          | .replace(/^0(?:0:0?)?/, "")
+          | }}
 
-        <div class="d-flex flex-row">
-          <v-dialog
-            v-model="verifyDialog.opened"
-            :fullscreen="$vuetify.breakpoint.smAndDown"
-            max-width="500"
-          >
-            <v-card class="sign-in fill-height">
-              <form @submit.prevent="submitCode(verifyDialog.code)">
-                <v-card-title>Scan your clock in QR code</v-card-title>
+        p.text-subtitle-2.text-center.text-md-left
 
-                <div>
-                  <qrcode-stream
-                    @decode="submitCode"
-                    @init="qrInit"
-                  ></qrcode-stream>
-                </div>
+          countdown(:end-time='\
+          nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin\
+          ')
+            template(v-slot:process='props')
+              span
+                | That's in
+                span(v-if='props.timeObj.d != 0')
+                  | {{ props.timeObj.d }} days,
+                span(v-if='props.timeObj.h != 0')
+                  | {{ props.timeObj.h }} hours,
+                span(v-if='props.timeObj.m != 0')
+                  | {{ props.timeObj.m }} minutes,
+                |                 {{ props.timeObj.s }} seconds.
+            template(v-slot:finish)
+              span That's right now!
 
-                <v-card-text>
-                  <v-text-field
-                    label="Or enter the clock in code"
-                    v-model="verifyDialog.code"
-                    hide-details
-                  />
-                </v-card-text>
+        .d-flex.flex-row
+          v-dialog(
+            v-model='verifyDialog.opened'
+            :fullscreen='$vuetify.breakpoint.smAndDown'
+            max-width='500'
+          )
+            v-card.sign-in.fill-height
+              form(@submit.prevent='submitCode(verifyDialog.code)')
+                v-card-title Scan your clock in QR code
+                div
+                  qrcode-stream(@decode='submitCode' @init='qrInit')
+                v-card-text
+                  v-text-field(label='Or enter the clock in code' v-model='verifyDialog.code' hide-details)
+                v-card-actions
+                  v-spacer
+                  v-btn(text @click='verifyDialog.opened = false') Cancel
+                  v-btn(text color='primary' type='submit') Submit
 
-                <v-card-actions>
-                  <v-spacer />
-                  <v-btn text @click="verifyDialog.opened = false"
-                    >Cancel</v-btn
-                  >
-                  <v-btn text color="primary" type="submit">Submit</v-btn>
-                </v-card-actions>
-              </form>
+              v-fade-transition
+                v-overlay(absolute opacity='0.2' v-if='verifyDialog.cameraLoading')
+                  v-progress-circular(indeterminate)
 
-              <v-fade-transition>
-                <v-overlay
-                  absolute
-                  opacity="0.2"
-                  v-if="verifyDialog.cameraLoading"
-                >
-                  <v-progress-circular indeterminate />
-                </v-overlay>
-              </v-fade-transition>
-            </v-card>
-          </v-dialog>
-
-          <v-expand-x-transition>
-            <div v-if="!onBreak" class="py-2">
-              <v-btn
+          v-expand-x-transition
+            .py-2(v-if='!onBreak')
+              v-btn.pa-6.mr-2(
                 raised
                 :color="clocked ? 'pink' : 'green'"
-                @click="clocked ? clockOut() : openVerifyDialog()"
-                class="pa-6 mr-2"
-                width="130px"
+                @click='clocked ? clockOut() : openVerifyDialog()'
+                width='130px'
                 dark
-                style="transition: background-color 0.3s"
-              >
-                Clock {{ clocked ? "out" : "in" }}
-              </v-btn>
-            </div>
-          </v-expand-x-transition>
+                style='transition: background-color 0.3s'
+              )
+                | Clock {{ clocked ? "out" : "in" }}
 
-          <v-expand-x-transition>
-            <div v-if="clocked" class="py-2">
-              <v-btn
+          v-expand-x-transition
+            .py-2(v-if='clocked')
+              v-btn.pa-6(
                 raised
                 :color="onBreak ? 'green' : 'amber'"
-                @click="toggleBreak(!!onBreak)"
-                class="pa-6"
-                width="130px"
+                @click='toggleBreak(!!onBreak)'
+                width='130px'
                 dark
-                style="transition: background-color 0.3s"
-              >
-                {{ onBreak ? "End" : "Start" }} break
-              </v-btn>
-            </div>
-          </v-expand-x-transition>
-        </div>
-      </div>
+                style='transition: background-color 0.3s')
+                | {{ onBreak ? "End" : "Start" }} break
 
-      <div v-else>
-        <h6 class="text-h6">You have no upcoming shifts</h6>
-      </div>
-    </div>
+      div(v-else)
+        h6.text-h6 You have no upcoming shifts
 
-    <v-card
-      class="align-self-center"
-      width="100%"
-      max-width="500px"
-      rounded="lg"
-    >
-      <v-card-title class="ma-1">Your history</v-card-title>
+    v-card.align-self-center(width='100%' max-width='500px' rounded='lg')
 
-      <div v-if="clockHistory.length">
-        <v-timeline align-top dense>
-          <transition-group name="scroll-y-transition">
-            <div v-for="event in clockHistory" :key="event.id || event.label">
-              <v-timeline-item v-if="event.label" hide-dot>
-                <span>{{ event.label | date("dddd, MMM D") }}</span>
-              </v-timeline-item>
+      v-card-title.ma-1 Your history
 
-              <v-timeline-item v-else :color="eventColor(event.action)" small>
-                <v-row class="pt-1">
-                  <v-col cols="3">
-                    <strong>{{ event.time | time }}</strong>
-                  </v-col>
-                  <v-col>
-                    <strong>{{ eventType(event.action) }}</strong>
-                    <div class="caption">{{ event.description }}</div>
-                  </v-col>
-                </v-row>
-              </v-timeline-item>
-            </div>
-          </transition-group>
-        </v-timeline>
+      div(v-if='clockHistory.length')
+        v-timeline(align-top dense)
+          transition-group(name='scroll-y-transition')
+            div(v-for='event in clockHistory' :key='event.id || event.label')
 
-        <v-card-actions class="d-flex justify-center">
-          <v-btn text color="primary" @click="loadClockHistory">
-            <v-icon right dark> mdi-arrow-down </v-icon>
-            Load previous week
-          </v-btn>
-        </v-card-actions>
-      </div>
+              v-timeline-item(v-if='event.label' hide-dot)
+                span {{ event.label | date("dddd, MMM D") }}
 
-      <v-card-text v-else>
-        No history yet
-      </v-card-text>
-    </v-card>
-  </v-container>
+              v-timeline-item(v-else :color='eventColor(event.action)' small)
+                v-row.pt-1
+                  v-col(cols='3')
+                    strong {{ event.time | time }}
+
+                  v-col
+                    strong {{ eventType(event.action) }}
+                    .caption {{ event.description }}
+
+        v-card-actions.d-flex.justify-center
+          v-btn(text color='primary' @click='loadClockHistory')
+            v-icon(right dark)  mdi-arrow-down 
+            |             Load previous week
+
+      v-card-text(v-else)
+        | No history yet
 </template>
 
 <script>
@@ -201,8 +135,8 @@ export default {
     QrcodeStream,
   },
   mounted() {
-    if (!this.clockHistory.length) this.loadClockHistory()
-    this.$store.dispatch("loadNextShift")
+    if (!this.clockHistory.length) this.loadClockHistory();
+    this.$store.dispatch("loadNextShift");
   },
   computed: {
     ...mapState(["clock"]),
@@ -221,7 +155,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["clockIn", "clockOut", 'toggleBreak']),
+    ...mapActions(["clockIn", "clockOut", "toggleBreak"]),
     openVerifyDialog() {
       this.verifyDialog.opened = true;
     },

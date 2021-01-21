@@ -1,49 +1,40 @@
-<template>
-  <v-dialog
-    v-model="opened"
-    :fullscreen="$vuetify.breakpoint.smAndDown"
-    max-width="500"
-    persistent
-  >
-    <v-card>
-      <v-toolbar flat>
-        <v-btn icon @click="closeDialog">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-toolbar-title>Complete payment</v-toolbar-title>
-      </v-toolbar>
+<template lang="pug">
+v-dialog(
+  v-model="opened",
+  :fullscreen="$vuetify.breakpoint.smAndDown",
+  max-width="500",
+  persistent
+)
+  v-card
+    v-toolbar(flat)
+      v-btn(icon, @click="closeDialog")
+        v-icon mdi-close
+      v-toolbar-title Complete payment
 
-      <v-card-text>
-        <p class="text-subtitle-1">
-          {{ timecards.length }}
-          employee{{ timecards.length == 1 ? "" : "s" }} will be paid ${{
-            wagePayment
-          }}
-          in total. A ${{ feesPayment }} fee will be applied.<br> Your total is ${{ totalPayment }}.
-        </p>
-
-        <paypal-buttons
-          :createOrder="createOrder"
-          :onApprove="onApprove"
-          v-if="!transaction"
-        ></paypal-buttons>
-
-        <div v-else>
-          <p class="text-subtitle-2 green--text d-flex align-center my-2">
-            Payment successful. Your PayPal order ID is:
-          </p>
-          <p class="green--text font-weight-black mx-1">
-            {{ transaction.orderID }}
-          </p>
-        </div>
-      </v-card-text>
-
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text @click="closeDialog">Cancel</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    v-card-text
+      p.text-subtitle-1
+        | {{ timecards.length }}
+        | employee{{ timecards.length == 1 ? '' : 's' }} will be paid ${{
+        | wagePayment
+        | }}
+        | in total. A ${{ feesPayment }} fee will be applied.
+        br
+        |
+        | Your total is ${{ totalPayment }}.
+        
+      paypal-buttons(
+        :createorder="createOrder",
+        :onapprove="onApprove",
+        v-if="!transaction"
+      )
+      div(v-else)
+        p.text-subtitle-2.green--text.d-flex.align-center.my-2
+          | Payment successful. Your PayPal order ID is:
+        p.green--text.font-weight-black.mx-1
+          | {{ transaction.orderID }}
+    v-card-actions
+      v-spacer
+      v-btn(text, @click="closeDialog") Cancel
 </template>
 
 <script>
@@ -62,23 +53,23 @@ export default {
     transaction: null,
   },
   computed: {
-		totalPayment() {
-			return this.wagePayment + this.feesPayment;
-		},
-		wagePayment() {
-			const total = this.timecards.reduce((total, current) => {
+    totalPayment() {
+      return this.wagePayment + this.feesPayment;
+    },
+    wagePayment() {
+      const total = this.timecards.reduce((total, current) => {
         return total + parseFloat(current.wage_payment);
       }, 0);
 
       return Math.round(total * 100) / 100;
-		},
-		feesPayment() {
-			const total = this.timecards.reduce((total, current) => {
+    },
+    feesPayment() {
+      const total = this.timecards.reduce((total, current) => {
         return total + parseFloat(current.fees_payment);
       }, 0);
 
       return Math.round(total * 100) / 100;
-		},
+    },
   },
   methods: {
     closeDialog() {

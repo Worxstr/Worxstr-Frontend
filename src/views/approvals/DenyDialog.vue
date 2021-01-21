@@ -1,25 +1,19 @@
-<template>
-  <v-dialog
-    v-model="opened"
-    :fullscreen="$vuetify.breakpoint.smAndDown"
-    max-width="500"
-    persistent
-  >
-    <v-card>
-      <v-card-title class="headline"> Deny timecard? </v-card-title>
-
-      <v-card-text>
-        {{ timecard.first_name }} {{ timecard.last_name }} will not be paid for
-        this shift.
-      </v-card-text>
-
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text @click="closeDialog">Cancel</v-btn>
-        <v-btn text color="red" @click="denyTimecard">Yes, Deny</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+<template lang="pug">
+v-dialog(
+  v-model="opened",
+  :fullscreen="$vuetify.breakpoint.smAndDown",
+  max-width="500",
+  persistent
+)
+  v-card
+    v-card-title.headline Deny timecard?
+    v-card-text
+      | {{ timecard.first_name }} {{ timecard.last_name }} will not be paid for
+      | this shift.
+    v-card-actions
+      v-spacer
+      v-btn(text, @click="closeDialog") Cancel
+      v-btn(text, color="red", @click="denyTimecard") Yes, Deny
 </template>
 
 <script>

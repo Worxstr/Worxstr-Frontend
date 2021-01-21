@@ -1,54 +1,41 @@
-<template>
-  <div class="messages d-flex flex-column">
-    <v-toolbar flat rounded="lg">
-      <v-btn
-        icon
-        v-if="$vuetify.breakpoint.smAndDown"
-        @click="$router.push({ name: 'messages' })"
-      >
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
+<template lang="pug">
+.messages.d-flex.flex-column
+  v-toolbar(flat, rounded="lg")
+    v-btn(
+      icon,
+      v-if="$vuetify.breakpoint.smAndDown",
+      @click="$router.push({ name: 'messages' })"
+    )
+      v-icon mdi-arrow-left
 
-      <v-toolbar-title>
-        Conversation {{ $route.params.conversationId }}
-      </v-toolbar-title>
-    </v-toolbar>
+    v-toolbar-title
+      | Conversation {{ $route.params.conversationId }}
 
-    <transition-group
-      name="scroll-y-reverse-transition"
-      tag="div"
-      class="message-container px-4 d-flex flex-column-reverse align-start"
-    >
-      <div
-        v-for="message in messages"
-        :key="message.id"
-        class="message grey lighten-3 px-4 py-2 mb-2 rounded-xl"
-        :class="message.pos"
-      >
-        <span>{{ message.text }}</span>
-      </div>
-    </transition-group>
+  transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
+    name="scroll-y-reverse-transition",
+    tag="div"
+  )
+    .message.grey.lighten-3.px-4.py-2.mb-2.rounded-xl(
+      v-for="message in messages",
+      :key="message.id",
+      :class="message.pos"
+    )
+      span {{ message.text }}
 
-    <form
-      @submit.prevent="sendMessage"
-      class="d-flex flex-row align-center pa-3"
-    >
-      <v-text-field
-        v-model="message"
-        ref="message"
-        background-color="grey lighten-3"
-        flat
-        hide-details
-        rounded
-        solo
-        placeholder="Type a message..."
-      ></v-text-field>
-
-      <v-btn color="primary" icon class="ml-3" type="submit">
-        <v-icon>mdi-send</v-icon>
-      </v-btn>
-    </form>
-  </div>
+  form.d-flex.flex-row.align-center.pa-3(@submit.prevent="sendMessage")
+    v-text-field(
+      v-model="message",
+      ref="message",
+      background-color="grey lighten-3",
+      flat,
+      hide-details,
+      rounded,
+      solo,
+      placeholder="Type a message..."
+    )
+    
+    v-btn.ml-3(color="primary", icon, type="submit")
+      v-icon mdi-send
 </template>
 
 <script>
@@ -68,15 +55,13 @@ export default {
       this.$socket.emit("message", {
         text: this.message,
       });
-
-      
     },
   },
   sockets: {
     connect: function () {
       console.log("socket connected");
     },
-    newMessage: function ({message}) {
+    newMessage: function ({ message }) {
       this.messages.unshift({
         text: message,
         pos: "right",

@@ -1,19 +1,17 @@
-<template>
-  <v-container class="home">
-    <v-card>
-      <v-calendar
-        ref="calendar"
-        v-model="value"
-        :weekdays="weekday"
-        :type="type"
-        :events="events"
-        :event-overlap-mode="mode"
-        :event-overlap-threshold="30"
-        :event-color="getEventColor"
-        @change="getEvents"
-      ></v-calendar>
-    </v-card>
-  </v-container>
+<template lang="pug">
+v-container.home
+  v-card
+    v-calendar(
+      ref="calendar",
+      v-model="value",
+      :weekdays="weekday",
+      :type="type",
+      :events="events",
+      :event-overlap-mode="mode",
+      :event-overlap-threshold="30",
+      :event-color="getEventColor",
+      @change="getEvents"
+    )
 </template>
 
 <script>
