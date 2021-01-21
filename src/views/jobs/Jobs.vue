@@ -3,6 +3,8 @@
     <div class="mb-5" v-if="directJobs.length">
       <v-toolbar flat color="transparent">
         <v-toolbar-title class="text-h6">Jobs</v-toolbar-title>
+        <v-spacer/>
+        <v-btn text>Add new job</v-btn>
       </v-toolbar>
 
       <v-card>

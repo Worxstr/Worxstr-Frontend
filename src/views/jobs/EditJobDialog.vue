@@ -6,7 +6,7 @@
     persistent
   >
     <v-card>
-      <v-form v-if="editedJob" @submit.prevent="updateShift" v-model="isValid">
+      <v-form v-if="editedJob" @submit.prevent="updateJob" v-model="isValid">
         <v-toolbar flat>
           <v-toolbar-title> Editing {{ editedJob.name }} </v-toolbar-title>
         </v-toolbar>
@@ -128,6 +128,7 @@
 </template>
 
 <script>
+// TODO: Move this to reusable import
 const exists = (errorString) => (value) => !!value || errorString;
 
 export default {
@@ -179,7 +180,7 @@ export default {
     closeDialog() {
       this.$emit("update:opened", false);
     },
-    async updateShift() {
+    async updateJob() {
       this.loading = true;
       await this.$store.dispatch("updateJob", this.editedJob);
       this.loading = false;
