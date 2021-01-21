@@ -6,18 +6,26 @@
     persistent
   >
     <v-card>
-      <v-card-title class="headline">Editing shift </v-card-title>
+      <v-form v-if="editedShift">
+        <v-card-title class="headline">Editing shift </v-card-title>
 
-      <v-card-text>
-        <v-select :items="employees" label="Employee" />
-        <v-select :items="locations" label="Location" />
-      </v-card-text>
+        <v-card-text>
+          <v-select
+            v-model="editedShift.employee_id"
+            :items="employees"
+            :item-text="(e) => `${e.first_name} ${e.last_name}`"
+            :item-value="'id'"
+            label="Employee"
+          />
+          <v-text-field v-model="editedShift.site_location" />
+        </v-card-text>
 
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text @click="closeDialog">Cancel</v-btn>
-        <v-btn text color="green">Save</v-btn>
-      </v-card-actions>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="closeDialog">Cancel</v-btn>
+          <v-btn text color="green" @click="updateShift">Save</v-btn>
+        </v-card-actions>
+      </v-form>
     </v-card>
   </v-dialog>
 </template>
@@ -27,14 +35,23 @@ export default {
   name: "editShiftDialog",
   props: {
     opened: Boolean,
+    employees: Array,
+    shift: Object,
   },
   data: () => ({
-		employees: ['Employee One', 'Employee Two', 'Employee Three'],
-		locations: ['Front of store', 'Back of store'],
+    editedShift: null,
   }),
+  watch: {
+    opened(newVal, oldVal) {
+      if (newVal == true) this.editedShift = Object.assign({}, this.shift);
+    },
+  },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
+    },
+    updateShift() {
+      this.$store.dispatch("updateShift", this.editedShift);
     },
   },
 };

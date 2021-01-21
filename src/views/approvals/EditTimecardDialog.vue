@@ -5,14 +5,12 @@
     max-width="500"
     persistent
   >
+
     <v-card>
       <v-form @submit.prevent="updateTimecard" v-model="form.isValid">
         <v-toolbar flat>
-          <v-btn icon @click="closeDialog">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
           <v-toolbar-title>
-            Edit timecard for
+            Editing timecard for
             {{ timecard.first_name }}
             {{ timecard.last_name }}
           </v-toolbar-title>
@@ -67,7 +65,6 @@
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import TimeInput from "@/components/TimeInput.vue";
-// import { CLOCK_IN, CLOCK_OUT, START_BREAK, END_BREAK } from "../../definitions/clockActions"
 
 dayjs.extend(duration);
 
@@ -85,26 +82,28 @@ export default {
     },
   }),
   props: {
+    opened: Boolean,
     timecard: Object,
-    opened: Boolean
-  },
-  mounted() {
-    this.calculateFormValues();
   },
   watch: {
     timecard: function (newVal, oldVal) {
       this.calculateFormValues();
     },
+		opened(newVal, oldVal) {
+			if (newVal == true)
+        this.calculateFormValues()
+		},
   },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
     },
+    
     calculateFormValues() {
       const events = this.timecard.time_clocks;
 
-      this.form.data.timeIn = events[0];
-      this.form.data.timeOut = events[events.length - 1];
+      this.form.data.timeIn = Object.assign({}, events[0]);
+      this.form.data.timeOut = Object.assign({}, events[events.length - 1]);
 
       const breakEvents = events.slice(1, events.length - 1),
         breaks = [];
@@ -117,6 +116,7 @@ export default {
       }
       this.form.data.breaks = breaks;
     },
+
     timeDiff(timeIn, timeOut) {
       timeIn = dayjs(timeIn);
       timeOut = dayjs(timeOut);
@@ -146,7 +146,7 @@ export default {
         events: newTimeclockEvents,
       });
 
-      this.closeDialog()
+      this.closeDialog();
     },
   },
 };

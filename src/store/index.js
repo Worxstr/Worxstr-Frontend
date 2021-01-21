@@ -36,7 +36,9 @@ const store = new Vuex.Store({
       }
     },
     shifts: {
-      next: null
+      next: null,
+      all: [],
+      byId: {},
     },
     jobs: {
       all: [],
@@ -71,9 +73,6 @@ const store = new Vuex.Store({
     INCREMENT_CLOCK_HISTORY_OFFSET(state) {
       state.clock.history.lastLoadedOffset++
     },
-    SET_NEXT_SHIFT(state, shift) {
-      state.shifts.next = shift
-    },
     CLOCK_IN(state) {
       state.clock.clocked = true
     },
@@ -96,9 +95,20 @@ const store = new Vuex.Store({
       Vue.delete(state.approvals.timecards.all, state.approvals.timecards.all.indexOf(timecardId))
     },
     ADD_JOB(state, job) {
-      Vue.set(state.jobs.byId, job.id, job)
+      Vue.set(state.jobs.byId, job.id, {
+        ...state.jobs.byId[job.id],
+        ...job
+      })
       if (!state.jobs.all.includes(job.id))
         state.jobs.all.push(job.id)
+    },
+    SET_NEXT_SHIFT(state, shift) {
+      state.shifts.next = shift
+    },
+    ADD_SHIFT(state, shift) {
+      Vue.set(state.shifts.byId, shift.id, shift)
+      if (!state.shifts.all.includes(shift.id))
+        state.shifts.all.push(shift.id)
     }
   },
   actions: {
@@ -165,7 +175,6 @@ const store = new Vuex.Store({
           'week_offset': state.clock.history.lastLoadedOffset
         }
       })
-      console.log(state.clock.history.lastLoadedOffset)
       data.history.forEach(event => {
         // TODO: Normalize nested data
         commit('ADD_CLOCK_EVENT', normalizeRelations(event, [/*'user'*/]))
@@ -178,7 +187,7 @@ const store = new Vuex.Store({
 
     async loadNextShift({ commit }) {
       const { data } = await axios.get(`${baseUrl}/shifts/next`)
-      commit('SET_NEXT_SHIFT', data.event)
+      commit('SET_NEXT_SHIFT', data.shift)
     },
 
     async clockIn({ commit, state }, { code }) {
@@ -319,17 +328,36 @@ const store = new Vuex.Store({
         url: `${baseUrl}/jobs/${jobId}`,
       })
 
-      console.log(data)
-
       // Preserve direct property
       const existingJob = getters.job(jobId)
       if (existingJob)
         data.job.direct = existingJob.direct
 
-      console.log({job: data.job})
+      // Flatten shift data
+      // data.job.shifts = data.job.shifts.map(shift => {
+      //   commit('ADD_SHIFT', shift)
+      //   return shift.id
+      // })
 
       commit('ADD_JOB', data.job)
-    }
+    },
+
+    async updateJob({ commit }, job) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/jobs/${job.id}`,
+        data: job
+      })
+      commit('ADD_JOB', data.job)
+    },
+
+    async updateShift({ commit }, shift) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/shifts/${shift.id}`,
+        data: { shift }
+      })
+    },
   },
   getters: {
     // TODO: Transform this and add labels, separated by day of week
@@ -392,8 +420,15 @@ const store = new Vuex.Store({
     unapprovedTimecards: (state, getters) => {
       return getters.timecards.filter((timecard) => !timecard.approved);
     },
-    job: (state) => id => {
-      return state.jobs.byId[id]
+    job: (state, getters) => id => {
+      const job = state.jobs.byId[id]
+      
+      // if (job && job.shifts)
+      //   job.shifts = job.shifts.map(shiftId => {
+      //     return getters.shift(shiftId)
+      //   })
+
+      return job
     },
     jobs: (state, getters) => {
       return state.jobs.all.map(id => getters.job(id))
@@ -403,6 +438,12 @@ const store = new Vuex.Store({
     },
     indirectJobs: (state, getters) => {
       return getters.jobs.filter((job) => !job.direct);
+    },
+    shift: (state) => id => {
+      return state.shifts.byId[id]
+    },
+    shifts: (state, getters) => {
+      return state.shifts.all.map(id => getters.shift(id))
     },
   },
   modules: {
