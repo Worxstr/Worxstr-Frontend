@@ -15,31 +15,37 @@ v-dialog(
           
       v-card-text
         time-input(v-model="form.data.timeIn.time", label="Time in")
-          .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
-            v-row
-              v-col
-                time-input(
-                  required,
-                  hide-details,
-                  v-model="breakItem.start.time",
-                  :label="`Break ${index + 1} start`"
-                )
-              v-col
-                time-input(
-                  required,
-                  hide-details,
-                  v-model="breakItem.end.time",
-                  :label="`Break ${index + 1} end`"
-                )
-          time-input(
-            required,
-            v-model="form.data.timeOut.time",
-            label="Time out"
-          )
+
+        .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
+          v-row
+            v-col
+              time-input(
+                required,
+                hide-details,
+                v-model="breakItem.start.time",
+                :label="`Break ${index + 1} start`"
+              )
+            v-col
+              time-input(
+                required,
+                hide-details,
+                v-model="breakItem.end.time",
+                :label="`Break ${index + 1} end`"
+              )
+
+        time-input(
+          required,
+          v-model="form.data.timeOut.time",
+          label="Time out"
+        )
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
         v-btn(text, color="primary", @click="updateTimecard") Save
+
+    v-fade-transition
+      v-overlay(v-if="loading", absolute, opacity=".2")
+        v-progress-circular(indeterminate)
 </template>
 
 <script>
@@ -53,6 +59,7 @@ export default {
   components: { TimeInput },
   name: "approvals",
   data: () => ({
+    loading: false,
     form: {
       isValid: false,
       data: {
@@ -119,13 +126,14 @@ export default {
       });
       newTimeclockEvents.push(this.form.data.timeOut);
 
-      console.log({ newTimeclockEvents });
+      this.loading = true
 
       await this.$store.dispatch("updateTimecard", {
         timecardId: this.timecard.id,
         events: newTimeclockEvents,
       });
 
+      this.loading = false
       this.closeDialog();
     },
   },
