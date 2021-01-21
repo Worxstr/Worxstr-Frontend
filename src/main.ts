@@ -17,7 +17,7 @@ Vue.component('l-marker', LMarker);
 
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: SocketIO(`http://localhost:5000`, {
+  connection: SocketIO(process.env.VUE_APP_API_BASE_URL, {
     path: '/socket.io'
   }),
   vuex: {
