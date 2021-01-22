@@ -17,7 +17,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar(flat)
-        v-toolbar-title {{ create ? `Creating job ${editedJob.name}` : `Editing ${editedJob.name}` }}
+        v-toolbar-title {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
 
       v-card-text.py-0
         v-subheader Job details

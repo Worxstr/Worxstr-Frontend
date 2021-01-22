@@ -7,7 +7,7 @@ v-dialog(
 )
   v-card
     v-card-title.headline Delete shift {{shift.id}}?
-    v-card-text {{ employeeName }} will no longer work this shift
+    v-card-text {{ employeeName }} will no longer work this shift.
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel

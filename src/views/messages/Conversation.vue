@@ -18,9 +18,9 @@
     .message.grey.lighten-3.px-4.py-2.mb-2.rounded-xl(
       v-for="message in messages",
       :key="message.id",
-      :class="message.pos"
+      :class="message.sender.id == authenticatedUser.id ? 'right' : 'left'"
     )
-      span {{ message.text }}
+      span {{message.sender.first_name}} {{message.sender.last_name}}: {{ message.text }}
 
   form.d-flex.flex-row.align-center.pa-3(@submit.prevent="sendMessage")
     v-text-field(
@@ -39,7 +39,8 @@
 </template>
 
 <script>
-let id = 6;
+/* eslint-disable @typescript-eslint/camelcase */
+import { mapState } from 'vuex'
 
 export default {
   name: "Messages",
@@ -47,65 +48,38 @@ export default {
     // TODO: doesnt' work
     this.$refs.message.$el.focus();
   },
+  watch: {
+    '$route.params.conversationId'(newVal, oldVal) {
+      this.messages = []
+    }
+  },
+  computed: {
+    ...mapState(['authenticatedUser'])
+  },
   methods: {
     sendMessage() {
-      console.log(this.message);
-      console.log(this.$socket);
-
-      this.$socket.emit("message", {
-        text: this.message,
+      this.$socket.emit("message:create", {
+        message: {
+          text: this.message,
+        },
+        user_id: this.authenticatedUser.id,
+        conversation_id: this.$route.params.conversationId
       });
+      this.message = "";
     },
   },
   sockets: {
     connect: function () {
-      console.log("socket connected");
+      console.log("Socket connected");
     },
-    newMessage: function ({ message }) {
-      this.messages.unshift({
-        text: message,
-        pos: "right",
-        id,
-      });
-      id++;
-      this.message = "";
+    'message:create': function ({ message, conversation_id }) {
+      if (conversation_id == this.$route.params.conversationId)
+        this.messages.unshift(message)
     },
   },
   data: () => ({
     message: "",
-
-    messages: [
-      {
-        text: "Love u",
-        pos: "right",
-        id: 5,
-      },
-      {
-        text: "Ok do good work lol",
-        pos: "left",
-        id: 4,
-      },
-      {
-        text: "Nothing my shift is starting",
-        pos: "right",
-        id: 3,
-      },
-      {
-        text: "What's up",
-        pos: "left",
-        id: 2,
-      },
-      {
-        text: "Hi",
-        pos: "right",
-        id: 1,
-      },
-      {
-        text: "Hello!",
-        pos: "left",
-        id: 0,
-      },
-    ],
+    messages: [],
   }),
 };
 </script>
