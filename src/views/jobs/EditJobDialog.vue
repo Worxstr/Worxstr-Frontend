@@ -6,9 +6,19 @@ v-dialog(
   persistent
 )
   v-card
-    v-form(v-if="editedJob", @submit.prevent="updateJob", v-model="isValid")
+    v-fade-transition
+      v-overlay(v-if="loading", absolute, opacity=".2")
+        v-progress-circular(indeterminate)
+        
+    v-form(
+      v-if="editedJob",
+      @submit.prevent="updateJob",
+      ref="form",
+      v-model="isValid"
+    )
       v-toolbar(flat)
-        v-toolbar-title Editing {{ editedJob.name }}
+        v-toolbar-title {{ create ? `Creating job ${editedJob.name}` : `Editing ${editedJob.name}` }}
+
       v-card-text.py-0
         v-subheader Job details
         v-text-field(
@@ -44,7 +54,8 @@ v-dialog(
               outlined,
               dense,
               required,
-              label="State"
+              label="State",
+              :rules="rules.state"
             )
           v-col
             v-text-field(
@@ -57,6 +68,7 @@ v-dialog(
             )
         v-subheader Managers
         v-select(
+          v-if="editedJob.managers",
           v-model="editedJob.organization_manager_id",
           :items="editedJob.managers.organization_managers",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
@@ -67,6 +79,7 @@ v-dialog(
           label="Organizational manager"
         )
         v-select(
+          v-if="editedJob.managers",
           v-model="editedJob.employee_manager_id",
           :items="editedJob.managers.employee_managers",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
@@ -106,13 +119,14 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="green", :disabled="!isValid", type="submit") Save
-    v-fade-transition
-      v-overlay(v-if="loading", absolute, opacity=".2")
-        v-progress-circular(indeterminate)
+        v-btn(text, color="green", :disabled="!isValid", type="submit")
+          | {{ create ? 'Create' : 'Save' }}
+
 </template>
 
 <script>
+/* eslint-disable @typescript-eslint/camelcase */
+
 // TODO: Move this to reusable import
 const exists = (errorString) => (value) => !!value || errorString;
 
@@ -120,11 +134,12 @@ export default {
   name: "editJobDialog",
   props: {
     opened: Boolean,
+    create: Boolean, // Creating new job
     job: Object,
   },
   data: () => ({
     isValid: false,
-    editedJob: null,
+    editedJob: {},
     loading: false,
     states: [
       "AL",
@@ -191,6 +206,7 @@ export default {
       name: [exists("Job name required")],
       address: [exists("Address required")],
       city: [exists("City required")],
+      state: [exists("State required")],
       zipCode: [
         exists("Zip code required"),
         (value) =>
@@ -218,16 +234,19 @@ export default {
   }),
   watch: {
     opened(newVal, oldVal) {
-      if (newVal == true) this.editedJob = Object.assign({}, this.job);
+      if (newVal == true && this.job)
+        this.editedJob = Object.assign({}, this.job);
     },
   },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
+      this.$refs.form.reset();
     },
     async updateJob() {
       this.loading = true;
-      await this.$store.dispatch("updateJob", this.editedJob);
+      if (this.create) await this.$store.dispatch("createJob", this.editedJob);
+      else await this.$store.dispatch("updateJob", this.editedJob);
       this.loading = false;
       this.closeDialog();
     },

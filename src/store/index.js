@@ -342,6 +342,15 @@ const store = new Vuex.Store({
       commit('ADD_JOB', data.job)
     },
 
+    async createJob({ commit }, job) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/jobs`,
+        data: job
+      })
+      commit('ADD_JOB', data.job)
+    },
+
     async updateJob({ commit }, job) {
       const { data } = await axios({
         method: 'PUT',

@@ -4,6 +4,7 @@
     dense
     outlined
     :required="required"
+    :rules="rules"
     :hide-details="hideDetails"
     :label="label"
     :value="timeString"
@@ -19,6 +20,7 @@ export default {
     label: String,
     hideDetails: Boolean,
     required: Boolean,
+    rules: Array,
   },
   computed: {
     timeString() {
@@ -27,6 +29,7 @@ export default {
   },
   methods: {
     updateDate: function (value) {
+      if (!value) return
       const newDate = new Date(this.value);
       const [hours, minutes, seconds] = value.split(":");
       newDate.setHours(hours);

@@ -1,8 +1,25 @@
 <template lang="pug">
 v-container.approvals
+
+  edit-timecard-dialog(
+    :opened.sync="editTimecardDialog",
+    :timecard="selectedTimecards[0]"
+  )
+  approve-dialog(
+    :opened.sync="approveDialog",
+    :timecards="selectedTimecards"
+  )
+  deny-dialog(:opened.sync="denyDialog", :timecard="selectedTimecards[0]")
+  payment-dialog(
+    :opened.sync="paymentDialog",
+    :timecards="selectedTimecards"
+  )
+  
   .mb-5(v-if="approvedTimecards.length")
     v-toolbar(flat, color="transparent")
-      v-toolbar-title.text-h6 Pending payments ({{ approvedTimecards.length }})
+      v-toolbar-title.text-h6
+        span Pending payments
+        v-chip(small class="mx-3 pa-2 font-weight-black") {{approvedTimecards.length}}
       v-spacer
       v-btn(text, @click="openPaymentDialog(approvedTimecards)")
         v-icon mdi-currency-usd
@@ -45,9 +62,8 @@ v-container.approvals
   .mb-5(v-if="unapprovedTimecards.length")
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6
-        | Unapproved timecards ({{
-        | unapprovedTimecards.length
-        | }})
+        span Unapproved timecards
+        v-chip(small class="mx-3 pa-2 font-weight-black") {{unapprovedTimecards.length}}
 
       v-spacer
       v-btn(
@@ -107,20 +123,6 @@ v-container.approvals
             v-btn(text, color="red", @click="openDenyDialog(timecard)")
               v-icon mdi-close
               | Deny
-
-  edit-timecard-dialog(
-    :opened.sync="editTimecardDialog",
-    :timecard="selectedTimecards[0]"
-  )
-  approve-dialog(
-    :opened.sync="approveDialog",
-    :timecards="selectedTimecards"
-  )
-  deny-dialog(:opened.sync="denyDialog", :timecard="selectedTimecards[0]")
-  payment-dialog(
-    :opened.sync="paymentDialog",
-    :timecards="selectedTimecards"
-  )
 </template>
 
 <script>
