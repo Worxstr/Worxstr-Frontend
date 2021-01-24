@@ -27,7 +27,7 @@
       v-model="message",
       ref="message",
       background-color="grey lighten-3",
-      flat,
+      flat,https://stackoverflow.com/questions/65854015/get-the-the-flask-security-user-id-in-a-flask-socketio-event/65865820#65865820
       hide-details,
       rounded,
       solo,
@@ -46,7 +46,7 @@ export default {
   name: "Messages",
   mounted() {
     // TODO: doesnt' work
-    this.$refs.message.$el.focus();
+    this.$refs.message.$el.focus();https://stackoverflow.com/questions/65854015/get-the-the-flask-security-user-id-in-a-flask-socketio-event/65865820#65865820
   },
   watch: {
     '$route.params.conversationId'(newVal, oldVal) {
