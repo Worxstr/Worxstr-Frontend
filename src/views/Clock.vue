@@ -25,7 +25,7 @@
           ')
             template(v-slot:process='props')
               span
-                | That's in
+                | That's in &nbsp;
                 span(v-if='props.timeObj.d != 0')
                   | {{ props.timeObj.d }} days,
                 span(v-if='props.timeObj.h != 0')

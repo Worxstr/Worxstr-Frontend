@@ -6,7 +6,7 @@ v-dialog(
   persistent
 )
   v-card
-    v-form(@submit.prevent="updateTimecard", v-model="form.isValid")
+    v-form(@submit.prevent="updateTimecard", v-model="form.isValid" v-if="timecard")
       v-toolbar(flat)
         v-toolbar-title
           | Editing timecard for

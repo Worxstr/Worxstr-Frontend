@@ -47,6 +47,10 @@ const store = new Vuex.Store({
     users: {
       all: [],
       byId: []
+    },
+    conversations: {
+      all: [],
+      byId: []
     }
   },
   mutations: {
@@ -109,7 +113,12 @@ const store = new Vuex.Store({
       Vue.set(state.shifts.byId, shift.id, shift)
       if (!state.shifts.all.includes(shift.id))
         state.shifts.all.push(shift.id)
-    }
+    },
+    ADD_CONVERSATION(state, conversation) {
+      Vue.set(state.conversations.byId, conversation.id, conversation)
+      if (!state.conversations.all.includes(conversation.id))
+        state.conversations.all.push(conversation.id)
+    },
   },
   actions: {
     showSnackbar({ commit }, snackbar) {
@@ -367,6 +376,16 @@ const store = new Vuex.Store({
         data: { shift }
       })
     },
+
+    async loadConversations({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/conversations`
+      })
+      data.conversations.forEach(c => {
+        commit('ADD_CONVERSATION', c)
+      })
+    }
   },
   getters: {
     // TODO: Transform this and add labels, separated by day of week
@@ -453,6 +472,12 @@ const store = new Vuex.Store({
     },
     shifts: (state, getters) => {
       return state.shifts.all.map(id => getters.shift(id))
+    },
+    conversation: (state) => id => {
+      return state.conversations.byId[id]
+    },
+    conversations: (state, getters) => {
+      return state.conversations.all.map(id => getters.conversation(id))
     },
   },
   modules: {

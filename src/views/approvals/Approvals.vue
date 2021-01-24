@@ -1,5 +1,10 @@
 <template lang="pug">
-v-container.approvals
+
+v-container.d-flex.flex-column.justify-center(fill-height v-if="!approvedTimecards.length && !unapprovedTimecards.length")
+  v-icon.text-h2.ma-5 mdi-clock-check-outline
+  p.text-body-1 No timecard approvals left!
+
+v-container.approvals(v-else)
 
   edit-timecard-dialog(
     :opened.sync="editTimecardDialog",
@@ -14,6 +19,7 @@ v-container.approvals
     :opened.sync="paymentDialog",
     :timecards="selectedTimecards"
   )
+
   
   .mb-5(v-if="approvedTimecards.length")
     v-toolbar(flat, color="transparent")

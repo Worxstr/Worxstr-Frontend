@@ -7,7 +7,7 @@ v-dialog(
 )
   v-card
     v-card-title.headline Deny timecard?
-    v-card-text
+    v-card-text(v-if="timecard")
       | {{ timecard.first_name }} {{ timecard.last_name }} will not be paid for
       | this shift.
     v-card-actions
