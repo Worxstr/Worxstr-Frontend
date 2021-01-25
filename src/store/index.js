@@ -51,7 +51,7 @@ const store = new Vuex.Store({
     conversations: {
       all: [],
       byId: []
-    }
+    },
   },
   mutations: {
     SHOW_SNACKBAR(state, snackbar) {
@@ -118,6 +118,9 @@ const store = new Vuex.Store({
       Vue.set(state.conversations.byId, conversation.id, conversation)
       if (!state.conversations.all.includes(conversation.id))
         state.conversations.all.push(conversation.id)
+    },
+    ADD_MESSAGE(state, { conversationId, message }) {
+      state.conversations.byId[conversationId].messages.push(message)
     },
   },
   actions: {
@@ -385,6 +388,23 @@ const store = new Vuex.Store({
       data.conversations.forEach(c => {
         commit('ADD_CONVERSATION', c)
       })
+    },
+
+    async loadConversation({ commit }, conversationId) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/conversations/${conversationId}`
+      }) 
+      commit('ADD_CONVERSATION', data.conversation)
+    },
+
+    async sendMessage({ commit }, { message, conversationId }) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/conversations/${conversationId}/messages`,
+        data: message
+      })
+      commit('ADD_MESSAGE', { message: data.mesasge, conversationId })
     }
   },
   getters: {
@@ -473,8 +493,8 @@ const store = new Vuex.Store({
     shifts: (state, getters) => {
       return state.shifts.all.map(id => getters.shift(id))
     },
-    conversation: (state) => id => {
-      return state.conversations.byId[id]
+    conversation: (state, _, __, rootGetters) => id => {
+      return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
     },
     conversations: (state, getters) => {
       return state.conversations.all.map(id => getters.conversation(id))

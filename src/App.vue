@@ -5,6 +5,7 @@ v-app.d-flex.flex-column.fill-height
       router-link(to='/' style='text-decoration: none')
         v-avatar.mr-10(color='grey darken-1' size='32')
           span.white--text W
+
       .d-flex.flex-row(v-if='\
       authenticatedUser &&\
       authenticatedUser.roles &&\
@@ -180,7 +181,7 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .v-bottom-navigation {
   transform: initial !important;
   height: 56px !important;
@@ -201,7 +202,7 @@ main {
   overflow: auto;
 }
 .v-main__wrap {
-  height: 100%;
+  height: 100% !important;
 }
 .v-app-bar {
   z-index: 1;

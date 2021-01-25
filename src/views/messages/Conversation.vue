@@ -9,18 +9,23 @@
       v-icon mdi-arrow-left
 
     v-toolbar-title
-      | Conversation {{ $route.params.conversationId }}
+      span(
+        v-for="participant in conversation.participants",
+        :key="participant.id",
+        v-if="participant.id != authenticatedUser.id"
+      )
+        | {{ participant.first_name }} {{ participant.last_name }}
 
   transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
     name="scroll-y-reverse-transition",
     tag="div"
   )
     .message.grey.lighten-3.px-4.py-2.mb-2.rounded-xl(
-      v-for="message in messages",
+      v-for="message in conversation.messages",
       :key="message.id",
-      :class="message.sender.id == authenticatedUser.id ? 'right' : 'left'"
+      :class="message.sender_id == authenticatedUser.id ? 'right' : 'left'"
     )
-      span {{message.sender.first_name}} {{message.sender.last_name}}: {{ message.text }}
+      span {{ message.sender_id }}: {{ message.body }}
 
   form.d-flex.flex-row.align-center.pa-3(@submit.prevent="sendMessage")
     v-text-field(
@@ -33,38 +38,44 @@
       solo,
       placeholder="Type a message..."
     )
-    
+
     v-btn.ml-3(color="primary", icon, type="submit")
       v-icon mdi-send
 </template>
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 
 export default {
   name: "Messages",
   mounted() {
-    // TODO: doesnt' work
-    this.$refs.message.$el.focus();
+    // TODO: get the text input to focus
+    console.log(this.$refs.message); //.$el.focus();
+
+    this.$store.dispatch("loadConversation", this.$route.params.conversationId);
   },
   watch: {
-    '$route.params.conversationId'(newVal, oldVal) {
-      this.messages = []
-    }
+    "$route.params.conversationId"(newVal, oldVal) {
+      this.messages = [];
+    },
   },
   computed: {
-    ...mapState(['authenticatedUser'])
+    ...mapState(["authenticatedUser"]),
+    conversation() {
+      return this.$store.getters.conversation(
+        this.$route.params.conversationId
+      );
+    },
   },
   methods: {
     sendMessage() {
-      this.$socket.emit("message:create", {
+      this.$store.dispatch('sendMessage', {
         message: {
           text: this.message,
         },
-        user_id: this.authenticatedUser.id,
-        conversation_id: this.$route.params.conversationId
-      });
+        conversationId: this.$route.params.conversationId,
+      })
       this.message = "";
     },
   },
@@ -72,14 +83,13 @@ export default {
     connect: function () {
       console.log("Socket connected");
     },
-    'message:create': function ({ message, conversation_id }) {
+    "message:create": function ({ message, conversation_id }) {
       if (conversation_id == this.$route.params.conversationId)
-        this.messages.unshift(message)
+        this.messages.unshift(message);
     },
   },
   data: () => ({
     message: "",
-    messages: [],
   }),
 };
 </script>
