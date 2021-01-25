@@ -1,5 +1,5 @@
 <template lang="pug">
-.messages.d-flex.flex-column
+.messages.d-flex.flex-column(v-if="conversation")
   v-toolbar(flat, rounded="lg")
     v-btn(
       icon,
@@ -16,16 +16,18 @@
       )
         | {{ participant.first_name }} {{ participant.last_name }}
 
-  transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
-    name="scroll-y-reverse-transition",
-    tag="div"
-  )
-    .message.grey.lighten-3.px-4.py-2.mb-2.rounded-xl(
+  //- transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
+  //-   name="scroll-y-reverse-transition",
+  //-   tag="div"
+  //- )
+  .message-container.px-4.d-flex.flex-column-reverse.align-start
+    .message(
       v-for="message in conversation.messages",
       :key="message.id",
       :class="message.sender_id == authenticatedUser.id ? 'right' : 'left'"
     )
-      span {{ message.sender_id }}: {{ message.body }}
+      p.grey.lighten-3.px-4.py-2.mb-2.rounded-xl
+        | {{ message.body }}
 
   form.d-flex.flex-row.align-center.pa-3(@submit.prevent="sendMessage")
     v-text-field(
@@ -63,21 +65,32 @@ export default {
   computed: {
     ...mapState(["authenticatedUser"]),
     conversation() {
-      const conversation = this.$store.getters.conversation(this.$route.params.conversationId);
+      const conversation = this.$store.getters.conversation(
+        this.$route.params.conversationId
+      );
+      // conversation.messages = conversation.messages.sort()
       if (conversation && conversation.messages)
-        conversation.messages = conversation.messages.reverse()
-      return conversation
+        conversation.messages = conversation.messages.reverse();
+      return conversation;
     },
   },
   methods: {
     sendMessage() {
       this.$store.dispatch("sendMessage", {
         message: {
-          text: this.message,
+          body: this.message,
         },
         conversationId: this.$route.params.conversationId,
       });
       this.message = "";
+    },
+    participantName(participantId) {
+      const participant = this.conversation.participants.find(
+        (p) => p.id == participantId
+      );
+      return participant
+        ? `${participant.first_name} ${participant.last_name}`
+        : "";
     },
   },
   sockets: {

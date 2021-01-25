@@ -44,10 +44,6 @@ const store = new Vuex.Store({
       all: [],
       byId: {}
     },
-    users: {
-      all: [],
-      byId: []
-    },
     conversations: {
       all: [],
       byId: []
@@ -404,7 +400,7 @@ const store = new Vuex.Store({
         url: `${baseUrl}/conversations/${conversationId}/messages`,
         data: message
       })
-      commit('ADD_MESSAGE', { message: data.mesasge, conversationId })
+      commit('ADD_MESSAGE', { message: data.message, conversationId })
     }
   },
   getters: {
