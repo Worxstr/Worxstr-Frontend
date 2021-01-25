@@ -63,19 +63,20 @@ export default {
   computed: {
     ...mapState(["authenticatedUser"]),
     conversation() {
-      return this.$store.getters.conversation(
-        this.$route.params.conversationId
-      );
+      const conversation = this.$store.getters.conversation(this.$route.params.conversationId);
+      if (conversation && conversation.messages)
+        conversation.messages = conversation.messages.reverse()
+      return conversation
     },
   },
   methods: {
     sendMessage() {
-      this.$store.dispatch('sendMessage', {
+      this.$store.dispatch("sendMessage", {
         message: {
           text: this.message,
         },
         conversationId: this.$route.params.conversationId,
-      })
+      });
       this.message = "";
     },
   },

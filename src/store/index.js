@@ -494,7 +494,8 @@ const store = new Vuex.Store({
       return state.shifts.all.map(id => getters.shift(id))
     },
     conversation: (state, _, __, rootGetters) => id => {
-      return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
+      return state.conversations.byId[id]
+      // return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
     },
     conversations: (state, getters) => {
       return state.conversations.all.map(id => getters.conversation(id))
