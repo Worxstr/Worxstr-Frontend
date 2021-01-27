@@ -71,7 +71,7 @@ const routes = [
     }
   },
   {
-    path: '/job/:jobId',
+    path: '/jobs/:jobId',
     name: 'job',
     component: Job,
     meta: {
