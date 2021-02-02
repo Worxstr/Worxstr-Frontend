@@ -19,6 +19,8 @@ v-dialog(
       v-toolbar(flat)
         v-toolbar-title {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
 
+      code {{managers}}
+
       v-card-text.py-0
         v-subheader Job details
         v-text-field(

@@ -81,10 +81,10 @@ const store = new Vuex.Store({
       if (!state.users.all.includes(user.id))
         state.users.all.push(user.id)
     },
-    ADD_MANAGER(state, { type, managerId }) {
+    ADD_MANAGER(state, { type, userId }) {
       // A manager is just a special type of User
-      if (!state.managers[type].find(m => m == managerId))
-        state.managers[type].push(managerId)
+      if (!state.managers[type].find(m => m == userId))
+        state.managers[type].push(userId)
     },
     ADD_CLOCK_EVENT(state, event) {
       Vue.set(state.clock.history.byId, event.id, event)
@@ -380,14 +380,14 @@ const store = new Vuex.Store({
         commit('ADD_USER', m)
         commit('ADD_MANAGER', {
           type: 'employee',
-          managerId: m.manager_id
+          userId: m.id
         })
       })
       data.job.managers.organization_managers.forEach(m => {
         commit('ADD_USER', m)
         commit('ADD_MANAGER', {
           type: 'organization',
-          managerId: m.manager_id
+          userId: m.id
         })
       })
 
