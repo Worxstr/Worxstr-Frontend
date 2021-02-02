@@ -76,6 +76,7 @@ export default {
   },
   methods: {
     sendMessage() {
+      this.$socket.emit('test', {test: 1})
       this.$store.dispatch("sendMessage", {
         message: {
           body: this.message,

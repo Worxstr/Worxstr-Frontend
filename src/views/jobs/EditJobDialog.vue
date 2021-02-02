@@ -5,11 +5,11 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card
+  v-card(v-if="editedJob")
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")
         v-progress-circular(indeterminate)
-        
+
     v-form(
       v-if="editedJob",
       @submit.prevent="updateJob",
@@ -24,53 +24,26 @@ v-dialog(
         v-text-field(
           outlined,
           dense,
-          label="Name",
+          label="Job name",
           v-model="editedJob.name",
           :rules="rules.name",
           required
         )
-        v-text-field(
+
+        vuetify-google-autocomplete#map(
           outlined,
           dense,
-          label="Address",
-          v-model="editedJob.address",
+          label="Address"
+          v-on:placechanged="setPlace"
+          :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''"
           :rules="rules.address",
-          required
         )
-        v-row
-          v-col
-            v-text-field(
-              outlined,
-              dense,
-              label="City",
-              v-model="editedJob.city",
-              :rules="rules.city",
-              required
-            )
-          v-col
-            v-select(
-              v-model="editedJob.state",
-              :items="states",
-              outlined,
-              dense,
-              required,
-              label="State",
-              :rules="rules.state"
-            )
-          v-col
-            v-text-field(
-              outlined,
-              dense,
-              label="Zip code",
-              v-model="editedJob.zip_code",
-              :rules="rules.zipCode",
-              required
-            )
+
         v-subheader Managers
         v-select(
-          v-if="editedJob.managers",
+          v-if="managers.organization.length",
           v-model="editedJob.organization_manager_id",
-          :items="editedJob.managers.organization_managers",
+          :items="managers.organization",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
           :item-value="'manager_id'",
           outlined,
@@ -79,9 +52,9 @@ v-dialog(
           label="Organizational manager"
         )
         v-select(
-          v-if="editedJob.managers",
+          v-if="managers.employee.length",
           v-model="editedJob.employee_manager_id",
-          :items="editedJob.managers.employee_managers",
+          :items="managers.employee",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
           :item-value="'id'",
           outlined,
@@ -121,7 +94,6 @@ v-dialog(
         v-btn(text, @click="closeDialog") Cancel
         v-btn(text, color="green", :disabled="!isValid", type="submit")
           | {{ create ? 'Create' : 'Save' }}
-
 </template>
 
 <script>
@@ -135,83 +107,23 @@ export default {
   props: {
     opened: Boolean,
     create: Boolean, // Creating new job
-    job: Object,
+    job: Object
+  },
+  computed: {
+    managers() {
+      return this.$store.getters.managers;
+    }
+  },
+  mounted() {
+    console.log('managers', this.managers)
   },
   data: () => ({
     isValid: false,
     editedJob: {},
     loading: false,
-    states: [
-      "AL",
-      "AK",
-      "AS",
-      "AZ",
-      "AR",
-      "CA",
-      "CO",
-      "CT",
-      "DE",
-      "DC",
-      "FM",
-      "FL",
-      "GA",
-      "GU",
-      "HI",
-      "ID",
-      "IL",
-      "IN",
-      "IA",
-      "KS",
-      "KY",
-      "LA",
-      "ME",
-      "MH",
-      "MD",
-      "MA",
-      "MI",
-      "MN",
-      "MS",
-      "MO",
-      "MT",
-      "NE",
-      "NV",
-      "NH",
-      "NJ",
-      "NM",
-      "NY",
-      "NC",
-      "ND",
-      "MP",
-      "OH",
-      "OK",
-      "OR",
-      "PW",
-      "PA",
-      "PR",
-      "RI",
-      "SC",
-      "SD",
-      "TN",
-      "TX",
-      "UT",
-      "VT",
-      "VI",
-      "VA",
-      "WA",
-      "WV",
-      "WI",
-      "WY",
-    ],
     rules: {
       name: [exists("Job name required")],
       address: [exists("Address required")],
-      city: [exists("City required")],
-      state: [exists("State required")],
-      zipCode: [
-        exists("Zip code required"),
-        (value) =>
-          /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(value) || "Zip code invalid",
-      ],
       consultantName: [exists("Consultant name required")],
       consultantPhone: [
         exists("Consultant phone required"),
@@ -242,6 +154,15 @@ export default {
     closeDialog() {
       this.$emit("update:opened", false);
       this.$refs.form.reset();
+    },
+    setPlace(address, place, id) {
+      console.log({address, place, id})
+      this.editedJob.address = address.name
+      this.editedJob.city = address.locality
+      this.editedJob.state = address.administrative_area_level_1
+      this.editedJob.zip_code = address.postal_code
+      this.editedJob.country = address.country
+      this.place = place
     },
     async updateJob() {
       this.loading = true;

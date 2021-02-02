@@ -20,6 +20,10 @@ const store = new Vuex.Store({
       timeout: 5000
     },
     authenticatedUser: null,
+    users: {
+      all: [],
+      byId: {}
+    },
     clock: {
       clocked: false,
       break: false,
@@ -44,6 +48,10 @@ const store = new Vuex.Store({
       all: [],
       byId: {}
     },
+    managers: {
+      employee: [],
+      organization: []
+    },
     conversations: {
       all: [],
       byId: []
@@ -64,6 +72,19 @@ const store = new Vuex.Store({
     UNSET_AUTHENTICATED_USER(state) {
       state.authenticatedUser = null
       localStorage.removeItem('authenticatedUser')
+    },
+    ADD_USER(state, user) {
+      Vue.set(state.users.byId, user.id, {
+        ...state.users.byId[user.id],
+        ...user
+      })
+      if (!state.users.all.includes(user.id))
+        state.users.all.push(user.id)
+    },
+    ADD_MANAGER(state, { type, managerId }) {
+      // A manager is just a special type of User
+      if (!state.managers[type].find(m => m == managerId))
+        state.managers[type].push(managerId)
     },
     ADD_CLOCK_EVENT(state, event) {
       Vue.set(state.clock.history.byId, event.id, event)
@@ -328,6 +349,20 @@ const store = new Vuex.Store({
           direct: false,
         })
       })
+      data.managers.employee_managers.forEach(m => {
+        commit('ADD_USER', m)
+        commit('ADD_MANAGER', {
+          type: 'employee',
+          managerId: m.manager_id
+        })
+      })
+      data.managers.organization_managers.forEach(m => {
+        commit('ADD_USER', m)
+        commit('ADD_MANAGER', {
+          type: 'organization',
+          managerId: m.manager_id
+        })
+      })
     },
 
     async loadJob({ commit, getters }, jobId) {
@@ -340,6 +375,21 @@ const store = new Vuex.Store({
       const existingJob = getters.job(jobId)
       if (existingJob)
         data.job.direct = existingJob.direct
+
+      data.job.managers.employee_managers.forEach(m => {
+        commit('ADD_USER', m)
+        commit('ADD_MANAGER', {
+          type: 'employee',
+          managerId: m.manager_id
+        })
+      })
+      data.job.managers.organization_managers.forEach(m => {
+        commit('ADD_USER', m)
+        commit('ADD_MANAGER', {
+          type: 'organization',
+          managerId: m.manager_id
+        })
+      })
 
       // Flatten shift data
       // data.job.shifts = data.job.shifts.map(shift => {
@@ -374,6 +424,7 @@ const store = new Vuex.Store({
         url: `${baseUrl}/shifts/${shift.id}`,
         data: { shift }
       })
+      commit('ADD_SHIFT', data.shift)
     },
 
     async loadConversations({ commit }) {
@@ -405,6 +456,9 @@ const store = new Vuex.Store({
   },
   getters: {
     // TODO: Transform this and add labels, separated by day of week
+    user: (state) => id => {
+      return state.users.byId[id]
+    },
     clockEvent: (state, _, __, rootGetters) => id => {
       return resolveRelations(state.clock.history.byId[id], [/*'user'*/], rootGetters)
     },
@@ -464,7 +518,7 @@ const store = new Vuex.Store({
     unapprovedTimecards: (state, getters) => {
       return getters.timecards.filter((timecard) => !timecard.approved);
     },
-    job: (state, getters) => id => {
+    job: (state) => id => {
       const job = state.jobs.byId[id]
       
       // if (job && job.shifts)
@@ -482,6 +536,18 @@ const store = new Vuex.Store({
     },
     indirectJobs: (state, getters) => {
       return getters.jobs.filter((job) => !job.direct);
+    },
+    manager: (state, getters) => managerId => {
+      const manager = Object.values(state.users.byId).find(u => u.id == managerId)
+      return manager ? manager : {first_name: "Invalid manager id"}
+    },
+    managers: (state, getters) => {
+      const a = {
+        employee: state.managers.employee.map(m => getters.manager(m)),
+        organization: state.managers.organization.map(m => getters.manager(m))
+      }
+      console.log(a)
+      return a
     },
     shift: (state) => id => {
       return state.shifts.byId[id]

@@ -107,11 +107,11 @@ export default Vue.extend({
   name: "App",
   mounted() {
     const storedUser = localStorage.getItem("authenticatedUser");
-    if (storedUser) {
-      this.$store.commit("SET_AUTHENTICATED_USER", {
-        user: JSON.parse(storedUser),
-      });
-    }
+    // if (storedUser) {
+    //   this.$store.commit("SET_AUTHENTICATED_USER", {
+    //     user: JSON.parse(storedUser),
+    //   });
+    // }
     // Refresh user data in case of an update
     this.$store.dispatch("getAuthenticatedUser");
   },

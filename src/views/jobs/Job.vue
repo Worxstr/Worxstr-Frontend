@@ -1,6 +1,9 @@
 <template lang="pug">
 v-container.approvals(v-if="job")
-  edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
+  edit-job-dialog(
+    :opened.sync="editJobDialog",
+    :job.sync="job",
+  )
   edit-shift-dialog(
     create,
     :opened.sync="addShiftDialog",
@@ -25,31 +28,24 @@ v-container.approvals(v-if="job")
     v-btn(text, @click="editJobDialog = true") Edit
 
   v-card.mb-3.d-flex.flex-column
-    GmapMap(
-      :center="location",
-      :zoom="16",
-      style="height: 40vh"
-    )
-      GmapMarker(
-        :key="index",
-        :position="location"
-      )
+    GmapMap(:center="location", :zoom="17", style="height: 40vh")
+      GmapMarker(:position="location")
 
     v-card-text
       p
         | {{ job.address }}
         br
-        | {{ job.city }}, {{ job.state }} {{ job.zip_code }}
+        | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
       div
 
     v-layout.justify-space-between
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Organizational manager
-        p {{ organizationManagerName(job.organization_manager_id) }}
+        p {{ organizationManager.first_name }} {{ organizationManager.last_name}}
 
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Employee manager
-        p {{ employeeManagerName(job.employee_manager_id) }}
+        p {{ employeeManager.first_name }} {{ employeeManager.last_name}}
 
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Consultant
@@ -99,8 +95,14 @@ export default {
     job() {
       return this.$store.getters.job(this.$route.params.jobId);
     },
+    employeeManager() {
+      return this.$store.getters.manager(this.job.employee_manager_id);
+    },
+    organizationManager() {
+      return this.$store.getters.manager(this.job.organization_manager_id);
+    },
     location() {
-      return { lat: this.job.latitude, lng: this.job.longitude }
+      return { lat: this.job.latitude, lng: this.job.longitude };
     },
   },
   mounted() {
@@ -122,22 +124,9 @@ export default {
       this.deleteShiftDialog = true;
     },
     employeeName(employeeId) {
-      const employee = this.job.employees.find((e) => e.id == employeeId);
-      return `${employee.first_name} ${employee.last_name}`;
-    },
-    organizationManagerName(organizationManagerId) {
-      if (!this.job.managers) return "";
-      const m = this.job.managers.organization_managers.find(
-        (m) => m.manager_id == organizationManagerId
-      );
-      return m ? `${m.first_name} ${m.last_name}` : "";
-    },
-    employeeManagerName(employeeManagerId) {
-      if (!this.job.managers) return "";
-      const m = this.job.managers.employee_managers.find(
-        (m) => m.id == employeeManagerId
-      );
-      return m ? `${m.first_name} ${m.last_name}` : "";
+      // if (!this.employees) return "";
+      // const employee = this.job.employees.find((e) => e.id == employeeId);
+      // return `${employee.first_name} ${employee.last_name}`;
     },
     addShift() {
       return;
