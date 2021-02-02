@@ -41,8 +41,9 @@ const store = new Vuex.Store({
     },
     shifts: {
       next: null,
-      all: [],
-      byId: {},
+      // TODO: Flatten shift data from jobs
+      // all: [],
+      // byId: {},
     },
     jobs: {
       all: [],
@@ -126,10 +127,12 @@ const store = new Vuex.Store({
     SET_NEXT_SHIFT(state, shift) {
       state.shifts.next = shift
     },
-    ADD_SHIFT(state, shift) {
-      Vue.set(state.shifts.byId, shift.id, shift)
-      if (!state.shifts.all.includes(shift.id))
-        state.shifts.all.push(shift.id)
+    ADD_SHIFT(state, {shift, jobId}) {
+      state.jobs.byId[jobId].shifts.push(shift)
+      // TODO: Flatten shift data from jobs
+      // Vue.set(state.shifts.byId, shift.id, shift)
+      // if (!state.shifts.all.includes(shift.id))
+      //   state.shifts.all.push(shift.id)
     },
     ADD_CONVERSATION(state, conversation) {
       Vue.set(state.conversations.byId, conversation.id, conversation)
@@ -418,14 +421,24 @@ const store = new Vuex.Store({
       commit('ADD_JOB', data.job)
     },
 
-    async updateShift({ commit }, shift) {
+    async createShift({ commit }, {shift, jobId}) {
       const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/shifts/${shift.id}`,
-        data: { shift }
+        method: 'POST',
+        url: `${baseUrl}/shifts`,
+        data: { shift },
+        params: {job_id: jobId}
       })
-      commit('ADD_SHIFT', data.shift)
+      commit('ADD_SHIFT', {shift: data.shift, jobId})
     },
+
+    // async updateShift({ commit }, {shift}) {
+    //   const { data } = await axios({
+    //     method: 'PUT',
+    //     url: `${baseUrl}/shifts/${shift.id}`,
+    //     data: { shift }
+    //   })
+    //   commit('ADD_SHIFT', data.shift)
+    // },
 
     async loadConversations({ commit }) {
       const { data } = await axios({

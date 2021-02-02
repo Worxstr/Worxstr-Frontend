@@ -19,6 +19,7 @@ export default {
     value: String,
     label: String,
     hideDetails: Boolean,
+    timeOnly: Boolean,
     required: Boolean,
     rules: Array,
   },
@@ -29,13 +30,23 @@ export default {
   },
   methods: {
     updateDate: function (value) {
-      if (!value) return
-      const newDate = new Date(this.value);
-      const [hours, minutes, seconds] = value.split(":");
-      newDate.setHours(hours);
-      newDate.setMinutes(minutes);
-      newDate.setSeconds(seconds);
-      this.$emit("input", newDate.toISOString());
+      console.log(value, this.value);
+      if (!value) return;
+
+      const newDate = this.value ? new Date(this.value) : new Date();
+
+      // Just use the time string XX:XX
+      if (this.timeOnly) {
+        this.$emit("input", value);
+      }
+      // Use ISO date string from props
+      else {
+        const [hours, minutes, seconds] = value.split(":");
+        newDate.setHours(hours);
+        newDate.setMinutes(minutes);
+        newDate.setSeconds(seconds);
+        this.$emit("input", newDate.toISOString());
+      }
     },
   },
 };

@@ -26,6 +26,7 @@ v-container.approvals(v-if="job")
       | {{ job.name }}
     v-spacer
     v-btn(text, @click="editJobDialog = true") Edit
+    v-btn(text, color="red") Close
 
   v-card.mb-3.d-flex.flex-column
     GmapMap(:center="location", :zoom="17", style="height: 40vh")
