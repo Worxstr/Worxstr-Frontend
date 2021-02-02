@@ -19,8 +19,6 @@ v-dialog(
       v-toolbar(flat)
         v-toolbar-title {{ create ? 'Creating shift' : 'Editing shift' }}
 
-      code {{ editedShift }}
-
       v-card-text
         v-select(
           v-model="editedShift.employee_id",
@@ -41,13 +39,10 @@ v-dialog(
           dense,
           required
         )
-        v-text-field(
-          required,
-          v-model="editedShift.date",
-          label="Date",
-          outlined,
-          type="date",
-          dense,
+        date-input(
+          required
+          v-model="editedShift.date"
+          label="Date"
           :rules="rules.date"
         )
         v-row
@@ -76,7 +71,8 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
-import TimeInput from "@/components/TimeInput.vue";
+import TimeInput from "@/components/TimeInput";
+import DateInput from "@/components/DateInput";
 
 // TODO: Move these to reusable import
 const exists = (errorString) => (value) => !!value || errorString;
@@ -91,7 +87,7 @@ export default {
     employees: Array,
     shift: Object,
   },
-  components: { TimeInput },
+  components: { TimeInput, DateInput },
   data: () => ({
     editedShift: {},
     isValid: false,
@@ -106,18 +102,21 @@ export default {
   }),
   watch: {
     opened(newVal, oldVal) {
-      if (newVal == true) this.editedShift = Object.assign({}, this.shift);
+      // Set date string without time and assign copy to editedShift
+      if (newVal == true) this.editedShift = Object.assign({date: this.shift.time_begin}, this.shift);
     },
   },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
-      this.$refs.form.reset();
+      if (this.create) this.$refs.form.reset();
     },
     async updateShift() {
       this.loading = true;
 
       const requestData = Object.assign({}, this.editedShift);
+
+      // TODO: Validate shifts so that end time is after start time
 
       // Concat the date input with time inputs
       requestData.time_begin = new Date(
@@ -127,8 +126,6 @@ export default {
         `${requestData.date} ${requestData.time_end}`
       ).toISOString();
       delete requestData.date;
-
-      console.log(requestData);
 
       if (this.create)
         await this.$store.dispatch("createShift", {

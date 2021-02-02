@@ -153,7 +153,7 @@ export default {
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
-      this.$refs.form.reset();
+      if (this.create) this.$refs.form.reset();
     },
     setPlace(address, place, id) {
       console.log({address, place, id})

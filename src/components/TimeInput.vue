@@ -30,7 +30,6 @@ export default {
   },
   methods: {
     updateDate: function (value) {
-      console.log(value, this.value);
       if (!value) return;
 
       const newDate = this.value ? new Date(this.value) : new Date();
