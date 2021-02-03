@@ -1,14 +1,14 @@
 <template lang="pug">
 v-text-field(
-	type="date",
-	dense,
-	outlined,
-	:required="required",
-	:rules="rules",
-	:hide-details="hideDetails",
-	:label="label",
-	:value="dateString",
-	@input="updateDate"
+  type="date",
+  dense,
+  outlined,
+  :required="required",
+  :rules="rules",
+  :hide-details="hideDetails",
+  :label="label",
+  :value="dateString",
+  @input="updateDate"
 )
 </template>
 
@@ -26,14 +26,13 @@ export default {
   },
   computed: {
     dateString() {
-      console.log(dayjs(this.value).format("YYYY-MM-DD"));
       return dayjs(this.value).format("YYYY-MM-DD");
     },
   },
   methods: {
     updateDate: function (value) {
       if (!value) return;
-      const newDate = new Date(this.value);
+      const newDate = new Date(value);
       this.$emit("input", newDate.toISOString());
     },
   },

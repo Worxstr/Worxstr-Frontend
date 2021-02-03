@@ -114,9 +114,6 @@ export default {
       return this.$store.getters.managers;
     }
   },
-  mounted() {
-    console.log('managers', this.managers)
-  },
   data: () => ({
     isValid: false,
     editedJob: {},
@@ -156,7 +153,6 @@ export default {
       if (this.create) this.$refs.form.reset();
     },
     setPlace(address, place, id) {
-      console.log({address, place, id})
       this.editedJob.address = address.name
       this.editedJob.city = address.locality
       this.editedJob.state = address.administrative_area_level_1

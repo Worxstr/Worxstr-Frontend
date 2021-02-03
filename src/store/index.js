@@ -128,11 +128,16 @@ const store = new Vuex.Store({
       state.shifts.next = shift
     },
     ADD_SHIFT(state, {shift, jobId}) {
+      console.log(shift, jobId)
       state.jobs.byId[jobId].shifts.push(shift)
       // TODO: Flatten shift data from jobs
       // Vue.set(state.shifts.byId, shift.id, shift)
       // if (!state.shifts.all.includes(shift.id))
       //   state.shifts.all.push(shift.id)
+    },
+    REMOVE_SHIFT(state, {jobId, shiftId}) {
+      console.log(shiftId, jobId)
+      state.jobs.byId[jobId].shifts = state.jobs.byId[jobId].shifts.filter(shift => shift.id != shiftId)
     },
     ADD_CONVERSATION(state, conversation) {
       Vue.set(state.conversations.byId, conversation.id, conversation)
@@ -223,7 +228,6 @@ const store = new Vuex.Store({
     },
 
     async clockIn({ commit, state }, { code }) {
-      console.log(`got code ${code}`)
       try {
         const { data } = await axios({
           method: 'POST',
@@ -235,13 +239,11 @@ const store = new Vuex.Store({
             code
           }
         })
-        console.log('code was correct')
         commit('ADD_CLOCK_EVENT', data.event)
         commit('CLOCK_IN')
         return data
       }
       catch (err) {
-        console.log('code was incorrect')
         return err
       }
     },
@@ -271,7 +273,6 @@ const store = new Vuex.Store({
 
     async toggleBreak({ commit }, breakState) {
       const action = breakState ? 'end' : 'start'
-      console.log(action)
 
       const { data } = await axios({
         method: 'POST',
@@ -431,14 +432,23 @@ const store = new Vuex.Store({
       commit('ADD_SHIFT', {shift: data.shift, jobId})
     },
 
-    // async updateShift({ commit }, {shift}) {
-    //   const { data } = await axios({
-    //     method: 'PUT',
-    //     url: `${baseUrl}/shifts/${shift.id}`,
-    //     data: { shift }
-    //   })
-    //   commit('ADD_SHIFT', data.shift)
-    // },
+    async updateShift({ commit }, shift) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/shifts/${shift.id}`,
+        data: { shift }
+      })
+      commit('REMOVE_SHIFT', { shiftId: shift.id, jobId: data.shift.job_id })
+      commit('ADD_SHIFT', { shift: data.shift, jobId: data.shift.job_id })
+    },
+
+    async deleteShift({ commit }, {shiftId, jobId}) {
+      // const { data } = await axios({
+      //   method: 'DELETE',
+      //   url: `${baseUrl}/shifts/${shiftId}`,
+      // })
+      commit('REMOVE_SHIFT', {shiftId, jobId})
+    },
 
     async loadConversations({ commit }) {
       const { data } = await axios({
@@ -559,7 +569,6 @@ const store = new Vuex.Store({
         employee: state.managers.employee.map(m => getters.manager(m)),
         organization: state.managers.organization.map(m => getters.manager(m))
       }
-      console.log(a)
       return a
     },
     shift: (state) => id => {
@@ -588,8 +597,6 @@ axios.interceptors.response.use(response => {
 
   let message;
   const res = error.response.data
-
-  console.log(error.request)
 
   // TODO: this is stupid, don't keep this. use custom axios config
   if (error.request.responseURL == 'http://localhost:5000/users/me') return

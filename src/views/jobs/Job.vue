@@ -66,8 +66,9 @@ v-container.approvals(v-if="job")
         span.text-subtitle-1.flex-grow-0
           | Shift {{ shift.id }}
         v-spacer
-        span.flex-grow-0.px-2
-          | {{ shift.time_begin | time }} - {{ shift.time_end | time }}
+        p.d-flex.flex-column.mb-0.flex-grow-0.px-2
+          span.my-1.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
+          span.my-1 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
       v-expansion-panel-content
         v-card-text.text-body-1
@@ -125,9 +126,8 @@ export default {
       this.deleteShiftDialog = true;
     },
     employeeName(employeeId) {
-      // if (!this.employees) return "";
-      // const employee = this.job.employees.find((e) => e.id == employeeId);
-      // return `${employee.first_name} ${employee.last_name}`;
+      const employee = this.job.employees.find((e) => e.id == employeeId);
+      return `${employee.first_name} ${employee.last_name}`;
     },
     addShift() {
       return;

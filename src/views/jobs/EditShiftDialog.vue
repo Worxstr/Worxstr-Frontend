@@ -19,6 +19,8 @@ v-dialog(
       v-toolbar(flat)
         v-toolbar-title {{ create ? 'Creating shift' : 'Editing shift' }}
 
+      code {{editedShift}}
+
       v-card-text
         v-select(
           v-model="editedShift.employee_id",
@@ -50,7 +52,6 @@ v-dialog(
             time-input(
               required,
               v-model="editedShift.time_begin",
-              time-only,
               label="Start time",
               :rules="rules.timeBegin"
             )
@@ -58,7 +59,6 @@ v-dialog(
             time-input(
               required,
               v-model="editedShift.time_end",
-              time-only,
               label="End time",
               :rules="rules.timeEnd"
             )
@@ -103,7 +103,8 @@ export default {
   watch: {
     opened(newVal, oldVal) {
       // Set date string without time and assign copy to editedShift
-      if (newVal == true) this.editedShift = Object.assign({date: this.shift.time_begin}, this.shift);
+      const date = this.shift ? this.shift.time_begin : undefined
+      if (newVal == true) this.editedShift = Object.assign({date: date}, this.shift);
     },
   },
   methods: {
@@ -115,17 +116,30 @@ export default {
       this.loading = true;
 
       const requestData = Object.assign({}, this.editedShift);
+      console.log(requestData)
 
       // TODO: Validate shifts so that end time is after start time
 
       // Concat the date input with time inputs
-      requestData.time_begin = new Date(
-        `${requestData.date} ${requestData.time_begin}`
-      ).toISOString();
-      requestData.time_end = new Date(
-        `${requestData.date} ${requestData.time_end}`
-      ).toISOString();
+      const begin = new Date(requestData.date)
+      const end = new Date(requestData.date)
+      const timeBegin = new Date(requestData.time_begin)
+      const timeEnd = new Date(requestData.time_end)
+
+      begin.setHours(timeBegin.getHours())
+      begin.setMinutes(timeBegin.getMinutes())
+      begin.setSeconds(timeBegin.getSeconds())
+
+      end.setHours(timeEnd.getHours())
+      end.setMinutes(timeEnd.getMinutes())
+      end.setSeconds(timeEnd.getSeconds())
+
+      requestData.time_begin = begin.toISOString()
+      requestData.time_end = end.toISOString()
+      
       delete requestData.date;
+
+      console.log(requestData)
 
       if (this.create)
         await this.$store.dispatch("createShift", {
@@ -133,9 +147,7 @@ export default {
           jobId: this.$route.params.jobId,
         });
       else
-        await this.$store.dispatch("updateShift", {
-          shift: requestData
-        });
+        await this.$store.dispatch("updateShift", requestData);
 
       this.loading = false;
       this.closeDialog();
