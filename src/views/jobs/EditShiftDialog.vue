@@ -19,8 +19,6 @@ v-dialog(
       v-toolbar(flat)
         v-toolbar-title {{ create ? 'Creating shift' : 'Editing shift' }}
 
-      code {{editedShift}}
-
       v-card-text
         v-select(
           v-model="editedShift.employee_id",
@@ -121,18 +119,16 @@ export default {
       // TODO: Validate shifts so that end time is after start time
 
       // Concat the date input with time inputs
-      const begin = new Date(requestData.date)
-      const end = new Date(requestData.date)
+      const begin = requestData.date ? new Date(requestData.date) : new Date()
+      const end = requestData.date ? new Date(requestData.date) : new Date()
       const timeBegin = new Date(requestData.time_begin)
       const timeEnd = new Date(requestData.time_end)
 
       begin.setHours(timeBegin.getHours())
       begin.setMinutes(timeBegin.getMinutes())
-      begin.setSeconds(timeBegin.getSeconds())
 
       end.setHours(timeEnd.getHours())
       end.setMinutes(timeEnd.getMinutes())
-      end.setSeconds(timeEnd.getSeconds())
 
       requestData.time_begin = begin.toISOString()
       requestData.time_end = end.toISOString()

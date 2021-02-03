@@ -1,9 +1,7 @@
 <template lang="pug">
 v-container.approvals(v-if="job")
-  edit-job-dialog(
-    :opened.sync="editJobDialog",
-    :job.sync="job",
-  )
+  edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
+  close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
   edit-shift-dialog(
     create,
     :opened.sync="addShiftDialog",
@@ -26,7 +24,7 @@ v-container.approvals(v-if="job")
       | {{ job.name }}
     v-spacer
     v-btn(text, @click="editJobDialog = true") Edit
-    v-btn(text, color="red") Close
+    v-btn(text, color="red", @click="closeJobDialog = true") Close
 
   v-card.mb-3.d-flex.flex-column
     GmapMap(:center="location", :zoom="17", style="height: 40vh")
@@ -42,11 +40,11 @@ v-container.approvals(v-if="job")
     v-layout.justify-space-between
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Organizational manager
-        p {{ organizationManager.first_name }} {{ organizationManager.last_name}}
+        p {{ organizationManager.first_name }} {{ organizationManager.last_name }}
 
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Employee manager
-        p {{ employeeManager.first_name }} {{ employeeManager.last_name}}
+        p {{ employeeManager.first_name }} {{ employeeManager.last_name }}
 
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Consultant
@@ -55,7 +53,7 @@ v-container.approvals(v-if="job")
   v-toolbar(flat, color="transparent")
     v-toolbar-title.text-h6 Shifts
     v-spacer
-    v-btn(text, @click="openAddShiftDialog") Add new shift
+    v-btn(text, @click="addShiftDialog = true") Add new shift
 
   p.text-body-2.text-center.mt-3(v-if="!job.shifts || !job.shifts.length")
     | There aren't any shifts for this job.
@@ -85,6 +83,7 @@ v-container.approvals(v-if="job")
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 import EditJobDialog from "./EditJobDialog";
+import CloseJobDialog from "./CloseJobDialog";
 import EditShiftDialog from "./EditShiftDialog";
 import DeleteShiftDialog from "./DeleteShiftDialog";
 
@@ -92,7 +91,12 @@ import DeleteShiftDialog from "./DeleteShiftDialog";
 
 export default {
   name: "job",
-  components: { EditJobDialog, EditShiftDialog, DeleteShiftDialog },
+  components: {
+    EditJobDialog,
+    CloseJobDialog,
+    EditShiftDialog,
+    DeleteShiftDialog,
+  },
   computed: {
     job() {
       return this.$store.getters.job(this.$route.params.jobId);
@@ -114,9 +118,6 @@ export default {
     innerClick() {
       alert("Click!");
     },
-    openAddShiftDialog(shift) {
-      this.addShiftDialog = true;
-    },
     openEditShiftDialog(shift) {
       this.selectedShift = shift;
       this.editShiftDialog = true;
@@ -135,6 +136,7 @@ export default {
   },
   data: () => ({
     editJobDialog: false,
+    closeJobDialog: false,
     addShiftDialog: false,
     editShiftDialog: false,
     deleteShiftDialog: false,

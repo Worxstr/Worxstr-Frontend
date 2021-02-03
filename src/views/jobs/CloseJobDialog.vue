@@ -6,12 +6,12 @@ v-dialog(
   persistent
 )
   v-card
-    v-card-title.headline Delete shift {{shift.id}}?
-    v-card-text {{ employeeName }} will no longer work this shift.
+    v-card-title.headline Close {{job.name}}?
+    v-card-text This cannot be undone.
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="red", @click="deleteShift") Yes, Delete
+      v-btn(text, color="red", @click="closeJob") Yes, Close
       
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")
@@ -21,10 +21,10 @@ v-dialog(
 
 <script>
 export default {
-  name: "denyDialog",
+  name: "closeJobDialog",
   props: {
     opened: Boolean,
-    shift: Object,
+    job: Object,
     employeeName: String,
   },
   data: () => ({
@@ -34,11 +34,12 @@ export default {
     closeDialog() {
       this.$emit("update:opened", false);
     },
-    async deleteShift() {
+    async closeJob() {
       this.loading = true
-      await this.$store.dispatch("deleteShift", this.shift.id);
+      await this.$store.dispatch("closeJob", this.job.id);
       this.loading = false
       this.closeDialog();
+      this.$router.push({name: 'jobs'})
     },
   },
 };

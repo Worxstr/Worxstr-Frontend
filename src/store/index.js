@@ -124,6 +124,10 @@ const store = new Vuex.Store({
       if (!state.jobs.all.includes(job.id))
         state.jobs.all.push(job.id)
     },
+    REMOVE_JOB(state, jobId) {
+      Vue.delete(state.jobs.byId, jobId);
+      Vue.delete(state.jobs.all, state.jobs.all.findIndex(id => id == jobId))
+    },
     SET_NEXT_SHIFT(state, shift) {
       state.shifts.next = shift
     },
@@ -422,6 +426,14 @@ const store = new Vuex.Store({
       commit('ADD_JOB', data.job)
     },
 
+    async closeJob({ commit }, jobId) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/jobs/${jobId}/close`
+      })
+      commit('REMOVE_JOB', jobId)
+    },
+
     async createShift({ commit }, {shift, jobId}) {
       const { data } = await axios({
         method: 'POST',
@@ -443,10 +455,10 @@ const store = new Vuex.Store({
     },
 
     async deleteShift({ commit }, {shiftId, jobId}) {
-      // const { data } = await axios({
-      //   method: 'DELETE',
-      //   url: `${baseUrl}/shifts/${shiftId}`,
-      // })
+      const { data } = await axios({
+        method: 'DELETE',
+        url: `${baseUrl}/shifts/${shiftId}`,
+      })
       commit('REMOVE_SHIFT', {shiftId, jobId})
     },
 
