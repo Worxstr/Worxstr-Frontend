@@ -1,6 +1,6 @@
 <template lang="pug">
-v-container.home
-  v-card
+v-container.home(fluid fill-height)
+  v-card#calendar-container
     v-calendar(
       ref="calendar",
       v-model="value",
@@ -100,3 +100,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  #calendar-container {
+    width: 100%;
+    height: 100%;
+  }
+</style>
