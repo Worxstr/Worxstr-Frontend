@@ -622,7 +622,8 @@ const store = new Vuex.Store({
           start: new Date(event.time_begin),
           end: new Date(event.time_end),
           color: 'blue',
-          timed: true
+          timed: true,
+          ...event
         }
       })
     },
