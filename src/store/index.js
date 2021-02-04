@@ -53,6 +53,10 @@ const store = new Vuex.Store({
       employee: [],
       organization: []
     },
+    events: {
+      all: [],
+      byId: {}
+    },
     conversations: {
       all: [],
       byId: []
@@ -142,6 +146,11 @@ const store = new Vuex.Store({
     REMOVE_SHIFT(state, {jobId, shiftId}) {
       console.log(shiftId, jobId)
       state.jobs.byId[jobId].shifts = state.jobs.byId[jobId].shifts.filter(shift => shift.id != shiftId)
+    },
+    ADD_EVENT(state, event) {
+      Vue.set(state.events.byId, event.id, event)
+      if (!state.events.all.includes(event.id))
+        state.events.all.push(event.id)
     },
     ADD_CONVERSATION(state, conversation) {
       Vue.set(state.conversations.byId, conversation.id, conversation)
@@ -462,6 +471,19 @@ const store = new Vuex.Store({
       commit('REMOVE_SHIFT', {shiftId, jobId})
     },
 
+    async loadCalendarEvents({ commit }, { start, end }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/calendar`,
+        params: {
+          date_begin: start,
+          date_end: end
+        }
+      })
+      console.log(data)
+      data.events.forEach(event => commit('ADD_EVENT', event))
+    },
+
     async loadConversations({ commit }) {
       const { data } = await axios({
         method: 'GET',
@@ -588,6 +610,21 @@ const store = new Vuex.Store({
     },
     shifts: (state, getters) => {
       return state.shifts.all.map(id => getters.shift(id))
+    },
+    calendarEvent: state => id => {
+      return state.events.byId[id]
+    },
+    calendarEvents: (state, getters) => {
+      return state.events.all.map(eventId => {
+        const event = getters.calendarEvent(eventId)
+        return {
+          name: event.site_location,
+          start: new Date(event.time_begin),
+          end: new Date(event.time_end),
+          color: 'blue',
+          timed: true
+        }
+      })
     },
     conversation: (state, _, __, rootGetters) => id => {
       return state.conversations.byId[id]

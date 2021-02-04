@@ -6,7 +6,7 @@ v-container.home
       v-model="value",
       :weekdays="weekday",
       :type="type",
-      :events="events",
+      :events="calendarEvents",
       :event-overlap-mode="mode",
       :event-overlap-threshold="30",
       :event-color="getEventColor",
@@ -15,12 +15,12 @@ v-container.home
 </template>
 
 <script>
-// @ is an alias to /src
+import { mapGetters } from 'vuex'
 
 export default {
   name: "schedule",
   data: () => ({
-    type: "week",
+    type: "month",
     types: ["month", "week", "day", "4day"],
     mode: "stack",
     modes: ["stack", "column"],
@@ -47,9 +47,15 @@ export default {
       "Party",
     ],
   }),
+  mounted() {
+    this.$refs.calendar.prev()
+  },
+  computed: {
+    ...mapGetters(['calendarEvents'])
+  },
   methods: {
     getEvents({ start, end }) {
-      const events = [];
+      /* const events = [];
 
       const min = new Date(`${start.date}T00:00:00`);
       const max = new Date(`${end.date}T23:59:59`);
@@ -71,8 +77,19 @@ export default {
           timed: !allDay,
         });
       }
-
-      this.events = events;
+      console.log(events) */
+      // {
+      //   name: this.names[this.rnd(0, this.names.length - 1)],
+      //   start: first,
+      //   end: second,
+      //   color: this.colors[this.rnd(0, this.colors.length - 1)],
+      //   timed: !allDay,
+      // }
+      console.log('dispatched')
+      this.$store.dispatch('loadCalendarEvents', {
+        start: (new Date(`${start.date}T00:00:00`)).toISOString(),
+        end: (new Date(`${end.date}T23:59:59`)).toISOString()
+      })
     },
     getEventColor(event) {
       return event.color;

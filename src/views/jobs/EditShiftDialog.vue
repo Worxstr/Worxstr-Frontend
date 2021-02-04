@@ -18,7 +18,7 @@ v-dialog(
     )
       v-toolbar(flat)
         v-toolbar-title {{ create ? 'Creating shift' : 'Editing shift' }}
-
+      code {{editedShift}}
       v-card-text
         v-select(
           v-model="editedShift.employee_id",
@@ -114,26 +114,26 @@ export default {
       this.loading = true;
 
       const requestData = Object.assign({}, this.editedShift);
-      console.log(requestData)
 
       // TODO: Validate shifts so that end time is after start time
 
       // Concat the date input with time inputs
-      const begin = requestData.date ? new Date(requestData.date) : new Date()
-      const end = requestData.date ? new Date(requestData.date) : new Date()
+      const date = requestData.date ? new Date(requestData.date) : new Date()
       const timeBegin = new Date(requestData.time_begin)
       const timeEnd = new Date(requestData.time_end)
-
-      begin.setHours(timeBegin.getHours())
-      begin.setMinutes(timeBegin.getMinutes())
-
-      end.setHours(timeEnd.getHours())
-      end.setMinutes(timeEnd.getMinutes())
-
-      requestData.time_begin = begin.toISOString()
-      requestData.time_end = end.toISOString()
       
-      delete requestData.date;
+      timeBegin.setDate(date.getDate())
+      timeBegin.setMonth(date.getMonth())
+      timeBegin.setFullYear(date.getFullYear())
+      
+      timeEnd.setDate(date.getDate())
+      timeEnd.setMonth(date.getMonth())
+      timeEnd.setFullYear(date.getFullYear())
+
+      console.log({timeBegin, timeEnd})
+
+      requestData.time_begin = timeBegin.toISOString()
+      requestData.time_end = timeEnd.toISOString()
 
       console.log(requestData)
 
