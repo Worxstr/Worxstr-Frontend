@@ -3,8 +3,8 @@ v-app.d-flex.flex-column.fill-height
   v-app-bar.flex-grow-0(color='white' elevate-on-scroll='' scroll-target='#scroll-target')
     v-container.py-0.fill-height
       router-link(to='/' style='text-decoration: none')
-        v-avatar.mr-10(color='grey darken-1' size='32')
-          span.white--text W
+        v-avatar.mr-10(tile size='50')
+          img(src='@/assets/logo.svg')
 
       .d-flex.flex-row(v-if='\
       authenticatedUser &&\
