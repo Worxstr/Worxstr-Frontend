@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container.home.d-flex.flex-column.align-stretch(fluid, fill-height)
+v-container.home.d-flex.flex-column.align-stretch(fluid :fill-height="type == 'month'")
   v-toolbar.flex-grow-0(flat, color="transparent")
     v-btn.ma-2(icon, @click="$refs.calendar.prev()")
       v-icon mdi-chevron-left
@@ -9,7 +9,7 @@ v-container.home.d-flex.flex-column.align-stretch(fluid, fill-height)
 
     v-spacer
 
-    v-select.ma-2(
+    v-select.ma-2.flex-grow-0(
       v-model="type",
       :items="types",
       :item-text="(t) => t.charAt(0).toUpperCase() + t.slice(1)",
@@ -23,7 +23,6 @@ v-container.home.d-flex.flex-column.align-stretch(fluid, fill-height)
     v-calendar(
       ref="calendar",
       v-model="value",
-      :weekdays="weekday",
       :type="type",
       :events="calendarEvents",
       event-overlap-mode="stack",
