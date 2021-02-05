@@ -1,6 +1,6 @@
 <template lang="pug">
-v-container.home(fluid, fill-height)
-  v-toolbar(flat, color="transparent")
+v-container.home.d-flex.flex-column.align-stretch(fluid, fill-height)
+  v-toolbar.flex-grow-0(flat, color="transparent")
     v-btn.ma-2(icon, @click="$refs.calendar.prev()")
       v-icon mdi-chevron-left
 
@@ -19,14 +19,14 @@ v-container.home(fluid, fill-height)
       label="View"
     )
 
-  v-card#calendar-container
+  v-card.flex-grow-1
     v-calendar(
       ref="calendar",
       v-model="value",
       :weekdays="weekday",
       :type="type",
       :events="calendarEvents",
-      :event-overlap-mode="mode",
+      event-overlap-mode="stack",
       :event-overlap-threshold="30",
       :event-color="getEventColor",
       @change="getEvents",
@@ -42,30 +42,7 @@ export default {
   data: () => ({
     type: "month",
     types: ["month", "week", "day", "4day"],
-    mode: "stack",
-    modes: ["stack", "column"],
-    weekday: [1, 2, 3, 4, 5],
     value: "",
-    events: [],
-    colors: [
-      "blue",
-      "indigo",
-      "deep-purple",
-      "cyan",
-      "green",
-      "orange",
-      "grey darken-1",
-    ],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party",
-    ],
   }),
   computed: {
     ...mapGetters(["calendarEvents"]),
