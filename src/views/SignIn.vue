@@ -52,7 +52,6 @@ export default {
     async signIn() {
       this.loading = true;
       await this.$store.dispatch("signIn", this.form);
-      console.log("test");
       this.loading = false;
     },
   },

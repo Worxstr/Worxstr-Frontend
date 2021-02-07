@@ -176,7 +176,7 @@ const store = new Vuex.Store({
           },
         })
         dispatch('getAuthenticatedUser')
-        router.push({ name: 'clock' })
+        router.push({ name: 'schedule' })
         return data
       }
       catch (err) {
