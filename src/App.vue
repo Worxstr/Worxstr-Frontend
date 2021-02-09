@@ -67,34 +67,53 @@ v-app.d-flex.flex-column.fill-height
         router-view
 
   transition(name='slide-fade')
-    v-bottom-navigation(v-model='value' :input-value='active' v-if="\
-    $vuetify.breakpoint.smAndDown &&\
-    authenticatedUser &&\
-    authenticatedUser.roles &&\
-    $route.name != 'home' &&\
-    $route.name != 'conversation'\
-    " color='indigo' grow='')
-      v-btn(v-for='route in $router.options.routes.filter(\
-      (r) =>\
-      r.meta &&\
-      ((r.meta.icon && !r.meta.restrict) ||\
-      (r.meta.icon &&\
-      r.meta.restrict &&\
-      r.meta.restrict.some((role) =>\
-      authenticatedUser.roles.map((r) => r.id).includes(role)\
-      )))\
-      )'
-      :key='route.name'
-      :value='route.name'
-      :to='{ name: route.name }'
+    v-bottom-navigation(
+      v-model='value'
+      :input-value='active'
+      color='indigo'
+      grow
+      v-if="\
+        $vuetify.breakpoint.smAndDown &&\
+        authenticatedUser &&\
+        authenticatedUser.roles &&\
+        $route.name != 'home' &&\
+        $route.name != 'conversation'"
     )
+      v-btn(
+        v-for='route in $router.options.routes.filter(\
+          (r) =>\
+          r.meta &&\
+          ((r.meta.icon && !r.meta.restrict) ||\
+          (r.meta.icon &&\
+          r.meta.restrict &&\
+          r.meta.restrict.some((role) =>\
+          authenticatedUser.roles.map((r) => r.id).includes(role)\
+          )))\
+        )'
+        :key='route.name'
+        :value='route.name'
+        :to='{ name: route.name }'
+      )
         span {{ route.name | capitalize }}
         v-icon {{ route.meta.icon }}
 
-  v-snackbar(app='' v-model='snackbar.show' :timeout='snackbar.timeout')
+  v-snackbar(
+    app
+    v-model='snackbar.show'
+    :timeout='snackbar.timeout'
+  )
     | {{ snackbar.text }}
-    template(v-slot:action='{ attrs }' v-if='snackbar.action')
-      v-btn(color='blue' text='' v-bind='attrs' @click='snackbar.show = false')
+
+    template(
+      v-slot:action='{ attrs }'
+      v-if='snackbar.action'
+    )
+      v-btn(
+        color='blue'
+        text
+        v-bind='attrs'
+        @click='snackbar.show = false'
+      )
         | Close
 
 </template>

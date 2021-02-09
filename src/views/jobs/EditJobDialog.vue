@@ -158,6 +158,8 @@ export default {
       this.editedJob.state = address.administrative_area_level_1
       this.editedJob.zip_code = address.postal_code
       this.editedJob.country = address.country
+      this.editedJob.latitude = address.latitude
+      this.editedJob.longitude = address.longitude
       this.place = place
     },
     async updateJob() {

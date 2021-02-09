@@ -27,7 +27,7 @@ v-container.approvals(v-if="job")
     v-btn(text, color="red", @click="closeJobDialog = true") Close
 
   v-card.mb-3.d-flex.flex-column
-    GmapMap(:center="location", :zoom="17", style="height: 40vh")
+    GmapMap(v-if="job.latitude && job.longitude" :center="location", :zoom="17", style="height: 40vh")
       GmapMarker(:position="location")
 
     v-card-text
