@@ -1,5 +1,5 @@
 <template lang="pug">
-.messages.d-flex.flex-column(v-if="conversation")
+v-card.messages.d-flex.flex-column(v-if="conversation")
   v-toolbar(flat, rounded="lg")
     v-btn(
       icon,
@@ -58,10 +58,13 @@ export default {
     this.$store.dispatch("loadConversation", this.$route.params.conversationId);
   },
   watch: {
-    "$route.params.conversationId"(newVal, oldVal) {
+    "$route.params.conversationId"() {
       this.messages = [];
     },
   },
+  data: () => ({ 
+    message: "",
+  }),
   computed: {
     ...mapState(["authenticatedUser"]),
     conversation() {
@@ -103,9 +106,6 @@ export default {
         this.messages.unshift(message);
     },
   },
-  data: () => ({
-    message: "",
-  }),
 };
 </script>
 

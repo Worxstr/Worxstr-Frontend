@@ -1,5 +1,5 @@
 <template lang="pug">
-.conversations
+v-card.conversations
   v-list(color="transparent")
     v-list-item(
       v-for="conversation in conversations",

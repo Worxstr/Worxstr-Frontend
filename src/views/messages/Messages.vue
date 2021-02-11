@@ -1,27 +1,37 @@
 <template lang="pug">
 v-container.messages.fill-height.align-start.d-flex.flex-row.pa-md-2.pa-0
-  v-card.mr-md-4(
+  new-conversation-dialog(:opened.sync='newConversationDialog')
+  
+  .d-flex.flex-column(
     v-if="$route.name == 'messages' || $vuetify.breakpoint.mdAndUp",
-    :width="$route.name == 'conversation' ? '30%' : '100%'",
-    :max-width="$vuetify.breakpoint.mdAndUp ? '350px' : '100%'",
-    :rounded="$vuetify.breakpoint.mdAndUp ? 'lg' : '0'"
+    :style="`width: ${$route.name == 'conversation' ? '35%' : '100%'}`",
+    :max-width="$vuetify.breakpoint.mdAndUp ? '35%' : '100%'"
   )
-    conversations
-  v-card.flex-grow-1.fill-height(
+    v-toolbar(flat, color="transparent")
+      v-toolbar-title.text-h5.font-weight-medium Messages
+      v-spacer
+      v-btn(icon color='primary')
+        v-icon(@click="newConversationDialog = true") mdi-plus
+
+    .mr-md-4(:rounded="$vuetify.breakpoint.mdAndUp ? 'lg' : '0'")
+      conversations
+
+  .flex-grow-1.fill-height(
     v-if="$route.name == 'conversation'",
     :rounded="$vuetify.breakpoint.mdAndUp ? 'lg' : '0'"
   )
     router-view
-  
-  .pa-5.flex-grow-1(v-else)
-    h4.text-body-2.font-weight-medium.text-center No conversation selected
 </template>
 
 <script>
 import Conversations from "./Conversations";
+import NewConversationDialog from '@/views/messages/NewConversationDialog';
 
 export default {
   name: "Messages",
-  components: { Conversations },
+  components: { Conversations, NewConversationDialog },
+  data: () => ({
+    newConversationDialog: false,
+  }),
 };
 </script>
