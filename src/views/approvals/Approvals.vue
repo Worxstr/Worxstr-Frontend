@@ -22,9 +22,9 @@ v-container.approvals(v-else)
 
   
   .mb-5(v-if="approvedTimecards.length")
-    v-toolbar(flat, color="transparent")
+    v-toolbar.no-padding(flat, color="transparent")
       v-toolbar-title.text-h6
-        span Pending payments
+        span Pending
         v-chip(small class="mx-3 pa-2 font-weight-black") {{approvedTimecards.length}}
       v-spacer
       v-btn(text, @click="openPaymentDialog(approvedTimecards)")
@@ -32,7 +32,7 @@ v-container.approvals(v-else)
         |
         | Complete payments
 
-    v-expansion-panels(popout)
+    v-expansion-panels()
       v-expansion-panel(
         v-for="timecard in approvedTimecards",
         :key="timecard.id"
@@ -66,9 +66,9 @@ v-container.approvals(v-else)
             p ${{ timecard.total_payment }} earned
 
   .mb-5(v-if="unapprovedTimecards.length")
-    v-toolbar(flat, color="transparent")
+    v-toolbar.no-padding(flat, color="transparent")
       v-toolbar-title.text-h6
-        span Unapproved timecards
+        span Unapproved
         v-chip(small class="mx-3 pa-2 font-weight-black") {{unapprovedTimecards.length}}
 
       v-spacer
@@ -81,7 +81,7 @@ v-container.approvals(v-else)
         |
         | Approve all
 
-    v-expansion-panels(popout)
+    v-expansion-panels()
       v-expansion-panel(
         v-for="timecard in unapprovedTimecards",
         :key="timecard.id"
@@ -199,3 +199,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .no-padding .v-toolbar__content {
+    padding: 0 !important;
+  }
+</style>

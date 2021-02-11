@@ -31,10 +31,12 @@ v-app
         v-btn(text :to="{ name: 'signUp' }" active-class='primary--text')
           | Sign up
 
-  v-main.grey.lighten-3
-    v-container.pa-0.fill-height.align-start(fluid)
+  v-main.grey.lighten-3(
+    :style="`padding-bottom: ${$route.meta && $route.meta.fullHeight ? '0px' : ''}`"
+  )
+    v-container.pa-0.align-start(fluid)
       transition(appear name='slide-y-transition' mode='out-in')
-        router-view
+        router-view(:style="`height: calc(100vh - ${$vuetify.breakpoint.mdAndUp ? '65' : '56'}px)`")
 
   transition(name='slide-fade')
     v-bottom-navigation(

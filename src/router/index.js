@@ -84,7 +84,8 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      restrict: [EMPLOYEE, MANAGER]
+      restrict: [EMPLOYEE, MANAGER],
+      fullHeight: true,
     }
   },
   {
@@ -93,12 +94,15 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      restrict: [EMPLOYEE, MANAGER]
+      restrict: [EMPLOYEE, MANAGER],
     },
     children: [{
       name: 'conversation',
       path: 'conversation/:conversationId',
-      component: Conversation
+      component: Conversation,
+      meta: {
+        fullHeight: true,
+      }
     }]
   }
 ]

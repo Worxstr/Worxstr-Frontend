@@ -2,14 +2,14 @@
 v-container.messages.fill-height.align-start.d-flex.flex-row.pa-md-2.pa-0
   new-conversation-dialog(:opened.sync="newConversationDialog")
   v-btn(
-    v-if="!$vuetify.breakpoint.mdAndUp && $route.name != 'conversation'"
-    fab
-    app
-    absolute
+    v-if="!$vuetify.breakpoint.mdAndUp && $route.name != 'conversation'",
+    fab,
+    app,
+    absolute,
     bottom,
     right,
     color="primary",
-    style="transform: translatey(-180%)"
+    style="transform: translatey(-180%)",
     @click="newConversationDialog = true"
   )
     v-icon mdi-plus
