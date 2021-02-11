@@ -11,18 +11,7 @@ v-app.d-flex.flex-column.fill-height
       authenticatedUser.roles &&\
       !$vuetify.breakpoint.smAndDown\
       ')
-        v-btn(v-for='route in $router.options.routes.filter(\
-          r =>\
-          r.meta &&\
-          (\
-            (r.meta.icon && !r.meta.restrict) ||\
-            (r.meta.icon &&\
-            r.meta.restrict &&\
-            r.meta.restrict.some((role) =>\
-            authenticatedUser.roles.map((r) => r.id).includes(role)\
-            ))\
-          )\
-        )'
+        v-btn(v-for='route in navLinks'
         :key='route.name'
         text=''
         :to='{ name: route.name }'
@@ -68,8 +57,7 @@ v-app.d-flex.flex-column.fill-height
 
   transition(name='slide-fade')
     v-bottom-navigation(
-      v-model='value'
-      :input-value='active'
+      style='transform: translateY(-100%) !important;'
       color='indigo'
       grow
       v-if="\
@@ -77,19 +65,12 @@ v-app.d-flex.flex-column.fill-height
         authenticatedUser &&\
         authenticatedUser.roles &&\
         $route.name != 'home' &&\
-        $route.name != 'conversation'"
+        $route.name != 'conversation'\
+        "
     )
+        
       v-btn(
-        v-for='route in $router.options.routes.filter(\
-          (r) =>\
-          r.meta &&\
-          ((r.meta.icon && !r.meta.restrict) ||\
-          (r.meta.icon &&\
-          r.meta.restrict &&\
-          r.meta.restrict.some((role) =>\
-          authenticatedUser.roles.map((r) => r.id).includes(role)\
-          )))\
-        )'
+        v-for='route in navLinks'
         :key='route.name'
         :value='route.name'
         :to='{ name: route.name }'
@@ -118,14 +99,14 @@ v-app.d-flex.flex-column.fill-height
 
 </template>
 
-<script lang="ts">
+<script>
 import Vue from "vue";
 import { mapState, mapActions } from "vuex";
 
 export default Vue.extend({
   name: "App",
   mounted() {
-    const storedUser = localStorage.getItem("authenticatedUser");
+    // const storedUser = localStorage.getItem("authenticatedUser");
     // if (storedUser) {
     //   this.$store.commit("SET_AUTHENTICATED_USER", {
     //     user: JSON.parse(storedUser),
@@ -141,6 +122,18 @@ export default Vue.extend({
   },
   computed: {
     ...mapState(["authenticatedUser", "snackbar"]),
+    navLinks() {
+      return this.$router.options.routes.filter(r =>
+        r.meta &&
+        (
+          (r.meta.icon && !r.meta.restrict) ||
+          (r.meta.icon &&
+            r.meta.restrict &&
+            r.meta.restrict.some((role) => this.authenticatedUser.roles.map((r) => r.id).includes(role)
+          ))
+        )
+      )
+    }
   },
   data: () => ({
     links: [
