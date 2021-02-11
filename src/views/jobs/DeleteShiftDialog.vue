@@ -5,9 +5,12 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card
+  v-card.d-flex.flex-column
     v-card-title.headline Delete shift {{shift.id}}?
     v-card-text {{ employeeName }} will no longer work this shift.
+
+    v-spacer
+    
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel

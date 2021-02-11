@@ -5,18 +5,18 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card
+  v-card.d-flex.flex-column
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")
         v-progress-circular(indeterminate)
 
-    v-form(
+    v-form.flex-grow-1.d-flex.flex-column(
       v-if="editedShift",
       @submit.prevent="updateShift",
       ref="form",
       v-model="isValid"
     )
-      v-toolbar(flat)
+      v-toolbar.flex-grow-0(flat)
         v-toolbar-title {{ create ? 'Creating shift' : 'Editing shift' }}
         
       v-card-text
@@ -60,6 +60,9 @@ v-dialog(
               label="End time",
               :rules="rules.timeEnd"
             )
+
+      v-spacer
+
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel

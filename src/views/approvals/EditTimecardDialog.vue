@@ -5,9 +5,9 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card
-    v-form(@submit.prevent="updateTimecard", v-model="form.isValid" v-if="timecard")
-      v-toolbar(flat)
+  v-card.d-flex.flex-column
+    v-form.flex-grow-1.d-flex.flex-column(@submit.prevent="updateTimecard", v-model="form.isValid" v-if="timecard")
+      v-toolbar.flex-grow-0(flat)
         v-toolbar-title
           | Editing timecard for
           | {{ timecard.first_name }}
@@ -38,6 +38,9 @@ v-dialog(
           v-model="form.data.timeOut.time",
           label="Time out"
         )
+
+      v-spacer
+      
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel

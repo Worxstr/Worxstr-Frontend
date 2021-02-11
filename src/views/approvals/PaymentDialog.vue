@@ -5,8 +5,8 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card
-    v-toolbar(flat)
+  v-card.d-flex.flex-column
+    v-toolbar.flex-grow-0(flat)
       v-btn(icon, @click="closeDialog")
         v-icon mdi-close
       v-toolbar-title Complete payment
@@ -32,6 +32,9 @@ v-dialog(
           | Payment successful. Your PayPal order ID is:
         p.green--text.font-weight-black.mx-1
           | {{ transaction.orderID }}
+
+    v-spacer
+
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel

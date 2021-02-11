@@ -5,18 +5,18 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card(v-if="editedJob")
+  v-card.d-flex.flex-column(v-if="editedJob")
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")
         v-progress-circular(indeterminate)
 
-    v-form(
+    v-form.flex-grow-1.d-flex.flex-column(
       v-if="editedJob",
       @submit.prevent="updateJob",
       ref="form",
       v-model="isValid"
     )
-      v-toolbar(flat)
+      v-toolbar.flex-grow-0(flat)
         v-toolbar-title {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
 
       v-card-text.py-0
@@ -89,6 +89,9 @@ v-dialog(
           :rules="rules.consultantEmail",
           required
         )
+
+      v-spacer
+
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel

@@ -5,11 +5,14 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card
+  v-card.d-flex.flex-column
     v-card-title.headline Deny timecard?
     v-card-text(v-if="timecard")
       | {{ timecard.first_name }} {{ timecard.last_name }} will not be paid for
       | this shift.
+
+    v-spacer
+    
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel

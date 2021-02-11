@@ -5,7 +5,7 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card
+  v-card.d-flex.flex-column
     v-card-title.headline New conversation
     v-card-text
         p Select the person you want to message
@@ -17,6 +17,8 @@ v-dialog(
             dense
             :item-text="(u) => `${u.first_name} ${u.last_name}`",
         )
+
+    v-spacer
 
     v-card-actions
       v-spacer

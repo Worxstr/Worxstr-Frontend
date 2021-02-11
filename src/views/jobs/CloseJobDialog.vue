@@ -5,9 +5,12 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card
+  v-card.d-flex.flex-column
     v-card-title.headline Close {{job.name}}?
     v-card-text This cannot be undone.
+
+    v-spacer
+    
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel

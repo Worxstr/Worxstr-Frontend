@@ -5,7 +5,7 @@ v-dialog(
   max-width="500",
   persistent
 )
-  v-card
+  v-card.d-flex.flex-column
     v-card-title.headline
       | Approve
       | {{ timecards.length == 1 ? 'this timecard' : 'these timecards' }}?
@@ -38,6 +38,8 @@ v-dialog(
             span.font-weight-black.mx-1 ${{ timecard.total_payment }}
             |
             | in cash.
+
+    v-spacer
             
     v-card-actions
       v-spacer
