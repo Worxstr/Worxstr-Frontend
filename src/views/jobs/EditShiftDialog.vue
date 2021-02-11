@@ -18,7 +18,7 @@ v-dialog(
     )
       v-toolbar(flat)
         v-toolbar-title {{ create ? 'Creating shift' : 'Editing shift' }}
-      code {{editedShift}}
+        
       v-card-text
         v-select(
           v-model="editedShift.employee_id",

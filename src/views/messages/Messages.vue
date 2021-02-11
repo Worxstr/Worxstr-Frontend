@@ -12,6 +12,9 @@ v-container.messages.fill-height.align-start.d-flex.flex-row.pa-md-2.pa-0
     :rounded="$vuetify.breakpoint.mdAndUp ? 'lg' : '0'"
   )
     router-view
+  
+  .pa-5.flex-grow-1(v-else)
+    h4.text-body-2.font-weight-medium.text-center No conversation selected
 </template>
 
 <script>
