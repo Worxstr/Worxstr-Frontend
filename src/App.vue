@@ -36,7 +36,7 @@ v-app
   )
     v-container.pa-0.align-start(fluid)
       transition(appear name='slide-y-transition' mode='out-in')
-        router-view(:style="`height: calc(100vh - ${$vuetify.breakpoint.mdAndUp ? '65' : '56'}px)`")
+        router-view(:style="`height: calc(100vh - ${$vuetify.breakpoint.mdAndUp ? 65 : (56 + ($route.meta.hideNav ? 56 : 0))}px)`")
 
   transition(name='slide-fade')
     v-bottom-navigation(
@@ -47,7 +47,6 @@ v-app
         authenticatedUser &&\
         authenticatedUser.roles &&\
         $vuetify.breakpoint.smAndDown &&\
-        $route.name != 'home' &&\
         $route.name != 'conversation'\
         "
     )
@@ -89,12 +88,12 @@ import { mapState, mapActions } from "vuex";
 export default Vue.extend({
   name: "App",
   mounted() {
-    const storedUser = localStorage.getItem("authenticatedUser");
-    if (storedUser) {
-      this.$store.commit("SET_AUTHENTICATED_USER", {
-        user: JSON.parse(storedUser),
-      });
-    }
+    // const storedUser = localStorage.getItem("authenticatedUser");
+    // if (storedUser) {
+    //   this.$store.commit("SET_AUTHENTICATED_USER", {
+    //     user: JSON.parse(storedUser),
+    //   });
+    // }
     // Refresh user data in case of an update
     this.$store.dispatch("getAuthenticatedUser");
   },
@@ -112,6 +111,7 @@ export default Vue.extend({
           (r.meta.icon && !r.meta.restrict) ||
           (r.meta.icon &&
             r.meta.restrict &&
+            this.authenticatedUser &&
             r.meta.restrict.some((role) => this.authenticatedUser.roles.map((r) => r.id).includes(role)
           ))
         )

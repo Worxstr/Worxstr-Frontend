@@ -86,6 +86,7 @@ const routes = [
       icon: 'mdi-calendar-multiselect',
       restrict: [EMPLOYEE, MANAGER],
       fullHeight: true,
+      hideNav: true,
     }
   },
   {

@@ -10,7 +10,7 @@ Vue.use(Vuex)
 
 axios.defaults.withCredentials = true
 
-const baseUrl = process.env.VUE_APP_API_BASE_URL
+const baseUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace('8080', '5000')
 
 const store = new Vuex.Store({
   state: {
