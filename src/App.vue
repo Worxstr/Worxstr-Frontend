@@ -83,7 +83,7 @@ v-app
 
 <script>
 import Vue from "vue";
-import { mapState, mapActions } from "vuex";
+import { mapState } from "vuex";
 
 export default Vue.extend({
   name: "App",
@@ -122,10 +122,6 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-// .v-bottom-navigation {
-//   transform: initial !important;
-//   height: 56px !important;
-// }
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: all 0.2s ease !important;
@@ -136,11 +132,4 @@ export default Vue.extend({
   height: 0 !important;
   opacity: 0;
 }
-
-// .v-main__wrap {
-//   height: 100% !important;
-// }
-// .v-app-bar {
-//   z-index: 1;
-// }
 </style>
