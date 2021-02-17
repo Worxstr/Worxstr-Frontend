@@ -61,6 +61,7 @@ const store = new Vuex.Store({
       all: [],
       byId: []
     },
+    contacts: [],
   },
   mutations: {
     SHOW_SNACKBAR(state, snackbar) {
@@ -156,6 +157,9 @@ const store = new Vuex.Store({
       Vue.set(state.conversations.byId, conversation.id, conversation)
       if (!state.conversations.all.includes(conversation.id))
         state.conversations.all.push(conversation.id)
+    },
+    UPDATE_CONTACTS(state, contacts) {
+      state.contacts = contacts;
     },
     ADD_MESSAGE(state, { conversationId, message }) {
       state.conversations.byId[conversationId].messages.push(message)
@@ -500,6 +504,17 @@ const store = new Vuex.Store({
         url: `${baseUrl}/conversations/${conversationId}`
       }) 
       commit('ADD_CONVERSATION', data.conversation)
+    },
+
+    async loadContacts({ commit }) {
+      
+      // TODO: Flatten contacts data into users store
+
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/conversations/contacts`
+      })
+      commit('UPDATE_CONTACTS', data.contacts);
     },
 
     async sendMessage({ commit }, { message, conversationId }) {

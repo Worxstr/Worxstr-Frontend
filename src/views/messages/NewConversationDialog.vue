@@ -11,7 +11,8 @@ v-dialog(
         p Select the person you want to message
         v-autocomplete(
             v-model="selectedUser"
-            :items="people"
+            :items="contacts"
+            multiple
             placeholder="Find someone"
             outlined
             dense
@@ -32,19 +33,21 @@ v-dialog(
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: "newConversationDialog",
   props: {
     opened: Boolean,
   },
+  mounted() {
+    this.$store.dispatch('loadContacts');
+  },
+  computed: {
+    ...mapState(['contacts'])
+  },
   data: () => ({
     loading: false,
-    people: [
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        { first_name: 'Employee', last_name: 'One', id: 1 },
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        { first_name: 'Employee', last_name: 'Two', id: 2 },
-    ]
   }),
   methods: {
     closeDialog() {
