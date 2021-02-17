@@ -22,6 +22,9 @@ v-app
       v-spacer
 
       div(v-if='authenticatedUser')
+        v-btn(icon :to="{ name: 'settings' }")
+          v-icon mdi-cog
+
         v-btn(icon @click='signOut')
           v-icon mdi-logout-variant
 

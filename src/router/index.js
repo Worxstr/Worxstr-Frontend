@@ -1,17 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Home from '../views/Home.vue'
-import SignIn from '../views/SignIn.vue'
-import SignUp from '../views/SignUp.vue'
-import Clock from '../views/Clock.vue'
-import Approvals from '../views/approvals/Approvals.vue'
-import Availability from '../views/Availability.vue'
-import Jobs from '../views/jobs/Jobs.vue'
-import Job from '../views/jobs/Job.vue'
-import Schedule from '../views/Schedule.vue'
-import Messages from '../views/messages/Messages.vue'
-import Conversation from '../views/messages/Conversation.vue'
+import Home from '@/views/Home.vue'
+import SignIn from '@/views/SignIn.vue'
+import SignUp from '@/views/SignUp.vue'
+import Clock from '@/views/Clock.vue'
+import Approvals from '@/views/approvals/Approvals.vue'
+import Availability from '@/views/Availability.vue'
+import Jobs from '@/views/jobs/Jobs.vue'
+import Job from '@/views/jobs/Job.vue'
+import Schedule from '@/views/Schedule.vue'
+import Messages from '@/views/messages/Messages.vue'
+import Conversation from '@/views/messages/Conversation.vue'
+import Settings from '@/views/Settings.vue'
 
 Vue.use(VueRouter)
 
@@ -105,6 +106,11 @@ const routes = [
         fullHeight: true,
       }
     }]
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: Settings,
   }
 ]
 
