@@ -14,8 +14,7 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
         :key="participant.id",
         v-if="participant.id != authenticatedUser.id"
       )
-        | {{ participant.first_name }}
-        span(v-if="conversation.participants.length == 2") &nbsp;{{ participant.last_name }}
+        | {{ participant.first_name }} {{ participant.last_name }}
         span(v-if="index != conversation.participants.length - 1 && conversation.participants.length != 2")
           | ,&nbsp;
 

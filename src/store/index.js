@@ -153,10 +153,12 @@ const store = new Vuex.Store({
       if (!state.events.all.includes(event.id))
         state.events.all.push(event.id)
     },
-    ADD_CONVERSATION(state, conversation) {
+    ADD_CONVERSATION(state, {conversation, prepend}) {
       Vue.set(state.conversations.byId, conversation.id, conversation)
       if (!state.conversations.all.includes(conversation.id))
-        state.conversations.all.push(conversation.id)
+        prepend ?
+          state.conversations.all.unshift(conversation.id):
+          state.conversations.all.push(conversation.id)
     },
     UPDATE_CONTACTS(state, contacts) {
       state.contacts = contacts;
@@ -493,8 +495,8 @@ const store = new Vuex.Store({
         method: 'GET',
         url: `${baseUrl}/conversations`
       })
-      data.conversations.forEach(c => {
-        commit('ADD_CONVERSATION', c)
+      data.conversations.forEach(conversation => {
+        commit('ADD_CONVERSATION', {conversation})
       })
     },
 
@@ -503,7 +505,19 @@ const store = new Vuex.Store({
         method: 'GET',
         url: `${baseUrl}/conversations/${conversationId}`
       }) 
-      commit('ADD_CONVERSATION', data.conversation)
+      commit('ADD_CONVERSATION', {conversation: data.conversation})
+    },
+
+    async createConversation({ commit }, userIds) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/conversations`,
+        data: {
+          users: userIds
+        }
+      })
+      commit('ADD_CONVERSATION', {conversation: data.conversation, prepend: true})
+      return data.conversation
     },
 
     async loadContacts({ commit }) {

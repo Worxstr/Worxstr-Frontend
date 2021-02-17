@@ -6,29 +6,37 @@ v-dialog(
   persistent
 )
   v-card.d-flex.flex-column
-    v-card-title.headline New conversation
-    v-card-text
-        p Select the person you want to message
-        v-autocomplete(
-            v-model="selectedUser"
-            :items="contacts"
-            multiple
-            placeholder="Find someone"
-            outlined
-            dense
-            :item-text="(u) => `${u.first_name} ${u.last_name}`",
-        )
+    v-form.flex-grow-1.d-flex.flex-column(
+      @submit.prevent="createConversation",
+      ref="form",
+      v-model="isValid"
+    )
 
-    v-spacer
+      v-card-title.headline New conversation
+      v-card-text
+          p Select the person you want to message
+          v-autocomplete(
+              v-model="selectedUsers"
+              :items="contacts"
+              multiple
+              placeholder="Find someone"
+              outlined
+              dense
+              :rules="[ v => v.length != 0 ]"
+              :item-text="(u) => `${u.first_name} ${u.last_name}`",
+              :item-value="u => u.id"
+          )
 
-    v-card-actions
       v-spacer
-      v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="primary", @click="deleteShift") Send message
-      
-    v-fade-transition
-      v-overlay(v-if="loading", absolute, opacity=".2")
-        v-progress-circular(indeterminate)
+
+      v-card-actions
+        v-spacer
+        v-btn(text, @click="closeDialog") Cancel
+        v-btn(text, color="primary", @click="createConversation" :disabled="!isValid") Send message
+        
+      v-fade-transition
+        v-overlay(v-if="loading", absolute, opacity=".2")
+          v-progress-circular(indeterminate)
 
 </template>
 
@@ -47,17 +55,21 @@ export default {
     ...mapState(['contacts'])
   },
   data: () => ({
+    isValid: false,
     loading: false,
+    selectedUsers: []
   }),
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
+      this.$refs.form.reset();
     },
-    async deleteShift() {
+    async createConversation() {
       this.loading = true
-    //   await this.$store.dispatch("deleteShift", this.shift.id);
+      const conversation = await this.$store.dispatch("createConversation", this.selectedUsers);
+      this.$router.push({name: 'conversation', params: {conversationId: conversation.id}})
       this.loading = false
-      this.closeDialog();
+      this.closeDialog()
     },
   },
 };
