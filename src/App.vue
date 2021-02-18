@@ -1,7 +1,7 @@
 <template lang="pug">
 
 v-app
-  v-app-bar(app color='white' elevate-on-scroll)
+  v-app-bar(app :color="$vuetify.theme.dark ? 'black' : 'white'" elevate-on-scroll)
     v-container.py-0.fill-height
       router-link(to='/' style='text-decoration: none')
         v-avatar.mr-10(tile size='50')
@@ -34,7 +34,8 @@ v-app
         v-btn(text :to="{ name: 'signUp' }" active-class='primary--text')
           | Sign up
 
-  v-main.grey.lighten-3(
+  v-main(
+    :class="{'grey': !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark}"
     :style="`padding-bottom: ${$route.meta && $route.meta.fullHeight ? '0px' : ''}`"
   )
     v-container.pa-0.align-start(fluid)

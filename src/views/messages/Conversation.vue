@@ -15,7 +15,9 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
         v-if="participant.id != authenticatedUser.id"
       )
         | {{ participant.first_name }} {{ participant.last_name }}
-        span(v-if="index != conversation.participants.length - 1 && conversation.participants.length != 2")
+        span(
+          v-if="index != conversation.participants.length - 1 && conversation.participants.length != 2"
+        )
           | ,&nbsp;
 
   //- transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
@@ -28,14 +30,16 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
       :key="message.id",
       :class="message.sender_id == authenticatedUser.id ? 'right' : 'left'"
     )
-      p.grey.lighten-3.px-4.py-2.mb-2.rounded-xl
+      p.px-4.py-2.mb-2.rounded-xl.grey(
+        :class="{ 'lighten-3': !$vuetify.theme.dark, 'darken-3': $vuetify.theme.dark }"
+      )
         | {{ message.body }}
 
   form.d-flex.flex-row.align-center.pa-3(@submit.prevent="sendMessage")
     v-text-field(
       v-model="message",
       ref="message",
-      background-color="grey lighten-3",
+      :background-color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`",
       flat,
       hide-details,
       rounded,
@@ -64,7 +68,7 @@ export default {
       this.messages = [];
     },
   },
-  data: () => ({ 
+  data: () => ({
     message: "",
   }),
   computed: {
@@ -81,7 +85,7 @@ export default {
   },
   methods: {
     sendMessage() {
-      this.$socket.emit('test', {test: 1})
+      this.$socket.emit("test", { test: 1 });
       this.$store.dispatch("sendMessage", {
         message: {
           body: this.message,
