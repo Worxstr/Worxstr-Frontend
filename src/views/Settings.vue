@@ -22,8 +22,14 @@
 							td.stretch {{ authenticatedUser.employee_info.address }}
 
 						tr(v-if="authenticatedUser.employee_info")
-							td SSN
-							td.stretch {{ authenticatedUser.employee_info.ssn}}
+							td Social Security number
+							td {{ authenticatedUser.employee_info.ssn}}
+							td.stretch
+								div.d-flex(v-if="profile.editSSN") 
+									v-text-field.input-large(dense hide-details label="SSN") 
+									v-btn(text color='primary' @click="profile.editSSN = false") Save
+
+								v-btn(v-else text color='primary' @click="profile.editSSN = true") Set SSN
 
 					v-subheader Preferences
 						
@@ -31,13 +37,12 @@
 						tr
 							td.stretch Dark mode
 							td
-								v-select(
+								v-select.input-small(
 									v-model="preferences.darkMode"
 									disabled
 									:items="['System default', 'Light', 'Dark']"
 									dense
 									hide-details
-									style='width: 150px'
 								)
 </template>
 
@@ -50,9 +55,12 @@ export default {
 		...mapState(['authenticatedUser']),
 	},
 	data: () => ({
+		profile: {
+			editSSN: false,
+		},
 		preferences: {
-			darkMode: 'System default'
-		}
+			darkMode: 'System default',
+		},
 	})
 };
 </script>
@@ -62,9 +70,16 @@ export default {
 	.settings-table {
 		th, td {
 			padding: 15px 20px;
+			white-space: nowrap;
 		}
 		td.stretch {
 			width: 100%;
+		}
+		.input-large {
+			width: 250px;
+		}
+		.input-small {
+			width: 150px;
 		}
 	}
 
