@@ -40,7 +40,8 @@ v-app
   )
     v-container.pa-0.align-start(fluid)
       transition(appear name='slide-y-transition' mode='out-in')
-        router-view(:style="`height: calc(100vh - ${$vuetify.breakpoint.mdAndUp ? 65 : (56 + ($route.meta.hideNav ? 56 : 0))}px)`")
+        router-view(:style='`height: ${pageHeight}`')
+          
 
   transition(name='slide-fade')
     v-bottom-navigation(
@@ -120,6 +121,18 @@ export default Vue.extend({
   },
   computed: {
     ...mapState(["authenticatedUser", "snackbar"]),
+    pageHeight() {
+      if (this.$route.meta.fullHeight)
+        return '100%'
+      else
+        if (this.$vuetify.breakpoint.mdAndUp)
+          return '100vh - 65'
+        else
+          if (this.$route.meta.hideNav)
+            return '100vh - 56'
+          else
+            return '100vh - 112'
+    },
     navLinks() {
       return this.$router.options.routes.filter(
         (r) =>

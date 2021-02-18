@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container.clock.d-flex.flex-column.flex-md-row-reverse.justify-md-center.align-md-start
     .mx-15.d-flex.align-center.align-md-start.flex-column.justify-center(
-      style='margin-top: 20vh; margin-bottom: 15vh; top: 60px; position: sticky'
+      style='margin-top: 20vh; margin-bottom: 15vh; top: 120px; position: sticky'
     )
       div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
         h6.text-h6
@@ -84,7 +84,7 @@
       div(v-else)
         h6.text-h6 You have no upcoming shifts
 
-    v-card.align-self-center(width='100%' max-width='500px' rounded='lg')
+    v-card.align-self-center(width='100%' max-width='500px' rounded='lg' style="margin-bottom: 60px")
 
       v-card-title.ma-1 Your history
 

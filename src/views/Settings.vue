@@ -31,11 +31,13 @@
 						tr
 							td.stretch Dark mode
 							td
-								v-switch(
-									v-model="$vuetify.theme.dark"
-									inset
+								v-select(
+									v-model="preferences.darkMode"
+									disabled
+									:items="['System default', 'Light', 'Dark']"
 									dense
-									persistent-hint
+									hide-details
+									style='width: 150px'
 								)
 </template>
 
@@ -46,7 +48,12 @@ export default {
   name: "settings",
 	computed: {
 		...mapState(['authenticatedUser']),
-	}
+	},
+	data: () => ({
+		preferences: {
+			darkMode: 'System default'
+		}
+	})
 };
 </script>
 
@@ -54,7 +61,7 @@ export default {
 	
 	.settings-table {
 		th, td {
-			padding: 20px 20px;
+			padding: 15px 20px;
 		}
 		td.stretch {
 			width: 100%;
