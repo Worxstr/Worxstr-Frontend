@@ -1,7 +1,7 @@
 <template lang="pug">
 
 v-app
-  v-app-bar(app :color="$vuetify.theme.dark ? 'black' : 'white'" elevate-on-scroll)
+  v-app-bar(app :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'" elevate-on-scroll)
     v-container.py-0.fill-height
       router-link(to='/' style='text-decoration: none')
         v-avatar.mr-10(tile size='50')
@@ -100,27 +100,39 @@ export default Vue.extend({
     // }
     // Refresh user data in case of an update
     this.$store.dispatch("getAuthenticatedUser");
+    this.initDarkMode();
   },
   methods: {
     signOut() {
       this.$store.dispatch("signOut");
     },
+    initDarkMode() {
+      const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+      darkMediaQuery.addEventListener("change", (e) => {
+        this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      });
+
+      if (darkMediaQuery.matches) {
+        setTimeout(() => (this.$vuetify.theme.dark = true), 0);
+      }
+    },
   },
   computed: {
     ...mapState(["authenticatedUser", "snackbar"]),
     navLinks() {
-      return this.$router.options.routes.filter(r =>
-        r.meta &&
-        (
-          (r.meta.icon && !r.meta.restrict) ||
-          (r.meta.icon &&
-            r.meta.restrict &&
-            this.authenticatedUser &&
-            r.meta.restrict.some((role) => this.authenticatedUser.roles.map((r) => r.id).includes(role)
-          ))
-        )
-      )
-    }
+      return this.$router.options.routes.filter(
+        (r) =>
+          r.meta &&
+          ((r.meta.icon && !r.meta.restrict) ||
+            (r.meta.icon &&
+              r.meta.restrict &&
+              this.authenticatedUser &&
+              r.meta.restrict.some((role) =>
+                this.authenticatedUser.roles.map((r) => r.id).includes(role)
+              )))
+      );
+    },
   },
 });
 </script>

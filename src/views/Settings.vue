@@ -15,19 +15,15 @@
 						
 						tr 
 							td Organization
-							td.stretch {{ authenticatedUser.organization_info.name || "Not available" }}
+							td.stretch {{ authenticatedUser.organization_info.name }}
 
-						tr
+						tr(v-if="authenticatedUser.employee_info")
 							td Address
-							td.stretch {{ authenticatedUser.address || "Not available"  }}
+							td.stretch {{ authenticatedUser.employee_info.address }}
 
-						tr
-							td Date of birth
-							td.stretch {{ authenticatedUser.dob || "Not available"  }}
-
-						tr
-							td Social Security number
-							td.stretch {{ authenticatedUser.ssn || "Not available" }}
+						tr(v-if="authenticatedUser.employee_info")
+							td SSN
+							td.stretch {{ authenticatedUser.employee_info.ssn}}
 
 					v-subheader Preferences
 						
