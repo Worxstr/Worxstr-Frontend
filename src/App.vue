@@ -64,24 +64,24 @@ v-app
         span {{ route.name | capitalize }}
         v-icon {{ route.meta.icon }}
 
-    v-snackbar(
-      app
-      v-model='snackbar.show'
-      :timeout='snackbar.timeout'
-    )
-      | {{ snackbar.text }}
+  v-snackbar(
+    app
+    v-model='snackbar.show'
+    :timeout='snackbar.timeout'
+  )
+    | {{ snackbar.text }}
 
-      template(
-        v-slot:action='{ attrs }'
-        v-if='snackbar.action'
+    template(
+      v-slot:action='{ attrs }'
+      v-if='snackbar.action'
+    )
+      v-btn(
+        color='blue'
+        text
+        v-bind='attrs'
+        @click='snackbar.show = false'
       )
-        v-btn(
-          color='blue'
-          text
-          v-bind='attrs'
-          @click='snackbar.show = false'
-        )
-          | Close
+        | Close
 
 </template>
 
