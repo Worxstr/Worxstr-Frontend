@@ -2,7 +2,7 @@
   v-container.home.fill-height.d-flex.flex-column.justify-center.align-center
     img.ma-8(src="@/assets/logo.svg" width='180')
     h2.text-h2.font-weight-bold.mb-2 Worxstr
-    p.text-subtitle-2 Uhhhh idk what else to put here
+    p.text-subtitle-2
     v-btn(v-if='authenticatedUser' @click='signOut' color='primary') Sign out
     v-btn(v-else :to="{name: 'signIn'}" color='primary') Sign in
     div(style='height: 160px;display: block')
