@@ -50,6 +50,10 @@ v-container.approvals(v-if="job")
         p.text-subtitle-2.mb-1 Consultant
         p {{ job.consultant_name }}
 
+      .flex-grow-1.px-5
+        p.text-subtitle-2.mb-1 Consultant code
+        p {{ job.consultant_code }}
+
   v-toolbar(flat, color="transparent")
     v-toolbar-title.text-h6 Shifts
     v-spacer

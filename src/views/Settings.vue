@@ -35,7 +35,7 @@
 						
 					table.settings-table
 						tr
-							td.stretch Dark mode
+							td.stretch Color theme
 							td
 								v-select.input-small(
 									v-model="preferences.darkMode"

@@ -23,17 +23,26 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
+    meta: {
+      fullHeight: true
+    }
   },
   {
     path: '/sign-in',
     name: 'signIn',
-    component: SignIn
+    component: SignIn,
+    meta: {
+      fullHeight: true
+    }
   },
   {
     path: '/sign-up',
     alias: '/confirmed',
     name: 'signUp',
     component: SignUp,
+    meta: {
+      fullHeight: true
+    }
   },
   {
     path: '/clock',
