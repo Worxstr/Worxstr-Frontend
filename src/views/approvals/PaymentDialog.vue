@@ -1,9 +1,11 @@
 <template lang="pug">
 v-dialog(
+  id="payment-dialog"
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
   max-width="500",
   persistent
+  eager
 )
   v-card.d-flex.flex-column
     v-toolbar.flex-grow-0(flat)
@@ -25,9 +27,9 @@ v-dialog(
       paypal-buttons(
         :createorder="createOrder",
         :onapprove="onApprove",
-        v-if="!transaction"
+        v-if="renderPaypal && !transaction"
       )
-      div(v-else)
+      div(v-if="transaction")
         p.text-subtitle-2.green--text.d-flex.align-center.my-2
           | Payment successful. Your PayPal order ID is:
         p.green--text.font-weight-black.mx-1
@@ -54,6 +56,13 @@ export default {
     opened: Boolean,
     timecards: Array,
     transaction: null,
+  },
+  data: () => ({
+    renderPaypal: false
+  }),
+  mounted() {
+    // Wait to render paypal buttons so the DOM container is not removed
+    setTimeout(() => this.renderPaypal = true, 1)
   },
   computed: {
     totalPayment() {
