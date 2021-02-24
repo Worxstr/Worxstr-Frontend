@@ -1,199 +1,166 @@
-<template>
-  <v-container
-    class="clock d-flex flex-column flex-md-row-reverse justify-md-center align-md-start"
-  >
-    <div
-      class="mx-15 d-flex align-center align-md-start flex-column justify-center"
-      style="margin-top: 20vh; margin-bottom: 15vh; top: 60px; position: sticky"
-    >
-      <h6 class="text-h6">Your shift ends at</h6>
-      <h3 class="text-h3 py-2 font-weight-bold">
-        {{
-          nextEvent.timestamp
-            .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-            .replace(/^0(?:0:0?)?/, "")
-        }}
-      </h3>
-      <p class="text-subtitle-2 text-center text-md-left">
-        <countdown :end-time="nextEvent.timestamp">
-          <template v-slot:process="props">
-            <span>
-              That's in
-              <span v-if="props.timeObj.d != 0"
-                >{{ props.timeObj.d }} days,
-              </span>
-              <span v-if="props.timeObj.h != 0"
-                >{{ props.timeObj.h }} hours,
-              </span>
-              <span v-if="props.timeObj.m != 0"
-                >{{ props.timeObj.m }} minutes,
-              </span>
-              {{ props.timeObj.s }} seconds.
-            </span>
-          </template>
-          <template v-slot:finish>
-            <span>That's right now!</span>
-          </template>
-        </countdown>
-      </p>
+<template lang="pug">
+  v-container.clock.d-flex.flex-column.flex-md-row-reverse.justify-md-center.align-md-start
+    .mx-15.d-flex.align-center.align-md-start.flex-column.justify-center(
+      style='margin-top: 20vh; margin-bottom: 15vh; top: 120px; position: sticky'
+    )
+      div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
+        h6.text-h6
+          | Your shift
+          | {{ nextShift.shiftActive ? "ends" : "begins" }}
+          | at
+          | {{ nextShift.site_location }}
+          | at
 
-      <div class="d-flex flex-row">
-        <v-dialog
-          v-model="verifyDialog"
-          fullscreen
-          hide-overlay
-          transition="dialog-bottom-transition"
-        >
-          <v-card
-            class="sign-in fill-height d-flex flex-column justify-center align-center"
-          >
-            <form @submit.prevent="signIn">
-              <v-card-title>Scan your clock in QR code</v-card-title>
+        h3.text-h3.py-2.font-weight-bold
+          | {{
+          | (nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin)
+          | .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          | .replace(/^0(?:0:0?)?/, "")
+          | }}
 
-              <v-card-text>
-                <v-progress-circular indeterminate v-if="qrLoading" />
-                <qrcode-stream
-                  @decode="onDecode"
-                  @init="qrInit"
-                ></qrcode-stream>
-                <qrcode-drop-zone></qrcode-drop-zone>
-                <qrcode-capture></qrcode-capture>
-              </v-card-text>
+        p.text-subtitle-2.text-center.text-md-left
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn text color="primary" type="submit">Sign in</v-btn>
-              </v-card-actions>
-            </form>
+          countdown(:end-time='\
+          nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin\
+          ')
+            template(v-slot:process='props')
+              span
+                | That's in &nbsp;
+                span(v-if='props.timeObj.d != 0')
+                  | {{ props.timeObj.d }} days,
+                span(v-if='props.timeObj.h != 0')
+                  | {{ props.timeObj.h }} hours,
+                span(v-if='props.timeObj.m != 0')
+                  | {{ props.timeObj.m }} minutes,
+                |                 {{ props.timeObj.s }} seconds.
+            template(v-slot:finish)
+              span That's right now!
 
-            <v-fade-transition>
-              <v-overlay absolute opacity="0.2" v-if="loading">
-                <v-progress-circular indeterminate />
-              </v-overlay>
-            </v-fade-transition>
-          </v-card>
-        </v-dialog>
+        .d-flex.flex-row
+          v-dialog(
+            v-model='verifyDialog.opened'
+            :fullscreen='$vuetify.breakpoint.smAndDown'
+            max-width='500'
+          )
+            v-card.sign-in.fill-height
+              form(@submit.prevent='submitCode(verifyDialog.code)')
+                v-card-title Scan your clock in QR code
+                div
+                  qrcode-stream(@decode='submitCode' @init='qrInit')
+                v-card-text
+                  v-text-field(label='Or enter the clock in code' v-model='verifyDialog.code' hide-details)
+                v-card-actions
+                  v-spacer
+                  v-btn(text @click='verifyDialog.opened = false') Cancel
+                  v-btn(text color='primary' type='submit') Submit
 
-        <v-expand-x-transition>
-          <div v-if="!this.clock.break" class="py-2">
-            <v-btn
-              raised
-              :color="clock.clocked ? 'pink' : 'green'"
-              @click="clock.clocked ? clockOut() : openVerifyDialog()"
-              class="pa-6 mr-2"
-              width="130px"
-              dark
-              style="transition: background-color 0.3s"
-            >
-              Clock {{ clock.clocked ? "out" : "in" }}
-            </v-btn>
-          </div>
-        </v-expand-x-transition>
+              v-fade-transition
+                v-overlay(absolute opacity='0.2' v-if='verifyDialog.cameraLoading')
+                  v-progress-circular(indeterminate)
 
-        <v-expand-x-transition>
-          <div v-if="clock.clocked" class="py-2">
-            <v-btn
-              raised
-              :color="this.clock.break ? 'green' : 'amber'"
-              @click="toggleBreak()"
-              class="pa-6"
-              width="130px"
-              dark
-              style="transition: background-color 0.3s"
-            >
-              {{ this.clock.break ? "End" : "Start" }} break
-            </v-btn>
-          </div>
-        </v-expand-x-transition>
-      </div>
-    </div>
+          v-expand-x-transition
+            .py-2(v-if='!onBreak')
+              v-btn.pa-6.mr-2(
+                raised
+                :color="clocked ? 'pink' : 'green'"
+                @click='clocked ? clockOut() : openVerifyDialog()'
+                width='130px'
+                dark
+                style='transition: background-color 0.3s'
+              )
+                | Clock {{ clocked ? "out" : "in" }}
 
-    <v-card
-      class="align-self-center"
-      width="100%"
-      max-width="500px"
-      rounded="lg"
-    >
-      <v-card-title class="ma-1">Your history</v-card-title>
+          v-expand-x-transition
+            .py-2(v-if='clocked')
+              v-btn.pa-6(
+                raised
+                :color="onBreak ? 'green' : 'amber'"
+                @click='toggleBreak(!!onBreak)'
+                width='130px'
+                dark
+                style='transition: background-color 0.3s')
+                | {{ onBreak ? "End" : "Start" }} break
 
-      <v-timeline align-top dense>
-        <transition-group name="scroll-y-transition">
-          <div v-for="event in clockHistory" :key="event.id || event.label">
-            <v-timeline-item v-if="event.label" hide-dot>
-              <span>{{ event.label | date("dddd, MMM D") }}</span>
-            </v-timeline-item>
+      div(v-else)
+        h6.text-h6 You have no upcoming shifts
 
-            <v-timeline-item v-else :color="eventColor(event.action)" small>
-              <v-row class="pt-1">
-                <v-col cols="3">
-                  <strong>{{ event.time | time }}</strong>
-                </v-col>
-                <v-col>
-                  <strong>{{ eventType(event.action) }}</strong>
-                  <div class="caption">{{ event.description }}</div>
-                </v-col>
-              </v-row>
-            </v-timeline-item>
-          </div>
-        </transition-group>
-      </v-timeline>
+    v-card.align-self-center(width='100%' max-width='500px' rounded='lg' style="margin-bottom: 60px")
 
-      <v-card-actions class="d-flex justify-center">
-        <v-btn text color="primary" @click="loadClockHistory">
-          <v-icon right dark> mdi-arrow-down </v-icon>
-          Load previous week
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-container>
+      v-card-title.ma-1 Your history
+
+      div(v-if='clockHistory.length')
+        v-timeline(align-top dense)
+          transition-group(name='scroll-y-transition')
+            div(v-for='event in clockHistory' :key='event.id || event.label')
+
+              v-timeline-item(v-if='event.label' hide-dot)
+                span {{ event.label | date("dddd, MMM D") }}
+
+              v-timeline-item(v-else :color='eventColor(event.action)' small)
+                v-row.pt-1
+                  v-col(cols='3')
+                    strong {{ event.time | time }}
+
+                  v-col
+                    strong {{ eventType(event.action) }}
+                    .caption {{ event.description }}
+
+        v-card-actions.d-flex.justify-center
+          v-btn(text color='primary' @click='loadClockHistory')
+            v-icon(right dark)  mdi-arrow-down 
+            |             Load previous week
+
+      v-card-text(v-else)
+        | No history yet
 </template>
 
 <script>
 import Vue from "vue";
 import vueAwesomeCountdown from "vue-awesome-countdown";
-import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from "vue-qrcode-reader";
+import { QrcodeStream } from "vue-qrcode-reader";
 import { mapState, mapGetters, mapActions } from "vuex";
 
 Vue.use(vueAwesomeCountdown, "vac");
 
-const shiftBegin = new Date();
-// shiftBegin.setDate(shiftBegin.getDate() + 1) // Add a day
-shiftBegin.setHours(9);
-shiftBegin.setMinutes(0);
-shiftBegin.setSeconds(0);
-
-const shiftEnd = shiftBegin;
-shiftEnd.setHours(17);
-
 export default {
-  name: "Clock",
+  name: "clock",
   data: () => ({
-    verifyDialog: false,
-    qrLoading: false,
-    nextEvent: {
-      timestamp: shiftEnd,
-      type: "shift_end",
+    verifyDialog: {
+      opened: false,
+      cameraLoading: false,
+      code: "",
     },
   }),
   components: {
     QrcodeStream,
-    QrcodeDropZone,
-    QrcodeCapture,
   },
   mounted() {
     if (!this.clockHistory.length) this.loadClockHistory();
+    this.$store.dispatch("loadNextShift");
   },
   computed: {
     ...mapState(["clock"]),
-    ...mapGetters(["clockHistory"]),
+    ...mapGetters(["clockHistory", "nextShift"]),
+    clocked() {
+      const lastClockEvent = this.clockHistory.find(
+        (event) => event.action == 1 || event.action == 2
+      );
+      return lastClockEvent ? lastClockEvent.action == 1 : null;
+    },
+    onBreak() {
+      const lastBreakEvent = this.clockHistory.find(
+        (event) => event.action == 3 || event.action == 4
+      );
+      return lastBreakEvent ? lastBreakEvent.action == 3 : null;
+    },
   },
   methods: {
-    ...mapActions(["clockIn", "clockOut"]),
+    ...mapActions(["clockIn", "clockOut", "toggleBreak"]),
     openVerifyDialog() {
-      this.verifyDialog = true;
+      this.verifyDialog.opened = true;
     },
     async qrInit(promise) {
-      this.qrLoading = true;
+      this.verifyDialog.cameraLoading = true;
       try {
         /* const { capabilities } = */ await promise;
       } catch (error) {
@@ -212,14 +179,14 @@ export default {
           // browser seems to be lacking features
         }
       } finally {
-        this.qrLoading = false;
+        this.verifyDialog.cameraLoading = false;
       }
     },
-    async onDecode(decodedString) {
-      console.log(`got string ${decodedString}`)
+    async submitCode(code) {
       // TODO: Handle incorrect code
-      await this.$store.dispatch("clockIn", { code: decodedString })
-      this.verifyDialog = false
+      await this.$store.dispatch("clockIn", { code });
+      this.verifyDialog.opened = false;
+      // TODO: Stop camera on close
     },
     eventType(eventEnum) {
       switch (eventEnum) {

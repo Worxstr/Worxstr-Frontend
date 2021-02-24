@@ -1,87 +1,72 @@
-<template>
-  <v-container class="home">
-    <v-card>
-      <v-calendar
-        ref="calendar"
-        v-model="value"
-        :weekdays="weekday"
-        :type="type"
-        :events="events"
-        :event-overlap-mode="mode"
-        :event-overlap-threshold="30"
-        :event-color="getEventColor"
-        @change="getEvents"
-      ></v-calendar>
-    </v-card>
-  </v-container>
+<template lang="pug">
+v-container.home.d-flex.flex-column.align-stretch(fluid :fill-height="type == 'month'")
+  v-toolbar.flex-grow-0(flat, color="transparent")
+    v-btn.ma-2(icon, @click="$refs.calendar.prev()")
+      v-icon mdi-chevron-left
+
+    v-btn.ma-2(icon, @click="$refs.calendar.next()")
+      v-icon mdi-chevron-right
+
+    v-spacer
+
+    v-select.ma-2.flex-grow-0(
+      v-model="type",
+      :items="types",
+      :item-text="(t) => t.charAt(0).toUpperCase() + t.slice(1)",
+      dense,
+      solo,
+      hide-details,
+      label="View"
+    )
+
+  v-card.flex-grow-1
+    v-calendar(
+      ref="calendar",
+      v-model="value",
+      :type="type",
+      :events="calendarEvents",
+      event-overlap-mode="stack",
+      :event-overlap-threshold="30",
+      :event-color="getEventColor",
+      @change="getEvents",
+      @click:event="openEvent"
+    )
 </template>
 
 <script>
-// @ is an alias to /src
+import { mapGetters } from "vuex";
 
 export default {
-  name: "Home",
+  name: "schedule",
   data: () => ({
-    type: "week",
+    type: "month",
     types: ["month", "week", "day", "4day"],
-    mode: "stack",
-    modes: ["stack", "column"],
-    weekday: [1, 2, 3, 4, 5],
     value: "",
-    events: [],
-    colors: [
-      "blue",
-      "indigo",
-      "deep-purple",
-      "cyan",
-      "green",
-      "orange",
-      "grey darken-1",
-    ],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party",
-    ],
   }),
+  computed: {
+    ...mapGetters(["calendarEvents"]),
+  },
   methods: {
     getEvents({ start, end }) {
-      const events = [];
-
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-      const days = (max.getTime() - min.getTime()) / 86400000;
-      const eventCount = this.rnd(days, days + 20);
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0;
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-        const second = new Date(first.getTime() + secondTimestamp);
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: first,
-          end: second,
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-          timed: !allDay,
-        });
-      }
-
-      this.events = events;
+      this.$store.dispatch("loadCalendarEvents", {
+        start: new Date(`${start.date}T00:00:00`).toISOString(),
+        end: new Date(`${end.date}T23:59:59`).toISOString(),
+      });
     },
     getEventColor(event) {
       return event.color;
     },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
+    openEvent({ nativeEvent, event }) {
+      // nativeEvent is the browser click event, event is the calendar event data
+      this.$router.push({ name: "job", params: { jobId: event.job_id } });
     },
   },
 };
 </script>
+
+<style lang="scss">
+#calendar-container {
+  width: 100%;
+  height: 100%;
+}
+</style>

@@ -1,112 +1,117 @@
-<template>
-  <div class="messages d-flex flex-column">
-    <v-toolbar flat rounded="lg">
-      <v-btn
-        icon
-        v-if="$vuetify.breakpoint.smAndDown"
-        @click="$router.push({ name: 'messages' })"
-      >
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
+<template lang="pug">
+v-card.messages.d-flex.flex-column(v-if="conversation")
+  v-toolbar(flat, rounded="lg")
+    v-btn(
+      icon,
+      v-if="$vuetify.breakpoint.smAndDown",
+      @click="$router.push({ name: 'messages' })"
+    )
+      v-icon mdi-arrow-left
 
-      <v-toolbar-title>
-        Conversation {{ $route.params.conversationId }}
-      </v-toolbar-title>
-    </v-toolbar>
+    v-toolbar-title
+      span(
+        v-for="(participant, index) in conversation.participants",
+        :key="participant.id",
+        v-if="participant.id != authenticatedUser.id"
+      )
+        | {{ participant.first_name }} {{ participant.last_name }}
+        span(
+          v-if="index != conversation.participants.length - 1 && conversation.participants.length != 2"
+        )
+          | ,&nbsp;
 
-    <transition-group
-      name="scroll-y-reverse-transition"
-      tag="div"
-      class="message-container px-4 d-flex flex-column-reverse align-start"
-    >
-      <div
-        v-for="message in messages"
-        :key="message.id"
-        class="message grey lighten-3 px-4 py-2 mb-2 rounded-xl"
-        :class="message.pos"
-      >
-        <span>{{ message.text }}</span>
-      </div>
-    </transition-group>
+  //- transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
+  //-   name="scroll-y-reverse-transition",
+  //-   tag="div"
+  //- )
+  .message-container.px-4.d-flex.flex-column-reverse.align-start
+    .message(
+      v-for="message in conversation.messages",
+      :key="message.id",
+      :class="message.sender_id == authenticatedUser.id ? 'right' : 'left'"
+    )
+      p.px-4.py-2.mb-2.rounded-xl.grey(
+        :class="{ 'lighten-3': !$vuetify.theme.dark, 'darken-3': $vuetify.theme.dark }"
+      )
+        | {{ message.body }}
 
-    <form
-      @submit.prevent="sendMessage"
-      class="d-flex flex-row align-center pa-3"
-    >
-      <v-text-field
-        v-model="message"
-        ref="message"
-        background-color="grey lighten-3"
-        flat
-        hide-details
-        rounded
-        solo
-        placeholder="Type a message..."
-      ></v-text-field>
+  form.d-flex.flex-row.align-center.pa-3(@submit.prevent="sendMessage")
+    v-text-field(
+      v-model="message",
+      ref="message",
+      :background-color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`",
+      flat,
+      hide-details,
+      rounded,
+      solo,
+      placeholder="Type a message..."
+    )
 
-      <v-btn color="primary" icon class="ml-3" type="submit">
-        <v-icon>mdi-send</v-icon>
-      </v-btn>
-    </form>
-  </div>
+    v-btn.ml-3(color="primary", icon, type="submit")
+      v-icon mdi-send
 </template>
 
 <script>
-let id = 6
+/* eslint-disable @typescript-eslint/camelcase */
+import { mapState } from "vuex";
 
 export default {
   name: "Messages",
   mounted() {
-    // TODO: doesnt' work
-    this.$refs.message.$el.focus()
+    // TODO: get the text input to focus
+    console.log(this.$refs.message); //.$el.focus();
+
+    this.$store.dispatch("loadConversation", this.$route.params.conversationId);
   },
-  methods: {
-    sendMessage() {
-      this.messages.unshift({
-        text: this.message,
-        pos: "right",
-        id
-      });
-      id++;
-      this.message = ""
-    }
+  watch: {
+    "$route.params.conversationId"() {
+      this.messages = [];
+    },
   },
   data: () => ({
     message: "",
-
-    messages: [
-      {
-        text: "Love u",
-        pos: "right",
-        id: 5
-      },
-      {
-        text: "Ok do good work lol",
-        pos: "left",
-        id: 4
-      },
-      {
-        text: "Nothing my shift is starting",
-        pos: "right",
-        id: 3
-      },
-      {
-        text: "What's up",
-        pos: "left",
-        id: 2
-      },
-      {
-        text: "Hi",
-        pos: "right",
-        id: 1
-      },
-      {
-        text: "Hello!",
-        pos: "left",
-        id: 0
-      },
-    ],
   }),
+  computed: {
+    ...mapState(["authenticatedUser"]),
+    conversation() {
+      const conversation = this.$store.getters.conversation(
+        this.$route.params.conversationId
+      );
+      // conversation.messages = conversation.messages.sort()
+      if (conversation && conversation.messages)
+        conversation.messages = conversation.messages.reverse();
+      return conversation;
+    },
+  },
+  methods: {
+    sendMessage() {
+      this.$socket.emit("test", { test: 1 });
+      this.$store.dispatch("sendMessage", {
+        message: {
+          body: this.message,
+        },
+        conversationId: this.$route.params.conversationId,
+      });
+      this.message = "";
+    },
+    participantName(participantId) {
+      const participant = this.conversation.participants.find(
+        (p) => p.id == participantId
+      );
+      return participant
+        ? `${participant.first_name} ${participant.last_name}`
+        : "";
+    },
+  },
+  sockets: {
+    connect: function () {
+      console.log("Socket connected");
+    },
+    "message:create": function ({ message, conversation_id }) {
+      if (conversation_id == this.$route.params.conversationId)
+        this.messages.unshift(message);
+    },
+  },
 };
 </script>
 
