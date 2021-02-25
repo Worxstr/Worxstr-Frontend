@@ -1,18 +1,19 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Home from '@/views/Home.vue'
-import SignIn from '@/views/SignIn.vue'
-import SignUp from '@/views/SignUp.vue'
-import Clock from '@/views/Clock.vue'
-import Approvals from '@/views/approvals/Approvals.vue'
-import Availability from '@/views/Availability.vue'
-import Jobs from '@/views/jobs/Jobs.vue'
-import Job from '@/views/jobs/Job.vue'
-import Schedule from '@/views/Schedule.vue'
-import Messages from '@/views/messages/Messages.vue'
-import Conversation from '@/views/messages/Conversation.vue'
-import Settings from '@/views/settings/Settings.vue'
+import Home from '@/views/Home'
+import SignIn from '@/views/SignIn'
+import SignUp from '@/views/SignUp'
+import Clock from '@/views/Clock'
+import Approvals from '@/views/approvals/Approvals'
+import Availability from '@/views/Availability'
+import Jobs from '@/views/jobs/Jobs'
+import Job from '@/views/jobs/Job'
+import Workforce from '@/views/Workforce'
+import Schedule from '@/views/Schedule'
+import Messages from '@/views/messages/Messages'
+import Conversation from '@/views/messages/Conversation'
+import Settings from '@/views/settings/Settings'
 
 Vue.use(VueRouter)
 
@@ -85,6 +86,15 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
+      restrict: [MANAGER]
+    }
+  },
+  {
+    path: '/workforce',
+    name: 'workforce',
+    component: Workforce,
+    meta: {
+      icon: 'mdi-account-group',
       restrict: [MANAGER]
     }
   },
