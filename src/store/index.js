@@ -542,8 +542,7 @@ const store = new Vuex.Store({
         data: message
       })
       commit('ADD_MESSAGE', { message: data.message, conversationId })
-    }
-
+    },
     async setSSN({ commit}, ssn) {
       const { data } = await axios({
         method: 'PUT',

@@ -58,6 +58,11 @@ export default {
 	computed: {
 		...mapState(['authenticatedUser']),
 	},
+	mounted() {
+		if (this.$route.params.openSSNDialog) {
+			this.ssnDialog = true
+		}
+	},
 	data: () => ({
 		ssnDialog: false,
 		preferences: {

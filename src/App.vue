@@ -79,9 +79,9 @@ v-app
         color='blue'
         text
         v-bind='attrs'
-        @click='snackbar.show = false'
+        @click='() => {snackbar.action(); snackbar.show = false}'
       )
-        | Close
+        | {{snackbar.actionText}}
 
 </template>
 
@@ -91,7 +91,7 @@ import { mapState } from "vuex";
 
 export default Vue.extend({
   name: "App",
-  mounted() {
+  async mounted() {
     // const storedUser = localStorage.getItem("authenticatedUser");
     // if (storedUser) {
     //   this.$store.commit("SET_AUTHENTICATED_USER", {
@@ -99,8 +99,22 @@ export default Vue.extend({
     //   });
     // }
     // Refresh user data in case of an update
-    this.$store.dispatch("getAuthenticatedUser");
     this.initDarkMode();
+    await this.$store.dispatch("getAuthenticatedUser");
+
+    // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
+    const user = this.$store.state.authenticatedUser;
+    if (user.employee_info && !user.employee_info.need_info) {
+      this.$store.dispatch("showSnackbar", {
+        text: "You haven't set your Social Security number.",
+        action: () => {
+          this.$router.push({name: 'settings', params: {
+            openSSNDialog: true
+          }})
+        },
+        actionText: 'Set SSN'
+      });
+    }
   },
   methods: {
     signOut() {
@@ -121,13 +135,9 @@ export default Vue.extend({
   computed: {
     ...mapState(["authenticatedUser", "snackbar"]),
     pageHeight() {
-      if (!this.$route.meta.fullHeight)
-        return '100%'
-      else
-        if (this.$vuetify.breakpoint.mdAndUp)
-          return 'calc(100vh - 65px)'
-        else
-          return 'calc(100vh - 56px)'
+      if (!this.$route.meta.fullHeight) return "100%";
+      else if (this.$vuetify.breakpoint.mdAndUp) return "calc(100vh - 65px)";
+      else return "calc(100vh - 56px)";
     },
     navLinks() {
       return this.$router.options.routes.filter(
