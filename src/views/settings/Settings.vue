@@ -21,6 +21,12 @@
 							td Organization
 							td.stretch {{ authenticatedUser.organization_info.name }}
 
+						tr
+							td Roles
+							td.stretch
+								v-chip.mr-2(label v-for="role in authenticatedUser.roles")
+									| {{role.name | snakeToSpace | capitalize }}
+
 						tr(v-if="authenticatedUser.employee_info")
 							td Address
 							td.stretch {{ authenticatedUser.employee_info.address }}
@@ -55,6 +61,11 @@ console.log(SSNDialog)
 export default {
   name: "settings",
 	components: { SSNDialog },
+	filters: {
+		snakeToSpace(string) {
+			return string.replaceAll('_', ' ')
+		}
+	},
 	computed: {
 		...mapState(['authenticatedUser']),
 	},
