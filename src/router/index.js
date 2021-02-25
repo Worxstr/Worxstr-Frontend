@@ -17,7 +17,7 @@ import Settings from '@/views/settings/Settings'
 
 Vue.use(VueRouter)
 
-const EMPLOYEE = 1, MANAGER = 2
+import { EMPLOYEE, EMPLOYEE_MANAGER, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 
 const routes = [
   {
@@ -60,7 +60,7 @@ const routes = [
     component: Approvals,
     meta: {
       icon: 'mdi-clock-check-outline',
-      restrict: [MANAGER]
+      restrict: [EMPLOYEE_MANAGER]
     }
   },
   // {
@@ -78,7 +78,7 @@ const routes = [
     component: Jobs,
     meta: {
       icon: 'mdi-calendar-check',
-      restrict: [MANAGER]
+      restrict: [EMPLOYEE_MANAGER]
     }
   },
   {
@@ -86,7 +86,7 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      restrict: [MANAGER]
+      restrict: [EMPLOYEE_MANAGER]
     }
   },
   {
@@ -95,7 +95,7 @@ const routes = [
     component: Workforce,
     meta: {
       icon: 'mdi-account-group',
-      restrict: [MANAGER]
+      restrict: [EMPLOYEE_MANAGER]
     }
   },
   {
@@ -104,7 +104,7 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      restrict: [EMPLOYEE, MANAGER],
+      restrict: [EMPLOYEE, EMPLOYEE_MANAGER],
       fullHeight: true,
       hideNav: true,
     }
@@ -115,7 +115,7 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      restrict: [EMPLOYEE, MANAGER],
+      restrict: [EMPLOYEE, EMPLOYEE_MANAGER],
     },
     children: [{
       name: 'conversation',
