@@ -12,7 +12,7 @@ import Job from '@/views/jobs/Job.vue'
 import Schedule from '@/views/Schedule.vue'
 import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
-import Settings from '@/views/Settings.vue'
+import Settings from '@/views/settings/Settings.vue'
 
 Vue.use(VueRouter)
 
@@ -62,15 +62,15 @@ const routes = [
       restrict: [MANAGER]
     }
   },
-  {
-    path: '/availability',
-    name: 'availability',
-    component: Availability,
-    meta: {
-      icon: 'mdi-calendar-check',
-      restrict: [EMPLOYEE]
-    }
-  },
+  // {
+  //   path: '/availability',
+  //   name: 'availability',
+  //   component: Availability,
+  //   meta: {
+  //     icon: 'mdi-calendar-check',
+  //     restrict: [EMPLOYEE]
+  //   }
+  // },
   {
     path: '/jobs',
     name: 'jobs',

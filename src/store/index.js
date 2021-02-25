@@ -87,6 +87,10 @@ const store = new Vuex.Store({
       if (!state.users.all.includes(user.id))
         state.users.all.push(user.id)
     },
+    SET_SSN_REGISTERED(state) {
+      if (state.authenticatedUser.employee_info)
+        state.authenticatedUser.employee_info.need_info = false
+    },
     ADD_MANAGER(state, { type, userId }) {
       // A manager is just a special type of User
       if (!state.managers[type].find(m => m == userId))
@@ -538,6 +542,17 @@ const store = new Vuex.Store({
         data: message
       })
       commit('ADD_MESSAGE', { message: data.message, conversationId })
+    }
+
+    async setSSN({ commit}, ssn) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/users/me/ssn`,
+        data: {
+          ssn
+        }
+      })
+      commit('SET_SSN_REGISTERED')
     }
   },
   getters: {

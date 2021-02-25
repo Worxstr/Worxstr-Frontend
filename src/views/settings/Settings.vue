@@ -1,5 +1,9 @@
 <template lang="pug">
 	v-container.home
+		SSNDialog(
+			:opened.sync="ssnDialog",
+		)
+
 		v-toolbar(flat, color="transparent")
 			v-toolbar-title.text-h5.font-weight-medium Settings
 			
@@ -23,13 +27,9 @@
 
 						tr(v-if="authenticatedUser.employee_info")
 							td Social Security number
-							td {{ authenticatedUser.employee_info.ssn}}
-							td.stretch
-								div.d-flex(v-if="profile.editSSN") 
-									v-text-field.input-large(dense hide-details label="SSN") 
-									v-btn(text color='primary' @click="profile.editSSN = false") Save
-
-								v-btn(v-else text color='primary' @click="profile.editSSN = true") Set SSN
+							td.stretch {{ authenticatedUser.employee_info.ssn}}
+							td
+								v-btn(text color='primary' @click="ssnDialog = true") Set SSN
 
 					v-subheader Preferences
 						
@@ -48,16 +48,18 @@
 
 <script>
 import { mapState } from 'vuex'
+import SSNDialog from './SSNDialog'
+
+console.log(SSNDialog)
 
 export default {
   name: "settings",
+	components: { SSNDialog },
 	computed: {
 		...mapState(['authenticatedUser']),
 	},
 	data: () => ({
-		profile: {
-			editSSN: false,
-		},
+		ssnDialog: false,
 		preferences: {
 			darkMode: 'System default',
 		},
