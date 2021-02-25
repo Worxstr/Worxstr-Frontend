@@ -95,7 +95,7 @@ const routes = [
     component: Workforce,
     meta: {
       icon: 'mdi-account-group',
-      restrict: [EMPLOYEE_MANAGER]
+      restrict: [EMPLOYEE_MANAGER, ORGANIZATION_MANAGER]
     }
   },
   {

@@ -24,7 +24,7 @@
 						tr
 							td Roles
 							td.stretch
-								v-chip.mr-2(label v-for="role in authenticatedUser.roles")
+								v-chip.mx-1(label v-for="role in authenticatedUser.roles")
 									| {{role.name | snakeToSpace | capitalize }}
 
 						tr(v-if="authenticatedUser.employee_info")
