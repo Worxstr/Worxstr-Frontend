@@ -19,11 +19,12 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
           :rules="passwordRules"
         )
       v-card-actions
+        v-btn(text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
         v-spacer
-        v-btn(text="", color="primary", type="submit", :disabled="!isValid") Sign in
+        v-btn(text, color="primary", type="submit", :disabled="!isValid") Sign in
     v-fade-transition
-      v-overlay(absolute="", opacity="0.2", v-if="loading")
-        v-progress-circular(indeterminate="")
+      v-overlay(absolute, opacity="0.2", v-if="loading")
+        v-progress-circular(indeterminate)
 </template>
 
 <script>

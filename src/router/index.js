@@ -2,11 +2,12 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import Home from '@/views/Home'
-import SignIn from '@/views/SignIn'
-import SignUp from '@/views/SignUp'
+import SignIn from '@/views/auth/SignIn'
+import SignUp from '@/views/auth/SignUp'
+import ResetPassword from '@/views/auth/ResetPassword'
 import Clock from '@/views/Clock'
 import Approvals from '@/views/approvals/Approvals'
-import Availability from '@/views/Availability'
+// import Availability from '@/views/Availability'
 import Jobs from '@/views/jobs/Jobs'
 import Job from '@/views/jobs/Job'
 import Workforce from '@/views/Workforce'
@@ -43,6 +44,14 @@ const routes = [
     component: SignUp,
     meta: {
       fullHeight: true
+    }
+  },
+  {
+    path: '/reset-password',
+    name: 'resetPassword',
+    component: ResetPassword,
+    meta: {
+      fullHeight: true,
     }
   },
   {

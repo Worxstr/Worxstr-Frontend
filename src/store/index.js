@@ -220,6 +220,16 @@ const store = new Vuex.Store({
       router.push({ name: 'home' })
     },
 
+    async resetPassword({ commit }, email) {
+      await axios({
+        method: 'POST',
+        url: `${baseUrl}/auth/reset`,
+        data: {
+          email
+        }
+      })
+    },
+
     async getAuthenticatedUser({ commit }) {
       const { data } = await axios({
         method: 'GET',
