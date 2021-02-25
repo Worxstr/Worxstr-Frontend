@@ -104,15 +104,18 @@ export default Vue.extend({
 
     // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
     const user = this.$store.state.authenticatedUser;
-    if (user.employee_info && !user.employee_info.need_info) {
+    if (user.employee_info && user.employee_info.need_info) {
       this.$store.dispatch("showSnackbar", {
         text: "You haven't set your Social Security number.",
         action: () => {
-          this.$router.push({name: 'settings', params: {
-            openSSNDialog: true
-          }})
+          this.$router.push({
+            name: "settings",
+            params: {
+              openSSNDialog: true,
+            },
+          });
         },
-        actionText: 'Set SSN'
+        actionText: "Set SSN",
       });
     }
   },
