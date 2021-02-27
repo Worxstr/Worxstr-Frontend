@@ -22,8 +22,11 @@ v-container.messages.fill-height.align-start.d-flex.flex-row.pa-md-2.pa-0
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h5.font-weight-medium Messages
       v-spacer
-      v-btn(icon, color="primary", v-if="$vuetify.breakpoint.mdAndUp")
-        v-icon(@click="newConversationDialog = true") mdi-plus
+      v-tooltip(bottom)
+        template(v-slot:activator="{ on, attrs }")
+          v-btn(icon, color="primary", v-if="$vuetify.breakpoint.mdAndUp" v-bind="attrs" v-on="on")
+            v-icon(@click="newConversationDialog = true") mdi-plus
+        span New conversation
 
     .mr-md-4(:rounded="$vuetify.breakpoint.mdAndUp ? 'lg' : '0'")
       conversations

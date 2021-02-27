@@ -12,3 +12,7 @@ Vue.filter('date', (value, format) => {
 Vue.filter('time', (value, format) => {
 	return dayjs(value).format(format || 'h:mm a')
 })
+
+Vue.filter('snakeToSpace', value => {
+	return value.replaceAll('_', ' ')
+})

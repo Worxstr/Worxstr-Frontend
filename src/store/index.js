@@ -491,6 +491,22 @@ const store = new Vuex.Store({
       commit('REMOVE_SHIFT', {shiftId, jobId})
     },
 
+    async addManager({ commit }, manager) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/users/add-manager`,
+        data: manager
+      })
+    },
+
+    async addEmployee({ commit }, employee) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/users/add-employee`,
+        data: employee
+      })
+    },
+
     async loadCalendarEvents({ commit }, { start, end }) {
       const { data } = await axios({
         method: 'GET',

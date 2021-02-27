@@ -68,11 +68,6 @@ import SSNDialog from './SSNDialog'
 export default {
   name: "settings",
 	components: { SSNDialog, ChangePasswordDialog },
-	filters: {
-		snakeToSpace(string) {
-			return string.replaceAll('_', ' ')
-		}
-	},
 	computed: {
 		...mapState(['authenticatedUser']),
 	},
