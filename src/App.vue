@@ -22,11 +22,17 @@ v-app
       v-spacer
 
       div(v-if='authenticatedUser')
-        v-btn(icon :to="{ name: 'settings' }")
-          v-icon mdi-cog
+        v-tooltip(bottom)
+          template(v-slot:activator="{ on, attrs }")
+            v-btn(icon :to="{ name: 'settings' }" v-bind="attrs" v-on="on")
+              v-icon mdi-cog
+          span Settings
 
-        v-btn(icon @click='signOut')
-          v-icon mdi-logout-variant
+        v-tooltip(bottom)
+          template(v-slot:activator="{ on, attrs }")
+            v-btn(icon @click='signOut' v-bind="attrs" v-on="on")
+              v-icon mdi-logout-variant
+          span Sign out
 
       div(v-else)
         v-btn(text :to="{ name: 'signIn' }" active-class='primary--text')
