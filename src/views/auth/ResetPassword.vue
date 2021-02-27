@@ -45,6 +45,7 @@ export default {
     async sendResetEmail() {
       this.loading = true;
       await this.$store.dispatch("resetPassword", this.form.email);
+      this.$store.dispatch("showSnackbar", {text: 'Reset link sent'})
       this.loading = false;
     },
   },
