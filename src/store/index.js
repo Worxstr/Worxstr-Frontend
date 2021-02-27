@@ -553,6 +553,15 @@ const store = new Vuex.Store({
       })
       commit('ADD_MESSAGE', { message: data.message, conversationId })
     },
+    async updatePassword({ commit }, newPassword) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/users/reset-password`,
+        data: {
+          password: newPassword
+        }
+      })
+    },
     async setSSN({ commit}, ssn) {
       const { data } = await axios({
         method: 'PUT',

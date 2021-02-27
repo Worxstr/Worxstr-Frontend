@@ -1,8 +1,7 @@
 <template lang="pug">
 	v-container.home
-		SSNDialog(
-			:opened.sync="ssnDialog",
-		)
+		ChangePasswordDialog(:opened.sync="changePasswordDialog")
+		SSNDialog(:opened.sync="ssnDialog")
 
 		v-toolbar(flat, color="transparent")
 			v-toolbar-title.text-h5.font-weight-medium Settings
@@ -36,6 +35,15 @@
 							td.stretch {{ authenticatedUser.employee_info.ssn}}
 							td
 								v-btn(text color='primary' @click="ssnDialog = true") Set SSN
+					
+					v-subheader Security
+					
+					table.settings-table
+						tr
+							td.stretch Change password
+							td
+								v-btn(text color='primary' @click="changePasswordDialog = true") Change
+							
 
 					v-subheader Preferences
 						
@@ -54,13 +62,12 @@
 
 <script>
 import { mapState } from 'vuex'
+import ChangePasswordDialog from './ChangePasswordDialog'
 import SSNDialog from './SSNDialog'
-
-console.log(SSNDialog)
 
 export default {
   name: "settings",
-	components: { SSNDialog },
+	components: { SSNDialog, ChangePasswordDialog },
 	filters: {
 		snakeToSpace(string) {
 			return string.replaceAll('_', ' ')
@@ -75,6 +82,7 @@ export default {
 		}
 	},
 	data: () => ({
+		changePasswordDialog: false,
 		ssnDialog: false,
 		preferences: {
 			darkMode: 'System default',
