@@ -23,8 +23,8 @@ v-container.approvals(v-if="job")
     v-toolbar-title.text-h5.font-weight-medium
       | {{ job.name }}
     v-spacer
-    v-btn(text, @click="editJobDialog = true") Edit
-    v-btn(text, color="red", @click="closeJobDialog = true") Close
+    v-btn(v-if="userIsOrgManager" text, @click="editJobDialog = true") Edit
+    v-btn(v-if="userIsOrgManager" text, color="red", @click="closeJobDialog = true") Close
 
   v-card.mb-3.d-flex.flex-column
     GmapMap(v-if="job.latitude && job.longitude" :center="location", :zoom="17", style="height: 40vh")
@@ -66,18 +66,22 @@ v-container.approvals(v-if="job")
     v-expansion-panel(v-for="shift in job.shifts", :key="shift.id")
       v-expansion-panel-header.d-flex
         span.text-subtitle-1.flex-grow-0
-          | Shift {{ shift.id }}
+          | {{ shift.site_location }}
+
+          span(v-if="shift.employee_id")
+            |  - {{ employeeName(shift.employee_id) }}
+
+          v-chip.mx-4.px-2(v-if="shift.active" label outlined small color='green') Active
+
         v-spacer
+        
         p.d-flex.flex-column.mb-0.flex-grow-0.px-2
           span.my-1.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
           span.my-1 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
       v-expansion-panel-content
-        v-card-text.text-body-1
-          | Location: {{ shift.site_location }}
-          br
-          span(v-if="shift.employee_id")
-            | Employee: {{ employeeName(shift.employee_id) }}
+        v-card-content(v-if="shift.active")
+          p Display clock history here
         v-card-actions
           v-spacer
           v-btn(text, @click="openEditShiftDialog(shift)") Edit
@@ -91,7 +95,7 @@ import CloseJobDialog from "./CloseJobDialog";
 import EditShiftDialog from "./EditShiftDialog";
 import DeleteShiftDialog from "./DeleteShiftDialog";
 
-// import markerIcon from '@/assets/icons/map-marker.svg'
+import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 
 export default {
   name: "job",
@@ -113,6 +117,9 @@ export default {
     },
     location() {
       return { lat: this.job.latitude, lng: this.job.longitude };
+    },
+    userIsOrgManager() {
+      return this.$store.state.authenticatedUser ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser) : false
     },
   },
   mounted() {

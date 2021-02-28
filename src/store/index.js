@@ -87,10 +87,9 @@ const store = new Vuex.Store({
       if (!state.users.all.includes(user.id))
         state.users.all.push(user.id)
     },
-    ADD_MANAGER(state, { type, userId }) {
-      // A manager is just a special type of User
-      if (!state.managers[type].find(m => m == userId))
-        state.managers[type].push(userId)
+    SET_SSN_REGISTERED(state) {
+      if (state.authenticatedUser.employee_info)
+        state.authenticatedUser.employee_info.need_info = false
     },
     ADD_CLOCK_EVENT(state, event) {
       Vue.set(state.clock.history.byId, event.id, event)
@@ -132,6 +131,11 @@ const store = new Vuex.Store({
     REMOVE_JOB(state, jobId) {
       Vue.delete(state.jobs.byId, jobId);
       Vue.delete(state.jobs.all, state.jobs.all.findIndex(id => id == jobId))
+    },
+    ADD_MANAGER(state, {type, manager}) {
+      if (!state.managers[type].some(m => m.id == manager.id)) {
+        state.managers[type].push(manager)
+      }
     },
     SET_NEXT_SHIFT(state, shift) {
       state.shifts.next = shift
@@ -214,6 +218,16 @@ const store = new Vuex.Store({
       })
       commit('UNSET_AUTHENTICATED_USER')
       router.push({ name: 'home' })
+    },
+
+    async resetPassword({ commit }, email) {
+      await axios({
+        method: 'POST',
+        url: `${baseUrl}/auth/reset`,
+        data: {
+          email
+        }
+      })
     },
 
     async getAuthenticatedUser({ commit }) {
@@ -354,37 +368,30 @@ const store = new Vuex.Store({
       })
     },
 
+    async loadManagers({ commit, state }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/jobs/managers`,
+        params: {
+          manager_id: state.authenticatedUser.manager_id
+        }
+      })
+      data.employee_managers.forEach(m => {
+        commit('ADD_MANAGER', { type: 'employee', manager: m })
+      })
+      data.organization_managers.forEach(m => {
+        commit('ADD_MANAGER', { type: 'organization', manager: m })
+      })
+    },
+
     async loadJobs({ commit }) {
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/jobs`,
       })
-      data.direct_jobs.forEach(job => {
+      data.jobs.forEach(job => {
         // TODO: Normalize nested data
-        commit('ADD_JOB', {
-          ...job,
-          direct: true,
-        })
-      })
-      data.indirect_jobs.forEach(job => {
-        commit('ADD_JOB', {
-          ...job,
-          direct: false,
-        })
-      })
-      data.managers.employee_managers.forEach(m => {
-        commit('ADD_USER', m)
-        commit('ADD_MANAGER', {
-          type: 'employee',
-          managerId: m.manager_id
-        })
-      })
-      data.managers.organization_managers.forEach(m => {
-        commit('ADD_USER', m)
-        commit('ADD_MANAGER', {
-          type: 'organization',
-          managerId: m.manager_id
-        })
+        commit('ADD_JOB', job)
       })
     },
 
@@ -392,26 +399,6 @@ const store = new Vuex.Store({
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/jobs/${jobId}`,
-      })
-
-      // Preserve direct property
-      const existingJob = getters.job(jobId)
-      if (existingJob)
-        data.job.direct = existingJob.direct
-
-      data.job.managers.employee_managers.forEach(m => {
-        commit('ADD_USER', m)
-        commit('ADD_MANAGER', {
-          type: 'employee',
-          userId: m.id
-        })
-      })
-      data.job.managers.organization_managers.forEach(m => {
-        commit('ADD_USER', m)
-        commit('ADD_MANAGER', {
-          type: 'organization',
-          userId: m.id
-        })
       })
 
       // Flatten shift data
@@ -477,6 +464,22 @@ const store = new Vuex.Store({
       commit('REMOVE_SHIFT', {shiftId, jobId})
     },
 
+    async addManager({ commit }, manager) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/users/add-manager`,
+        data: manager
+      })
+    },
+
+    async addEmployee({ commit }, employee) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/users/add-employee`,
+        data: employee
+      })
+    },
+
     async loadCalendarEvents({ commit }, { start, end }) {
       const { data } = await axios({
         method: 'GET',
@@ -538,6 +541,25 @@ const store = new Vuex.Store({
         data: message
       })
       commit('ADD_MESSAGE', { message: data.message, conversationId })
+    },
+    async updatePassword({ commit }, newPassword) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/users/reset-password`,
+        data: {
+          password: newPassword
+        }
+      })
+    },
+    async setSSN({ commit}, ssn) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/users/me/ssn`,
+        data: {
+          ssn
+        }
+      })
+      commit('SET_SSN_REGISTERED')
     }
   },
   getters: {

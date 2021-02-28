@@ -1,5 +1,8 @@
 <template lang="pug">
-v-container.home.d-flex.flex-column.align-stretch(fluid :fill-height="type == 'month'")
+v-container.home.d-flex.flex-column.align-stretch(
+  fluid,
+  :fill-height="type == 'month'"
+)
   v-toolbar.flex-grow-0(flat, color="transparent")
     v-btn.ma-2(icon, @click="$refs.calendar.prev()")
       v-icon mdi-chevron-left
@@ -35,6 +38,10 @@ v-container.home.d-flex.flex-column.align-stretch(fluid :fill-height="type == 'm
 
 <script>
 import { mapGetters } from "vuex";
+import {
+  EMPLOYEE_MANAGER,
+  ORGANIZATION_MANAGER,
+} from "@/definitions/userRoles";
 
 export default {
   name: "schedule",
@@ -58,7 +65,12 @@ export default {
     },
     openEvent({ nativeEvent, event }) {
       // nativeEvent is the browser click event, event is the calendar event data
-      this.$router.push({ name: "job", params: { jobId: event.job_id } });
+
+      if (this.$store.state.authenticatedUser.roles.some((role) =>
+        role.id == EMPLOYEE_MANAGER || role.id == ORGANIZATION_MANAGER
+      )) {
+        this.$router.push({ name: "job", params: { jobId: event.job_id } });
+      }
     },
   },
 };

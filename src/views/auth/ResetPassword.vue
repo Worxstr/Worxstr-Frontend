@@ -1,8 +1,8 @@
 <template lang="pug">
 v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
   v-card(width="500")
-    v-form(@submit.prevent="signIn", v-model="isValid")
-      v-card-title Sign in
+    v-form(@submit.prevent="sendResetEmail", v-model="isValid")
+      v-card-title Reset your password
       v-card-text
         v-text-field(
           label="Email",
@@ -11,28 +11,25 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
           v-model="form.email",
           :rules="emailRules"
         )
-        v-text-field(
-          label="Password",
-          type="password",
-          required="",
-          v-model="form.password",
-          :rules="passwordRules"
-        )
       v-card-actions
         v-spacer
-        v-btn(text="", color="primary", type="submit", :disabled="!isValid") Sign in
+        v-btn(text, color="primary", type="submit", :disabled="!isValid") Send reset email
     v-fade-transition
-      v-overlay(absolute="", opacity="0.2", v-if="loading")
-        v-progress-circular(indeterminate="")
+      v-overlay(absolute, opacity="0.2", v-if="loading")
+        v-progress-circular(indeterminate)
 </template>
 
 <script>
 export default {
-  name: "signIn",
+  name: "resetPassword",
+  mounted() {
+    if (this.$route.params.email) {
+      this.form.email = this.$route.params.email
+    }
+  },
   data: () => ({
     form: {
       email: "",
-      password: "",
     },
     isValid: false,
     emailRules: [
@@ -42,16 +39,13 @@ export default {
         return pattern.test(value) || "Invalid email";
       },
     ],
-    passwordRules: [
-      (value) => !!value || "Password required",
-      (value) => value.length >= 8 || "Password must be 8 characters",
-    ],
     loading: false,
   }),
   methods: {
-    async signIn() {
+    async sendResetEmail() {
       this.loading = true;
-      await this.$store.dispatch("signIn", this.form);
+      await this.$store.dispatch("resetPassword", this.form.email);
+      this.$store.dispatch("showSnackbar", {text: 'Reset link sent'})
       this.loading = false;
     },
   },

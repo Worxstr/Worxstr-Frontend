@@ -3,13 +3,13 @@ v-container.approvals
 
   edit-job-dialog(:opened.sync="createJobDialog" create)
 
-  .mb-5(v-if="directJobs.length")
+  .mb-5
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Jobs
       v-spacer
-      v-btn(text @click="openCreateJobDialog") Add new job
+      v-btn(text @click="openCreateJobDialog" v-if="userIsOrgManager") Add new job
 
-    v-card
+    v-card(v-if="directJobs.length")
       v-list
         v-list-item(
           v-for="job in directJobs"
@@ -20,6 +20,10 @@ v-container.approvals
           v-list-item-content
             v-list-item-title(v-text="job.name")
               v-list-item-subtitle(v-text="job.address")
+
+    div(v-else).d-flex.flex-column.justify-center
+      v-icon.text-h2.ma-5 mdi-calendar-check
+      p.text-center.text-body-1 No jobs yet.
 
   .mb-5(v-if="indirectJobs.length")
     v-toolbar(flat, color="transparent")
@@ -42,6 +46,7 @@ v-container.approvals
 <script>
 import { mapGetters } from "vuex";
 import EditJobDialog from './EditJobDialog'
+import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 
 export default {
   name: "jobs",
@@ -50,6 +55,9 @@ export default {
   },
   computed: {
     ...mapGetters(["directJobs", "indirectJobs"]),
+    userIsOrgManager() {
+      return this.$store.state.authenticatedUser ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser) : false
+    }
   },
   components: { EditJobDialog },
   data: () => ({

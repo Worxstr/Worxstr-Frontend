@@ -9,7 +9,7 @@ v-dialog(
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")
         v-progress-circular(indeterminate)
-
+    
     v-form.flex-grow-1.d-flex.flex-column(
       v-if="editedJob",
       @submit.prevent="updateJob",
@@ -45,7 +45,7 @@ v-dialog(
           v-model="editedJob.organization_manager_id",
           :items="managers.organization",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
-          :item-value="'manager_id'",
+          :item-value="'id'",
           outlined,
           dense,
           required,
@@ -101,6 +101,7 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
+import { mapState } from 'vuex'
 
 // TODO: Move this to reusable import
 const exists = (errorString) => (value) => !!value || errorString;
@@ -110,12 +111,17 @@ export default {
   props: {
     opened: Boolean,
     create: Boolean, // Creating new job
-    job: Object
+    job: Object,
+  },
+  watch: {
+    opened(newVal, oldVal) {
+      if (newVal) this.$store.dispatch('loadManagers');
+      if (newVal && this.job)
+        this.editedJob = Object.assign({}, this.job);
+    },
   },
   computed: {
-    managers() {
-      return this.$store.getters.managers;
-    }
+    ...mapState(['managers'])
   },
   data: () => ({
     isValid: false,
@@ -144,12 +150,6 @@ export default {
       ],
     },
   }),
-  watch: {
-    opened(newVal, oldVal) {
-      if (newVal == true && this.job)
-        this.editedJob = Object.assign({}, this.job);
-    },
-  },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);

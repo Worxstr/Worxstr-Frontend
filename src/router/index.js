@@ -1,22 +1,25 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Home from '@/views/Home.vue'
-import SignIn from '@/views/SignIn.vue'
-import SignUp from '@/views/SignUp.vue'
-import Clock from '@/views/Clock.vue'
-import Approvals from '@/views/approvals/Approvals.vue'
-import Availability from '@/views/Availability.vue'
-import Jobs from '@/views/jobs/Jobs.vue'
-import Job from '@/views/jobs/Job.vue'
-import Schedule from '@/views/Schedule.vue'
-import Messages from '@/views/messages/Messages.vue'
-import Conversation from '@/views/messages/Conversation.vue'
-import Settings from '@/views/Settings.vue'
+import Home from '@/views/Home'
+import SignIn from '@/views/auth/SignIn'
+import SignUp from '@/views/auth/SignUp'
+import ResetPassword from '@/views/auth/ResetPassword'
+import Clock from '@/views/Clock'
+import Approvals from '@/views/approvals/Approvals'
+// import Availability from '@/views/Availability'
+import Jobs from '@/views/jobs/Jobs'
+import Job from '@/views/jobs/Job'
+import Workforce from '@/views/workforce/Workforce'
+import Schedule from '@/views/Schedule'
+import Messages from '@/views/messages/Messages'
+import Conversation from '@/views/messages/Conversation'
+import Settings from '@/views/settings/Settings'
 
 Vue.use(VueRouter)
 
-const EMPLOYEE = 1, MANAGER = 2
+import { EMPLOYEE, EMPLOYEE_MANAGER, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
+const MANAGER = [EMPLOYEE_MANAGER, ORGANIZATION_MANAGER]
 
 const routes = [
   {
@@ -45,6 +48,14 @@ const routes = [
     }
   },
   {
+    path: '/reset-password',
+    name: 'resetPassword',
+    component: ResetPassword,
+    meta: {
+      fullHeight: true,
+    }
+  },
+  {
     path: '/clock',
     name: 'clock',
     component: Clock,
@@ -59,25 +70,25 @@ const routes = [
     component: Approvals,
     meta: {
       icon: 'mdi-clock-check-outline',
-      restrict: [MANAGER]
+      restrict: [...MANAGER]
     }
   },
-  {
-    path: '/availability',
-    name: 'availability',
-    component: Availability,
-    meta: {
-      icon: 'mdi-calendar-check',
-      restrict: [EMPLOYEE]
-    }
-  },
+  // {
+  //   path: '/availability',
+  //   name: 'availability',
+  //   component: Availability,
+  //   meta: {
+  //     icon: 'mdi-calendar-check',
+  //     restrict: [EMPLOYEE]
+  //   }
+  // },
   {
     path: '/jobs',
     name: 'jobs',
     component: Jobs,
     meta: {
       icon: 'mdi-calendar-check',
-      restrict: [MANAGER]
+      restrict: [...MANAGER]
     }
   },
   {
@@ -85,7 +96,16 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      restrict: [MANAGER]
+      restrict: [...MANAGER]
+    }
+  },
+  {
+    path: '/workforce',
+    name: 'workforce',
+    component: Workforce,
+    meta: {
+      icon: 'mdi-account-group',
+      restrict: [...MANAGER]
     }
   },
   {
@@ -94,7 +114,7 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      restrict: [EMPLOYEE, MANAGER],
+      restrict: [EMPLOYEE, ...MANAGER],
       fullHeight: true,
       hideNav: true,
     }
@@ -105,7 +125,7 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      restrict: [EMPLOYEE, MANAGER],
+      restrict: [EMPLOYEE, ...MANAGER],
     },
     children: [{
       name: 'conversation',

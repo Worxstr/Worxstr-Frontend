@@ -22,11 +22,17 @@ v-app
       v-spacer
 
       div(v-if='authenticatedUser')
-        v-btn(icon :to="{ name: 'settings' }")
-          v-icon mdi-cog
+        v-tooltip(bottom)
+          template(v-slot:activator="{ on, attrs }")
+            v-btn(icon :to="{ name: 'settings' }" v-bind="attrs" v-on="on")
+              v-icon mdi-cog
+          span Settings
 
-        v-btn(icon @click='signOut')
-          v-icon mdi-logout-variant
+        v-tooltip(bottom)
+          template(v-slot:activator="{ on, attrs }")
+            v-btn(icon @click='signOut' v-bind="attrs" v-on="on")
+              v-icon mdi-logout-variant
+          span Sign out
 
       div(v-else)
         v-btn(text :to="{ name: 'signIn' }" active-class='primary--text')
@@ -64,24 +70,24 @@ v-app
         span {{ route.name | capitalize }}
         v-icon {{ route.meta.icon }}
 
-    v-snackbar(
-      app
-      v-model='snackbar.show'
-      :timeout='snackbar.timeout'
-    )
-      | {{ snackbar.text }}
+  v-snackbar(
+    app
+    v-model='snackbar.show'
+    :timeout='snackbar.timeout'
+  )
+    | {{ snackbar.text }}
 
-      template(
-        v-slot:action='{ attrs }'
-        v-if='snackbar.action'
+    template(
+      v-slot:action='{ attrs }'
+      v-if='snackbar.action'
+    )
+      v-btn(
+        color='blue'
+        text
+        v-bind='attrs'
+        @click='() => {snackbar.action(); snackbar.show = false}'
       )
-        v-btn(
-          color='blue'
-          text
-          v-bind='attrs'
-          @click='snackbar.show = false'
-        )
-          | Close
+        | {{snackbar.actionText}}
 
 </template>
 
@@ -91,7 +97,7 @@ import { mapState } from "vuex";
 
 export default Vue.extend({
   name: "App",
-  mounted() {
+  async mounted() {
     // const storedUser = localStorage.getItem("authenticatedUser");
     // if (storedUser) {
     //   this.$store.commit("SET_AUTHENTICATED_USER", {
@@ -99,8 +105,25 @@ export default Vue.extend({
     //   });
     // }
     // Refresh user data in case of an update
-    this.$store.dispatch("getAuthenticatedUser");
     this.initDarkMode();
+    await this.$store.dispatch("getAuthenticatedUser");
+
+    // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
+    const user = this.$store.state.authenticatedUser;
+    if (user.employee_info && user.employee_info.need_info) {
+      this.$store.dispatch("showSnackbar", {
+        text: "You haven't set your Social Security number.",
+        action: () => {
+          this.$router.push({
+            name: "settings",
+            params: {
+              openSSNDialog: true,
+            },
+          });
+        },
+        actionText: "Set SSN",
+      });
+    }
   },
   methods: {
     signOut() {
@@ -121,13 +144,9 @@ export default Vue.extend({
   computed: {
     ...mapState(["authenticatedUser", "snackbar"]),
     pageHeight() {
-      if (!this.$route.meta.fullHeight)
-        return '100%'
-      else
-        if (this.$vuetify.breakpoint.mdAndUp)
-          return 'calc(100vh - 65px)'
-        else
-          return 'calc(100vh - 56px)'
+      if (!this.$route.meta.fullHeight) return "100%";
+      else if (this.$vuetify.breakpoint.mdAndUp) return "calc(100vh - 65px)";
+      else return "calc(100vh - 56px)";
     },
     navLinks() {
       return this.$router.options.routes.filter(

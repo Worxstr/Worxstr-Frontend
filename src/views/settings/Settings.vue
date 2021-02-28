@@ -1,5 +1,8 @@
 <template lang="pug">
 	v-container.home
+		ChangePasswordDialog(:opened.sync="changePasswordDialog")
+		SSNDialog(:opened.sync="ssnDialog")
+
 		v-toolbar(flat, color="transparent")
 			v-toolbar-title.text-h5.font-weight-medium Settings
 			
@@ -17,19 +20,30 @@
 							td Organization
 							td.stretch {{ authenticatedUser.organization_info.name }}
 
+						tr
+							td Roles
+							td.stretch
+								v-chip.mx-1(label v-for="role in authenticatedUser.roles")
+									| {{role.name | snakeToSpace | capitalize }}
+
 						tr(v-if="authenticatedUser.employee_info")
 							td Address
 							td.stretch {{ authenticatedUser.employee_info.address }}
 
 						tr(v-if="authenticatedUser.employee_info")
 							td Social Security number
-							td {{ authenticatedUser.employee_info.ssn}}
-							td.stretch
-								div.d-flex(v-if="profile.editSSN") 
-									v-text-field.input-large(dense hide-details label="SSN") 
-									v-btn(text color='primary' @click="profile.editSSN = false") Save
-
-								v-btn(v-else text color='primary' @click="profile.editSSN = true") Set SSN
+							td.stretch {{ authenticatedUser.employee_info.ssn}}
+							td
+								v-btn(text color='primary' @click="ssnDialog = true") Set SSN
+					
+					v-subheader Security
+					
+					table.settings-table
+						tr
+							td.stretch Change password
+							td
+								v-btn(text color='primary' @click="changePasswordDialog = true") Change
+							
 
 					v-subheader Preferences
 						
@@ -48,16 +62,23 @@
 
 <script>
 import { mapState } from 'vuex'
+import ChangePasswordDialog from './ChangePasswordDialog'
+import SSNDialog from './SSNDialog'
 
 export default {
   name: "settings",
+	components: { SSNDialog, ChangePasswordDialog },
 	computed: {
 		...mapState(['authenticatedUser']),
 	},
+	mounted() {
+		if (this.$route.params.openSSNDialog) {
+			this.ssnDialog = true
+		}
+	},
 	data: () => ({
-		profile: {
-			editSSN: false,
-		},
+		changePasswordDialog: false,
+		ssnDialog: false,
 		preferences: {
 			darkMode: 'System default',
 		},
