@@ -7,7 +7,7 @@ v-container.approvals
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Jobs
       v-spacer
-      v-btn(text @click="openCreateJobDialog") Add new job
+      v-btn(text @click="openCreateJobDialog" v-if="userIsOrgManager") Add new job
 
     v-card(v-if="directJobs.length")
       v-list
@@ -46,6 +46,7 @@ v-container.approvals
 <script>
 import { mapGetters } from "vuex";
 import EditJobDialog from './EditJobDialog'
+import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 
 export default {
   name: "jobs",
@@ -54,6 +55,9 @@ export default {
   },
   computed: {
     ...mapGetters(["directJobs", "indirectJobs"]),
+    userIsOrgManager() {
+      return this.$store.state.authenticatedUser ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser) : false
+    }
   },
   components: { EditJobDialog },
   data: () => ({

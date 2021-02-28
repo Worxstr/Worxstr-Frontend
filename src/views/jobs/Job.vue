@@ -23,7 +23,7 @@ v-container.approvals(v-if="job")
     v-toolbar-title.text-h5.font-weight-medium
       | {{ job.name }}
     v-spacer
-    v-btn(text, @click="editJobDialog = true") Edit
+    v-btn(text, @click="editJobDialog = true" v-if="userIsOrgManager") Edit
     v-btn(text, color="red", @click="closeJobDialog = true") Close
 
   v-card.mb-3.d-flex.flex-column
@@ -95,7 +95,7 @@ import CloseJobDialog from "./CloseJobDialog";
 import EditShiftDialog from "./EditShiftDialog";
 import DeleteShiftDialog from "./DeleteShiftDialog";
 
-// import markerIcon from '@/assets/icons/map-marker.svg'
+import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 
 export default {
   name: "job",
@@ -117,6 +117,9 @@ export default {
     },
     location() {
       return { lat: this.job.latitude, lng: this.job.longitude };
+    },
+    userIsOrgManager() {
+      return this.$store.state.authenticatedUser ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser) : false
     },
   },
   mounted() {

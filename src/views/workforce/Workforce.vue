@@ -1,7 +1,7 @@
 <template lang="pug">
 	v-container
 		add-workforce-member-dialog(:opened.sync="addEmployeeDialog" type="employee")
-		add-workforce-member-dialog(:opened.sync="addManagerDialog" type="manager")
+		add-workforce-member-dialog(:opened.sync="addManagerDialog" type="manager" v-if="userIsOrgManager")
 
 		v-toolbar(flat, color="transparent")
 			v-toolbar-title.text-h5.font-weight-medium Workforce
@@ -16,6 +16,7 @@
 
 <script>
 import AddWorkforceMemberDialog from './AddWorkforceMemberDialog'
+import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 
 export default {
   name: "workforce",
@@ -23,6 +24,11 @@ export default {
   data: () => ({
     addEmployeeDialog: false,
     addManagerDialog: false,
-  })
+  }),
+  computed: {
+    userIsOrgManager() {
+      return this.$store.state.authenticatedUser ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser) : false
+    }
+  }
 };
 </script>
