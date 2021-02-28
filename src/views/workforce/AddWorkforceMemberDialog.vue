@@ -23,7 +23,7 @@ v-dialog(
           label="First name",
           dense,
           outlined,
-          v-model="workforceMember.firstName",
+          v-model="workforceMember.first_name",
           :rules="rules.firstName",
           required
         )
@@ -31,7 +31,7 @@ v-dialog(
           label="Last name",
           dense,
           outlined,
-          v-model="workforceMember.lastName",
+          v-model="workforceMember.last_name",
           :rules="rules.lastName",
           required
         )
@@ -76,7 +76,7 @@ v-dialog(
           dense,
           outlined,
           :rules="rules.currency",
-          v-model="workforceMember.hourlyWage",
+          v-model="workforceMember.hourly_rate",
           required
         )
 
@@ -84,7 +84,7 @@ v-dialog(
           label="Direct manager",
           dense,
           outlined,
-          v-model="workforceMember.managerId",
+          v-model="workforceMember.manager_id",
           required
         )
       v-spacer
@@ -106,7 +106,9 @@ export default {
   props: ["opened", "type"],
   data: () => ({
     isValid: false,
-    workforceMember: {},
+    workforceMember: {
+      hourly_rate: 12.00
+    },
     loading: false,
     managerTypes: [
       {

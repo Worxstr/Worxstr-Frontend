@@ -9,7 +9,7 @@ v-dialog(
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")
         v-progress-circular(indeterminate)
-
+    
     v-form.flex-grow-1.d-flex.flex-column(
       v-if="editedJob",
       @submit.prevent="updateJob",
@@ -45,7 +45,7 @@ v-dialog(
           v-model="editedJob.organization_manager_id",
           :items="managers.organization",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
-          :item-value="'manager_id'",
+          :item-value="'id'",
           outlined,
           dense,
           required,
