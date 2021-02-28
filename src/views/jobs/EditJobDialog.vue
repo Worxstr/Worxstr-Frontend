@@ -101,6 +101,7 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
+import { mapState } from 'vuex'
 
 // TODO: Move this to reusable import
 const exists = (errorString) => (value) => !!value || errorString;
@@ -110,12 +111,10 @@ export default {
   props: {
     opened: Boolean,
     create: Boolean, // Creating new job
-    job: Object
+    job: Object,
   },
   computed: {
-    managers() {
-      return this.$store.getters.managers;
-    }
+    ...mapState(['managers'])
   },
   data: () => ({
     isValid: false,

@@ -91,11 +91,6 @@ const store = new Vuex.Store({
       if (state.authenticatedUser.employee_info)
         state.authenticatedUser.employee_info.need_info = false
     },
-    ADD_MANAGER(state, { type, userId }) {
-      // A manager is just a special type of User
-      if (!state.managers[type].find(m => m == userId))
-        state.managers[type].push(userId)
-    },
     ADD_CLOCK_EVENT(state, event) {
       Vue.set(state.clock.history.byId, event.id, event)
       if (!state.clock.history.all.includes(event.id))
@@ -136,6 +131,11 @@ const store = new Vuex.Store({
     REMOVE_JOB(state, jobId) {
       Vue.delete(state.jobs.byId, jobId);
       Vue.delete(state.jobs.all, state.jobs.all.findIndex(id => id == jobId))
+    },
+    ADD_MANAGER(state, {type, manager}) {
+      if (!state.managers[type].some(m => m.id == manager.id)) {
+        state.managers[type].push(manager)
+      }
     },
     SET_NEXT_SHIFT(state, shift) {
       state.shifts.next = shift
@@ -368,6 +368,22 @@ const store = new Vuex.Store({
       })
     },
 
+    async loadManagers({ commit, state }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/jobs/managers`,
+        params: {
+          manager_id: state.authenticatedUser.manager_id
+        }
+      })
+      data.employee_managers.foreach(m => {
+        commit('ADD_MANAGER', { type: 'employee', manager: m })
+      })
+      data.organization_managers.foreach(m => {
+        commit('ADD_MANAGER', { type: 'organization', manager: m })
+      })
+    },
+
     async loadJobs({ commit }) {
       const { data } = await axios({
         method: 'GET',
@@ -377,46 +393,12 @@ const store = new Vuex.Store({
         // TODO: Normalize nested data
         commit('ADD_JOB', job)
       })
-      data.managers.employee_managers.forEach(m => {
-        commit('ADD_USER', m)
-        commit('ADD_MANAGER', {
-          type: 'employee',
-          userId: m.id
-        })
-      })
-      data.managers.organization_managers.forEach(m => {
-        commit('ADD_USER', m)
-        commit('ADD_MANAGER', {
-          type: 'organization',
-          userId: m.id
-        })
-      })
     },
 
     async loadJob({ commit, getters }, jobId) {
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/jobs/${jobId}`,
-      })
-
-      // Preserve direct property
-      const existingJob = getters.job(jobId)
-      if (existingJob)
-        data.job.direct = existingJob.direct
-
-      data.job.managers.employee_managers.forEach(m => {
-        commit('ADD_USER', m)
-        commit('ADD_MANAGER', {
-          type: 'employee',
-          userId: m.id
-        })
-      })
-      data.job.managers.organization_managers.forEach(m => {
-        commit('ADD_USER', m)
-        commit('ADD_MANAGER', {
-          type: 'organization',
-          userId: m.id
-        })
       })
 
       // Flatten shift data
