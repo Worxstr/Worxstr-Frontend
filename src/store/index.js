@@ -390,14 +390,14 @@ const store = new Vuex.Store({
         commit('ADD_USER', m)
         commit('ADD_MANAGER', {
           type: 'employee',
-          managerId: m.manager_id
+          userId: m.id
         })
       })
       data.managers.organization_managers.forEach(m => {
         commit('ADD_USER', m)
         commit('ADD_MANAGER', {
           type: 'organization',
-          managerId: m.manager_id
+          userId: m.id
         })
       })
     },
