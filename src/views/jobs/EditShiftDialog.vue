@@ -124,21 +124,19 @@ export default {
       const date = requestData.date ? new Date(requestData.date) : new Date()
       const timeBegin = new Date(requestData.time_begin)
       const timeEnd = new Date(requestData.time_end)
-      
-      timeBegin.setDate(date.getDate())
-      timeBegin.setMonth(date.getMonth())
-      timeBegin.setFullYear(date.getFullYear())
-      
-      timeEnd.setDate(date.getDate())
-      timeEnd.setMonth(date.getMonth())
-      timeEnd.setFullYear(date.getFullYear())
 
-      console.log({timeBegin, timeEnd})
+      console.log({ date, timeBegin, timeEnd })
+      
+      timeBegin.setUTCDate(date.getUTCDate())
+      timeBegin.setUTCMonth(date.getUTCMonth())
+      timeBegin.setUTCFullYear(date.getUTCFullYear())
+      
+      timeEnd.setUTCDate(date.getUTCDate())
+      timeEnd.setUTCMonth(date.getUTCMonth())
+      timeEnd.setUTCFullYear(date.getUTCFullYear())
 
       requestData.time_begin = timeBegin.toISOString()
       requestData.time_end = timeEnd.toISOString()
-
-      console.log(requestData)
 
       if (this.create)
         await this.$store.dispatch("createShift", {
