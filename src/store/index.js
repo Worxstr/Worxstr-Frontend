@@ -373,18 +373,9 @@ const store = new Vuex.Store({
         method: 'GET',
         url: `${baseUrl}/jobs`,
       })
-      data.direct_jobs.forEach(job => {
+      data.jobs.forEach(job => {
         // TODO: Normalize nested data
-        commit('ADD_JOB', {
-          ...job,
-          direct: true,
-        })
-      })
-      data.indirect_jobs.forEach(job => {
-        commit('ADD_JOB', {
-          ...job,
-          direct: false,
-        })
+        commit('ADD_JOB', job)
       })
       data.managers.employee_managers.forEach(m => {
         commit('ADD_USER', m)
