@@ -125,8 +125,6 @@ export default {
       const timeBegin = new Date(requestData.time_begin)
       const timeEnd = new Date(requestData.time_end)
 
-      console.log({ date, timeBegin, timeEnd })
-      
       timeBegin.setUTCDate(date.getUTCDate())
       timeBegin.setUTCMonth(date.getUTCMonth())
       timeBegin.setUTCFullYear(date.getUTCFullYear())

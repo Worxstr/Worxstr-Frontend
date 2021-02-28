@@ -1,15 +1,16 @@
 <template lang="pug">
-v-text-field(
-  type="time",
-  dense,
-  outlined,
-  :required="required",
-  :rules="rules",
-  :hide-details="hideDetails",
-  :label="label",
-  :value="timeString",
-  @input="updateDate"
-)
+div 
+  v-text-field(
+    type="time",
+    dense,
+    outlined,
+    :required="required",
+    :rules="rules",
+    :hide-details="hideDetails",
+    :label="label",
+    :value="timeString",
+    @input="updateDate"
+  )
 </template>
 
 <script>
@@ -18,6 +19,7 @@ export default {
   props: {
     value: String,
     label: String,
+    showSeconds: Boolean,
     hideDetails: Boolean,
     required: Boolean,
     rules: Array,
@@ -36,9 +38,9 @@ export default {
       
       newDate.setHours(hours);
       newDate.setMinutes(minutes);
-      if (seconds) newDate.setSeconds(seconds);
+      newDate.setSeconds(this.showSeconds ? seconds : 0);
 
-this.$emit("input", newDate.toISOString());
+      this.$emit("input", newDate.toISOString());
     },
   },
 };
