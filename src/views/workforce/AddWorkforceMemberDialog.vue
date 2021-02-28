@@ -80,12 +80,16 @@ v-dialog(
           required
         )
 
-        v-text-field(
-          label="Direct manager",
-          dense,
-          outlined,
+        v-select(
+          v-if="managers.employee.length",
           v-model="workforceMember.manager_id",
-          required
+          :items="managers.employee",
+          :item-text="(m) => `${m.first_name} ${m.last_name}`",
+          :item-value="'id'",
+          outlined,
+          dense,
+          required,
+          label="Direct manager"
         )
       v-spacer
 
@@ -98,12 +102,19 @@ v-dialog(
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 
-// TODO: Move this to reusable import
-const exists = (errorString) => (value) => !!value || errorString;
+import { mapState } from 'vuex'
 
 export default {
   name: "addWorkforceMemberDialog",
   props: ["opened", "type"],
+  computed: {
+    ...mapState(['managers'])
+  },
+  watch: {
+    opened(newVal, oldVal) {
+      if (newVal) this.$store.dispatch('loadManagers');
+    },
+  },
   data: () => ({
     isValid: false,
     workforceMember: {

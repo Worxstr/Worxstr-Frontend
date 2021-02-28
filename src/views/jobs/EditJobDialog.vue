@@ -113,6 +113,13 @@ export default {
     create: Boolean, // Creating new job
     job: Object,
   },
+  watch: {
+    opened(newVal, oldVal) {
+      if (newVal) this.$store.dispatch('loadManagers');
+      if (newVal && this.job)
+        this.editedJob = Object.assign({}, this.job);
+    },
+  },
   computed: {
     ...mapState(['managers'])
   },
@@ -143,12 +150,6 @@ export default {
       ],
     },
   }),
-  watch: {
-    opened(newVal, oldVal) {
-      if (newVal == true && this.job)
-        this.editedJob = Object.assign({}, this.job);
-    },
-  },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
