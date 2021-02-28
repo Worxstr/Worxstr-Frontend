@@ -23,8 +23,8 @@ v-container.approvals(v-if="job")
     v-toolbar-title.text-h5.font-weight-medium
       | {{ job.name }}
     v-spacer
-    v-btn(text, @click="editJobDialog = true" v-if="userIsOrgManager") Edit
-    v-btn(text, color="red", @click="closeJobDialog = true") Close
+    v-btn(v-if="userIsOrgManager" text, @click="editJobDialog = true") Edit
+    v-btn(v-if="userIsOrgManager" text, color="red", @click="closeJobDialog = true") Close
 
   v-card.mb-3.d-flex.flex-column
     GmapMap(v-if="job.latitude && job.longitude" :center="location", :zoom="17", style="height: 40vh")
