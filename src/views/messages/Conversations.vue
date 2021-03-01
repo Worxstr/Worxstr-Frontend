@@ -1,6 +1,6 @@
 <template lang="pug">
 
-v-skeleton-loader(v-if="loading" type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
+v-skeleton-loader(v-if="loading && !conversations.length" type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
 
 v-card.conversations(v-else)
   v-list(color="transparent")

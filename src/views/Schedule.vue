@@ -24,7 +24,7 @@ v-container.home.d-flex.flex-column.align-stretch(
 
   v-card.flex-grow-1
     v-fade-transition
-      v-overlay(v-if="loading" absolute)
+      v-overlay(v-if="loading && !calendarEvents.length" absolute)
         v-progress-circular(indeterminate)
 
     v-calendar(

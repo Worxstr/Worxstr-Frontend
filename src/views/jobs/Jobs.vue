@@ -1,6 +1,6 @@
 <template lang="pug">
 
-v-container(v-if="loading")
+v-container(v-if="loading && !(directJobs.length || indirectJobs.length)")
   v-skeleton-loader.my-4(type='heading')
   v-skeleton-loader(type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
 
