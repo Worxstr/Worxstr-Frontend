@@ -1,5 +1,10 @@
 <template lang="pug">
-v-container.approvals
+
+v-container(v-if="loading")
+  v-skeleton-loader.my-4(type='heading')
+  v-skeleton-loader(type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
+
+v-container.approvals(v-else)
 
   edit-job-dialog(:opened.sync="createJobDialog" create)
 
@@ -50,8 +55,14 @@ import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 
 export default {
   name: "jobs",
-  mounted() {
-    this.$store.dispatch("loadJobs");
+  data: () => ({
+    loading: false,
+    createJobDialog: false
+  }),
+  async mounted() {
+    this.loading = true
+    await this.$store.dispatch("loadJobs");
+    this.loading = false
   },
   computed: {
     ...mapGetters(["directJobs", "indirectJobs"]),
@@ -60,9 +71,6 @@ export default {
     }
   },
   components: { EditJobDialog },
-  data: () => ({
-    createJobDialog: false
-  }),
   methods: {
     openCreateJobDialog() {
       this.createJobDialog = true

@@ -1,134 +1,140 @@
 <template lang="pug">
+v-container(v-if="loading")
+  v-skeleton-loader.my-4(type='heading')
+  v-skeleton-loader(type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
 
-v-container.d-flex.flex-column.justify-center(fill-height v-if="!approvedTimecards.length && !unapprovedTimecards.length")
-  v-icon.text-h2.ma-5 mdi-clock-check-outline
-  p.text-body-1 No timecard approvals left!
+  v-skeleton-loader.mt-8.mb-4(type='heading')
+  v-skeleton-loader(type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
 
-v-container.approvals(v-else)
+div(v-else)
+  v-container.d-flex.flex-column.justify-center(fill-height v-if="!approvedTimecards.length && !unapprovedTimecards.length")
+    v-icon.text-h2.ma-5 mdi-clock-check-outline
+    p.text-body-1 No timecard approvals left!
 
-  edit-timecard-dialog(
-    :opened.sync="editTimecardDialog",
-    :timecard="selectedTimecards[0]"
-  )
-  approve-dialog(
-    :opened.sync="approveDialog",
-    :timecards="selectedTimecards"
-  )
-  deny-dialog(:opened.sync="denyDialog", :timecard="selectedTimecards[0]")
-  payment-dialog(
-    :opened.sync="paymentDialog",
-    :timecards="selectedTimecards"
-  )
+  v-container.approvals(v-else)
 
-  
-  .mb-5(v-if="approvedTimecards.length")
-    v-toolbar.no-padding(flat, color="transparent")
-      v-toolbar-title.text-h6
-        span Pending
-        v-chip(small class="mx-3 pa-2 font-weight-black") {{approvedTimecards.length}}
-      v-spacer
-      v-btn(text, @click="openPaymentDialog(approvedTimecards)")
-        v-icon mdi-currency-usd
-        |
-        | Complete payments
+    edit-timecard-dialog(
+      :opened.sync="editTimecardDialog",
+      :timecard="selectedTimecards[0]"
+    )
+    approve-dialog(
+      :opened.sync="approveDialog",
+      :timecards="selectedTimecards"
+    )
+    deny-dialog(:opened.sync="denyDialog", :timecard="selectedTimecards[0]")
+    payment-dialog(
+      :opened.sync="paymentDialog",
+      :timecards="selectedTimecards"
+    )
+    
+    .mb-5(v-if="approvedTimecards.length")
+      v-toolbar.no-padding(flat, color="transparent")
+        v-toolbar-title.text-h6
+          span Pending
+          v-chip(small class="mx-3 pa-2 font-weight-black") {{approvedTimecards.length}}
+        v-spacer
+        v-btn(text, @click="openPaymentDialog(approvedTimecards)")
+          v-icon mdi-currency-usd
+          |
+          | Complete payments
 
-    v-expansion-panels()
-      v-expansion-panel(
-        v-for="timecard in approvedTimecards",
-        :key="timecard.id"
-      )
-        v-expansion-panel-header.d-flex
-          span.text-subtitle-1.flex-grow-0
-            | {{ timecard.first_name }} {{ timecard.last_name }}
-          v-spacer
-          span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
-          span.flex-grow-0.px-2(
-            v-if="timecard.time_clocks && timecard.time_clocks.length"
-          )
-            | {{ timecard.time_clocks[0].time | time }}
-            | -
-            | {{
-            | timecard.time_clocks[timecard.time_clocks.length - 1].time
-            | | time
-            | }}
-
-        v-expansion-panel-content
-          v-card-text.text-body-1
-            p(v-if="timecard.time_clocks && timecard.time_clocks.length")
-              | Worked for
-              | {{
-              | timeDiff(
-              | timecard.time_clocks[0].time,
-              | timecard.time_clocks[timecard.time_clocks.length - 1].time
-              | )
-              | }}
-            p {{ timecard.time_break }} minute break
-            p ${{ timecard.total_payment }} earned
-
-  .mb-5(v-if="unapprovedTimecards.length")
-    v-toolbar.no-padding(flat, color="transparent")
-      v-toolbar-title.text-h6
-        span Unapproved
-        v-chip(small class="mx-3 pa-2 font-weight-black") {{unapprovedTimecards.length}}
-
-      v-spacer
-      v-btn(
-        text,
-        color="green",
-        @click="openApproveDialog(unapprovedTimecards)"
-      )
-        v-icon mdi-check
-        |
-        | Approve all
-
-    v-expansion-panels()
-      v-expansion-panel(
-        v-for="timecard in unapprovedTimecards",
-        :key="timecard.id"
-      )
-        v-expansion-panel-header
-          span.text-subtitle-1.flex-grow-0
-            | {{ timecard.first_name }}
-            | {{ timecard.last_name }}
-          v-spacer
-          span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
-          span.flex-grow-0.px-2(
-            v-if="timecard.time_clocks && timecard.time_clocks.length"
-          )
-            | {{ timecard.time_clocks[0].time | time }}
-            | -
-            | {{
-            | timecard.time_clocks[timecard.time_clocks.length - 1].time
-            | | time
-            | }}
-
-        v-expansion-panel-content
-          v-card-text.text-body-1
-            p(v-if="timecard.time_clocks && timecard.time_clocks.length")
-              | Worked for
-              | {{
-              | timeDiff(
-              | timecard.time_clocks[0].time,
-              | timecard.time_clocks[timecard.time_clocks.length - 1].time
-              | )
-              | }}
-            p {{ timecard.time_break }} minute break
-            p ${{ timecard.total_payment }} earned
-
-          v-card-actions
+      v-expansion-panels()
+        v-expansion-panel(
+          v-for="timecard in approvedTimecards",
+          :key="timecard.id"
+        )
+          v-expansion-panel-header.d-flex
+            span.text-subtitle-1.flex-grow-0
+              | {{ timecard.first_name }} {{ timecard.last_name }}
             v-spacer
-            v-btn(text, @click="openEditTimecardDialog(timecard)") Edit
-            v-btn(
-              text,
-              color="green",
-              @click="openApproveDialog([timecard])"
+            span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
+            span.flex-grow-0.px-2(
+              v-if="timecard.time_clocks && timecard.time_clocks.length"
             )
-              v-icon mdi-check
-              |
-              | Approve
-            v-btn(text, color="red", @click="openDenyDialog(timecard)")
-              v-icon mdi-close
-              | Deny
+              | {{ timecard.time_clocks[0].time | time }}
+              | -
+              | {{
+              | timecard.time_clocks[timecard.time_clocks.length - 1].time
+              | | time
+              | }}
+
+          v-expansion-panel-content
+            v-card-text.text-body-1
+              p(v-if="timecard.time_clocks && timecard.time_clocks.length")
+                | Worked for
+                | {{
+                | timeDiff(
+                | timecard.time_clocks[0].time,
+                | timecard.time_clocks[timecard.time_clocks.length - 1].time
+                | )
+                | }}
+              p {{ timecard.time_break }} minute break
+              p ${{ timecard.total_payment }} earned
+
+    .mb-5(v-if="unapprovedTimecards.length")
+      v-toolbar.no-padding(flat, color="transparent")
+        v-toolbar-title.text-h6
+          span Unapproved
+          v-chip(small class="mx-3 pa-2 font-weight-black") {{unapprovedTimecards.length}}
+
+        v-spacer
+        v-btn(
+          text,
+          color="green",
+          @click="openApproveDialog(unapprovedTimecards)"
+        )
+          v-icon mdi-check
+          |
+          | Approve all
+
+      v-expansion-panels()
+        v-expansion-panel(
+          v-for="timecard in unapprovedTimecards",
+          :key="timecard.id"
+        )
+          v-expansion-panel-header
+            span.text-subtitle-1.flex-grow-0
+              | {{ timecard.first_name }}
+              | {{ timecard.last_name }}
+            v-spacer
+            span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
+            span.flex-grow-0.px-2(
+              v-if="timecard.time_clocks && timecard.time_clocks.length"
+            )
+              | {{ timecard.time_clocks[0].time | time }}
+              | -
+              | {{
+              | timecard.time_clocks[timecard.time_clocks.length - 1].time
+              | | time
+              | }}
+
+          v-expansion-panel-content
+            v-card-text.text-body-1
+              p(v-if="timecard.time_clocks && timecard.time_clocks.length")
+                | Worked for
+                | {{
+                | timeDiff(
+                | timecard.time_clocks[0].time,
+                | timecard.time_clocks[timecard.time_clocks.length - 1].time
+                | )
+                | }}
+              p {{ timecard.time_break }} minute break
+              p ${{ timecard.total_payment }} earned
+
+            v-card-actions
+              v-spacer
+              v-btn(text, @click="openEditTimecardDialog(timecard)") Edit
+              v-btn(
+                text,
+                color="green",
+                @click="openApproveDialog([timecard])"
+              )
+                v-icon mdi-check
+                |
+                | Approve
+              v-btn(text, color="red", @click="openDenyDialog(timecard)")
+                v-icon mdi-close
+                | Deny
 </template>
 
 <script>
@@ -146,7 +152,9 @@ dayjs.extend(duration);
 export default {
   name: "approvals",
   async mounted() {
-    this.$store.dispatch("loadApprovals");
+    this.loading = true
+    await this.$store.dispatch("loadApprovals");
+    this.loading = false
   },
   components: {
     EditTimecardDialog,
@@ -155,6 +163,7 @@ export default {
     DenyDialog,
   },
   data: () => ({
+    loading: false,
     selectedTimecards: [],
     editTimecardDialog: false,
     approveDialog: false,

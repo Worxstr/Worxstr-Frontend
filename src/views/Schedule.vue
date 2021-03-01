@@ -23,6 +23,10 @@ v-container.home.d-flex.flex-column.align-stretch(
     )
 
   v-card.flex-grow-1
+    v-fade-transition
+      v-overlay(v-if="loading" absolute)
+        v-progress-circular(indeterminate)
+
     v-calendar(
       ref="calendar",
       v-model="value",
@@ -46,6 +50,7 @@ import {
 export default {
   name: "schedule",
   data: () => ({
+    loading: false,
     type: "month",
     types: ["month", "week", "day", "4day"],
     value: "",
@@ -54,11 +59,13 @@ export default {
     ...mapGetters(["calendarEvents"]),
   },
   methods: {
-    getEvents({ start, end }) {
-      this.$store.dispatch("loadCalendarEvents", {
+    async getEvents({ start, end }) {
+      this.loading = true
+      await this.$store.dispatch("loadCalendarEvents", {
         start: new Date(`${start.date}T00:00:00`).toISOString(),
         end: new Date(`${end.date}T23:59:59`).toISOString(),
       });
+      this.loading = false
     },
     getEventColor(event) {
       return event.color;
@@ -66,9 +73,12 @@ export default {
     openEvent({ nativeEvent, event }) {
       // nativeEvent is the browser click event, event is the calendar event data
 
-      if (this.$store.state.authenticatedUser.roles.some((role) =>
-        role.id == EMPLOYEE_MANAGER || role.id == ORGANIZATION_MANAGER
-      )) {
+      if (
+        this.$store.state.authenticatedUser.roles.some(
+          (role) =>
+            role.id == EMPLOYEE_MANAGER || role.id == ORGANIZATION_MANAGER
+        )
+      ) {
         this.$router.push({ name: "job", params: { jobId: event.job_id } });
       }
     },

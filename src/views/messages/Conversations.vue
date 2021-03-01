@@ -1,5 +1,8 @@
 <template lang="pug">
-v-card.conversations
+
+v-skeleton-loader(v-if="loading" type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
+
+v-card.conversations(v-else)
   v-list(color="transparent")
     v-list-item(
       v-for="conversation in conversations",
@@ -27,8 +30,13 @@ import { mapState, mapGetters } from "vuex";
 export default {
   name: "Conversations",
   async mounted() {
+    this.loading = true
     await this.$store.dispatch("loadConversations");
+    this.loading = false
   },
+  data: () => ({
+    loading: false,
+  }),
   computed: {
     ...mapState(["authenticatedUser"]),
     ...mapGetters(["conversations"]),
