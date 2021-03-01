@@ -40,11 +40,11 @@ v-container.approvals(v-if="job")
     v-layout.justify-space-between
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Organizational manager
-        p {{ organizationManager.first_name }} {{ organizationManager.last_name }}
+        p {{ job.organization_manager.first_name }} {{ job.organization_manager.last_name }}
 
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Employee manager
-        p {{ employeeManager.first_name }} {{ employeeManager.last_name }}
+        p {{ job.employee_manager.first_name }} {{ job.employee_manager.last_name }}
 
       .flex-grow-1.px-5
         p.text-subtitle-2.mb-1 Consultant
@@ -65,13 +65,12 @@ v-container.approvals(v-if="job")
   v-expansion-panels(popout, tile)
     v-expansion-panel(v-for="shift in job.shifts", :key="shift.id")
       v-expansion-panel-header.d-flex
-        span.text-subtitle-1.flex-grow-0
-          | {{ shift.site_location }}
+        //- span.text-subtitle-1.flex-grow-0
+        p.d-flex.flex-column.mb-0.flex-grow-0.px-2
+          span.my-1.font-weight-medium(v-if="shift.employee_id") {{ employeeName(shift.employee_id) }}
+          span.my-1 {{ shift.site_location }}
 
-          span(v-if="shift.employee_id")
-            |  - {{ employeeName(shift.employee_id) }}
-
-          v-chip.mx-4.px-2(v-if="shift.active" label outlined small color='green') Active
+        v-chip.mx-4.px-2.flex-grow-0(v-if="shift.active" label outlined small color='green') Active
 
         v-spacer
         
@@ -109,12 +108,6 @@ export default {
     job() {
       return this.$store.getters.job(this.$route.params.jobId);
     },
-    employeeManager() {
-      return this.$store.getters.manager(this.job.employee_manager_id);
-    },
-    organizationManager() {
-      return this.$store.getters.manager(this.job.organization_manager_id);
-    },
     location() {
       return { lat: this.job.latitude, lng: this.job.longitude };
     },
@@ -126,9 +119,6 @@ export default {
     this.$store.dispatch("loadJob", this.$route.params.jobId);
   },
   methods: {
-    innerClick() {
-      alert("Click!");
-    },
     openEditShiftDialog(shift) {
       this.selectedShift = shift;
       this.editShiftDialog = true;
@@ -140,9 +130,6 @@ export default {
     employeeName(employeeId) {
       const employee = this.job.employees.find((e) => e.id == employeeId);
       return `${employee.first_name} ${employee.last_name}`;
-    },
-    addShift() {
-      return;
     },
   },
   data: () => ({
