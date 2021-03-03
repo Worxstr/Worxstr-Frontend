@@ -576,27 +576,7 @@ const store = new Vuex.Store({
         return (new Date(b.time)) - (new Date(a.time))
       })
 
-      let last
-
-      return events.flatMap((event, i) => {
-        const current = new Date(event.time)
-        const ret = []
-
-        if (!last || !(last.getDate() === current.getDate()
-          && last.getMonth() === current.getMonth()
-          && last.getFullYear() === current.getFullYear())) {
-
-          ret.push(
-            {
-              label: current,
-              id: `day-${i}`
-            }
-          )
-        }
-        ret.push(event)
-        last = current
-        return ret
-      })
+      return events;
     },
     nextShift: (state) => {
       if (!state.shifts.next) return {}

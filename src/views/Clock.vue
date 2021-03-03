@@ -48,7 +48,7 @@
                 div
                   qrcode-stream(@decode='submitCode' @init='qrInit')
                 v-card-text
-                  v-text-field(label='Or enter the clock in code' v-model='verifyDialog.code' hide-details)
+                  v-text-field(label='Or enter the code manually' v-model='verifyDialog.code' hide-details)
                 v-card-actions
                   v-spacer
                   v-btn(text @click='verifyDialog.opened = false') Cancel
@@ -89,21 +89,7 @@
       v-card-title.ma-1 Your history
 
       div(v-if='clockHistory.length')
-        v-timeline(align-top dense)
-          transition-group(name='scroll-y-transition')
-            div(v-for='event in clockHistory' :key='event.id || event.label')
-
-              v-timeline-item(v-if='event.label' hide-dot)
-                span {{ event.label | date("dddd, MMM D") }}
-
-              v-timeline-item(v-else :color='eventColor(event.action)' small)
-                v-row.pt-1
-                  v-col(cols='3')
-                    strong {{ event.time | time }}
-
-                  v-col
-                    strong {{ eventType(event.action) }}
-                    .caption {{ event.description }}
+        clock-events(:events='clockHistory')
 
         v-card-actions.d-flex.justify-center
           v-btn(text color='primary' @click='loadClockHistory')
@@ -120,6 +106,9 @@ import vueAwesomeCountdown from "vue-awesome-countdown";
 import { QrcodeStream } from "vue-qrcode-reader";
 import { mapState, mapGetters, mapActions } from "vuex";
 
+import { CLOCK_IN, CLOCK_OUT, START_BREAK, END_BREAK } from '@/definitions/clockActions'
+import ClockEvents from '@/components/ClockEvents'
+
 Vue.use(vueAwesomeCountdown, "vac");
 
 export default {
@@ -133,6 +122,7 @@ export default {
   }),
   components: {
     QrcodeStream,
+    ClockEvents,
   },
   mounted() {
     if (!this.clockHistory.length) this.loadClockHistory();
@@ -143,15 +133,15 @@ export default {
     ...mapGetters(["clockHistory", "nextShift"]),
     clocked() {
       const lastClockEvent = this.clockHistory.find(
-        (event) => event.action == 1 || event.action == 2
+        (event) => event.action == CLOCK_IN || event.action == CLOCK_OUT
       );
-      return lastClockEvent ? lastClockEvent.action == 1 : null;
+      return lastClockEvent ? lastClockEvent.action == CLOCK_IN : null;
     },
     onBreak() {
       const lastBreakEvent = this.clockHistory.find(
-        (event) => event.action == 3 || event.action == 4
+        (event) => event.action == START_BREAK || event.action == END_BREAK
       );
-      return lastBreakEvent ? lastBreakEvent.action == 3 : null;
+      return lastBreakEvent ? lastBreakEvent.action == START_BREAK : null;
     },
   },
   methods: {
@@ -164,20 +154,28 @@ export default {
       try {
         /* const { capabilities } = */ await promise;
       } catch (error) {
-        // TODO: Handle these errors with toast
-        if (error.name === "NotAllowedError") {
-          // user denied camera access permisson
-        } else if (error.name === "NotFoundError") {
-          // no suitable camera device installed
-        } else if (error.name === "NotSupportedError") {
-          // page is not served over HTTPS (or localhost)
-        } else if (error.name === "NotReadableError") {
-          // maybe camera is already in use
-        } else if (error.name === "OverconstrainedError") {
-          // did you requested the front camera although there is none?
-        } else if (error.name === "StreamApiNotSupportedError") {
-          // browser seems to be lacking features
+        let errorMessage;
+        switch (error.name) {
+          case "NotAllowedError":
+            errorMessage = 'Camera permission denied'
+            break;
+          case "NotFoundError":
+            errorMessage = 'No camera'
+            break;
+          case "NotSupportedError":
+            errorMessage = 'Page must be served over HTTPS'
+            break;
+          case "NotReadableError":
+            errorMessage = 'Camera in use'
+            break;
+          case "OverconstrainedError":
+            errorMessage = 'No front camera'
+            break;
+          case "StreamApiNotSupportedError":
+            errorMessage = 'Browser not supported'
+            break;
         }
+        this.$store.dispatch('showSnackbar', { text: errorMessage })
       } finally {
         this.verifyDialog.cameraLoading = false;
       }
@@ -187,34 +185,6 @@ export default {
       await this.$store.dispatch("clockIn", { code });
       this.verifyDialog.opened = false;
       // TODO: Stop camera on close
-    },
-    eventType(eventEnum) {
-      switch (eventEnum) {
-        case 1:
-          return "Clocked in";
-        case 2:
-          return "Clocked out";
-        case 3:
-          return "Started break";
-        case 4:
-          return "Ended break";
-        default:
-          return "Unknown event";
-      }
-    },
-    eventColor(eventEnum) {
-      switch (eventEnum) {
-        case 1:
-          return "green";
-        case 2:
-          return "pink";
-        case 3:
-          return "amber";
-        case 4:
-          return "green";
-        default:
-          return "blue";
-      }
     },
     loadClockHistory() {
       this.$store.dispatch("loadClockHistory");
