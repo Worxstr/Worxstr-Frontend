@@ -645,17 +645,6 @@ const store = new Vuex.Store({
     indirectJobs: (state, getters) => {
       return getters.jobs.filter((job) => !job.direct);
     },
-    manager: (state, getters) => managerId => {
-      const manager = Object.values(state.users.byId).find(u => u.id == managerId)
-      return manager ? manager : {first_name: "Invalid manager id"}
-    },
-    managers: (state, getters) => {
-      const a = {
-        employee: state.managers.employee.map(m => getters.manager(m)),
-        organization: state.managers.organization.map(m => getters.manager(m))
-      }
-      return a
-    },
     shift: (state) => id => {
       return state.shifts.byId[id]
     },
