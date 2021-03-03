@@ -2,9 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import Home from '@/views/Home'
+
 import SignIn from '@/views/auth/SignIn'
 import SignUp from '@/views/auth/SignUp'
 import ResetPassword from '@/views/auth/ResetPassword'
+
 import Clock from '@/views/Clock'
 import Approvals from '@/views/approvals/Approvals'
 // import Availability from '@/views/Availability'
@@ -14,7 +16,10 @@ import Workforce from '@/views/workforce/Workforce'
 import Schedule from '@/views/Schedule'
 import Messages from '@/views/messages/Messages'
 import Conversation from '@/views/messages/Conversation'
+
 import Settings from '@/views/settings/Settings'
+
+import NotFound from '@/views/errors/NotFound'
 
 Vue.use(VueRouter)
 
@@ -140,6 +145,11 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: Settings,
+  },
+  {
+    path: '*',
+    name: 'Not found',
+    component: NotFound
   }
 ]
 
