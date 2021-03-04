@@ -108,7 +108,11 @@ div(v-else)
 
         v-expansion-panel-content
           v-card-content(v-if="shift.active")
-            p Display clock history here
+            clock-events(
+              v-if="shift.timeclock_actions.length",
+              :events="shift.timeclock_actions"
+            )
+
           v-card-actions
             v-spacer
             v-btn(text, @click="openEditShiftDialog(shift)") Edit
@@ -122,6 +126,8 @@ import CloseJobDialog from "./CloseJobDialog";
 import EditShiftDialog from "./EditShiftDialog";
 import DeleteShiftDialog from "./DeleteShiftDialog";
 
+import ClockEvents from "@/components/ClockEvents";
+
 import { userIs, ORGANIZATION_MANAGER } from "@/definitions/userRoles";
 
 export default {
@@ -131,6 +137,7 @@ export default {
     CloseJobDialog,
     EditShiftDialog,
     DeleteShiftDialog,
+    ClockEvents,
   },
   computed: {
     job() {

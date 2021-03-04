@@ -13,7 +13,7 @@ v-dialog(
         v-icon mdi-close
       v-toolbar-title Complete payment
 
-    v-card-text
+    v-card-text.mt-5
       p.text-subtitle-1
         | {{ timecards.length }}
         | employee{{ timecards.length == 1 ? '' : 's' }} will be paid ${{
@@ -23,7 +23,7 @@ v-dialog(
         br
         |
         | Your total is ${{ totalPayment }}.
-        
+    
       paypal-buttons(
         :createorder="createOrder",
         :onapprove="onApprove",

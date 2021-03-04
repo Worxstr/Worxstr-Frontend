@@ -72,8 +72,8 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
-import TimeInput from "@/components/TimeInput";
-import DateInput from "@/components/DateInput";
+import TimeInput from "@/components/inputs/TimeInput";
+import DateInput from "@/components/inputs/DateInput";
 
 // TODO: Move these to reusable import
 const exists = (errorString) => (value) => !!value || errorString;

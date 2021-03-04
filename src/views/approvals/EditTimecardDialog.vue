@@ -54,7 +54,7 @@ v-dialog(
 <script>
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import TimeInput from "@/components/TimeInput.vue";
+import TimeInput from "@/components/inputs/TimeInput.vue";
 
 dayjs.extend(duration);
 
