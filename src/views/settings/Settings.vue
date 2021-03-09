@@ -67,6 +67,9 @@ import SSNDialog from './SSNDialog'
 
 export default {
   name: "settings",
+	metaInfo: {
+		title: 'Settings',
+	},
 	components: { SSNDialog, ChangePasswordDialog },
 	computed: {
 		...mapState(['authenticatedUser']),

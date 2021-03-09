@@ -70,6 +70,9 @@
 
 export default {
   name: "signUp",
+  metaInfo: {
+    title: 'Sign up',
+  },
   data: () => ({
     form: {
       first_name: "",

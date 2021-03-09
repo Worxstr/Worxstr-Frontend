@@ -9,17 +9,6 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
       v-icon mdi-arrow-left
 
     v-toolbar-title {{ conversation | groupNameList(authenticatedUser) }}
-      
-      //- span(
-      //-   v-for="(participant, index) in conversation.participants",
-      //-   :key="participant.id",
-      //-   v-if="participant.id != authenticatedUser.id"
-      //- )
-      //-   | {{ participant | fullName }}
-      //-   span(
-      //-     v-if="index != conversation.participants.length - 1 && conversation.participants.length != 2"
-      //-   )
-      //-     | ,&nbsp;
 
   //- transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
   //-   name="scroll-y-reverse-transition",
@@ -60,7 +49,9 @@ export default {
   name: "Messages",
   metaInfo() {
     return {
-      title: 'Conversation'
+      title: this.conversation
+        ? this.$options.filters.groupNameList(this.conversation, this.authenticatedUser)
+        : 'Conversation'
     }
   },
   mounted() {
