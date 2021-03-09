@@ -10,9 +10,16 @@ Vue.filter('date', (value, format) => {
 })
 
 Vue.filter('time', (value, format) => {
+	console.log(value)
+	console.log(new Date(value))
 	return dayjs(value).format(format || 'h:mm a')
 })
 
 Vue.filter('snakeToSpace', value => {
 	return value.replaceAll('_', ' ')
+})
+
+Vue.filter('fullName', user => {
+	if (!user) return 'Invalid user'
+	return `${user.first_name} ${user.last_name}`
 })

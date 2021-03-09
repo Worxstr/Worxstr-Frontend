@@ -12,8 +12,7 @@ v-dialog(
     v-card-text
       span
         span(v-if="timecards.length == 1")
-          | You are approving {{ timecards[0].first_name }}
-          | {{ timecards[0].last_name }} for ${{ timecards[0].total_payment }}
+          | You are approving {{ timecards[0] | fullName }} for ${{ timecards[0].total_payment }}
           | for this shift.
         span(v-else)
           | You are approving {{ timecards.length }} employees for ${{
@@ -34,7 +33,7 @@ v-dialog(
             |
             | Be sure to pay
             |
-            | {{ timecard.first_name }} {{ timecard.last_name }}
+            | {{ timecard.first_name | fullName }}
             span.font-weight-black.mx-1 ${{ timecard.total_payment }}
             |
             | in cash.

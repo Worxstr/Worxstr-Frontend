@@ -14,7 +14,7 @@
 					table.settings-table
 						tr
 							td Name
-							td.stretch {{ authenticatedUser.first_name }} {{ authenticatedUser.last_name }}
+							td.stretch {{ authenticatedUser | fullName }}
 						
 						tr 
 							td Organization

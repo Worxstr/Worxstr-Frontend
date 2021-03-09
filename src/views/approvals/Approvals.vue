@@ -1,18 +1,26 @@
 <template lang="pug">
-v-container(v-if="loading && !(approvedTimecards.length || unapprovedTimecards.length)")
-  v-skeleton-loader.my-4(type='heading')
-  v-skeleton-loader(type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
+v-container(
+  v-if="loading && !(approvedTimecards.length || unapprovedTimecards.length)"
+)
+  v-skeleton-loader.my-4(type="heading")
+  v-skeleton-loader(
+    type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
+  )
 
-  v-skeleton-loader.mt-8.mb-4(type='heading')
-  v-skeleton-loader(type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
+  v-skeleton-loader.mt-8.mb-4(type="heading")
+  v-skeleton-loader(
+    type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
+  )
 
 div(v-else)
-  v-container.d-flex.flex-column.justify-center(fill-height v-if="!approvedTimecards.length && !unapprovedTimecards.length")
+  v-container.d-flex.flex-column.justify-center(
+    fill-height,
+    v-if="!approvedTimecards.length && !unapprovedTimecards.length"
+  )
     v-icon.text-h2.ma-5 mdi-clock-check-outline
     p.text-body-1 No timecard approvals left!
 
   v-container.approvals(v-else)
-
     edit-timecard-dialog(
       :opened.sync="editTimecardDialog",
       :timecard="selectedTimecards[0]"
@@ -26,26 +34,26 @@ div(v-else)
       :opened.sync="paymentDialog",
       :timecards="selectedTimecards"
     )
-    
+
     .mb-5(v-if="approvedTimecards.length")
       v-toolbar.no-padding(flat, color="transparent")
         v-toolbar-title.text-h6
           span Pending
-          v-chip(small class="mx-3 pa-2 font-weight-black") {{approvedTimecards.length}}
+          v-chip.mx-3.pa-2.font-weight-black(small) {{ approvedTimecards.length }}
         v-spacer
         v-btn(text, @click="openPaymentDialog(approvedTimecards)")
           v-icon mdi-currency-usd
           |
           | Complete payments
 
-      v-expansion-panels()
+      v-expansion-panels
         v-expansion-panel(
           v-for="timecard in approvedTimecards",
           :key="timecard.id"
         )
           v-expansion-panel-header.d-flex
             span.text-subtitle-1.flex-grow-0
-              | {{ timecard.first_name }} {{ timecard.last_name }}
+              | {{ timecard | fullName }}
             v-spacer
             span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
             span.flex-grow-0.px-2(
@@ -53,10 +61,7 @@ div(v-else)
             )
               | {{ timecard.time_clocks[0].time | time }}
               | -
-              | {{
-              | timecard.time_clocks[timecard.time_clocks.length - 1].time
-              | | time
-              | }}
+              | {{ timecard.time_clocks[timecard.time_clocks.length - 1].time | time }}
 
           v-expansion-panel-content
             v-card-text.text-body-1
@@ -75,7 +80,7 @@ div(v-else)
       v-toolbar.no-padding(flat, color="transparent")
         v-toolbar-title.text-h6
           span Unapproved
-          v-chip(small class="mx-3 pa-2 font-weight-black") {{unapprovedTimecards.length}}
+          v-chip.mx-3.pa-2.font-weight-black(small) {{ unapprovedTimecards.length }}
 
         v-spacer
         v-btn(
@@ -87,15 +92,13 @@ div(v-else)
           |
           | Approve all
 
-      v-expansion-panels()
+      v-expansion-panels
         v-expansion-panel(
           v-for="timecard in unapprovedTimecards",
           :key="timecard.id"
         )
           v-expansion-panel-header
-            span.text-subtitle-1.flex-grow-0
-              | {{ timecard.first_name }}
-              | {{ timecard.last_name }}
+            span.text-subtitle-1.flex-grow-0 {{ timecard | fullName }}
             v-spacer
             span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
             span.flex-grow-0.px-2(
@@ -152,9 +155,9 @@ dayjs.extend(duration);
 export default {
   name: "approvals",
   async mounted() {
-    this.loading = true
+    this.loading = true;
     await this.$store.dispatch("loadApprovals");
-    this.loading = false
+    this.loading = false;
   },
   components: {
     EditTimecardDialog,
@@ -210,7 +213,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .no-padding .v-toolbar__content {
-    padding: 0 !important;
-  }
+.no-padding .v-toolbar__content {
+  padding: 0 !important;
+}
 </style>

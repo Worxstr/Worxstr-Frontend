@@ -62,11 +62,11 @@ div(v-else)
       v-layout.justify-space-between
         .flex-grow-1.px-5
           p.text-subtitle-2.mb-1 Organizational manager
-          p {{ job.organization_manager.first_name }} {{ job.organization_manager.last_name }}
+          p {{ job.organization_manager | fullName }}
 
         .flex-grow-1.px-5
           p.text-subtitle-2.mb-1 Employee manager
-          p {{ job.employee_manager.first_name }} {{ job.employee_manager.last_name }}
+          p {{ job.employee_manager | fullName }}
 
         .flex-grow-1.px-5
           p.text-subtitle-2.mb-1 Consultant
@@ -89,7 +89,7 @@ div(v-else)
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0
           p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-            span.my-1.font-weight-medium(v-if="shift.employee_id") {{ employeeName(shift.employee_id) }}
+            span.my-1.font-weight-medium(v-if="shift.employee_id") {{ shift.employee | fullName }}
             span.my-1 {{ shift.site_location }}
 
           v-chip.mx-4.px-2.flex-grow-0(
