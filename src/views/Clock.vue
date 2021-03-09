@@ -112,6 +112,9 @@ Vue.use(vueAwesomeCountdown, "vac");
 
 export default {
   name: "clock",
+  metaInfo: {
+    title: 'Clock'
+  },
   data: () => ({
     verifyDialog: {
       opened: false,

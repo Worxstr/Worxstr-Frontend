@@ -20,6 +20,9 @@ import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 
 export default {
   name: "workforce",
+  metaInfo: {
+    title: 'Workforce'
+  },
   components: { AddWorkforceMemberDialog },
   data: () => ({
     addEmployeeDialog: false,

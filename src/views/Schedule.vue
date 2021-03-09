@@ -49,6 +49,9 @@ import {
 
 export default {
   name: "schedule",
+  metaInfo: {
+    title: 'Schedule'
+  },
   data: () => ({
     loading: false,
     type: "month",

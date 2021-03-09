@@ -44,6 +44,9 @@ import NewConversationDialog from "@/views/messages/NewConversationDialog";
 
 export default {
   name: "Messages",
+  metaInfo: {
+    title: 'Messages'
+  },
   components: { Conversations, NewConversationDialog },
   data: () => ({
     newConversationDialog: false,

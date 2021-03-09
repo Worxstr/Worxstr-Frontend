@@ -55,6 +55,9 @@ import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 
 export default {
   name: "jobs",
+  metaInfo: {
+    title: 'Jobs'
+  },
   data: () => ({
     loading: false,
     createJobDialog: false

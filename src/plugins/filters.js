@@ -10,8 +10,6 @@ Vue.filter('date', (value, format) => {
 })
 
 Vue.filter('time', (value, format) => {
-	console.log(value)
-	console.log(new Date(value))
 	return dayjs(value).format(format || 'h:mm a')
 })
 
@@ -22,4 +20,18 @@ Vue.filter('snakeToSpace', value => {
 Vue.filter('fullName', user => {
 	if (!user) return 'Invalid user'
 	return `${user.first_name} ${user.last_name}`
+})
+
+// Create a string that lists users names from an array of users, filtering the authenticated user
+// [{first: 'Bob', last: 'Vance'}, {first: 'Ada', last: 'Lovelace'}]								-> 'Ada Lovelace'
+// [{first: 'Bob', last: 'Vance'}, {first: 'Ada', last: 'Lovelace', {first: 'Tim', last: 'Allen'}}] -> 'Bob, Tim'
+Vue.filter('groupNameList', (group, authenticatedUser) => {
+	return group.participants
+		.filter(u =>
+			u.id != authenticatedUser.id
+		)
+		.map(u =>
+			group.participants.length == 2 ? Vue.filter('fullName')(u) : u.first_name
+		)
+		.join(', ')
 })

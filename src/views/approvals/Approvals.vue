@@ -154,6 +154,9 @@ dayjs.extend(duration);
 
 export default {
   name: "approvals",
+  metaInfo: {
+    title: 'Approvals'
+  },
   async mounted() {
     this.loading = true;
     await this.$store.dispatch("loadApprovals");

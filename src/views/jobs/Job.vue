@@ -132,6 +132,11 @@ import { userIs, ORGANIZATION_MANAGER } from "@/definitions/userRoles";
 
 export default {
   name: "job",
+  metaInfo() {
+    return {
+      title: this.job.name || 'Job'
+    }
+  },
   components: {
     EditJobDialog,
     CloseJobDialog,
