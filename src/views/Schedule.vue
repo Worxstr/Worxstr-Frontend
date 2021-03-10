@@ -24,8 +24,8 @@ v-container.home.d-flex.flex-column.align-stretch(
 
   v-card.flex-grow-1
     v-fade-transition
-      v-overlay(v-if="loading && !calendarEvents.length" absolute)
-        v-progress-circular(indeterminate)
+      v-overlay(v-if="loading && !calendarEvents.length" absolute :color='$vuetify.theme.dark ? "black" : "white"')
+        v-progress-circular(indeterminate :color='$vuetify.theme.dark ? "white" : "black"')
 
     v-calendar(
       ref="calendar",
