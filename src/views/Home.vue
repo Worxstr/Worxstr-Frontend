@@ -14,6 +14,10 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'home',
+  metaInfo: {
+    title: 'Worxstr',
+    titleTemplate: null
+  },
   computed: {
     ...mapState(['authenticatedUser'])
   },

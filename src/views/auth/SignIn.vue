@@ -30,6 +30,9 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
 <script>
 export default {
   name: "signIn",
+  metaInfo: {
+    title: 'Sign in',
+  },
   data: () => ({
     form: {
       email: "",

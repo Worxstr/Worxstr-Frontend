@@ -8,17 +8,7 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
     )
       v-icon mdi-arrow-left
 
-    v-toolbar-title
-      span(
-        v-for="(participant, index) in conversation.participants",
-        :key="participant.id",
-        v-if="participant.id != authenticatedUser.id"
-      )
-        | {{ participant.first_name }} {{ participant.last_name }}
-        span(
-          v-if="index != conversation.participants.length - 1 && conversation.participants.length != 2"
-        )
-          | ,&nbsp;
+    v-toolbar-title {{ conversation | groupNameList(authenticatedUser) }}
 
   //- transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
   //-   name="scroll-y-reverse-transition",
@@ -26,8 +16,8 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
   //- )
   .message-container.px-4.d-flex.flex-column-reverse.align-start
     .message(
-      v-for="message in conversation.messages",
-      :key="message.id",
+      v-for="message in conversation.messages"
+      :key="message.id"
       :class="message.sender_id == authenticatedUser.id ? 'right' : 'left'"
     )
       p.px-4.py-2.mb-2.rounded-xl.grey(
@@ -37,13 +27,13 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
 
   form.d-flex.flex-row.align-center.pa-3(@submit.prevent="sendMessage")
     v-text-field(
-      v-model="message",
-      ref="message",
-      :background-color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`",
-      flat,
-      hide-details,
-      rounded,
-      solo,
+      v-model="message"
+      ref="message"
+      :background-color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`"
+      flat
+      hide-details
+      rounded
+      solo
       placeholder="Type a message..."
     )
 
@@ -57,6 +47,13 @@ import { mapState } from "vuex";
 
 export default {
   name: "Messages",
+  metaInfo() {
+    return {
+      title: this.conversation
+        ? this.$options.filters.groupNameList(this.conversation, this.authenticatedUser)
+        : 'Conversation'
+    }
+  },
   mounted() {
     // TODO: get the text input to focus
     console.log(this.$refs.message); //.$el.focus();

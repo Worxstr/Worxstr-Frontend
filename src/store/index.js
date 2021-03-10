@@ -12,6 +12,8 @@ axios.defaults.withCredentials = true
 
 const baseUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace('8080', '5000')
 
+console.log(baseUrl)
+
 const store = new Vuex.Store({
   state: {
     snackbar: {
@@ -177,6 +179,7 @@ const store = new Vuex.Store({
     },
     async signIn({ commit, dispatch }, credentials) {
       try {
+        console.log({baseUrl})
         const { data } = await axios({
           method: 'POST',
           url: `${baseUrl}/auth/login`,

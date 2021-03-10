@@ -27,12 +27,11 @@
               span
                 | That's in &nbsp;
                 span(v-if='props.timeObj.d != 0')
-                  | {{ props.timeObj.d }} days,
+                  | {{ props.timeObj.d }} days,&nbsp;
                 span(v-if='props.timeObj.h != 0')
-                  | {{ props.timeObj.h }} hours,
+                  | {{ props.timeObj.h }} hours,&nbsp;
                 span(v-if='props.timeObj.m != 0')
-                  | {{ props.timeObj.m }} minutes,
-                |                 {{ props.timeObj.s }} seconds.
+                  | {{ props.timeObj.m }} minutes, {{ props.timeObj.s }} seconds.
             template(v-slot:finish)
               span That's right now!
 
@@ -113,6 +112,9 @@ Vue.use(vueAwesomeCountdown, "vac");
 
 export default {
   name: "clock",
+  metaInfo: {
+    title: 'Clock'
+  },
   data: () => ({
     verifyDialog: {
       opened: false,

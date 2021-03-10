@@ -9,9 +9,7 @@ v-dialog(
     v-form.flex-grow-1.d-flex.flex-column(@submit.prevent="updateTimecard", v-model="form.isValid" v-if="timecard")
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title
-          | Editing timecard for
-          | {{ timecard.first_name }}
-          | {{ timecard.last_name }}
+          | Editing timecard for {{ timecard | fullName }}
           
       v-card-text
         time-input(v-model="form.data.timeIn.time", label="Time in")

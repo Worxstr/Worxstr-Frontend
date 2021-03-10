@@ -14,7 +14,7 @@
 					table.settings-table
 						tr
 							td Name
-							td.stretch {{ authenticatedUser.first_name }} {{ authenticatedUser.last_name }}
+							td.stretch {{ authenticatedUser | fullName }}
 						
 						tr 
 							td Organization
@@ -67,6 +67,9 @@ import SSNDialog from './SSNDialog'
 
 export default {
   name: "settings",
+	metaInfo: {
+		title: 'Settings',
+	},
 	components: { SSNDialog, ChangePasswordDialog },
 	computed: {
 		...mapState(['authenticatedUser']),

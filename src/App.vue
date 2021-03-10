@@ -97,6 +97,9 @@ import { mapState } from "vuex";
 
 export default Vue.extend({
   name: "App",
+  metaInfo: {
+    titleTemplate: '%s | Worxstr'
+  },
   async mounted() {
     // const storedUser = localStorage.getItem("authenticatedUser");
     // if (storedUser) {

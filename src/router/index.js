@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Meta from 'vue-meta'
 
 import Home from '@/views/Home'
 
@@ -22,6 +23,7 @@ import Settings from '@/views/settings/Settings'
 import NotFound from '@/views/errors/NotFound'
 
 Vue.use(VueRouter)
+Vue.use(Meta)
 
 import { EMPLOYEE, EMPLOYEE_MANAGER, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
 const MANAGER = [EMPLOYEE_MANAGER, ORGANIZATION_MANAGER]
