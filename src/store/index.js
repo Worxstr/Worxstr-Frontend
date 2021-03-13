@@ -51,6 +51,7 @@ const store = new Vuex.Store({
       all: [],
       byId: {}
     },
+    workforce: [],
     managers: {
       employee: [],
       organization: []
@@ -133,6 +134,11 @@ const store = new Vuex.Store({
     REMOVE_JOB(state, jobId) {
       Vue.delete(state.jobs.byId, jobId);
       Vue.delete(state.jobs.all, state.jobs.all.findIndex(id => id == jobId))
+    },
+    ADD_WORKFORCE_MEMBER(state, userId) {
+      if (!state.workforce.includes(userId)) {
+        state.workforce.push(userId)
+      }
     },
     ADD_MANAGER(state, { type, manager }) {
       if (!state.managers[type].some(m => m.id == manager.id)) {
@@ -467,6 +473,17 @@ const store = new Vuex.Store({
       commit('REMOVE_SHIFT', { shiftId, jobId })
     },
 
+    async loadWorkforce({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/users/employees`
+      })
+      data.users.forEach(u => {
+        commit('ADD_USER', u)
+        commit('ADD_WORKFORCE_MEMBER', u.id)
+      })
+    },
+
     async addManager({ commit }, manager) {
       const { data } = await axios({
         method: 'POST',
@@ -634,6 +651,9 @@ const store = new Vuex.Store({
     shifts: (state, getters) => {
       return state.shifts.all.map(id => getters.shift(id))
     },
+    workforce: (state, getters) => {
+      return state.workforce.map(userId => state.users.byId[userId])
+    },
     calendarEvent: state => id => {
       return state.events.byId[id]
     },
@@ -644,17 +664,17 @@ const store = new Vuex.Store({
         'blue',
         'green',
         'purple',
-        'red',
         'indigo',
-        'light-green',
         'orange darken-1',
         'deep-purple',
-        'lime',
+        'red',
         'light-blue',
         'yellow darken-2',
+        'light-green',
         'cyan',
         'pink',
         'teal',
+        'lime',
       ];
       const colorMap = {}; // Map job ID to color
 
