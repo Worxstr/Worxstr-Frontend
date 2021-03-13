@@ -58,7 +58,7 @@ export default {
     transaction: null,
   },
   data: () => ({
-    renderPaypal: false
+    renderPaypal: false,
   }),
   mounted() {
     // Wait to render paypal buttons so the DOM container is not removed

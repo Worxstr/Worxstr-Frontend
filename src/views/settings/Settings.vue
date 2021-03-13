@@ -53,8 +53,8 @@
 							td
 								v-select.input-small(
 									v-model="preferences.darkMode"
-									disabled
 									:items="['System default', 'Light', 'Dark']"
+									@change="updateDarkMode"
 									dense
 									hide-details
 								)
@@ -66,7 +66,7 @@ import ChangePasswordDialog from './ChangePasswordDialog'
 import SSNDialog from './SSNDialog'
 
 export default {
-  name: "settings",
+	name: "settings",
 	metaInfo: {
 		title: 'Settings',
 	},
@@ -83,9 +83,27 @@ export default {
 		changePasswordDialog: false,
 		ssnDialog: false,
 		preferences: {
-			darkMode: 'System default',
+			darkMode: window.localStorage.getItem('darkMode') || 'System default',
 		},
-	})
+	}),
+	methods: {
+		updateDarkMode() {
+			let dark
+			switch (this.preferences.darkMode) {
+				case 'System default':
+					dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+					break 
+				case 'Light':
+					dark = false
+					break
+				case 'Dark':
+					dark = true
+					break
+			}
+			window.localStorage.setItem('darkMode', this.preferences.darkMode)
+			this.$vuetify.theme.dark = dark
+		}
+	}
 };
 </script>
 

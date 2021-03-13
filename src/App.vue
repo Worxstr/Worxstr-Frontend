@@ -133,15 +133,22 @@ export default Vue.extend({
       this.$store.dispatch("signOut");
     },
     initDarkMode() {
-      const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const userPrefDarkMode = window.localStorage.getItem('darkMode')
+      const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
 
-      darkMediaQuery.addEventListener("change", (e) => {
-        this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      });
+      if (userPrefDarkMode == 'System default') {
+        darkMediaQuery.addEventListener("change", (e) => {
+          this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+        })
 
-      if (darkMediaQuery.matches) {
-        setTimeout(() => (this.$vuetify.theme.dark = true), 0);
+        if (darkMediaQuery.matches) {
+          setTimeout(() => (this.$vuetify.theme.dark = true), 0)
+        }
       }
+      else {
+        this.$vuetify.theme.dark = userPrefDarkMode == 'Dark'
+      }
+
     },
   },
   computed: {

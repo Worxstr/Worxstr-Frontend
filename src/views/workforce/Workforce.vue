@@ -13,6 +13,7 @@
 			v-data-table(
 				:headers="headers"
 				:items="workforce"
+				:loading="loading"
 			)
 				template(v-slot:item.name="{ item }")
 					span {{ item | fullName }}
@@ -33,10 +34,13 @@ export default {
     title: "Workforce",
   },
   components: { AddWorkforceMemberDialog },
-  mounted() {
-    this.$store.dispatch("loadWorkforce");
-  },
+  async mounted() {
+		this.loading = true
+    await this.$store.dispatch("loadWorkforce");
+		this.loading = false
+	},
   data: () => ({
+		loading: false,
     addEmployeeDialog: false,
     addManagerDialog: false,
     headers: [
