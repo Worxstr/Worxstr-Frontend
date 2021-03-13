@@ -25,8 +25,8 @@ v-dialog(
         | Your total is ${{ totalPayment }}.
     
       paypal-buttons(
-        :createorder="createOrder",
-        :onapprove="onApprove",
+        :createOrder="createOrder",
+        :onApprove="onApprove",
         v-if="renderPaypal && !transaction"
       )
       div(v-if="transaction")
@@ -89,6 +89,7 @@ export default {
     },
     createOrder(data, actions) {
       console.log({ data, actions });
+      console.log(this.totalPayment)
 
       return actions.order.create({
         // eslint-disable-next-line @typescript-eslint/camelcase
