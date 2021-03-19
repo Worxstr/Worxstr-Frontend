@@ -7,11 +7,17 @@
 
 	div(v-else)
 		v-container.d-flex.flex-column.justify-center
-			p {{ user | fullName }}
-			p {{ user.email }}
-			p {{ user.phone }}
+			v-card
+				v-card-title {{ user | fullName }}
+				v-card-text
+					p User ID: {{ user.id }}
+					p {{ user.email }}
+					p {{ user.phone | phone }}
 
-			v-btn(text) Edit wage
+					.d-flex
+						v-spacer
+						v-btn(text) Edit wage
+						v-btn(text color="red") Delete user
 
 </template>
 

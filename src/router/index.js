@@ -11,7 +11,7 @@ import ResetPassword from '@/views/auth/ResetPassword'
 import User from '@/views/User'
 
 import Clock from '@/views/Clock'
-import Approvals from '@/views/approvals/Approvals'
+import Payments from '@/views/payments/Payments'
 // import Availability from '@/views/Availability'
 import Jobs from '@/views/jobs/Jobs'
 import Job from '@/views/jobs/Job'
@@ -79,9 +79,9 @@ const routes = [
     }
   },
   {
-    path: '/approvals',
-    name: 'approvals',
-    component: Approvals,
+    path: '/payments',
+    name: 'payments',
+    component: Payments,
     meta: {
       icon: 'mdi-clock-check-outline',
       restrict: [...MANAGER]

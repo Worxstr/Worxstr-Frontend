@@ -22,6 +22,9 @@
 				template(v-slot:item.phone="{ item }")
 					span {{ item.phone | phone }}
 			
+				//- template(v-slot:item.phone="{ item }")
+				//- 	v-icon(small class="mr-2" @click="editUser(item)") mdi-pencil
+				//- 	v-icon(small @click="deleteItem(item)") mdi-delete
 </template>
 
 <script>
@@ -30,7 +33,7 @@ import { userIs, ORGANIZATION_MANAGER } from "@/definitions/userRoles";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "workforce",
+	name: "workforce",
   metaInfo: {
     title: "Workforce",
   },
