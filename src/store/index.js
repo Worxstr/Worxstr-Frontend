@@ -248,6 +248,14 @@ const store = new Vuex.Store({
       commit('SET_AUTHENTICATED_USER', data.authenticated_user)
     },
 
+    async loadUser({ commit }, userId) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/users/${userId}`
+      })
+      commit('ADD_USER', data.user)
+    },
+
     async loadClockHistory({ state, commit }) {
       const { data } = await axios.get(`${baseUrl}/clock/history`, {
         params: {

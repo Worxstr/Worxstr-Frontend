@@ -5,7 +5,7 @@
 
 		v-toolbar(flat, color="transparent")
 			v-toolbar-title.text-h5.font-weight-medium Settings
-			
+
 		v-card
 			v-card-content
 				v-list(rounded subheader)
@@ -49,7 +49,7 @@
 						
 					table.settings-table
 						tr
-							td.stretch Color theme
+							td.stretch Dark theme
 							td
 								v-select.input-small(
 									v-model="preferences.darkMode"

@@ -14,6 +14,7 @@
 				:headers="headers"
 				:items="workforce"
 				:loading="loading"
+				@click:row="openUser"
 			)
 				template(v-slot:item.name="{ item }")
 					span {{ item | fullName }}
@@ -74,5 +75,10 @@ export default {
         : false;
     },
   },
+	methods: {
+		openUser(user) {
+			this.$router.push({name: 'user', params: {userId: user.id}})
+		}
+	},
 };
 </script>

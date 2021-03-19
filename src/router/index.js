@@ -8,6 +8,8 @@ import SignIn from '@/views/auth/SignIn'
 import SignUp from '@/views/auth/SignUp'
 import ResetPassword from '@/views/auth/ResetPassword'
 
+import User from '@/views/User'
+
 import Clock from '@/views/Clock'
 import Approvals from '@/views/approvals/Approvals'
 // import Availability from '@/views/Availability'
@@ -61,6 +63,11 @@ const routes = [
     meta: {
       fullHeight: true,
     }
+  },
+  {
+    path: '/users/:userId',
+    name: 'user',
+    component: User,
   },
   {
     path: '/clock',
