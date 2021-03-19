@@ -78,15 +78,6 @@ const routes = [
       restrict: [EMPLOYEE]
     }
   },
-  {
-    path: '/payments',
-    name: 'payments',
-    component: Payments,
-    meta: {
-      icon: 'mdi-clock-check-outline',
-      restrict: [...MANAGER]
-    }
-  },
   // {
   //   path: '/availability',
   //   name: 'availability',
@@ -106,19 +97,19 @@ const routes = [
     }
   },
   {
-    path: '/jobs/:jobId',
-    name: 'job',
-    component: Job,
+    path: '/payments',
+    name: 'payments',
+    component: Payments,
     meta: {
+      icon: 'mdi-clock-check-outline',
       restrict: [...MANAGER]
     }
   },
   {
-    path: '/workforce',
-    name: 'workforce',
-    component: Workforce,
+    path: '/jobs/:jobId',
+    name: 'job',
+    component: Job,
     meta: {
-      icon: 'mdi-account-group',
       restrict: [...MANAGER]
     }
   },
@@ -131,6 +122,15 @@ const routes = [
       restrict: [EMPLOYEE, ...MANAGER],
       fullHeight: true,
       hideNav: true,
+    }
+  },
+  {
+    path: '/workforce',
+    name: 'workforce',
+    component: Workforce,
+    meta: {
+      icon: 'mdi-account-group',
+      restrict: [...MANAGER]
     }
   },
   {
