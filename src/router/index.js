@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Meta from 'vue-meta'
 
 import Home from '@/views/Home'
+import About from '@/views/About'
 
 import SignIn from '@/views/auth/SignIn'
 import SignUp from '@/views/auth/SignUp'
@@ -35,6 +36,11 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: About,
   },
   {
     path: '/sign-in',
