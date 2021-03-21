@@ -5,7 +5,7 @@
     fluid
     color="primary lighten-1"
   )
-    img.ma-8.shadow(src="@/assets/logo.svg", width="180")
+    img.ma-8.svg-shadow(src="@/assets/logo.svg", width="180")
     h2.text-h2.font-weight-bold.mb-2.white--text Worxstr
     p.text-subtitle-2
     v-btn(v-if="authenticatedUser", @click="signOut", color="white") Sign out
@@ -19,31 +19,30 @@
     p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
     p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33 percent increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
 
-  //- Our mission
-  v-container.d-flex.flex-column.justify-center.align-center.pa-16.gradient(fluid)
-    p.text-h3.font-weight-bold.mb-15.white--text Our mission
+  //- Our mission/vision
+  v-container.justify-center.align-center.pa-16.gradient.text-center(fluid)
+    v-row
+      v-col(cols='12' md='6')
+        v-icon.white--text.text-h2.mb-6 mdi-rocket-launch
+        p.text-h3.font-weight-bold.white--text Our mission
+        p.white--text At Worxstr our mission is to drive efficiency, consistency, and respect into the management systems for gig labor.
 
-    p.white--text At Worxstr our mission is to drive efficiency, consistency, and respect into the management systems for gig labor.
-
-  //- Our vision
-  v-container.d-flex.flex-column.justify-center.align-center.pa-16
-    p.text-h3.font-weight-bold.mb-15 Our vision
-
-    p At Worxstr we aspire to transform the gig labor industry by providing financial stability, transparency, and accountability through a management platform that will drive tomorrow's economy. At Worxstr we believe that every working American deserves the freedom that comes from opportunity and possibility.
+      v-col(cols='12' md='6')
+        v-icon.white--text.text-h2.mb-6 mdi-eye-outline
+        p.text-h3.font-weight-bold.white--text Our vision
+        p.white--text At Worxstr we aspire to transform the gig labor industry by providing financial stability, transparency, and accountability through a management platform that will drive tomorrow's economy. At Worxstr we believe that every working American deserves the freedom that comes from opportunity and possibility.
 
   //- About us
-  v-container.d-flex.flex-column.justify-center.align-center.pa-16.gradient(fluid)
-    p.text-h3.font-weight-bold.mb-15.white--text About us
+  v-container.d-flex.flex-column.justify-center.align-center.pa-16(fluid)
+    p.text-h3.font-weight-bold.mb-15 About us
 
-    .d-flex.flex-column.flex-sm-row
-      .my-5.mx-10.d-flex.flex-column.justify-start.align-center(
-        v-for="member in team"
-      )
-        v-avatar.mb-7(size="150", :elevation="3")
+    v-row
+      v-col.my-5.d-flex.flex-column.justify-start.align-center(cols='12' md='6' v-for="member in team")
+        v-avatar.mb-7(size="150", elevation="15")
           img(:src="member.photo", :alt="member.name")
-        span.text-center.mb-1.white--text.text-h4.font-weight-bold {{ member.name }}
-        span.text-center.mb-3.white--text.text-subtitle-1.font-weight-medium {{ member.title }}
-        span.text-center.mb-3.white--text {{ member.description }}
+        span.text-center.mb-1.text-h4.font-weight-bold {{ member.name }}
+        span.text-center.mb-3.text-subtitle-1.font-weight-medium {{ member.title }}
+        span.text-center.mb-3 {{ member.description }}
 
   //- Footer
   v-footer(padless)
@@ -115,7 +114,7 @@ export default {
         photo: "https://cdn.vuetifyjs.com/images/john.jpg",
         description:
           "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently completing his second undergraduate degree from Appalachian State University in Computer Information Systems Management with a prior degree in Advertising and General Business.",
-      }
+      },
     ],
     social: [
       {
@@ -143,7 +142,7 @@ export default {
 .jumbo {
   min-height: 80vh;
 }
-.shadow {
+.svg-shadow {
   -webkit-filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.3));
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.3));
 }
