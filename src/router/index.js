@@ -35,9 +35,6 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
-    meta: {
-      fullHeight: true
-    }
   },
   {
     path: '/sign-in',
