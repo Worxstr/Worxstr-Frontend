@@ -69,12 +69,12 @@ v-app
       app
       color='indigo'
       grow
-      :input-value="\
+      v-if="\
         authenticatedUser &&\
         authenticatedUser.roles &&\
         $vuetify.breakpoint.smAndDown &&\
-        $route.name != 'conversation'\
-        "
+        $route.name != 'conversation'&&\
+        $route.name != 'home'"
     )
         
       v-btn(
