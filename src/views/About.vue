@@ -1,7 +1,7 @@
 <template lang="pug">
 .d-flex.flex-column
   v-container.d-flex.flex-column.justify-center.align-center.pa-16(fluid)
-    p.text-h3.font-weight-bold.mb-15 About us
+    p.text-h4.font-weight-bold.mb-15 Our team
 
     v-row
       v-col.my-5.d-flex.flex-column.justify-start.align-center(
@@ -15,23 +15,17 @@
             :src="require(`@/assets/images/team/${member.photo}`)",
             :alt="member.name"
           )
-        span.text-center.mb-1.text-h4.font-weight-bold {{ member.name }}
+        span.text-center.mb-1.text-h5.font-weight-bold {{ member.name }}
         span.text-center.mb-3.text-subtitle-1.font-weight-medium {{ member.title }}
         span.text-center.mb-3 {{ member.description }}
-
-  worxstr-footer
 </template>
 
 <script>
-import WorxstrFooter from "@/components/WorxstrFooter";
 
 export default {
   name: "about",
   metaInfo: {
     title: "About us",
-  },
-  components: {
-    WorxstrFooter,
   },
   data: () => ({
     team: [
@@ -53,9 +47,15 @@ export default {
         name: "Alex Wohlbruck",
         title: "Lead frontend developer",
         photo: "alex.jpg",
-        description: "uhhhhh"
+        description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He is an undergrad student at Appalachian State University, studying for a B.S. in computer science."
       },
     ],
   }),
 };
 </script>
+
+<style lang="scss">
+  .text-block {
+    text-align: justify !important;
+  }
+</style>

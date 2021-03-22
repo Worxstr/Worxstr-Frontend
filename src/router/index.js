@@ -4,6 +4,9 @@ import Meta from 'vue-meta'
 
 import Home from '@/views/Home'
 import About from '@/views/About'
+import Contact from '@/views/Contact'
+import Privacy from '@/views/Privacy'
+import Terms from '@/views/Terms'
 
 import SignIn from '@/views/auth/SignIn'
 import SignUp from '@/views/auth/SignUp'
@@ -36,11 +39,41 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
+    meta: {
+      showFooter: true,
+    }
   },
   {
     path: '/about',
     name: 'about',
     component: About,
+    meta: {
+      showFooter: true,
+    }
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: Contact,
+    meta: {
+      showFooter: true,
+    }
+  },
+  {
+    path: '/privacy',
+    name: 'privacy',
+    component: Privacy,
+    meta: {
+      showFooter: true,
+    }
+  },
+  {
+    path: '/terms',
+    name: 'terms',
+    component: Terms,
+    meta: {
+      showFooter: true,
+    }
   },
   {
     path: '/sign-in',
@@ -161,7 +194,10 @@ const routes = [
   {
     path: '*',
     name: 'Not found',
-    component: NotFound
+    component: NotFound,
+    meta: {
+      fullHeight: true,
+    }
   }
 ]
 

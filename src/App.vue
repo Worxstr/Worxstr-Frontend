@@ -85,6 +85,8 @@ v-app
       )
         span {{ route.name | capitalize }}
         v-icon {{ route.meta.icon }}
+  
+  worxstr-footer(v-if='$route.meta.showFooter')
 
   v-snackbar(
     app
@@ -110,11 +112,15 @@ v-app
 <script>
 import Vue from "vue";
 import { mapState } from "vuex";
+import WorxstrFooter from '@/components/WorxstrFooter'
 
 export default Vue.extend({
   name: "App",
   metaInfo: {
     titleTemplate: "%s | Worxstr",
+  },
+  components: {
+    WorxstrFooter
   },
   async mounted() {
     // const storedUser = localStorage.getItem("authenticatedUser");

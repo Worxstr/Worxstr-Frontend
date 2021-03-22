@@ -36,7 +36,7 @@ export default {
         text: "Contact us",
       },
       {
-        to: "privacyPolicy",
+        to: "privacy",
         text: "Privacy policy",
       },
       {
