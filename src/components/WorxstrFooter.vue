@@ -18,8 +18,8 @@ v-footer.worxstr-footer(padless)
       span {{ new Date().getFullYear() }} — All rights reserved
       br
       span.text-caption
-      | Site design by&nbsp;
-      a(href="https://www.linkedin.com/in/alexwohlbruck/", target="_blank") Alex Wohlbruck
+        | Site design by&nbsp;
+        a(href="https://www.linkedin.com/in/alexwohlbruck/", target="_blank") Alex Wohlbruck
 </template>
 
 <script>
