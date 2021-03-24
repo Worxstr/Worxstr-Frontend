@@ -14,7 +14,7 @@ v-footer.worxstr-footer(padless)
 
     v-card-text
       span &copy;&nbsp;
-      strong Worxstr Inc.&nbsp;
+      strong Worxstr L.L.C.&nbsp;
       span {{ new Date().getFullYear() }} — All rights reserved
       br
       span.text-caption

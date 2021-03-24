@@ -29,6 +29,8 @@
         cols="12",
         sm="6",
         md="4",
+        lg="3"
+        xl='2'
         v-for="member in team"
       )
         v-card(rounded='lg' outlined @click='viewMember(member)')
@@ -73,7 +75,7 @@ export default {
           {
             link: 'https://www.linkedin.com/in/jackson-sippe-628392159/',
             icon: 'mdi-linkedin'
-          }
+          },
         ]
       },
       {
@@ -81,6 +83,12 @@ export default {
         title: "Co-Founder/Head of Sales and Marketing",
         photo: "james.jpg",
         description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently completing his second undergraduate degree from Appalachian State University in Computer Information Systems Management with a prior degree in Advertising and General Business.",
+        socials: [
+          {
+            link: 'https://www.linkedin.com/in/jameswheeler94/',
+            icon: 'mdi-linkedin'
+          },
+        ]
       },
       {
         name: "Alex Wohlbruck",
@@ -95,7 +103,7 @@ export default {
           {
             link: 'https://www.linkedin.com/in/alexwohlbruck/',
             icon: 'mdi-linkedin'
-          }
+          },
         ]
       },
     ],
