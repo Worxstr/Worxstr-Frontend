@@ -6,6 +6,7 @@ v-container.d-flex.flex-column.justify-center.align-center.pa-16
 				
 		v-text-field(
 			outlined,
+			filled
 			dense,
 			label="Subject",
 			v-model="subject",
@@ -14,6 +15,7 @@ v-container.d-flex.flex-column.justify-center.align-center.pa-16
 
 		v-textarea(
 			outlined,
+			filled
 			dense,
 			label="Message",
 			v-model="message",

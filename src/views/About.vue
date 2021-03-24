@@ -41,7 +41,7 @@
                 :alt="member.name"
               )
             span.text-center.mb-1.text-h5.font-weight-bold {{ member.name }}
-            span.text-center.text-subtitle-1.font-weight-medium {{ member.title }}
+            span.text-center.text-subtitle-2.font-weight-medium {{ member.title }}
 
 </template>
 

@@ -2,7 +2,7 @@
 .home
   //- Main CTA
   v-container.jumbo.d-flex.flex-column.justify-center.align-center.gradient(
-    fluid
+    fluid,
     color="primary lighten-1"
   )
     img.ma-8.svg-shadow(src="@/assets/logo.svg", width="180")
@@ -23,15 +23,28 @@
     p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
     p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33 percent increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
 
+  //- Feature carousel
+  v-carousel(
+    cycle,
+    interval='8000'
+    height="700",
+    hide-delimiter-background,
+    show-arrows-on-hover
+    delimiter-icon='mdi-circle-medium'
+  )
+    v-carousel-item(v-for="(slide, i) in slides", :key="i")
+      v-sheet(:color="colors[i]" height="100%")
+
+
   //- Our mission/vision
   v-container.justify-center.align-center.pa-16.gradient.text-center(fluid)
     v-row
-      v-col(cols='12' md='6')
+      v-col(cols="12", md="6")
         v-icon.white--text.text-h2.mb-6 mdi-rocket-launch
         p.text-h4.font-weight-bold.white--text Our mission
         p.white--text At Worxstr our mission is to drive efficiency, consistency, and respect into the management systems for gig labor.
 
-      v-col(cols='12' md='6')
+      v-col(cols="12", md="6")
         v-icon.white--text.text-h2.mb-6 mdi-eye-outline
         p.text-h4.font-weight-bold.white--text Our vision
         p.white--text At Worxstr we aspire to transform the gig labor industry by providing financial stability, transparency, and accountability through a management platform that will drive tomorrow's economy. At Worxstr we believe that every working American deserves the freedom that comes from opportunity and possibility.
@@ -52,7 +65,17 @@ export default {
   },
   methods: {
     ...mapActions(["signOut"]),
-  }
+  },
+  data: () => ({
+    colors: [
+      "indigo",
+      "warning",
+      "pink darken-2",
+      "red lighten-1",
+      "deep-purple accent-4",
+    ],
+    slides: ["First", "Second", "Third", "Fourth", "Fifth"],
+  }),
 };
 </script>
 
