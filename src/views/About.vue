@@ -21,8 +21,8 @@
           v-btn(v-for='social in selectedMember.socials', icon :href='social.link' target="_blank")
             v-icon(size='24px') {{ social.icon }}
 
-  v-container.d-flex.flex-column.justify-center.align-stretch.pa-16(fluid)
-    p.text-h4.font-weight-bold.mb-15.text-center Our team
+  v-container.d-flex.flex-column.justify-center.align-stretch.px-16.pt-8.text-center(fluid)
+    p.text-h4.font-weight-bold Our team
 
     v-row
       v-col(
@@ -69,6 +69,10 @@ export default {
         description: "Jackson Sippe is a second-generation operator of his family’s construction business with extensive experience managing contract labor. He is a software developer with experience working for a major Point-Of-Sale system provider in the retail industry. Jackson is also an MBA student at Appalachian State University with an undergraduate degree in Computer Science.",
         socials: [
           {
+            link: 'mailto:jackson@worxstr.com',
+            icon: 'mdi-at'
+          },
+          {
             link: 'https://github.com/sippejw',
             icon: 'mdi-github',
           },
@@ -85,6 +89,10 @@ export default {
         description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently completing his second undergraduate degree from Appalachian State University in Computer Information Systems Management with a prior degree in Advertising and General Business.",
         socials: [
           {
+            link: 'mailto:james@worxstr.com',
+            icon: 'mdi-at'
+          },
+          {
             link: 'https://www.linkedin.com/in/jameswheeler94/',
             icon: 'mdi-linkedin'
           },
@@ -94,8 +102,12 @@ export default {
         name: "Alex Wohlbruck",
         title: "Lead frontend developer",
         photo: "alex.jpg",
-        description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
+        description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He loves cats, and he is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
         socials: [
+          {
+            link: 'mailto:alexwohlbruck@gmail.com',
+            icon: 'mdi-at'
+          },
           {
             link: 'https://github.com/alexwohlbruck',
             icon: 'mdi-github',

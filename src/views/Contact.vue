@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container.d-flex.flex-column.justify-center.align-center.pa-16
+v-container.d-flex.flex-column.justify-center.align-center.pt-8
 	p.text-h4.font-weight-bold.mb-10 Contact us
 
 	v-form.flex-grow-1.d-flex.flex-column(@submit.prevent="updateTimecard", v-model="isValid" style='width: 600px; max-width: 100%')
