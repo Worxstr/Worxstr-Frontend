@@ -25,8 +25,9 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
       ) 
         | {{ message.body }}
 
-      p.text-caption.text--disabled(v-if='showInfo(i)')
+      p.text-caption.text--disabled
         span(v-if='message.sender_id != authenticatedUser.id') {{ participant(message.sender_id).first_name }} -&nbsp;
+        span(v-if='isToday(message.timestamp)') {{ message.timestamp | date('MMM D') }},&nbsp;
         span {{ message.timestamp | time }}
 
   form.d-flex.flex-row.align-center.pa-3(@submit.prevent="sendMessage")
@@ -94,6 +95,15 @@ export default {
         return (new Date(current.timestamp)).getTime() - (new Date(last.timestamp)).getTime() > (60 * 1000)
       }
       return true;
+    },
+    isToday(timestamp) {
+      const now = (new Date())
+      const then = (new Date(timestamp))
+      return !(
+        now.getUTCDay() == then.getUTCDay() &&
+        now.getUTCMonth() == then.getUTCMonth() &&
+        now.getUTCFullYear() == then.getUTCFullYear()
+      )
     },
     sendMessage() {
       this.$socket.emit("test", { test: 1 });
