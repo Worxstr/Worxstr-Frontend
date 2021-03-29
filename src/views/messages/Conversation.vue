@@ -25,7 +25,7 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
       ) 
         | {{ message.body }}
 
-      p.text-caption.text--disabled
+      p.text-caption.text--disabled(v-if='showInfo(i)')
         span(v-if='message.sender_id != authenticatedUser.id') {{ participant(message.sender_id).first_name }} -&nbsp;
         span(v-if='isToday(message.timestamp)') {{ message.timestamp | date('MMM D') }},&nbsp;
         span {{ message.timestamp | time }}
@@ -86,16 +86,21 @@ export default {
     },
   },
   methods: {
+    // Determine if the message info should be shown
     showInfo(messageIndex) {
       const current = this.conversation.messages[messageIndex]
-      const last = this.conversation.messages[messageIndex - 1]
+      const next = this.conversation.messages[messageIndex + 1]
 
-      if (last) {
-        if (current.sender_id != last.sender_id) return true
-        return (new Date(current.timestamp)).getTime() - (new Date(last.timestamp)).getTime() > (60 * 1000)
+      if (next) {
+        // The messages were sent by different users
+        if (current.sender_id != next.sender_id) return true
+
+        // The messages were sent more than a minute apart
+        return ((new Date(next.timestamp)).getTime()) - (new Date(current.timestamp)).getTime() > (60 * 1000)
       }
       return true;
     },
+    // Check if the message was sent today
     isToday(timestamp) {
       const now = (new Date())
       const then = (new Date(timestamp))
