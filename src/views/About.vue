@@ -118,6 +118,22 @@ export default {
           },
         ]
       },
+      {
+        name: 'Andrew Thorp',
+        title: "Lead backend developer & DevOps engineer",
+        photo: 'andrew.jpg',
+        description: "Andrew is a genius",
+        socials: [
+          {
+            link: 'https://github.com/aThorp96',
+            icon: 'mdi-github',
+          },
+          {
+            link: 'https://www.linkedin.com/in/aThorp96',
+            icon: 'mdi-linkedin'
+          },
+        ]
+      }
     ],
   }),
 };
