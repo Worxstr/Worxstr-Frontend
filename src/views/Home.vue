@@ -26,26 +26,28 @@
   //- Feature carousel
   v-carousel(
     cycle,
-    interval="8000",
+    interval="80000",
     height="700",
     hide-delimiter-background,
     show-arrows-on-hover,
     delimiter-icon="mdi-circle-medium"
+    :dark='false'
+    :light='true'
   )
-    v-carousel-item
-      v-sheet(color="indigo", height="100%")
-        .d-flex.flex-column.flex-md-row(style='height: 100%; max-width: 1500px')
-          .pa-15.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start(
+    v-carousel-item(v-for='feature in carousel')
+      v-sheet(:color='feature.color', :dark='feature.dark' height="100%")
+        .d-flex.flex-column.flex-md-row(:class="feature.reverse ? 'flex-md-row-reverse' : ''" style='height: 100%; max-width: 1500px;')
+          .px-15.pt-15.pt-md-0.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start(
             :style="`width: ${$vuetify.breakpoint.mdAndUp ? 40 : 100}%; height: 100%`"
           )
-            v-icon.white--text.text-h2.mb-6 mdi-clock-fast
-            p.text-h4.font-weight-bold Scheduling
-            p Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.
+            v-icon.text-h2.mb-6 {{ feature.icon }}
+            p.text-h4.font-weight-bold {{ feature.title }}
+            p {{ feature.description }}
           .flex-grow-1
             v-img(
-              src="@/assets/images/landing/schedule.svg",
-              alt="Scheduling system",
-              :style="`transform: rotate(-2.5deg) ${$vuetify.breakpoint.mdAndUp ? 'scale(1.2,1.2) translate(100px,100px)' : 'translatex(100px)'}`"
+              :src="require(`@/assets/images/landing/${feature.image}`)",
+              :alt="feature.title",
+              :style="$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small"
             )
 
   //- Our mission/vision
@@ -77,6 +79,34 @@ export default {
   methods: {
     ...mapActions(["signOut"]),
   },
+  data: () => ({
+    carousel: [
+      {
+        dark: true,
+        color: 'indigo',
+        icon: 'mdi-clock-fast',
+        title: 'Scheduling',
+        description: 'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
+        image: 'schedule.svg',
+        style: {
+          large: 'transform: rotate(-2.5deg) scale(1.2) translate(100px,100px)',
+          small: 'transform: rotate(-2.5deg) scale(1.2) translatex(100px)',
+        }
+      },
+      {
+        reverse: true,
+        color: 'grey lighten-2',
+        icon: 'mdi-clock-check',
+        title: 'Time Approvals',
+        description: 'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
+        image: 'approvals.svg',
+        style: {
+          large: 'transform: scale(1) translate(0px,100px)',
+          small: 'transform: scale(.9)',
+        }
+      }
+    ]
+  })
 };
 </script>
 
