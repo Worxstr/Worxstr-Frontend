@@ -26,15 +26,27 @@
   //- Feature carousel
   v-carousel(
     cycle,
-    interval='8000'
+    interval="8000",
     height="700",
     hide-delimiter-background,
-    show-arrows-on-hover
-    delimiter-icon='mdi-circle-medium'
+    show-arrows-on-hover,
+    delimiter-icon="mdi-circle-medium"
   )
-    v-carousel-item(v-for="(slide, i) in slides", :key="i")
-      v-sheet(:color="colors[i]" height="100%")
-
+    v-carousel-item
+      v-sheet(color="indigo", height="100%")
+        .d-flex.flex-column.flex-md-row(style='height: 100%; max-width: 1500px')
+          .pa-15.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start(
+            :style="`width: ${$vuetify.breakpoint.mdAndUp ? 40 : 100}%; height: 100%`"
+          )
+            v-icon.white--text.text-h2.mb-6 mdi-clock-fast
+            p.text-h4.font-weight-bold Scheduling
+            p Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.
+          .flex-grow-1
+            v-img(
+              src="@/assets/images/landing/schedule.svg",
+              alt="Scheduling system",
+              :style="`transform: rotate(-2.5deg) ${$vuetify.breakpoint.mdAndUp ? 'scale(1.2,1.2) translate(100px,100px)' : 'translatex(100px)'}`"
+            )
 
   //- Our mission/vision
   v-container.justify-center.align-center.pa-16.gradient.text-center(fluid)
@@ -48,7 +60,6 @@
         v-icon.white--text.text-h2.mb-6 mdi-eye-outline
         p.text-h4.font-weight-bold.white--text Our vision
         p.white--text At Worxstr we aspire to transform the gig labor industry by providing financial stability, transparency, and accountability through a management platform that will drive tomorrow's economy. At Worxstr we believe that every working American deserves the freedom that comes from opportunity and possibility.
-
 </template>
 
 <script>
@@ -66,16 +77,6 @@ export default {
   methods: {
     ...mapActions(["signOut"]),
   },
-  data: () => ({
-    colors: [
-      "indigo",
-      "warning",
-      "pink darken-2",
-      "red lighten-1",
-      "deep-purple accent-4",
-    ],
-    slides: ["First", "Second", "Third", "Fourth", "Fifth"],
-  }),
 };
 </script>
 
