@@ -26,7 +26,7 @@
   //- Feature carousel
   v-carousel(
     cycle,
-    interval="8000",
+    interval="80000",
     height="700",
     hide-delimiter-background,
     show-arrows-on-hover,
@@ -36,9 +36,9 @@
   )
     v-carousel-item(v-for='feature in carousel')
       v-sheet(:color='feature.color', :dark='feature.dark' height="100%")
-        .d-flex.flex-column.flex-md-row(:class="feature.reverse ? 'flex-md-row-reverse' : ''" style='height: 100%; max-width: 1500px;')
+        .carousel-content.d-flex.flex-column.flex-md-row(:class="feature.reverse ? 'flex-md-row-reverse' : ''")
           .px-15.pt-15.pb-10.pt-md-0.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start(
-            :style="`width: ${$vuetify.breakpoint.mdAndUp ? 40 : 100}%; height: 100%`"
+            :style="`width: ${$vuetify.breakpoint.mdAndUp ? 40 : 100}%;  : 100%`"
           )
             v-icon.text-h2.mb-6 {{ feature.icon }}
             p.text-h4.font-weight-bold {{ feature.title }}
@@ -82,18 +82,6 @@ export default {
   data: () => ({
     carousel: [
       {
-        reverse: true,
-        color: 'blue-grey lighten-4',
-        icon: 'mdi-badge-account',
-        title: 'Onboarding',
-        description: 'Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.',
-        image: 'schedule.svg',
-        style: {
-          large: '',
-          small: '',
-        }
-      },
-      {
         dark: true,
         color: 'indigo',
         icon: 'mdi-clock-fast',
@@ -115,6 +103,18 @@ export default {
         style: {
           large: 'transform: scale(1) translate(0px,100px)',
           small: 'transform: scale(.9)',
+        }
+      },
+      {
+        dark: true,
+        color: 'blue darken-3',
+        icon: 'mdi-badge-account',
+        title: 'Onboarding',
+        description: 'Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.',
+        image: 'onboarding.svg',
+        style: {
+          large: 'transform: scale(1.7) translate(200px, 100px)',
+          small: 'scale(1.9) translate(200px, 10px)',
         }
       },
       {
@@ -148,5 +148,10 @@ export default {
     rgba(46, 106, 239, 1) 0%,
     rgba(46, 170, 230, 1) 100%
   );
+}
+.carousel-content {
+  margin: 0 auto;
+  height: 100%;
+  max-width: 1500px;
 }
 </style>
