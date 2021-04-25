@@ -26,15 +26,29 @@
   //- Feature carousel
   v-carousel(
     cycle,
-    interval='8000'
+    interval="8000",
     height="700",
     hide-delimiter-background,
-    show-arrows-on-hover
-    delimiter-icon='mdi-circle-medium'
+    show-arrows-on-hover,
+    delimiter-icon="mdi-circle-medium"
+    :dark='false'
+    :light='true'
   )
-    v-carousel-item(v-for="(slide, i) in slides", :key="i")
-      v-sheet(:color="colors[i]" height="100%")
-
+    v-carousel-item(v-for='feature in carousel')
+      v-sheet(:color='feature.color', :dark='feature.dark' height="100%")
+        .d-flex.flex-column.flex-md-row(:class="feature.reverse ? 'flex-md-row-reverse' : ''" style='height: 100%; max-width: 1500px;')
+          .px-15.pt-15.pb-10.pt-md-0.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start(
+            :style="`width: ${$vuetify.breakpoint.mdAndUp ? 40 : 100}%; height: 100%`"
+          )
+            v-icon.text-h2.mb-6 {{ feature.icon }}
+            p.text-h4.font-weight-bold {{ feature.title }}
+            p {{ feature.description }}
+          .flex-grow-1
+            v-img(
+              :src="require(`@/assets/images/landing/${feature.image}`)",
+              :alt="feature.title",
+              :style="$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small"
+            )
 
   //- Our mission/vision
   v-container.justify-center.align-center.pa-16.gradient.text-center(fluid)
@@ -48,7 +62,6 @@
         v-icon.white--text.text-h2.mb-6 mdi-eye-outline
         p.text-h4.font-weight-bold.white--text Our vision
         p.white--text At Worxstr we aspire to transform the gig labor industry by providing financial stability, transparency, and accountability through a management platform that will drive tomorrow's economy. At Worxstr we believe that every working American deserves the freedom that comes from opportunity and possibility.
-
 </template>
 
 <script>
@@ -67,15 +80,56 @@ export default {
     ...mapActions(["signOut"]),
   },
   data: () => ({
-    colors: [
-      "indigo",
-      "warning",
-      "pink darken-2",
-      "red lighten-1",
-      "deep-purple accent-4",
-    ],
-    slides: ["First", "Second", "Third", "Fourth", "Fifth"],
-  }),
+    carousel: [
+      {
+        reverse: true,
+        color: 'blue-grey lighten-4',
+        icon: 'mdi-badge-account',
+        title: 'Onboarding',
+        description: 'Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.',
+        image: 'schedule.svg',
+        style: {
+          large: '',
+          small: '',
+        }
+      },
+      {
+        dark: true,
+        color: 'indigo',
+        icon: 'mdi-clock-fast',
+        title: 'Scheduling',
+        description: 'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
+        image: 'schedule.svg',
+        style: {
+          large: 'transform: rotate(-2.5deg) scale(1.2) translate(100px,100px)',
+          small: 'transform: rotate(-2.5deg) scale(1.2) translate(100px,21px)',
+        }
+      },
+      {
+        reverse: true,
+        color: 'grey lighten-2',
+        icon: 'mdi-clock-check-outline',
+        title: 'Time Approvals',
+        description: 'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
+        image: 'approvals.svg',
+        style: {
+          large: 'transform: scale(1) translate(0px,100px)',
+          small: 'transform: scale(.9)',
+        }
+      },
+      {
+        color: 'green lighten-2',
+        icon: 'mdi-cash-lock',
+        title: 'Payments',
+        description: 'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
+        image: 'approvals.svg',
+        style: {
+          large: '',
+          small: '',
+        }
+      }
+    ]
+  })
 };
 </script>
 
