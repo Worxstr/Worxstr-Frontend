@@ -64,7 +64,7 @@ export default {
     team: [
       {
         name: "Jackson Sippe",
-        title: "Co-Founder/Head of Product and Development",
+        title: "Co-Founder / Head of Product and Development",
         photo: "jackson.jpg",
         description: "Jackson Sippe is a second-generation operator of his family’s construction business with extensive experience managing contract labor. He is a software developer with experience working for a major Point-Of-Sale system provider in the retail industry. Jackson is also an MBA student at Appalachian State University with an undergraduate degree in Computer Science.",
         socials: [
@@ -84,7 +84,7 @@ export default {
       },
       {
         name: "James Wheeler",
-        title: "Co-Founder/Head of Sales and Marketing",
+        title: "Co-Founder / Head of Sales and Marketing",
         photo: "james.jpg",
         description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently completing his second undergraduate degree from Appalachian State University in Computer Information Systems Management with a prior degree in Advertising and General Business.",
         socials: [
@@ -100,7 +100,7 @@ export default {
       },
       {
         name: "Alex Wohlbruck",
-        title: "Lead frontend developer",
+        title: "Lead Frontend Developer",
         photo: "alex.jpg",
         description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He loves cats, and he is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
         socials: [
@@ -120,7 +120,7 @@ export default {
       },
       {
         name: 'Andrew Thorp',
-        title: "Lead backend developer & DevOps engineer",
+        title: "Lead Backend Developer / DevOps engineer",
         photo: 'andrew.jpg',
         description: "Andrew is a genius",
         socials: [
@@ -133,7 +133,23 @@ export default {
             icon: 'mdi-linkedin'
           },
         ]
-      }
+      },
+      {
+        name: 'Coley Lippard',
+        title: "Creative Marketing Director",
+        photo: 'coley.jpg',
+        description: "Coley Lippard has grown from a unique history of forward-thinking individuals that push the envelope of normalcy. As the son of a variety entertainer, his creativity has lead to a career in design and marketing with a fresh perspective and an eye on sustainable results. He is a recent Digital Marketing and Computer Information Service graduate at Appalachian State University and is currently guiding the creative direction of several businesses.",
+        socials: [
+          {
+            link: 'mailto:coleylipp237@gmail.com',
+            icon: 'mdi-at',
+          },
+          {
+            link: 'https://www.linkedin.com/in/coleylipp',
+            icon: 'mdi-linkedin'
+          },
+        ]
+      },
     ],
   }),
 };
