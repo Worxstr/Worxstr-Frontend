@@ -7,8 +7,9 @@ a {
 .gradient {
     background: rgb(46, 106, 239);
     background: linear-gradient(
-      50deg,
-      rgba(46, 106, 239, 1) 0%,
-      rgba(46, 170, 230, 1) 100%
+        50deg,
+        rgba(46, 106, 239, 1) 0%,
+        rgba(46, 170, 230, 1) 100%
     );
-  }
+
+}

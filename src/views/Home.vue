@@ -1,7 +1,7 @@
 <template lang="pug">
 .home
   //- Main CTA
-  .gradient
+  v-sheet.gradient
     v-container
       v-row.jumbo.d-flex.align-center
         v-col.ma-8
@@ -12,12 +12,12 @@
             p.text-h5.font-weight-medium.white--text The adaptive solution to wide-scale temp labor management
 
           div(v-if="authenticatedUser")
-            v-btn.mr-3(color="secondary", :to="{ name: 'schedule' }") Enter site
-            v-btn.mr-3(color="secondary", @click="signOut") Sign out
+            v-btn.mr-3.black--text(color="secondary", :to="{ name: 'schedule' }") Enter site
+            v-btn.mr-3.black--text(color="secondary", @click="signOut") Sign out
 
           div(v-else)
-            v-btn.mr-3(color="secondary", :to="{ name: 'signIn' }") Sign in
-            v-btn.mr-3(color="secondary", :to="{ name: 'signUp' }") Sign up
+            v-btn.mr-3.black--text(color="secondary", :to="{ name: 'signIn' }") Sign in
+            v-btn.mr-3.black--text(color="secondary", :to="{ name: 'signUp' }") Sign up
 
           v-spacer(style="height: 100px")
 
@@ -57,7 +57,7 @@
               )
               
   //- Calculator
-  .gradient
+  v-sheet(dark).gradient
     v-container.py-16
       v-row
         v-col.d-flex.flex-column.justify-center
@@ -68,6 +68,7 @@
             v-model='calculator.employees'
             label="Company size",
             outlined,
+            color='white'
             hide-details,
             type="number",
             step="10",
@@ -79,6 +80,7 @@
             v-model='calculator.wage'
             label="Average wage",
             outlined,
+            color='white'
             hide-details,
             type="number",
             min="7.25",
@@ -89,6 +91,7 @@
             v-model='calculator.bs'
             label="Some other bs",
             outlined,
+            color='white'
             hide-details,
             type="number",
             min="0"
@@ -96,7 +99,7 @@
 
       .d-flex.flex-column.align-center.mt-10
         p.text-h2.font-weight-bold ${{savingsEstimate | numberFormat}}
-        span.text-body-2.text--secondary In estimated savings
+        span.text-body-2(style='opacity: .8') In estimated savings
 
 </template>
 
