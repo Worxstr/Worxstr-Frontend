@@ -25,7 +25,7 @@
   v-carousel(
     v-model='carouselIndex'
     cycle,
-    interval="8000",
+    interval="80000",
     height="700",
     hide-delimiter-background,
     show-arrows-on-hover,
@@ -33,21 +33,23 @@
     :dark='carousel[carouselIndex].dark'
     :light='!carousel[carouselIndex].dark'
   )
-    v-carousel-item(v-for='feature in carousel')
-      v-sheet(:color='feature.color', :dark='feature.dark' height="100%")
-        .d-flex.flex-column.flex-md-row(:class="feature.reverse ? 'flex-md-row-reverse' : ''" style='height: 100%; max-width: 1500px;')
+    v-carousel-item(v-for="feature in carousel")
+      v-sheet(:color="feature.color", :dark="feature.dark", height="100%")
+        .carousel-content.d-flex.flex-column.flex-md-row(
+          :class="feature.reverse ? 'flex-md-row-reverse' : ''"
+        )
           .px-15.pt-15.pb-10.pt-md-0.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start(
-            :style="`width: ${$vuetify.breakpoint.mdAndUp ? 40 : 100}%; height: 100%`"
+            :style="`width: ${$vuetify.breakpoint.mdAndUp ? 40 : 100}%;  : 100%`"
           )
             v-icon.text-h2.mb-6 {{ feature.icon }}
             p.text-h4.font-weight-bold {{ feature.title }}
             p {{ feature.description }}
           .flex-grow-1
-            v-img(
-              :src="require(`@/assets/images/landing/${feature.image}`)",
-              :alt="feature.title",
-              :style="$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small"
-            )
+            div(:style="$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small")
+              v-img(
+                :src="require(`@/assets/images/landing/${feature.image}`)",
+                :alt="feature.title"
+              )
 
   //- What is Worxstr?
   v-container.d-flex.flex-column.justify-center.align-center.pa-16
@@ -90,54 +92,58 @@ export default {
     carouselIndex: 0,
     carousel: [
       {
-        reverse: true,
-        color: 'blue-grey lighten-4',
-        icon: 'mdi-badge-account',
-        title: 'Onboarding',
-        description: 'Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.',
-        image: 'schedule.svg',
+        dark: true,
+        color: "indigo",
+        icon: "mdi-clock-fast",
+        title: "Scheduling",
+        description:
+          "Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.",
+        image: "schedule.svg",
         style: {
-          large: '',
-          small: '',
-        }
+          large: "transform: rotate(-2.5deg) scale(1.2) translate(100px,100px)",
+          small: "transform: rotate(-2.5deg) scale(1.2) translate(100px,50px)",
+        },
+      },
+      {
+        reverse: true,
+        color: "grey lighten-2",
+        icon: "mdi-clock-check-outline",
+        title: "Time Approvals",
+        description:
+          "Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.",
+        image: "approvals.svg",
+        style: {
+          large: "transform: scale(1) translate(0px,100px)",
+          small: "transform: scale(.9) translatey(-80px)",
+        },
       },
       {
         dark: true,
-        color: 'indigo',
-        icon: 'mdi-clock-fast',
-        title: 'Scheduling',
-        description: 'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
-        image: 'schedule.svg',
+        color: "blue darken-3",
+        icon: "mdi-badge-account",
+        title: "Onboarding",
+        description:
+          "Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.",
+        image: "onboarding.svg",
         style: {
-          large: 'transform: rotate(-2.5deg) scale(1.2) translate(100px,100px)',
-          small: 'transform: rotate(-2.5deg) scale(1.2) translate(100px,21px)',
-        }
+          large: "transform: scale(1.7) translate(120px, 100px)",
+          small: "transform: scale(1.7) translatex(150px)",
+        },
       },
       {
-        reverse: true,
-        color: 'grey lighten-2',
-        icon: 'mdi-clock-check-outline',
-        title: 'Time Approvals',
-        description: 'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
-        image: 'approvals.svg',
+        color: "green lighten-2",
+        icon: "mdi-cash-lock",
+        title: "Payments",
+        description:
+          "Worxstr’s streamlined payment system allows for flexible payment methods to contractors.",
+        image: "approvals.svg",
         style: {
-          large: 'transform: scale(1) translate(0px,100px)',
-          small: 'transform: scale(.9)',
-        }
+          large: "transform: scale(1) translate(0px,100px)",
+          small: "transform: scale(.9) translatey(-80px)",
+        },
       },
-      {
-        color: 'green lighten-2',
-        icon: 'mdi-cash-lock',
-        title: 'Payments',
-        description: 'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
-        image: 'approvals.svg',
-        style: {
-          large: '',
-          small: '',
-        }
-      }
-    ]
-  })
+    ],
+  }),
 };
 </script>
 
@@ -156,5 +162,10 @@ export default {
     rgba(46, 106, 239, 1) 0%,
     rgba(46, 170, 230, 1) 100%
   );
+}
+.carousel-content {
+  margin: 0 auto;
+  height: 100%;
+  max-width: 1500px;
 }
 </style>
