@@ -7,28 +7,15 @@ v-app
         v-avatar.mr-10(tile size='50')
           img(src='@/assets/logo.svg')
 
-      .d-flex.flex-row(v-if='\
-        authenticatedUser &&\
-        authenticatedUser.roles &&\
-        !$vuetify.breakpoint.smAndDown\
-      ')
-        v-btn(v-for='route in primaryNavLinks'
-        :key='route.name'
+      .d-flex.flex-row(v-if='!$vuetify.breakpoint.smAndDown')
+        v-btn(v-for='link in primaryNavLinks'
+        :key='link.text'
         text
-        :to='{ name: route.name }'
+        :to='{ name: link.to }'
         active-class='primary--text')
-          | {{ route.name }}
+          | {{ link.text }}
 
       v-spacer
-
-      //- div(v-if='authenticatedUser')
-        v-tooltip(bottom)
-          template(v-slot:activator="{ on, attrs }")
-            v-btn(icon :to="{ name: 'settings' }" v-bind="attrs" v-on="on")
-              v-icon mdi-cog
-          span Settings
-
-        
 
       div(v-for="link in secondaryNavLinks")
 
@@ -78,13 +65,13 @@ v-app
     )
         
       v-btn(
-        v-for='route in primaryNavLinks'
-        :key='route.name'
-        :value='route.name'
-        :to='{ name: route.name }'
+        v-for='link in primaryNavLinks'
+        :key='link.to'
+        :value='link.text'
+        :to='{ name: link.to }'
       )
-        span {{ route.name | capitalize }}
-        v-icon {{ route.meta.icon }}
+        span {{ link.text | capitalize }}
+        v-icon {{ link.icon }}
   
   worxstr-footer(v-if='$route.meta.showFooter')
 
@@ -180,19 +167,23 @@ export default Vue.extend({
     },
     primaryNavLinks() {
       return this.$router.options.routes.filter(
-        (r) =>
-          r.meta &&
-          ((r.meta.icon && !r.meta.restrict) ||
-            (r.meta.icon &&
-              r.meta.restrict &&
-              this.authenticatedUser &&
-              r.meta.restrict.some((role) =>
-                this.authenticatedUser.roles.map((r) => r.id).includes(role)
-              )))
-      );
+          (r) =>
+            r.meta &&
+            ((r.meta.icon && !r.meta.restrict) ||
+              (r.meta.icon &&
+                r.meta.restrict &&
+                this.authenticatedUser &&
+                r.meta.restrict.some((role) =>
+                  this.authenticatedUser.roles.map((r) => r.id).includes(role)
+                )))
+        ).map(route => ({
+          text: route.name,
+          icon: route.meta.icon,
+          to: route.name
+        }));
     },
     secondaryNavLinks() {
-      return this.$store.state.authenticatedUser
+      return this.authenticatedUser
         ? [{
           text: 'Settings',
           icon: 'mdi-cog',
@@ -203,11 +194,17 @@ export default Vue.extend({
           click: this.signOut
         }]
         : [{
-          to: 'signIn',
-          text: 'Sign in',
-        }, {
-          to: 'signUp',
-          text: 'Sign up',
+          text: 'About',
+          to: 'about'
+        },{
+          text: 'Contact us',
+          to: 'contact'
+        },{
+          text: 'Privacy policy',
+          to: 'privacy'
+        },{
+          text: 'Terms of use',
+          to: 'terms'
         }]
     }
   },
