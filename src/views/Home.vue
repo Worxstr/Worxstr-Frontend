@@ -19,7 +19,7 @@
             v-btn.mr-3.black--text(color="secondary", :to="{ name: 'signIn' }") Sign in
             v-btn.mr-3.black--text(color="secondary", :to="{ name: 'signUp' }") Sign up
 
-          v-spacer(style="height: 100px")
+          v-spacer(style="height: 70px")
 
         v-col(v-if="$vuetify.breakpoint.mdAndUp")
           p {{ carouselIndex }}
@@ -58,47 +58,44 @@
               
   //- Calculator
   v-sheet(dark).gradient
-    v-container.py-16
-      v-row
+    v-container.py-16.px-10
+      v-row(cols="12", md="6")
         v-col.d-flex.flex-column.justify-center
           h4.text-h4.font-weight-bold.mb-4 Calculate savings with Worxstr
           p Dolore non dolor pariatur anim ad est cillum consequat proident minim veniam.
-        v-col
+        v-col(cols="12", md="6")
+          p.text-h6.mb-6.pl-2 My company has:
           v-text-field.pb-4(
-            v-model='calculator.employees'
-            label="Company size",
+            v-model='calculator.managers'
+            label="Managers",
             outlined,
             color='white'
             hide-details,
             type="number",
-            step="10",
-            min="10",
-            prefix="~",
-            suffix="employees"
+            min="1",
           )
           v-text-field.pb-4(
-            v-model='calculator.wage'
-            label="Average wage",
+            v-model='calculator.contracts'
+            label="Contracts",
             outlined,
             color='white'
             hide-details,
             type="number",
-            min="7.25",
-            step="0.25",
-            prefix="$"
+            min="1",
           )
           v-text-field.pb-4(
-            v-model='calculator.bs'
-            label="Some other bs",
+            v-model='calculator.contractors'
+            label="Contractors",
             outlined,
             color='white'
             hide-details,
             type="number",
-            min="0"
+            min="1",
           )
 
       .d-flex.flex-column.align-center.mt-10
         p.text-h2.font-weight-bold ${{savingsEstimate | numberFormat}}
+          span.text-h6.ml-2 / month
         span.text-body-2(style='opacity: .8') In estimated savings
 
 </template>
@@ -115,7 +112,7 @@ export default {
   computed: {
     ...mapState(["authenticatedUser"]),
     savingsEstimate: function() {
-      return this.calculator.employees * this.calculator.wage / this.calculator.bs
+      return this.calculator.managers * this.calculator.contracts * 12 + (.05 * this.calculator.contractors)
     }
   },
   methods: {
@@ -123,9 +120,9 @@ export default {
   },
   data: () => ({
     calculator: {
-      employees: 50,
-      wage: 10,
-      bs: 10
+      managers: null,
+      contracts:  null,
+      contractors:  null
     },
     carouselIndex: 0,
     carousel: [

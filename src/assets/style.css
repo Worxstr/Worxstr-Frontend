@@ -13,3 +13,13 @@ a {
     );
 
 }
+.gradient p,
+.gradient span,
+.gradient h1,
+.gradient h2,
+.gradient h3,
+.gradient h4,
+.gradient h5,
+.gradient h6 {
+    color: white !important;
+}
