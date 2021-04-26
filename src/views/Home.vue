@@ -67,7 +67,7 @@
           p.text-h6.mb-6.pl-2 My company has:
           v-text-field.pb-4(
             v-model='calculator.managers'
-            label="Managers",
+            suffix="Managers",
             outlined,
             color='white'
             hide-details,
@@ -76,7 +76,7 @@
           )
           v-text-field.pb-4(
             v-model='calculator.contracts'
-            label="Contracts",
+            suffix="Contracts",
             outlined,
             color='white'
             hide-details,
@@ -85,7 +85,7 @@
           )
           v-text-field.pb-4(
             v-model='calculator.contractors'
-            label="Contractors",
+            suffix="Contractors",
             outlined,
             color='white'
             hide-details,
@@ -120,9 +120,9 @@ export default {
   },
   data: () => ({
     calculator: {
-      managers: null,
-      contracts:  null,
-      contractors:  null
+      managers: 10,
+      contracts:  15,
+      contractors: 20,
     },
     carouselIndex: 0,
     carousel: [
