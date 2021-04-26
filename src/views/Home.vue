@@ -19,18 +19,19 @@
 
           v-spacer(style='height: 100px')
         v-col
-          p image
+          p {{carouselIndex}}
 
   //- Feature carousel
   v-carousel(
+    v-model='carouselIndex'
     cycle,
     interval="8000",
     height="700",
     hide-delimiter-background,
     show-arrows-on-hover,
     delimiter-icon="mdi-circle-medium"
-    :dark='false'
-    :light='true'
+    :dark='carousel[carouselIndex].dark'
+    :light='!carousel[carouselIndex].dark'
   )
     v-carousel-item(v-for='feature in carousel')
       v-sheet(:color='feature.color', :dark='feature.dark' height="100%")
@@ -86,6 +87,7 @@ export default {
     ...mapActions(["signOut"]),
   },
   data: () => ({
+    carouselIndex: 0,
     carousel: [
       {
         reverse: true,
