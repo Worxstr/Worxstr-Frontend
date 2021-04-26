@@ -1,27 +1,25 @@
 <template lang="pug">
 .home
   //- Main CTA
-  v-container.jumbo.d-flex.flex-column.justify-center.align-center.gradient(
-    fluid,
-    color="primary lighten-1"
-  )
-    img.ma-8.svg-shadow(src="@/assets/logo.svg", width="180")
-    h2.text-h2.font-weight-bold.mb-2.white--text Worxstr
-    p.text-subtitle-2
+  .gradient
+    v-container
+      v-row.jumbo.d-flex.align-center
+        v-col.ma-8
+          img.svg-shadow(src="@/assets/logo.svg", width="150")
+          
+          .my-8
+            h2.text-h2.font-weight-bold.mb-2.white--text Worxstr
+            p.text-h5.font-weight-medium The adaptive solution to wide-scale temp labor management
 
-    div(v-if="authenticatedUser")
-      v-btn.mx-2(:to="{ name: 'schedule' }") Enter site
-      v-btn.mx-2(@click="signOut") Sign out
-    v-btn.mx-2(v-else, :to="{ name: 'signIn' }") Sign in
+          div(v-if="authenticatedUser")
+            v-btn.mr-2(:to="{ name: 'schedule' }") Enter site
+            v-btn.mr-2(@click="signOut") Sign out
 
-    div(style="height: 160px; display: block")
+          v-btn.mr-2(v-else, :to="{ name: 'signIn' }") Sign in
 
-  //- What is Worxstr?
-  v-container.d-flex.flex-column.justify-center.align-center.pa-16
-    p.text-h4.font-weight-bold.mb-15 What is Worxstr?
-
-    p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
-    p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33 percent increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
+          v-spacer(style='height: 100px')
+        v-col
+          p image
 
   //- Feature carousel
   v-carousel(
@@ -49,6 +47,14 @@
               :alt="feature.title",
               :style="$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small"
             )
+
+  //- What is Worxstr?
+  v-container.d-flex.flex-column.justify-center.align-center.pa-16
+    p.text-h4.font-weight-bold.mb-15 What is Worxstr?
+
+    p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
+    p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33 percent increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
+
 
   //- Our mission/vision
   v-container.justify-center.align-center.pa-16.gradient.text-center(fluid)
@@ -135,7 +141,7 @@ export default {
 
 <style lang="scss" scoped>
 .jumbo {
-  min-height: 80vh;
+  min-height: 50vh;
 }
 .svg-shadow {
   -webkit-filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.3));
