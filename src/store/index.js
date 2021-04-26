@@ -51,6 +51,7 @@ const store = new Vuex.Store({
       all: [],
       byId: {}
     },
+    workforce: [],
     managers: {
       employee: [],
       organization: []
@@ -134,7 +135,12 @@ const store = new Vuex.Store({
       Vue.delete(state.jobs.byId, jobId);
       Vue.delete(state.jobs.all, state.jobs.all.findIndex(id => id == jobId))
     },
-    ADD_MANAGER(state, {type, manager}) {
+    ADD_WORKFORCE_MEMBER(state, userId) {
+      if (!state.workforce.includes(userId)) {
+        state.workforce.push(userId)
+      }
+    },
+    ADD_MANAGER(state, { type, manager }) {
       if (!state.managers[type].some(m => m.id == manager.id)) {
         state.managers[type].push(manager)
       }
@@ -142,7 +148,7 @@ const store = new Vuex.Store({
     SET_NEXT_SHIFT(state, shift) {
       state.shifts.next = shift
     },
-    ADD_SHIFT(state, {shift, jobId}) {
+    ADD_SHIFT(state, { shift, jobId }) {
       console.log(shift, jobId)
       state.jobs.byId[jobId].shifts.push(shift)
       // TODO: Flatten shift data from jobs
@@ -150,7 +156,7 @@ const store = new Vuex.Store({
       // if (!state.shifts.all.includes(shift.id))
       //   state.shifts.all.push(shift.id)
     },
-    REMOVE_SHIFT(state, {jobId, shiftId}) {
+    REMOVE_SHIFT(state, { jobId, shiftId }) {
       console.log(shiftId, jobId)
       state.jobs.byId[jobId].shifts = state.jobs.byId[jobId].shifts.filter(shift => shift.id != shiftId)
     },
@@ -159,11 +165,11 @@ const store = new Vuex.Store({
       if (!state.events.all.includes(event.id))
         state.events.all.push(event.id)
     },
-    ADD_CONVERSATION(state, {conversation, prepend}) {
+    ADD_CONVERSATION(state, { conversation, prepend }) {
       Vue.set(state.conversations.byId, conversation.id, conversation)
       if (!state.conversations.all.includes(conversation.id))
         prepend ?
-          state.conversations.all.unshift(conversation.id):
+          state.conversations.all.unshift(conversation.id) :
           state.conversations.all.push(conversation.id)
     },
     UPDATE_CONTACTS(state, contacts) {
@@ -179,7 +185,7 @@ const store = new Vuex.Store({
     },
     async signIn({ commit, dispatch }, credentials) {
       try {
-        console.log({baseUrl})
+        console.log({ baseUrl })
         const { data } = await axios({
           method: 'POST',
           url: `${baseUrl}/auth/login`,
@@ -240,6 +246,14 @@ const store = new Vuex.Store({
 
       })
       commit('SET_AUTHENTICATED_USER', data.authenticated_user)
+    },
+
+    async loadUser({ commit }, userId) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/users/${userId}`
+      })
+      commit('ADD_USER', data.user)
     },
 
     async loadClockHistory({ state, commit }) {
@@ -439,14 +453,14 @@ const store = new Vuex.Store({
       commit('REMOVE_JOB', jobId)
     },
 
-    async createShift({ commit }, {shift, jobId}) {
+    async createShift({ commit }, { shift, jobId }) {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/shifts`,
         data: { shift },
-        params: {job_id: jobId}
+        params: { job_id: jobId }
       })
-      commit('ADD_SHIFT', {shift: data.shift, jobId})
+      commit('ADD_SHIFT', { shift: data.shift, jobId })
     },
 
     async updateShift({ commit }, shift) {
@@ -459,12 +473,23 @@ const store = new Vuex.Store({
       commit('ADD_SHIFT', { shift: data.shift, jobId: data.shift.job_id })
     },
 
-    async deleteShift({ commit }, {shiftId, jobId}) {
+    async deleteShift({ commit }, { shiftId, jobId }) {
       const { data } = await axios({
         method: 'DELETE',
         url: `${baseUrl}/shifts/${shiftId}`,
       })
-      commit('REMOVE_SHIFT', {shiftId, jobId})
+      commit('REMOVE_SHIFT', { shiftId, jobId })
+    },
+
+    async loadWorkforce({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/users/employees`
+      })
+      data.users.forEach(u => {
+        commit('ADD_USER', u)
+        commit('ADD_WORKFORCE_MEMBER', u.id)
+      })
     },
 
     async addManager({ commit }, manager) {
@@ -502,7 +527,7 @@ const store = new Vuex.Store({
         url: `${baseUrl}/conversations`
       })
       data.conversations.forEach(conversation => {
-        commit('ADD_CONVERSATION', {conversation})
+        commit('ADD_CONVERSATION', { conversation })
       })
     },
 
@@ -510,8 +535,8 @@ const store = new Vuex.Store({
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/conversations/${conversationId}`
-      }) 
-      commit('ADD_CONVERSATION', {conversation: data.conversation})
+      })
+      commit('ADD_CONVERSATION', { conversation: data.conversation })
     },
 
     async createConversation({ commit }, userIds) {
@@ -522,12 +547,12 @@ const store = new Vuex.Store({
           users: userIds
         }
       })
-      commit('ADD_CONVERSATION', {conversation: data.conversation, prepend: true})
+      commit('ADD_CONVERSATION', { conversation: data.conversation, prepend: true })
       return data.conversation
     },
 
     async loadContacts({ commit }) {
-      
+
       // TODO: Flatten contacts data into users store
 
       const { data } = await axios({
@@ -554,7 +579,7 @@ const store = new Vuex.Store({
         }
       })
     },
-    async setSSN({ commit}, ssn) {
+    async setSSN({ commit }, ssn) {
       const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/users/me/ssn`,
@@ -611,7 +636,7 @@ const store = new Vuex.Store({
     },
     job: (state) => id => {
       const job = state.jobs.byId[id]
-      
+
       // if (job && job.shifts)
       //   job.shifts = job.shifts.map(shiftId => {
       //     return getters.shift(shiftId)
@@ -634,17 +659,52 @@ const store = new Vuex.Store({
     shifts: (state, getters) => {
       return state.shifts.all.map(id => getters.shift(id))
     },
+    workforce: (state, getters) => {
+      return state.workforce.map(userId => state.users.byId[userId])
+    },
     calendarEvent: state => id => {
       return state.events.byId[id]
     },
     calendarEvents: (state, getters) => {
+
+      let colorCounter = 0;
+      const eventColors = [
+        'blue',
+        'green',
+        'purple',
+        'indigo',
+        'orange darken-1',
+        'deep-purple',
+        'red',
+        'light-blue',
+        'yellow darken-2',
+        'light-green',
+        'cyan',
+        'pink',
+        'teal',
+        'lime',
+      ];
+      const colorMap = {}; // Map job ID to color
+
       return state.events.all.map(eventId => {
+
         const event = getters.calendarEvent(eventId)
+
+        let color;
+        if (colorMap[event.job_id]) {
+          color = colorMap[event.job_id]
+        }
+        else {
+          color = eventColors[colorCounter % eventColors.length]
+          colorMap[event.job_id] = color
+          colorCounter++
+        }
+
         return {
           name: event.site_location,
           start: new Date(event.time_begin),
           end: new Date(event.time_end),
-          color: 'blue',
+          color,
           timed: true,
           ...event
         }

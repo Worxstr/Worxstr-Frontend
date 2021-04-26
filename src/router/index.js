@@ -3,13 +3,19 @@ import VueRouter from 'vue-router'
 import Meta from 'vue-meta'
 
 import Home from '@/views/Home'
+import About from '@/views/About'
+import Contact from '@/views/Contact'
+import Privacy from '@/views/Privacy'
+import Terms from '@/views/Terms'
 
 import SignIn from '@/views/auth/SignIn'
 import SignUp from '@/views/auth/SignUp'
 import ResetPassword from '@/views/auth/ResetPassword'
 
+import User from '@/views/User'
+
 import Clock from '@/views/Clock'
-import Approvals from '@/views/approvals/Approvals'
+import Payments from '@/views/payments/Payments'
 // import Availability from '@/views/Availability'
 import Jobs from '@/views/jobs/Jobs'
 import Job from '@/views/jobs/Job'
@@ -34,7 +40,39 @@ const routes = [
     name: 'home',
     component: Home,
     meta: {
-      fullHeight: true
+      showFooter: true,
+    }
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: About,
+    meta: {
+      showFooter: true,
+    }
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: Contact,
+    meta: {
+      showFooter: true,
+    }
+  },
+  {
+    path: '/privacy',
+    name: 'privacy',
+    component: Privacy,
+    meta: {
+      showFooter: true,
+    }
+  },
+  {
+    path: '/terms',
+    name: 'terms',
+    component: Terms,
+    meta: {
+      showFooter: true,
     }
   },
   {
@@ -63,21 +101,17 @@ const routes = [
     }
   },
   {
+    path: '/users/:userId',
+    name: 'user',
+    component: User,
+  },
+  {
     path: '/clock',
     name: 'clock',
     component: Clock,
     meta: {
       icon: 'mdi-clock-outline',
       restrict: [EMPLOYEE]
-    }
-  },
-  {
-    path: '/approvals',
-    name: 'approvals',
-    component: Approvals,
-    meta: {
-      icon: 'mdi-clock-check-outline',
-      restrict: [...MANAGER]
     }
   },
   // {
@@ -99,19 +133,19 @@ const routes = [
     }
   },
   {
-    path: '/jobs/:jobId',
-    name: 'job',
-    component: Job,
+    path: '/payments',
+    name: 'payments',
+    component: Payments,
     meta: {
+      icon: 'mdi-clock-check-outline',
       restrict: [...MANAGER]
     }
   },
   {
-    path: '/workforce',
-    name: 'workforce',
-    component: Workforce,
+    path: '/jobs/:jobId',
+    name: 'job',
+    component: Job,
     meta: {
-      icon: 'mdi-account-group',
       restrict: [...MANAGER]
     }
   },
@@ -124,6 +158,15 @@ const routes = [
       restrict: [EMPLOYEE, ...MANAGER],
       fullHeight: true,
       hideNav: true,
+    }
+  },
+  {
+    path: '/workforce',
+    name: 'workforce',
+    component: Workforce,
+    meta: {
+      icon: 'mdi-account-group',
+      restrict: [...MANAGER]
     }
   },
   {
@@ -151,7 +194,10 @@ const routes = [
   {
     path: '*',
     name: 'Not found',
-    component: NotFound
+    component: NotFound,
+    meta: {
+      fullHeight: true,
+    }
   }
 ]
 

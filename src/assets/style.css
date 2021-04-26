@@ -1,3 +1,6 @@
 html {
     overflow-y: auto;
 }
+a {
+    text-decoration: none;
+}

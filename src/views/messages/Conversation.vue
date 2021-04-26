@@ -15,15 +15,20 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
   //-   tag="div"
   //- )
   .message-container.px-4.d-flex.flex-column-reverse.align-start
-    .message(
-      v-for="message in conversation.messages"
+    .message.d-flex.flex-column(
+      v-for="(message, i) in conversation.messages"
       :key="message.id"
       :class="message.sender_id == authenticatedUser.id ? 'right' : 'left'"
     )
       p.px-4.py-2.mb-2.rounded-xl.grey(
         :class="{ 'lighten-3': !$vuetify.theme.dark, 'darken-3': $vuetify.theme.dark }"
-      )
+      ) 
         | {{ message.body }}
+
+      p.text-caption.text--disabled(v-if='showInfo(i)')
+        span(v-if='message.sender_id != authenticatedUser.id') {{ participant(message.sender_id).first_name }} -&nbsp;
+        span(v-if='isToday(message.timestamp)') {{ message.timestamp | date('MMM D') }},&nbsp;
+        span {{ message.timestamp | time }}
 
   form.d-flex.flex-row.align-center.pa-3(@submit.prevent="sendMessage")
     v-text-field(
@@ -81,6 +86,30 @@ export default {
     },
   },
   methods: {
+    // Determine if the message info should be shown
+    showInfo(messageIndex) {
+      const current = this.conversation.messages[messageIndex]
+      const next = this.conversation.messages[messageIndex + 1]
+
+      if (next) {
+        // The messages were sent by different users
+        if (current.sender_id != next.sender_id) return true
+
+        // The messages were sent more than a minute apart
+        return ((new Date(next.timestamp)).getTime()) - (new Date(current.timestamp)).getTime() > (60 * 1000)
+      }
+      return true;
+    },
+    // Check if the message was sent today
+    isToday(timestamp) {
+      const now = (new Date())
+      const then = (new Date(timestamp))
+      return !(
+        now.getUTCDay() == then.getUTCDay() &&
+        now.getUTCMonth() == then.getUTCMonth() &&
+        now.getUTCFullYear() == then.getUTCFullYear()
+      )
+    },
     sendMessage() {
       this.$socket.emit("test", { test: 1 });
       this.$store.dispatch("sendMessage", {
@@ -91,13 +120,11 @@ export default {
       });
       this.message = "";
     },
-    participantName(participantId) {
+    participant(participantId) {
       const participant = this.conversation.participants.find(
         (p) => p.id == participantId
       );
       return participant
-        ? `${participant.first_name} ${participant.last_name}`
-        : "";
     },
   },
   sockets: {
@@ -127,9 +154,11 @@ export default {
 }
 .message.left {
   align-self: flex-start;
+  align-items: flex-start;
 }
 .message.right {
   align-self: flex-end;
+  align-items: flex-end;
 }
 
 .message-enter-active,

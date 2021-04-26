@@ -10,28 +10,78 @@
 			v-btn(text @click="addManagerDialog = true" v-if="userIsOrgManager") Add manager
 		
 		v-card
-			v-card-content
-				p.pa-5 Employees and managers go here
+			v-data-table(
+				:headers="headers"
+				:items="workforce"
+				:loading="loading"
+				@click:row="openUser"
+			)
+				template(v-slot:item.name="{ item }")
+					span {{ item | fullName }}
+
+				template(v-slot:item.phone="{ item }")
+					span {{ item.phone | phone }}
+			
+				//- template(v-slot:item.phone="{ item }")
+				//- 	v-icon(small class="mr-2" @click="editUser(item)") mdi-pencil
+				//- 	v-icon(small @click="deleteItem(item)") mdi-delete
 </template>
 
 <script>
-import AddWorkforceMemberDialog from './AddWorkforceMemberDialog'
-import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
+import AddWorkforceMemberDialog from "./AddWorkforceMemberDialog";
+import { userIs, ORGANIZATION_MANAGER } from "@/definitions/userRoles";
+import { mapGetters } from "vuex";
 
 export default {
-  name: "workforce",
+	name: "workforce",
   metaInfo: {
-    title: 'Workforce'
+    title: "Workforce",
   },
   components: { AddWorkforceMemberDialog },
+  async mounted() {
+		this.loading = true
+    await this.$store.dispatch("loadWorkforce");
+		this.loading = false
+	},
   data: () => ({
+		loading: false,
     addEmployeeDialog: false,
     addManagerDialog: false,
+    headers: [
+			{
+				text: "ID",
+				value: "id"
+			},
+      {
+        text: "Name",
+        value: "name",
+      },
+			{
+				text: "Email",
+				value: "email",
+			},
+			{
+				text: "Phone",
+				value: "phone",
+			},
+			{
+				text: "Manager ID",
+				value: "manager_id",
+			}
+    ],
   }),
   computed: {
+    ...mapGetters(["workforce"]),
     userIsOrgManager() {
-      return this.$store.state.authenticatedUser ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser) : false
-    }
-  }
+      return this.$store.state.authenticatedUser
+        ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser)
+        : false;
+    },
+  },
+	methods: {
+		openUser(user) {
+			this.$router.push({name: 'user', params: {userId: user.id}})
+		}
+	},
 };
 </script>

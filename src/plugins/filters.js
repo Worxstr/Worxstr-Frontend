@@ -13,6 +13,11 @@ Vue.filter('time', (value, format) => {
 	return dayjs(value).format(format || 'h:mm a')
 })
 
+// 1234567890 -> (123) 456-7890
+Vue.filter('phone', value => {
+	return `(${value.substring(0,3)}) ${value.substring(3,6)}-${value.substring(6,10)}`
+})
+
 Vue.filter('snakeToSpace', value => {
 	return value.replaceAll('_', ' ')
 })

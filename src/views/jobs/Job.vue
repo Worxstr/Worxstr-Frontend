@@ -11,7 +11,7 @@ v-container(v-if="loading && !job.shifts")
   )
 
 div(v-else)
-  v-container.approvals(v-if="job")
+  v-container.approvals.mb-50(v-if="job")
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
     edit-shift-dialog(

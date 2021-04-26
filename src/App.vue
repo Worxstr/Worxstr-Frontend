@@ -12,7 +12,7 @@ v-app
         authenticatedUser.roles &&\
         !$vuetify.breakpoint.smAndDown\
       ')
-        v-btn(v-for='route in navLinks'
+        v-btn(v-for='route in primaryNavLinks'
         :key='route.name'
         text
         :to='{ name: route.name }'
@@ -21,24 +21,40 @@ v-app
 
       v-spacer
 
-      div(v-if='authenticatedUser')
+      //- div(v-if='authenticatedUser')
         v-tooltip(bottom)
           template(v-slot:activator="{ on, attrs }")
             v-btn(icon :to="{ name: 'settings' }" v-bind="attrs" v-on="on")
               v-icon mdi-cog
           span Settings
 
-        v-tooltip(bottom)
-          template(v-slot:activator="{ on, attrs }")
-            v-btn(icon @click='signOut' v-bind="attrs" v-on="on")
-              v-icon mdi-logout-variant
-          span Sign out
+        
 
-      div(v-else)
-        v-btn(text :to="{ name: 'signIn' }" active-class='primary--text')
-          | Sign in
-        v-btn(text :to="{ name: 'signUp' }" active-class='primary--text')
-          | Sign up
+      div(v-for="link in secondaryNavLinks")
+
+        //- Icon button
+        v-tooltip(v-if="link.icon" bottom)
+          template(v-slot:activator="{ on, attrs }")
+            v-btn(
+              icon
+              v-bind="attrs"
+              v-on="on"
+              :to="link.to ? { name: link.to } : null"
+              @click="() => link.click ? link.click() : ''"
+            )
+              v-icon {{ link.icon }}
+          
+          span {{ link.text }}
+
+        //- Text button
+        v-btn(
+          v-else
+          text
+          :to="{ name: link.to }"
+          active-class="primary--text"
+        )
+          | {{ link.text }}
+      
 
   v-main(
     :class="{'grey': !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark}"
@@ -53,22 +69,24 @@ v-app
       app
       color='indigo'
       grow
-      :input-value="\
+      v-if="\
         authenticatedUser &&\
         authenticatedUser.roles &&\
         $vuetify.breakpoint.smAndDown &&\
-        $route.name != 'conversation'\
-        "
+        $route.name != 'conversation'&&\
+        $route.name != 'home'"
     )
         
       v-btn(
-        v-for='route in navLinks'
+        v-for='route in primaryNavLinks'
         :key='route.name'
         :value='route.name'
         :to='{ name: route.name }'
       )
         span {{ route.name | capitalize }}
         v-icon {{ route.meta.icon }}
+  
+  worxstr-footer(v-if='$route.meta.showFooter')
 
   v-snackbar(
     app
@@ -94,11 +112,15 @@ v-app
 <script>
 import Vue from "vue";
 import { mapState } from "vuex";
+import WorxstrFooter from '@/components/WorxstrFooter'
 
 export default Vue.extend({
   name: "App",
   metaInfo: {
-    titleTemplate: '%s | Worxstr'
+    titleTemplate: "%s | Worxstr",
+  },
+  components: {
+    WorxstrFooter
   },
   async mounted() {
     // const storedUser = localStorage.getItem("authenticatedUser");
@@ -133,14 +155,19 @@ export default Vue.extend({
       this.$store.dispatch("signOut");
     },
     initDarkMode() {
+      const userPrefDarkMode = window.localStorage.getItem("darkMode");
       const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-      darkMediaQuery.addEventListener("change", (e) => {
-        this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      });
+      if (userPrefDarkMode == "System default") {
+        darkMediaQuery.addEventListener("change", (e) => {
+          this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+        });
 
-      if (darkMediaQuery.matches) {
-        setTimeout(() => (this.$vuetify.theme.dark = true), 0);
+        if (darkMediaQuery.matches) {
+          setTimeout(() => (this.$vuetify.theme.dark = true), 0);
+        }
+      } else {
+        this.$vuetify.theme.dark = userPrefDarkMode == "Dark";
       }
     },
   },
@@ -151,7 +178,7 @@ export default Vue.extend({
       else if (this.$vuetify.breakpoint.mdAndUp) return "calc(100vh - 65px)";
       else return "calc(100vh - 56px)";
     },
-    navLinks() {
+    primaryNavLinks() {
       return this.$router.options.routes.filter(
         (r) =>
           r.meta &&
@@ -164,6 +191,25 @@ export default Vue.extend({
               )))
       );
     },
+    secondaryNavLinks() {
+      return this.$store.state.authenticatedUser
+        ? [{
+          text: 'Settings',
+          icon: 'mdi-cog',
+          to: 'settings',
+        }, {
+          text: 'Sign out',
+          icon: 'mdi-logout-variant',
+          click: this.signOut
+        }]
+        : [{
+          to: 'signIn',
+          text: 'Sign in',
+        }, {
+          to: 'signUp',
+          text: 'Sign up',
+        }]
+    }
   },
 });
 </script>
