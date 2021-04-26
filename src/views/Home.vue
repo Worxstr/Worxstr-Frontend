@@ -6,35 +6,35 @@
       v-row.jumbo.d-flex.align-center
         v-col.ma-8
           img.svg-shadow(src="@/assets/logo.svg", width="150")
-          
+
           .my-8
             h2.text-h2.font-weight-bold.mb-2.white--text Worxstr
             p.text-h5.font-weight-medium.white--text The adaptive solution to wide-scale temp labor management
 
           div(v-if="authenticatedUser")
-            v-btn.mr-2(color='amber' :to="{ name: 'schedule' }") Enter site
-            v-btn.mr-2(color='amber' @click="signOut") Sign out
+            v-btn.mr-3(color="secondary", :to="{ name: 'schedule' }") Enter site
+            v-btn.mr-3(color="secondary", @click="signOut") Sign out
 
           div(v-else)
-            v-btn.mr-2(color='amber' :to="{ name: 'signIn' }") Sign in
-            v-btn.mr-2(color='amber' :to="{ name: 'signUp' }") Sign up
+            v-btn.mr-3(color="secondary", :to="{ name: 'signIn' }") Sign in
+            v-btn.mr-3(color="secondary", :to="{ name: 'signUp' }") Sign up
 
-          v-spacer(style='height: 100px')
+          v-spacer(style="height: 100px")
 
-        v-col(v-if='$vuetify.breakpoint.mdAndUp')
-          p {{carouselIndex}}
+        v-col(v-if="$vuetify.breakpoint.mdAndUp")
+          p {{ carouselIndex }}
 
   //- Feature carousel
   v-carousel(
-    v-model='carouselIndex'
+    v-model="carouselIndex",
     cycle,
     interval="80000",
     height="700",
     hide-delimiter-background,
     show-arrows-on-hover,
-    delimiter-icon="mdi-circle-medium"
-    :dark='carousel[carouselIndex].dark'
-    :light='!carousel[carouselIndex].dark'
+    delimiter-icon="mdi-circle-medium",
+    :dark="carousel[carouselIndex].dark",
+    :light="!carousel[carouselIndex].dark"
   )
     v-carousel-item(v-for="feature in carousel")
       v-sheet(:color="feature.color", :dark="feature.dark", height="100%")
@@ -48,15 +48,56 @@
             p.text-h4.font-weight-bold {{ feature.title }}
             p {{ feature.description }}
           .flex-grow-1
-            div(:style="$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small")
+            div(
+              :style="$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small"
+            )
               v-img(
                 :src="require(`@/assets/images/landing/${feature.image}`)",
                 :alt="feature.title"
               )
-
+              
   //- Calculator
-  v-container
-    p.text-center.ma-10 Calculator here
+  .gradient
+    v-container.py-16
+      v-row
+        v-col.d-flex.flex-column.justify-center
+          h4.text-h4.font-weight-bold.mb-4 Calculate savings with Worxstr
+          p Dolore non dolor pariatur anim ad est cillum consequat proident minim veniam.
+        v-col
+          v-text-field.pb-4(
+            v-model='calculator.employees'
+            label="Company size",
+            outlined,
+            hide-details,
+            type="number",
+            step="10",
+            min="10",
+            prefix="~",
+            suffix="employees"
+          )
+          v-text-field.pb-4(
+            v-model='calculator.wage'
+            label="Average wage",
+            outlined,
+            hide-details,
+            type="number",
+            min="7.25",
+            step="0.25",
+            prefix="$"
+          )
+          v-text-field.pb-4(
+            v-model='calculator.bs'
+            label="Some other bs",
+            outlined,
+            hide-details,
+            type="number",
+            min="0"
+          )
+
+      .d-flex.flex-column.align-center.mt-10
+        p.text-h2.font-weight-bold ${{savingsEstimate | numberFormat}}
+        span.text-body-2.text--secondary In estimated savings
+
 </template>
 
 <script>
@@ -70,11 +111,19 @@ export default {
   },
   computed: {
     ...mapState(["authenticatedUser"]),
+    savingsEstimate: function() {
+      return this.calculator.employees * this.calculator.wage / this.calculator.bs
+    }
   },
   methods: {
     ...mapActions(["signOut"]),
   },
   data: () => ({
+    calculator: {
+      employees: 50,
+      wage: 10,
+      bs: 10
+    },
     carouselIndex: 0,
     carousel: [
       {

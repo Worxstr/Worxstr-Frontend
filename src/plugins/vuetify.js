@@ -8,11 +8,11 @@ export default new Vuetify({
         themes: {
             light: {
                 primary: '#3b7bef',
-                secondary: colors.amber,
+                secondary: colors.deepPurple.darken1,
             },
             dark: {
                 primary: '#3b7bef',
-                secondary: colors.amber,
+                secondary: colors.deepPurple.darken1,
             },
         },
     },
