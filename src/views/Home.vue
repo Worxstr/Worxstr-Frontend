@@ -12,23 +12,23 @@
             p.text-h5.font-weight-medium.white--text The adaptive solution to wide-scale temp labor management
 
           div(v-if="authenticatedUser")
-            v-btn.mr-3.black--text(color="secondary", :to="{ name: 'schedule' }") Enter site
-            v-btn.mr-3.black--text(color="secondary", @click="signOut") Sign out
+            v-btn.mr-3(color="secondary", :to="{ name: 'schedule' }") Enter site
+            v-btn.mr-3(color="secondary", @click="signOut") Sign out
 
           div(v-else)
-            v-btn.mr-3.black--text(color="secondary", :to="{ name: 'signIn' }") Sign in
-            v-btn.mr-3.black--text(color="secondary", :to="{ name: 'signUp' }") Sign up
+            v-btn.mr-3(color="secondary", :to="{ name: 'signUp' }") Start now
+            v-btn.mr-3(outlined color="secondary", :to="{ name: 'signIn' }") Sign in
 
           v-spacer(style="height: 70px")
 
         v-col(v-if="$vuetify.breakpoint.mdAndUp")
-          p {{ carouselIndex }}
+          p image here
 
   //- Feature carousel
   v-carousel(
     v-model="carouselIndex",
     cycle,
-    interval="80000",
+    interval="8000",
     height="700",
     hide-delimiter-background,
     show-arrows-on-hover,
@@ -62,12 +62,12 @@
       v-row(cols="12", md="6")
         v-col.d-flex.flex-column.justify-center
           h4.text-h4.font-weight-bold.mb-4 Calculate savings with Worxstr
-          p Dolore non dolor pariatur anim ad est cillum consequat proident minim veniam.
+          p With features aimed at saving your workforce time and money, we’ve created this easy to use savings calculator that can give you an estimate of the time and value provided to your organization.
         v-col(cols="12", md="6")
-          p.text-h6.mb-6.pl-2 My company has:
+          p.text-h6.mb-4.pl-2 My company has:
           v-text-field.pb-4(
             v-model='calculator.managers'
-            suffix="Managers",
+            suffix="managers",
             outlined,
             color='white'
             hide-details,
@@ -76,7 +76,7 @@
           )
           v-text-field.pb-4(
             v-model='calculator.contracts'
-            suffix="Contracts",
+            suffix="contracts / year",
             outlined,
             color='white'
             hide-details,
@@ -85,7 +85,7 @@
           )
           v-text-field.pb-4(
             v-model='calculator.contractors'
-            suffix="Contractors",
+            suffix="contractors",
             outlined,
             color='white'
             hide-details,
@@ -94,8 +94,8 @@
           )
 
       .d-flex.flex-column.align-center.mt-10
-        p.text-h2.font-weight-bold ${{savingsEstimate | numberFormat}}
-          span.text-h6.ml-2 / month
+        p.text-h2.font-weight-bold {{savingsEstimate | numberFormat}}
+          span.text-h6.ml-2 hours / year
         span.text-body-2(style='opacity: .8') In estimated savings
 
 </template>
@@ -112,7 +112,8 @@ export default {
   computed: {
     ...mapState(["authenticatedUser"]),
     savingsEstimate: function() {
-      return this.calculator.managers * this.calculator.contracts * 12 + (.05 * this.calculator.contractors)
+      const { managers, contracts, contractors } = this.calculator;
+      return (managers * contracts * 12) + (.05 * (contractors/managers) * 52)
     }
   },
   methods: {
@@ -166,7 +167,8 @@ export default {
         },
       },
       {
-        color: "green lighten-2",
+        dark: true,
+        color: "green",
         icon: "mdi-cash-lock",
         title: "Payments",
         description:

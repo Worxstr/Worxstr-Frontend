@@ -25,7 +25,7 @@ export default {
     links: [
       {
         to: "about",
-        text: "About us",
+        text: "About",
       },
       {
         to: "contact",

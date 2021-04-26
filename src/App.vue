@@ -199,12 +199,6 @@ export default Vue.extend({
         },{
           text: 'Contact us',
           to: 'contact'
-        },{
-          text: 'Privacy policy',
-          to: 'privacy'
-        },{
-          text: 'Terms of use',
-          to: 'terms'
         }]
     }
   },
