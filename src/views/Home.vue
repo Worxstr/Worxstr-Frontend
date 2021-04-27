@@ -22,7 +22,7 @@
           v-spacer(style="height: 70px")
 
         v-col(v-if="$vuetify.breakpoint.mdAndUp")
-          p image here
+          
 
   //- Feature carousel
   v-carousel(
