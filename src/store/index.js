@@ -732,7 +732,7 @@ axios.interceptors.response.use(response => {
   const res = error.response.data
 
   // TODO: this is stupid, don't keep this. use custom axios config
-  if (error.request.responseURL == 'http://localhost:5000/users/me') return
+  if (error.request.responseURL.includes('/users/me')) return
 
   if (res.message || res.response.error) {
     message = res.message || res.response.error
