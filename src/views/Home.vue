@@ -57,7 +57,7 @@
               )
               
   //- Calculator
-  v-sheet(dark).gradient
+  v-sheet#calculator(dark).gradient
     v-container.py-16.px-10
       v-row(cols="12", md="6")
         v-col.d-flex.flex-column.justify-center
