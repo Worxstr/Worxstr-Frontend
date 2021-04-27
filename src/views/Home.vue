@@ -1,38 +1,40 @@
 <template lang="pug">
 .home
   //- Main CTA
-  v-container.jumbo.d-flex.flex-column.justify-center.align-center.gradient(
-    fluid,
-    color="primary lighten-1"
-  )
-    img.ma-8.svg-shadow(src="@/assets/logo.svg", width="180")
-    h2.text-h2.font-weight-bold.mb-2.white--text Worxstr
-    p.text-subtitle-2
+  v-sheet.gradient
+    v-container
+      v-row.jumbo.d-flex.align-center
+        v-col.ma-8
+          img.svg-shadow(src="@/assets/logo.svg", width="150")
 
-    div(v-if="authenticatedUser")
-      v-btn.mx-2(:to="{ name: 'schedule' }") Enter site
-      v-btn.mx-2(@click="signOut") Sign out
-    v-btn.mx-2(v-else, :to="{ name: 'signIn' }") Sign in
+          .my-8
+            h2.text-h2.font-weight-bold.mb-2.white--text Worxstr
+            p.text-h5.font-weight-medium.white--text The adaptive solution to wide-scale temp labor management
 
-    div(style="height: 160px; display: block")
+          div(v-if="authenticatedUser")
+            v-btn.mr-3(color="secondary", :to="{ name: 'schedule' }") Enter site
+            v-btn.mr-3(color="secondary", @click="signOut") Sign out
 
-  //- What is Worxstr?
-  v-container.d-flex.flex-column.justify-center.align-center.pa-16
-    p.text-h4.font-weight-bold.mb-15 What is Worxstr?
+          div(v-else)
+            v-btn.mr-3(color="secondary", :to="{ name: 'signUp' }") Start now
+            v-btn.mr-3(outlined color="secondary", :to="{ name: 'signIn' }") Sign in
 
-    p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
-    p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33 percent increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
+          v-spacer(style="height: 70px")
+
+        v-col(v-if="$vuetify.breakpoint.mdAndUp")
+          p image here
 
   //- Feature carousel
   v-carousel(
+    v-model="carouselIndex",
     cycle,
-    interval="80000",
+    interval="8000",
     height="700",
     hide-delimiter-background,
     show-arrows-on-hover,
     delimiter-icon="mdi-circle-medium",
-    :dark="false",
-    :light="true"
+    :dark="carousel[carouselIndex].dark",
+    :light="!carousel[carouselIndex].dark"
   )
     v-carousel-item(v-for="feature in carousel")
       v-sheet(:color="feature.color", :dark="feature.dark", height="100%")
@@ -46,24 +48,56 @@
             p.text-h4.font-weight-bold {{ feature.title }}
             p {{ feature.description }}
           .flex-grow-1
-            div(:style="$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small")
+            div(
+              :style="$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small"
+            )
               v-img(
                 :src="require(`@/assets/images/landing/${feature.image}`)",
                 :alt="feature.title"
               )
+              
+  //- Calculator
+  v-sheet(dark).gradient
+    v-container.py-16.px-10
+      v-row(cols="12", md="6")
+        v-col.d-flex.flex-column.justify-center
+          h4.text-h4.font-weight-bold.mb-4 Calculate savings with Worxstr
+          p With features aimed at saving your workforce time and money, we’ve created this easy to use savings calculator that can give you an estimate of the time and value provided to your organization.
+        v-col(cols="12", md="6")
+          p.text-h6.mb-4.pl-2 My company has:
+          v-text-field.pb-4(
+            v-model='calculator.managers'
+            suffix="managers",
+            outlined,
+            color='white'
+            hide-details,
+            type="number",
+            min="1",
+          )
+          v-text-field.pb-4(
+            v-model='calculator.contracts'
+            suffix="contracts / year",
+            outlined,
+            color='white'
+            hide-details,
+            type="number",
+            min="1",
+          )
+          v-text-field.pb-4(
+            v-model='calculator.contractors'
+            suffix="contractors",
+            outlined,
+            color='white'
+            hide-details,
+            type="number",
+            min="1",
+          )
 
-  //- Our mission/vision
-  v-container.justify-center.align-center.pa-16.gradient.text-center(fluid)
-    v-row
-      v-col(cols="12", md="6")
-        v-icon.white--text.text-h2.mb-6 mdi-rocket-launch
-        p.text-h4.font-weight-bold.white--text Our mission
-        p.white--text At Worxstr our mission is to drive efficiency, consistency, and respect into the management systems for gig labor.
+      .d-flex.flex-column.align-center.mt-10
+        p.text-h2.font-weight-bold {{savingsEstimate | numberFormat}}
+          span.text-h6.ml-2 hours / year
+        span.text-body-2(style='opacity: .8') In estimated savings
 
-      v-col(cols="12", md="6")
-        v-icon.white--text.text-h2.mb-6 mdi-eye-outline
-        p.text-h4.font-weight-bold.white--text Our vision
-        p.white--text At Worxstr we aspire to transform the gig labor industry by providing financial stability, transparency, and accountability through a management platform that will drive tomorrow's economy. At Worxstr we believe that every working American deserves the freedom that comes from opportunity and possibility.
 </template>
 
 <script>
@@ -77,11 +111,21 @@ export default {
   },
   computed: {
     ...mapState(["authenticatedUser"]),
+    savingsEstimate: function() {
+      const { managers, contracts, contractors } = this.calculator;
+      return (managers * contracts * 12) + (.05 * (contractors/managers) * 52)
+    }
   },
   methods: {
     ...mapActions(["signOut"]),
   },
   data: () => ({
+    calculator: {
+      managers: 10,
+      contracts:  15,
+      contractors: 20,
+    },
+    carouselIndex: 0,
     carousel: [
       {
         dark: true,
@@ -123,7 +167,8 @@ export default {
         },
       },
       {
-        color: "green lighten-2",
+        dark: true,
+        color: "green",
         icon: "mdi-cash-lock",
         title: "Payments",
         description:
@@ -141,19 +186,11 @@ export default {
 
 <style lang="scss" scoped>
 .jumbo {
-  min-height: 80vh;
+  min-height: 50vh;
 }
 .svg-shadow {
   -webkit-filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.3));
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.3));
-}
-.gradient {
-  background: rgb(46, 106, 239);
-  background: linear-gradient(
-    50deg,
-    rgba(46, 106, 239, 1) 0%,
-    rgba(46, 170, 230, 1) 100%
-  );
 }
 .carousel-content {
   margin: 0 auto;

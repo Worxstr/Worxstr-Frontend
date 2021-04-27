@@ -5,6 +5,14 @@ Vue.filter('capitalize', value => {
 	return value.charAt(0).toUpperCase() + value.slice(1);
 })
 
+Vue.filter('numberFormat', (num, precision) => {
+	return (
+		(!precision || precision == 0)
+		? Math.round(num)
+		: (Math.round(num * precision) / precision)
+	).toLocaleString('en')
+})
+
 Vue.filter('date', (value, format) => {
 	return dayjs(value).format(format || 'YYYY-MM-DD')
 })

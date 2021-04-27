@@ -8,7 +8,7 @@ v-footer.worxstr-footer(padless)
       v-btn(v-for='social in socials', icon :href="social.link" target="_blank")
         v-icon(size='24px') {{ social.icon }}
 
-    v-card-text.pt-0 Some additional info can go here
+    //- v-card-text.pt-0 Some additional info can go here
 
     v-divider
 
@@ -25,7 +25,7 @@ export default {
     links: [
       {
         to: "about",
-        text: "About us",
+        text: "About",
       },
       {
         to: "contact",
@@ -43,15 +43,15 @@ export default {
     socials: [
       {
         icon: "mdi-facebook",
-        link: "",
+        link: "https://www.facebook.com/worxstr",
       },
       {
         icon: "mdi-instagram",
-        link: "",
+        link: "https://www.instagram.com/worxstr/",
       },
       {
         icon: "mdi-twitter",
-        link: "",
+        link: "https://twitter.com/worxstr",
       },
       {
         icon: "mdi-linkedin",
