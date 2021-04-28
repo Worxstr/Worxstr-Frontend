@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, { StoreOptions } from 'vuex'
 import axios from 'axios'
 import router from '../router'
 
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
+import { Conversation } from '@/definitions/Messages'
+import { User } from '@/definitions/User'
+import { ClockEvent, Timecard } from '@/definitions/Clock'
+import { Job, Shift } from '@/definitions/Job'
+import { CalendarEvent } from '@/definitions/Schedule'
 
 Vue.use(Vuex)
 
@@ -12,9 +17,71 @@ axios.defaults.withCredentials = true
 
 const baseUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace('8080', '5000')
 
-console.log(baseUrl)
+interface RootState {
+  snackbar: {
+    show: boolean;
+    text: string;
+    timeout: number;
+  };
+  authenticatedUser: User | null;
+  users: {
+    all: number[];
+    byId: {
+      [key: number]: User;
+    };
+  };
+  clock: {
+    clocked: boolean;
+    break: boolean;
+    history: {
+      lastLoadedOffset: number;
+      all: number[];
+      byId: {
+        [key: number]: ClockEvent;
+      };
+    };
+  };
+  approvals: {
+    timecards: {
+      all: number[];
+      byId: {
+        [key: number]: Timecard;
+      };
+    };
+  };
+  shifts: {
+    next: Shift | null;
+    all: number[];
+    byId: {
+      [key: number]: Shift;
+    };
+  };
+  jobs: {
+    all: number[];
+    byId: {
+      [key: number]: Job;
+    };
+  };
+  workforce: number[];
+  managers: {
+    [key: string]: User[];
+  };
+  events: {
+    all: number[];
+    byId: {
+      [key: number]: CalendarEvent;
+    };
+  };
+  conversations: {
+    all: number[];
+    byId: {
+      [key: number]: Conversation;
+    };
+  };
+  contacts: User[];
+}
 
-const store = new Vuex.Store({
+const storeConfig: StoreOptions<RootState> = {
   state: {
     snackbar: {
       show: false,
@@ -44,8 +111,8 @@ const store = new Vuex.Store({
     shifts: {
       next: null,
       // TODO: Flatten shift data from jobs
-      // all: [],
-      // byId: {},
+      all: [],
+      byId: {},
     },
     jobs: {
       all: [],
@@ -91,10 +158,10 @@ const store = new Vuex.Store({
         state.users.all.push(user.id)
     },
     SET_SSN_REGISTERED(state) {
-      if (state.authenticatedUser.employee_info)
+      if (state.authenticatedUser?.employee_info)
         state.authenticatedUser.employee_info.need_info = false
     },
-    ADD_CLOCK_EVENT(state, event) {
+    ADD_CLOCK_EVENT(state, event: ClockEvent) {
       Vue.set(state.clock.history.byId, event.id, event)
       if (!state.clock.history.all.includes(event.id))
         state.clock.history.all.push(event.id)
@@ -140,8 +207,8 @@ const store = new Vuex.Store({
         state.workforce.push(userId)
       }
     },
-    ADD_MANAGER(state, { type, manager }) {
-      if (!state.managers[type].some(m => m.id == manager.id)) {
+    ADD_MANAGER(state, { type, manager }: { type: string; manager: User }) {
+      if (!state.managers[type].some((m: User) => m.id == manager.id)) {
         state.managers[type].push(manager)
       }
     },
@@ -262,7 +329,7 @@ const store = new Vuex.Store({
           'week_offset': state.clock.history.lastLoadedOffset
         }
       })
-      data.history.forEach(event => {
+      data.history.forEach((event: ClockEvent) => {
         // TODO: Normalize nested data
         commit('ADD_CLOCK_EVENT', normalizeRelations(event, [/*'user'*/]))
         /* commit('ADD_USER', event.user, {
@@ -283,7 +350,7 @@ const store = new Vuex.Store({
           method: 'POST',
           url: `${baseUrl}/clock/clock-in`,
           params: {
-            'shift_id': state.shifts.next.id
+            'shift_id': state.shifts.next?.id
           },
           data: {
             code
@@ -303,7 +370,7 @@ const store = new Vuex.Store({
         method: 'POST',
         url: `${baseUrl}/clock/clock-out`,
         params: {
-          'shift_id': state.shifts.next.id
+          'shift_id': state.shifts.next?.id
         },
       })
       commit('ADD_CLOCK_EVENT', data.event)
@@ -315,7 +382,7 @@ const store = new Vuex.Store({
         method: 'GET',
         url: `${baseUrl}/clock/timecards`
       })
-      data.timecards.forEach(timecard => {
+      data.timecards.forEach((timecard: Timecard) => {
         // TODO: Normalize nested data
         commit('ADD_TIMECARD', timecard)
       })
@@ -351,7 +418,7 @@ const store = new Vuex.Store({
           timecards
         }
       })
-      data.event.forEach(timecard => {
+      data.event.forEach((timecard: Timecard) => {
         // TODO: Normalize nested data
         commit('ADD_TIMECARD', timecard)
       })
@@ -365,7 +432,7 @@ const store = new Vuex.Store({
           timecards
         }
       })
-      data.event.forEach(timecard => {
+      data.event.forEach((timecard: Timecard) => {
         // TODO: Normalize nested data
         commit('REMOVE_TIMECARD', timecard.id)
       })
@@ -380,7 +447,7 @@ const store = new Vuex.Store({
           transaction
         }
       })
-      timecards.forEach(timecard => {
+      timecards.forEach((timecard: Timecard) => {
         commit('REMOVE_TIMECARD', timecard.id)
       })
     },
@@ -390,13 +457,13 @@ const store = new Vuex.Store({
         method: 'GET',
         url: `${baseUrl}/jobs/managers`,
         params: {
-          manager_id: state.authenticatedUser.manager_id
+          manager_id: state.authenticatedUser?.manager_id
         }
       })
-      data.employee_managers.forEach(m => {
+      data.employee_managers.forEach((m: User) => {
         commit('ADD_MANAGER', { type: 'employee', manager: m })
       })
-      data.organization_managers.forEach(m => {
+      data.organization_managers.forEach((m: User) => {
         commit('ADD_MANAGER', { type: 'organization', manager: m })
       })
     },
@@ -406,7 +473,7 @@ const store = new Vuex.Store({
         method: 'GET',
         url: `${baseUrl}/jobs`,
       })
-      data.jobs.forEach(job => {
+      data.jobs.forEach((job: Job) => {
         // TODO: Normalize nested data
         commit('ADD_JOB', job)
       })
@@ -486,7 +553,7 @@ const store = new Vuex.Store({
         method: 'GET',
         url: `${baseUrl}/users/employees`
       })
-      data.users.forEach(u => {
+      data.users.forEach((u: User) => {
         commit('ADD_USER', u)
         commit('ADD_WORKFORCE_MEMBER', u.id)
       })
@@ -518,7 +585,7 @@ const store = new Vuex.Store({
         }
       })
       console.log(data)
-      data.events.forEach(event => commit('ADD_EVENT', event))
+      data.events.forEach((event: CalendarEvent) => commit('ADD_EVENT', event))
     },
 
     async loadConversations({ commit }) {
@@ -526,7 +593,7 @@ const store = new Vuex.Store({
         method: 'GET',
         url: `${baseUrl}/conversations`
       })
-      data.conversations.forEach(conversation => {
+      data.conversations.forEach((conversation: Conversation) => {
         commit('ADD_CONVERSATION', { conversation })
       })
     },
@@ -592,16 +659,16 @@ const store = new Vuex.Store({
   },
   getters: {
     // TODO: Transform this and add labels, separated by day of week
-    user: (state) => id => {
+    user: (state) => (id: number) => {
       return state.users.byId[id]
     },
-    clockEvent: (state, _, __, rootGetters) => id => {
+    clockEvent: (state, _, __, rootGetters) => (id: number) => {
       return resolveRelations(state.clock.history.byId[id], [/*'user'*/], rootGetters)
     },
     clockHistory: (state, getters) => {
       let events = state.clock.history.all.map(eventId => getters.clockEvent(eventId))
       events = events.sort((a, b) => {
-        return (new Date(b.time)) - (new Date(a.time))
+        return (new Date(b.time).getTime()) - (new Date(a.time).getTime())
       })
 
       return events;
@@ -622,19 +689,19 @@ const store = new Vuex.Store({
         shiftActive,
       }
     },
-    timecard: (state) => id => {
+    timecard: (state) => (id: number) => {
       return state.approvals.timecards.byId[id]
     },
     timecards: (state, getters) => {
       return state.approvals.timecards.all.map(id => getters.timecard(id))
     },
     approvedTimecards: (state, getters) => {
-      return getters.timecards.filter((timecard) => timecard.approved && !timecard.paid);
+      return getters.timecards.filter((timecard: Timecard) => timecard.approved && !timecard.paid);
     },
     unapprovedTimecards: (state, getters) => {
-      return getters.timecards.filter((timecard) => !timecard.approved);
+      return getters.timecards.filter((timecard: Timecard) => !timecard.approved);
     },
-    job: (state) => id => {
+    job: (state) => (id: number) => {
       const job = state.jobs.byId[id]
 
       // if (job && job.shifts)
@@ -648,21 +715,21 @@ const store = new Vuex.Store({
       return state.jobs.all.map(id => getters.job(id))
     },
     directJobs: (state, getters) => {
-      return getters.jobs.filter((job) => job.direct);
+      return getters.jobs.filter((job: Job) => job.direct);
     },
     indirectJobs: (state, getters) => {
-      return getters.jobs.filter((job) => !job.direct);
+      return getters.jobs.filter((job: Job) => !job.direct);
     },
-    shift: (state) => id => {
+    shift: (state) => (id: number) => {
       return state.shifts.byId[id]
     },
     shifts: (state, getters) => {
-      return state.shifts.all.map(id => getters.shift(id))
+      return state.shifts.all.map((id: number) => getters.shift(id))
     },
     workforce: (state, getters) => {
-      return state.workforce.map(userId => state.users.byId[userId])
+      return state.workforce.map((userId: number) => state.users.byId[userId])
     },
-    calendarEvent: state => id => {
+    calendarEvent: state => (id: number) => {
       return state.events.byId[id]
     },
     calendarEvents: (state, getters) => {
@@ -684,7 +751,9 @@ const store = new Vuex.Store({
         'teal',
         'lime',
       ];
-      const colorMap = {}; // Map job ID to color
+      const colorMap: {
+        [key: number]: string;
+      } = {}; // Map job ID to color
 
       return state.events.all.map(eventId => {
 
@@ -710,17 +779,21 @@ const store = new Vuex.Store({
         }
       })
     },
-    conversation: (state, _, __, rootGetters) => id => {
+    conversation: (state, _, __, rootGetters) => (id: number) => {
       return state.conversations.byId[id]
       // return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
     },
     conversations: (state, getters) => {
-      return state.conversations.all.map(id => getters.conversation(id))
+      return state.conversations.all.map((id: number) => getters.conversation(id))
     },
   },
   modules: {
   }
-})
+}
+
+const store = new Vuex.Store<RootState>(storeConfig)
+
+export default store;
 
 axios.interceptors.response.use(response => {
   return response
@@ -744,5 +817,3 @@ axios.interceptors.response.use(response => {
 
   return Promise.reject(error)
 })
-
-export default store
