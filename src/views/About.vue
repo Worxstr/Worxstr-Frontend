@@ -63,7 +63,7 @@
         span.text-center.mb-3.text-subtitle-1.font-weight-medium {{ selectedMember.title }}
         span.text-center.mb-3 {{ selectedMember.description }}
         .mb-3
-          v-btn(v-for='social in selectedMember.socials', icon :href='social.link' target="_blank")
+          v-btn(v-for='social in selectedMember.socials', icon :href='social.link' target="_blank" rel="noreferrer")
             v-icon(size='24px') {{ social.icon }}
 
 </template>

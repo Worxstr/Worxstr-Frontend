@@ -5,7 +5,7 @@ v-footer.worxstr-footer(padless)
       v-btn.my-2(v-for='link in links', :key='link.to', text, :to='link.to') {{ link.text }}
 
     .mb-3
-      v-btn(v-for='social in socials', icon :href="social.link" target="_blank")
+      v-btn(v-for='social in socials', icon :href="social.link" target="_blank" rel="noreferrer")
         v-icon(size='24px') {{ social.icon }}
 
     //- v-card-text.pt-0 Some additional info can go here

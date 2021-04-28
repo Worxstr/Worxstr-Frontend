@@ -5,7 +5,7 @@
     v-container
       v-row.jumbo.d-flex.align-center
         v-col.ma-8
-          img.svg-shadow(src="@/assets/logo.svg", width="150")
+          img.svg-shadow(src="@/assets/logo.svg", width="150" alt="Worxstr logo")
 
           .my-8
             h2.text-h2.font-weight-bold.mb-2.white--text Worxstr
@@ -13,7 +13,7 @@
 
           div(v-if="authenticatedUser")
             v-btn.mr-3(color="secondary", :to="{ name: 'schedule' }") Enter site
-            v-btn.mr-3(color="secondary", @click="signOut") Sign out
+            v-btn.mr-3(outlined, color="secondary", @click="signOut") Sign out
 
           div(v-else)
             v-btn.mr-3(color="secondary", :to="{ name: 'signUp' }") Start now
@@ -24,8 +24,8 @@
         v-col(v-if="$vuetify.breakpoint.mdAndUp")
           v-img(
             src="@/assets/images/landing/devices.svg",
-            alt="Worxstr on mobile and web"
-            :style='`transform: scale(${$vuetify.breakpoint.xl ? 1.5 : 2.5}) translate(${$vuetify.breakpoint.xl ? "3%" : "25%"}, ${$vuetify.breakpoint.xl ? "13px" : "36px"})`'
+            alt="Worxstr on mobile and web",
+            :style="`transform: scale(${$vuetify.breakpoint.xl ? 1.5 : 2.5}) translate(${$vuetify.breakpoint.xl ? '3%' : '25%'}, ${$vuetify.breakpoint.xl ? '13px' : '36px'})`"
           )
 
   //- Feature carousel

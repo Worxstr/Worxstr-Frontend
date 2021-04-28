@@ -5,7 +5,7 @@ v-app
     v-container.py-0.fill-height
       router-link(to='/' style='text-decoration: none')
         v-avatar.mr-10(tile size='50')
-          img(src='@/assets/logo.svg')
+          img(src='@/assets/logo.svg' alt="Worxstr logo")
 
       .d-flex.flex-row(v-if='!$vuetify.breakpoint.smAndDown')
         v-btn(v-for='link in primaryNavLinks'
@@ -99,15 +99,22 @@ v-app
 <script>
 import Vue from "vue";
 import { mapState } from "vuex";
-import WorxstrFooter from '@/components/WorxstrFooter'
+import WorxstrFooter from "@/components/WorxstrFooter";
 
 export default Vue.extend({
   name: "App",
   metaInfo: {
     titleTemplate: "%s | Worxstr",
+    meta: [
+      { charset: "utf-8" },
+      {
+        name: "description",
+        content: "The adaptive solution to wide-scale temp labor management.",
+      },
+    ],
   },
   components: {
-    WorxstrFooter
+    WorxstrFooter,
   },
   async mounted() {
     // const storedUser = localStorage.getItem("authenticatedUser");
@@ -166,7 +173,8 @@ export default Vue.extend({
       else return "calc(100vh - 56px)";
     },
     primaryNavLinks() {
-      return this.$router.options.routes.filter(
+      return this.$router.options.routes
+        .filter(
           (r) =>
             r.meta &&
             ((r.meta.icon && !r.meta.restrict) ||
@@ -176,31 +184,38 @@ export default Vue.extend({
                 r.meta.restrict.some((role) =>
                   this.authenticatedUser.roles.map((r) => r.id).includes(role)
                 )))
-        ).map(route => ({
+        )
+        .map((route) => ({
           text: route.name,
           icon: route.meta.icon,
-          to: route.name
+          to: route.name,
         }));
     },
     secondaryNavLinks() {
       return this.authenticatedUser
-        ? [{
-          text: 'Settings',
-          icon: 'mdi-cog',
-          to: 'settings',
-        }, {
-          text: 'Sign out',
-          icon: 'mdi-logout-variant',
-          click: this.signOut
-        }]
-        : [{
-          text: 'About',
-          to: 'about'
-        },{
-          text: 'Contact us',
-          to: 'contact'
-        }]
-    }
+        ? [
+            {
+              text: "Settings",
+              icon: "mdi-cog",
+              to: "settings",
+            },
+            {
+              text: "Sign out",
+              icon: "mdi-logout-variant",
+              click: this.signOut,
+            },
+          ]
+        : [
+            {
+              text: "About",
+              to: "about",
+            },
+            {
+              text: "Contact us",
+              to: "contact",
+            },
+          ];
+    },
   },
 });
 </script>
