@@ -7,6 +7,7 @@
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
+    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -32,10 +33,10 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
-, "src/router/index.js", "src/store/index.js", "src/plugins/vuetify.js"  ],
+    "tests/**/*.tsx",
+    "decs.d.ts",
+  ],
   "exclude": [
-    "node_modules",
-    "src/main.ts"
+    "node_modules"
   ]
 }

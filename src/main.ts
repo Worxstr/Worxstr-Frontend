@@ -3,15 +3,15 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import store from './store'
-import vuetify from './plugins/vuetify.js'
-import SocketIO from "socket.io-client"
+import vuetify from './plugins/vuetify'
+import { io } from "socket.io-client"
 import VueSocketIO from 'vue-socket.io'
 
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete';
 
 import './assets/style.css'
-import './plugins/filters.js'
+import './plugins/filters'
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
@@ -28,7 +28,7 @@ Vue.use(VuetifyGoogleAutocomplete, {
 
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: SocketIO(process.env.VUE_APP_API_BASE_URL, {
+  connection: io(process.env.VUE_APP_API_BASE_URL, {
     path: '/socket.io'
   }),
   vuex: {
