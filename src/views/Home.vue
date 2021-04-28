@@ -17,12 +17,16 @@
 
           div(v-else)
             v-btn.mr-3(color="secondary", :to="{ name: 'signUp' }") Start now
-            v-btn.mr-3(outlined color="secondary", :to="{ name: 'signIn' }") Sign in
+            v-btn.mr-3(outlined, color="secondary", :to="{ name: 'signIn' }") Sign in
 
           v-spacer(style="height: 70px")
 
         v-col(v-if="$vuetify.breakpoint.mdAndUp")
-          
+          v-img(
+            src="@/assets/images/landing/devices.svg",
+            alt="Worxstr on mobile and web"
+            :style='`transform: scale(${$vuetify.breakpoint.xl ? 1.5 : 2.5}) translate(${$vuetify.breakpoint.xl ? "3%" : "25%"}, ${$vuetify.breakpoint.xl ? "13px" : "36px"})`'
+          )
 
   //- Feature carousel
   v-carousel(
@@ -55,9 +59,9 @@
                 :src="require(`@/assets/images/landing/${feature.image}`)",
                 :alt="feature.title"
               )
-              
+
   //- Calculator
-  v-sheet#calculator(dark).gradient
+  v-sheet#calculator.gradient(dark)
     v-container.py-16.px-10
       v-row(cols="12", md="6")
         v-col.d-flex.flex-column.justify-center
@@ -66,38 +70,37 @@
         v-col(cols="12", md="6")
           p.text-h6.mb-4.pl-2 My company has:
           v-text-field.pb-4(
-            v-model='calculator.managers'
+            v-model="calculator.managers",
             suffix="managers",
             outlined,
-            color='white'
+            color="white",
             hide-details,
             type="number",
-            min="1",
+            min="1"
           )
           v-text-field.pb-4(
-            v-model='calculator.contracts'
+            v-model="calculator.contracts",
             suffix="contracts / year",
             outlined,
-            color='white'
+            color="white",
             hide-details,
             type="number",
-            min="1",
+            min="1"
           )
           v-text-field.pb-4(
-            v-model='calculator.contractors'
+            v-model="calculator.contractors",
             suffix="contractors",
             outlined,
-            color='white'
+            color="white",
             hide-details,
             type="number",
-            min="1",
+            min="1"
           )
 
       .d-flex.flex-column.align-center.mt-10
-        p.text-h2.font-weight-bold {{savingsEstimate | numberFormat}}
+        p.text-h2.font-weight-bold {{ savingsEstimate | numberFormat }}
           span.text-h6.ml-2 hours / year
-        span.text-body-2(style='opacity: .8') In estimated savings
-
+        span.text-body-2(style="opacity: 0.8") In estimated savings
 </template>
 
 <script>
@@ -111,10 +114,10 @@ export default {
   },
   computed: {
     ...mapState(["authenticatedUser"]),
-    savingsEstimate: function() {
+    savingsEstimate: function () {
       const { managers, contracts, contractors } = this.calculator;
-      return (managers * contracts * 12) + (.05 * (contractors/managers) * 52)
-    }
+      return managers * contracts * 12 + 0.05 * (contractors / managers) * 52;
+    },
   },
   methods: {
     ...mapActions(["signOut"]),
@@ -122,7 +125,7 @@ export default {
   data: () => ({
     calculator: {
       managers: 10,
-      contracts:  15,
+      contracts: 15,
       contractors: 20,
     },
     carouselIndex: 0,
