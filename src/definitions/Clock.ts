@@ -23,5 +23,11 @@ export type Timecard = {
 	total_time: string;
 	transaction_id: number;
 	wage_payment: string;
+}
 
+export enum ClockAction {
+	ClockIn = 1,
+	ClockOut = 2,
+	StartBreak = 3,
+	EndBreak = 4,
 }

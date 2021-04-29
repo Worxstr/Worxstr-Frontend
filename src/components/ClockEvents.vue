@@ -16,12 +16,7 @@ v-timeline(align-top, dense)
 </template>
 
 <script>
-import {
-  CLOCK_IN,
-  CLOCK_OUT,
-  START_BREAK,
-  END_BREAK,
-} from "@/definitions/clockActions";
+import { ClockAction } from "@/definitions/Clock";
 
 export default {
   name: "clockEvents",
@@ -30,19 +25,19 @@ export default {
   },
   data: () => ({
     eventMetadata: {
-      [CLOCK_IN]: {
+      [ClockAction.ClockIn]: {
         color: "green",
         label: "Clocked in",
       },
-      [CLOCK_OUT]: {
+      [ClockAction.ClockOut]: {
         color: "pink",
         label: "Clocked out",
       },
-      [START_BREAK]: {
+      [ClockAction.StartBreak]: {
         color: "amber",
         label: "Started break",
       },
-      [END_BREAK]: {
+      [ClockAction.EndBreak]: {
         color: "green",
         label: "Ended break",
       },

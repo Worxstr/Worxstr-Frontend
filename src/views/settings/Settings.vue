@@ -75,7 +75,7 @@ export default {
 		...mapState(['authenticatedUser']),
 	},
 	mounted() {
-		if (this.$route.params.openSSNDialog) {
+		if (this.$route.params.openSSNDialog == "true") {
 			this.ssnDialog = true
 		}
 	},
