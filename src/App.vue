@@ -96,13 +96,12 @@ v-app
 
 </template>
 
-<script>
-import Vue from "vue";
-import { mapState } from "vuex";
-import WorxstrFooter from "@/components/WorxstrFooter";
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import WorxstrFooter from "@/components/WorxstrFooter.vue";
+import { Role, User, UserRole } from "./definitions/User";
 
-export default Vue.extend({
-  name: "App",
+@Component({
   metaInfo: {
     titleTemplate: "%s | Worxstr",
     meta: [
@@ -116,17 +115,28 @@ export default Vue.extend({
   components: {
     WorxstrFooter,
   },
+})
+export default class App extends Vue {
   async mounted() {
-    // const storedUser = localStorage.getItem("authenticatedUser");
-    // if (storedUser) {
-    //   this.$store.commit("SET_AUTHENTICATED_USER", {
-    //     user: JSON.parse(storedUser),
-    //   });
-    // }
-    // Refresh user data in case of an update
+    this.getLocalUserData();
     this.initDarkMode();
+
+    // Refresh user data in case of an update
     await this.$store.dispatch("getAuthenticatedUser");
 
+    this.promptSSN();
+  }
+
+  getLocalUserData() {
+    const storedUser = localStorage.getItem("authenticatedUser");
+    if (storedUser) {
+      this.$store.commit("SET_AUTHENTICATED_USER", {
+        user: JSON.parse(storedUser),
+      });
+    }
+  }
+
+  promptSSN() {
     // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
     const user = this.$store.state.authenticatedUser;
     if (user.employee_info && user.employee_info.need_info) {
@@ -136,88 +146,102 @@ export default Vue.extend({
           this.$router.push({
             name: "settings",
             params: {
-              openSSNDialog: true,
+              openSSNDialog: "true",
             },
           });
         },
         actionText: "Set SSN",
       });
     }
-  },
-  methods: {
-    signOut() {
-      this.$store.dispatch("signOut");
-    },
-    initDarkMode() {
-      const userPrefDarkMode = window.localStorage.getItem("darkMode");
-      const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  }
 
-      if (userPrefDarkMode == "System default") {
-        darkMediaQuery.addEventListener("change", (e) => {
-          this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-        });
+  initDarkMode() {
+    const userPrefDarkMode = window.localStorage.getItem("darkMode");
+    const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-        if (darkMediaQuery.matches) {
-          setTimeout(() => (this.$vuetify.theme.dark = true), 0);
-        }
-      } else {
-        this.$vuetify.theme.dark = userPrefDarkMode == "Dark";
+    if (userPrefDarkMode == "System default") {
+      darkMediaQuery.addEventListener("change", (e) => {
+        this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      });
+
+      if (darkMediaQuery.matches) {
+        setTimeout(() => (this.$vuetify.theme.dark = true), 0);
       }
-    },
-  },
-  computed: {
-    ...mapState(["authenticatedUser", "snackbar"]),
-    pageHeight() {
-      if (!this.$route.meta.fullHeight) return "100%";
-      else if (this.$vuetify.breakpoint.mdAndUp) return "calc(100vh - 65px)";
-      else return "calc(100vh - 56px)";
-    },
-    primaryNavLinks() {
-      return this.$router.options.routes
-        .filter(
-          (r) =>
-            r.meta &&
-            ((r.meta.icon && !r.meta.restrict) ||
-              (r.meta.icon &&
-                r.meta.restrict &&
-                this.authenticatedUser &&
-                r.meta.restrict.some((role) =>
-                  this.authenticatedUser.roles.map((r) => r.id).includes(role)
-                )))
-        )
-        .map((route) => ({
-          text: route.name,
-          icon: route.meta.icon,
-          to: route.name,
-        }));
-    },
-    secondaryNavLinks() {
-      return this.authenticatedUser
-        ? [
-            {
-              text: "Settings",
-              icon: "mdi-cog",
-              to: "settings",
-            },
-            {
-              text: "Sign out",
-              icon: "mdi-logout-variant",
-              click: this.signOut,
-            },
-          ]
-        : [
-            {
-              text: "About",
-              to: "about",
-            },
-            {
-              text: "Contact us",
-              to: "contact",
-            },
-          ];
-    },
-  },
-});
+    } else {
+      this.$vuetify.theme.dark = userPrefDarkMode == "Dark";
+    }
+  }
+
+  signOut(): void {
+    this.$store.dispatch("signOut");
+  }
+
+  get authenticatedUser(): User {
+    return this.$store.state.authenticatedUser;
+  }
+
+  get snackbar() {
+    return this.$store.state.snackbar;
+  }
+
+  get pageHeight() {
+    if (!this.$route.meta.fullHeight) return "100%";
+    else if (this.$vuetify.breakpoint.mdAndUp) return "calc(100vh - 65px)";
+    else return "calc(100vh - 56px)";
+  }
+
+  get primaryNavLinks() {
+
+    return this.$router.options.routes?.filter((route) => {
+      const meta = route.meta;
+
+      if (!meta) return false;
+
+      const icon = !!meta.icon
+      const restrict = !!meta.restrict
+
+      const userHasRequiredRole = !!meta.restrict?.some((role: UserRole) =>
+        this.authenticatedUser?.roles
+          ?.map((r: Role) => r.id)
+          .includes(role)
+      )
+
+      return (icon && !restrict) || (icon && restrict && userHasRequiredRole)
+
+    })
+    .map((route) => ({
+      text: route.name,
+      icon: route.meta.icon,
+      to: route.name
+    }));
+  }
+
+  get secondaryNavLinks() {
+    return this.authenticatedUser
+      ? [
+          {
+            text: "Settings",
+            icon: "mdi-cog",
+            to: "settings",
+          },
+          {
+            text: "Sign out",
+            icon: "mdi-logout-variant",
+            click: this.signOut,
+          },
+        ]
+      : [
+          {
+            text: "About",
+            to: "about",
+          },
+          {
+            text: "Contact us",
+            to: "contact",
+          },
+        ];
+  }
+}
 </script>
 
 <style lang="scss">

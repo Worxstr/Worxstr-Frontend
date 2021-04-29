@@ -31,8 +31,7 @@ import NotFound from '@/views/errors/NotFound.vue'
 Vue.use(VueRouter)
 Vue.use(Meta)
 
-import { EMPLOYEE, EMPLOYEE_MANAGER, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
-const MANAGER = [EMPLOYEE_MANAGER, ORGANIZATION_MANAGER]
+import { UserRole, Manager } from '@/definitions/User'
 
 const routes = [
   {
@@ -111,7 +110,7 @@ const routes = [
     component: Clock,
     meta: {
       icon: 'mdi-clock-outline',
-      restrict: [EMPLOYEE]
+      restrict: [UserRole.Employee]
     }
   },
   // {
@@ -129,7 +128,7 @@ const routes = [
     component: Jobs,
     meta: {
       icon: 'mdi-calendar-check',
-      restrict: [...MANAGER]
+      restrict: Manager
     }
   },
   {
@@ -138,7 +137,7 @@ const routes = [
     component: Payments,
     meta: {
       icon: 'mdi-clock-check-outline',
-      restrict: [...MANAGER]
+      restrict: Manager
     }
   },
   {
@@ -146,7 +145,7 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      restrict: [...MANAGER]
+      restrict: Manager
     }
   },
   {
@@ -155,7 +154,7 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      restrict: [EMPLOYEE, ...MANAGER],
+      restrict: [UserRole.Employee, ...Manager],
       fullHeight: true,
       hideNav: true,
     }
@@ -166,7 +165,7 @@ const routes = [
     component: Workforce,
     meta: {
       icon: 'mdi-account-group',
-      restrict: [...MANAGER]
+      restrict: Manager
     }
   },
   {
@@ -175,7 +174,7 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      restrict: [EMPLOYEE, ...MANAGER],
+      restrict: [UserRole.Employee, ...Manager],
     },
     children: [{
       name: 'conversation',

@@ -128,7 +128,7 @@ import DeleteShiftDialog from "./DeleteShiftDialog";
 
 import ClockEvents from "@/components/ClockEvents";
 
-import { userIs, ORGANIZATION_MANAGER } from "@/definitions/userRoles";
+import { userIs, UserRole } from "@/definitions/User";
 
 export default {
   name: "job",
@@ -153,7 +153,7 @@ export default {
     },
     userIsOrgManager() {
       return this.$store.state.authenticatedUser
-        ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser)
+        ? userIs(UserRole.OrganizationManger, this.$store.state.authenticatedUser)
         : false;
     },
   },

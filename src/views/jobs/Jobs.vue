@@ -51,7 +51,7 @@ v-container.approvals(v-else)
 <script>
 import { mapGetters } from "vuex";
 import EditJobDialog from './EditJobDialog'
-import { userIs, ORGANIZATION_MANAGER } from '@/definitions/userRoles'
+import { userIs, UserRole } from '@/definitions/User'
 
 export default {
   name: "jobs",
@@ -70,7 +70,7 @@ export default {
   computed: {
     ...mapGetters(["directJobs", "indirectJobs"]),
     userIsOrgManager() {
-      return this.$store.state.authenticatedUser ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser) : false
+      return this.$store.state.authenticatedUser ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser) : false
     }
   },
   components: { EditJobDialog },
