@@ -22,27 +22,28 @@ v-dialog(
 
 </template>
 
-<script>
-export default {
-  name: "denyDialog",
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+
+@Component({
   props: {
     opened: Boolean,
     shift: Object,
     employeeName: String,
-  },
-  data: () => ({
-    loading: false,
-  }),
-  methods: {
-    closeDialog() {
-      this.$emit("update:opened", false);
-    },
-    async deleteShift() {
-      this.loading = true
-      await this.$store.dispatch("deleteShift", this.shift.id);
-      this.loading = false
-      this.closeDialog();
-    },
-  },
-};
+  }
+})
+export default class DeleteShiftDialog extends Vue {
+  loading = false
+  
+  closeDialog() {
+    this.$emit("update:opened", false);
+  }
+  
+  async deleteShift() {
+    this.loading = true
+    await this.$store.dispatch("deleteShift", this.shift.id);
+    this.loading = false
+    this.closeDialog();
+  }
+}
 </script>

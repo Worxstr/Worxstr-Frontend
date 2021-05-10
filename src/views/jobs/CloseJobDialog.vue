@@ -22,28 +22,28 @@ v-dialog(
 
 </template>
 
-<script>
-export default {
-  name: "closeJobDialog",
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+
+@Component({
   props: {
     opened: Boolean,
     job: Object,
     employeeName: String,
-  },
-  data: () => ({
-    loading: false,
-  }),
-  methods: {
-    closeDialog() {
-      this.$emit("update:opened", false);
-    },
-    async closeJob() {
-      this.loading = true
-      await this.$store.dispatch("closeJob", this.job.id);
-      this.loading = false
-      this.closeDialog();
-      this.$router.push({name: 'jobs'})
-    },
-  },
-};
+  }
+})
+export default class CloseJobDialog extends Vue {
+  loading = false
+
+  closeDialog() {
+    this.$emit('update:opened', false);
+  }
+  async closeJob() {
+    this.loading = true
+    await this.$store.dispatch('closeJob', this.job.id);
+    this.loading = false
+    this.closeDialog();
+    this.$router.push({name: 'jobs'})
+ 1 }
+}
 </script>
