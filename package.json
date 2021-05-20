@@ -9,6 +9,9 @@
     "deploy": "aws s3 sync ./dist s3://worxstr-secure-app-client"
   },
   "dependencies": {
+    "@capacitor/android": "^3.0.0",
+    "@capacitor/cli": "^3.0.0",
+    "@capacitor/core": "^3.0.0",
     "@types/socket.io": "^2.1.13",
     "axios": "^0.21.1",
     "core-js": "^3.8.2",

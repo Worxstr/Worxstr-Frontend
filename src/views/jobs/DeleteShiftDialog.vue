@@ -23,25 +23,24 @@ v-dialog(
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Shift } from '@/definitions/Job';
+import { Vue, Component, Prop } from 'vue-property-decorator'
 
-@Component({
-  props: {
-    opened: Boolean,
-    shift: Object,
-    employeeName: String,
-  }
-})
+@Component
 export default class DeleteShiftDialog extends Vue {
   loading = false
-  
+
+  @Prop({ default: false }) readonly opened!: boolean
+  @Prop(Object) readonly shift: Shift | undefined
+  @Prop(String) readonly employeeName: string | undefined
+
   closeDialog() {
     this.$emit("update:opened", false);
   }
   
   async deleteShift() {
     this.loading = true
-    await this.$store.dispatch("deleteShift", this.shift.id);
+    await this.$store.dispatch("deleteShift", this.shift?.id);
     this.loading = false
     this.closeDialog();
   }

@@ -22,20 +22,22 @@
 </template>
 
 <script>
-export default {
-  name: "User",
-  metaInfo() {
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component
+export default class User extends Vue {
+	metaInfo() {
     return {
-      title: this.user ? this.$options.filters.fullName(this.user) : "User",
-    };
-  },
+      title: this.user ? this.$options.filters.fullName(this.user) : 'User'
+    }
+  }
+
   mounted() {
-    this.$store.dispatch("loadUser", this.$route.params.userId);
-  },
-  computed: {
-    user() {
-      return this.$store.getters.user(this.$route.params.userId);
-    },
-  },
-};
+    this.$store.dispatch('loadUser', this.$route.params.userId)
+  }
+
+	get user() {
+		return this.$store.getters.user(this.$route.params.userId)
+	}
+}
 </script>
