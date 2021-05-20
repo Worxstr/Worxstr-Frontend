@@ -9,7 +9,7 @@ v-dialog(
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")
         v-progress-circular(indeterminate)
-    
+
     v-form.flex-grow-1.d-flex.flex-column(
       v-if="editedJob",
       @submit.prevent="updateJob",
@@ -33,10 +33,10 @@ v-dialog(
         vuetify-google-autocomplete#map(
           outlined,
           dense,
-          label="Address"
-          v-on:placechanged="setPlace"
-          :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''"
-          :rules="rules.address",
+          label="Address",
+          v-on:placechanged="setPlace",
+          :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''",
+          :rules="rules.address"
         )
 
         v-subheader Managers
@@ -99,63 +99,67 @@ v-dialog(
           | {{ create ? 'Create' : 'Save' }}
 </template>
 
-<script>
+<script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import { mapState } from 'vuex'
+import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
+import { User } from '@/definitions/User'
+import { Job } from '@/definitions/Job';
 
 // TODO: Move this to reusable import
-const exists = (errorString) => (value) => !!value || errorString;
+const exists = (errorMessage: string) => (value: any) => !!value || errorMessage;
 
-export default {
-  name: "editJobDialog",
-  props: {
-    opened: Boolean,
-    create: Boolean, // Creating new job
-    job: Object,
-  },
-  watch: {
-    opened(newVal, oldVal) {
-      if (newVal) this.$store.dispatch('loadManagers');
-      if (newVal && this.job)
-        this.editedJob = Object.assign({}, this.job);
-    },
-  },
-  computed: {
-    ...mapState(['managers'])
-  },
-  data: () => ({
-    isValid: false,
-    editedJob: {},
-    loading: false,
-    rules: {
-      name: [exists("Job name required")],
-      address: [exists("Address required")],
-      consultantName: [exists("Consultant name required")],
-      consultantPhone: [
-        exists("Consultant phone required"),
-        (value) => {
-          // https://stackoverflow.com/questions/4338267/validate-phone-number-with-javascript
-          // TODO: Use a library for these rules
+@Component
+export default class EditJobDialog extends Vue {
 
-          const pattern = /^(()?\d{3}())?(-|\s)?\d{3}(-|\s)?\d{4}$/;
-          return pattern.test(value) || "Invalid phone";
-        },
-      ],
-      consultantEmail: [
-        exists("Email required"),
-        (value) => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || "Invalid email";
-        },
-      ],
-    },
-  }),
-  methods: {
-    closeDialog() {
-      this.$emit("update:opened", false);
-      if (this.create) this.$refs.form.reset();
-    },
-    setPlace(address, place, id) {
+  @Prop({ default: false }) readonly opened!: boolean
+  @Prop({ default: false }) readonly create!: boolean
+  @Prop(Object) readonly job: Job | undefined
+
+  isValid = false
+  editedJob?: Job
+  loading = false
+  place: any
+
+  rules = {
+    name: [exists("Job name required")],
+    address: [exists("Address required")],
+    consultantName: [exists("Consultant name required")],
+    consultantPhone: [
+      exists("Consultant phone required"),
+      (value: string) => {
+        // https://stackoverflow.com/questions/4338267/validate-phone-number-with-javascript
+        // TODO: Use a library for these rules
+
+        const pattern = /^(()?\d{3}())?(-|\s)?\d{3}(-|\s)?\d{4}$/;
+        return pattern.test(value) || "Invalid phone";
+      },
+    ],
+    consultantEmail: [
+      exists("Email required"),
+      (value: string) => {
+        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return pattern.test(value) || "Invalid email";
+      },
+    ],
+  }
+
+  @Watch('opened')
+  onOpened(newVal: boolean, oldVal: boolean) {
+    if (newVal) this.$store.dispatch('loadManagers');
+    if (newVal && this.job)
+      this.editedJob = Object.assign({}, this.job);
+  }
+
+  get managers(): User[] {
+    return this.$store.getters.managers
+  }
+
+  closeDialog() {
+    this.$emit("update:opened", false);
+    if (this.create) (this.$refs.form as HTMLFormElement).reset();
+  }
+  setPlace(address: any, place: string, id: string) {
+    if (this.editedJob) {
       this.editedJob.address = address.name
       this.editedJob.city = address.locality
       this.editedJob.state = address.administrative_area_level_1
@@ -163,15 +167,15 @@ export default {
       this.editedJob.country = address.country
       this.editedJob.latitude = address.latitude
       this.editedJob.longitude = address.longitude
-      this.place = place
-    },
-    async updateJob() {
-      this.loading = true;
-      if (this.create) await this.$store.dispatch("createJob", this.editedJob);
-      else await this.$store.dispatch("updateJob", this.editedJob);
-      this.loading = false;
-      this.closeDialog();
-    },
-  },
-};
+    }
+    this.place = place
+  }
+  async updateJob() {
+    this.loading = true;
+    if (this.create) await this.$store.dispatch("createJob", this.editedJob);
+    else await this.$store.dispatch("updateJob", this.editedJob);
+    this.loading = false;
+    this.closeDialog();
+  }
+}
 </script>

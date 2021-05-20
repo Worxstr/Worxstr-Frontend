@@ -5,41 +5,28 @@ v-app
     v-container.py-0.fill-height
       router-link(to='/' style='text-decoration: none')
         v-avatar.mr-10(tile size='50')
-          img(src='@/assets/logo.svg')
+          img(src='@/assets/logo.svg' alt='Worxstr logo')
 
-      .d-flex.flex-row(v-if='\
-        authenticatedUser &&\
-        authenticatedUser.roles &&\
-        !$vuetify.breakpoint.smAndDown\
-      ')
-        v-btn(v-for='route in primaryNavLinks'
-        :key='route.name'
+      .d-flex.flex-row(v-if='!$vuetify.breakpoint.smAndDown')
+        v-btn(v-for='link in primaryNavLinks'
+        :key='link.text'
         text
-        :to='{ name: route.name }'
+        :to='{ name: link.to }'
         active-class='primary--text')
-          | {{ route.name }}
+          | {{ link.text }}
 
       v-spacer
 
-      //- div(v-if='authenticatedUser')
-        v-tooltip(bottom)
-          template(v-slot:activator="{ on, attrs }")
-            v-btn(icon :to="{ name: 'settings' }" v-bind="attrs" v-on="on")
-              v-icon mdi-cog
-          span Settings
-
-        
-
-      div(v-for="link in secondaryNavLinks")
+      div(v-for='link in secondaryNavLinks')
 
         //- Icon button
-        v-tooltip(v-if="link.icon" bottom)
-          template(v-slot:activator="{ on, attrs }")
+        v-tooltip(v-if='link.icon' bottom)
+          template(v-slot:activator='{ on, attrs }')
             v-btn(
               icon
-              v-bind="attrs"
-              v-on="on"
-              :to="link.to ? { name: link.to } : null"
+              v-bind='attrs'
+              v-on='on'
+              :to='link.to ? { name: link.to } : null'
               @click="() => link.click ? link.click() : ''"
             )
               v-icon {{ link.icon }}
@@ -50,8 +37,8 @@ v-app
         v-btn(
           v-else
           text
-          :to="{ name: link.to }"
-          active-class="primary--text"
+          :to='{ name: link.to }'
+          active-class='primary--text'
         )
           | {{ link.text }}
       
@@ -78,13 +65,13 @@ v-app
     )
         
       v-btn(
-        v-for='route in primaryNavLinks'
-        :key='route.name'
-        :value='route.name'
-        :to='{ name: route.name }'
+        v-for='link in primaryNavLinks'
+        :key='link.to'
+        :value='link.text'
+        :to='{ name: link.to }'
       )
-        span {{ route.name | capitalize }}
-        v-icon {{ route.meta.icon }}
+        span {{ link.text | capitalize }}
+        v-icon {{ link.icon }}
   
   worxstr-footer(v-if='$route.meta.showFooter')
 
@@ -109,109 +96,148 @@ v-app
 
 </template>
 
-<script>
-import Vue from "vue";
-import { mapState } from "vuex";
-import WorxstrFooter from '@/components/WorxstrFooter'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import WorxstrFooter from '@/components/WorxstrFooter.vue'
+import { Role, User, UserRole } from './definitions/User'
 
-export default Vue.extend({
-  name: "App",
+@Component({
   metaInfo: {
-    titleTemplate: "%s | Worxstr",
+    titleTemplate: '%s | Worxstr',
+    meta: [
+      { charset: 'utf-8' },
+      {
+        name: 'description',
+        content: 'The adaptive solution to wide-scale temp labor management.',
+      },
+    ],
   },
   components: {
-    WorxstrFooter
+    WorxstrFooter,
   },
+})
+export default class App extends Vue {
   async mounted() {
-    // const storedUser = localStorage.getItem("authenticatedUser");
-    // if (storedUser) {
-    //   this.$store.commit("SET_AUTHENTICATED_USER", {
-    //     user: JSON.parse(storedUser),
-    //   });
-    // }
-    // Refresh user data in case of an update
-    this.initDarkMode();
-    await this.$store.dispatch("getAuthenticatedUser");
+    this.getLocalUserData()
+    this.initDarkMode()
 
+    // Refresh user data in case of an update
+    await this.$store.dispatch('getAuthenticatedUser')
+
+    this.promptSSN()
+  }
+
+  getLocalUserData() {
+    const storedUser = localStorage.getItem('authenticatedUser')
+    if (storedUser) {
+      this.$store.commit('SET_AUTHENTICATED_USER', {
+        user: JSON.parse(storedUser),
+      })
+    }
+  }
+
+  promptSSN() {
     // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
-    const user = this.$store.state.authenticatedUser;
+    const user = this.$store.state.authenticatedUser
     if (user.employee_info && user.employee_info.need_info) {
-      this.$store.dispatch("showSnackbar", {
-        text: "You haven't set your Social Security number.",
+      this.$store.dispatch('showSnackbar', {
+        text: `You haven't set your Social Security number.`,
         action: () => {
           this.$router.push({
-            name: "settings",
+            name: 'settings',
             params: {
-              openSSNDialog: true,
+              openSSNDialog: 'true',
             },
-          });
+          })
         },
-        actionText: "Set SSN",
-      });
+        actionText: 'Set SSN',
+      })
     }
-  },
-  methods: {
-    signOut() {
-      this.$store.dispatch("signOut");
-    },
-    initDarkMode() {
-      const userPrefDarkMode = window.localStorage.getItem("darkMode");
-      const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  }
 
-      if (userPrefDarkMode == "System default") {
-        darkMediaQuery.addEventListener("change", (e) => {
-          this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-        });
+  initDarkMode() {
+    const userPrefDarkMode = window.localStorage.getItem('darkMode')
+    const darkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
-        if (darkMediaQuery.matches) {
-          setTimeout(() => (this.$vuetify.theme.dark = true), 0);
-        }
-      } else {
-        this.$vuetify.theme.dark = userPrefDarkMode == "Dark";
+    if (userPrefDarkMode == 'System default') {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      darkMediaQuery.addEventListener('change', e => {
+        this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      })
+
+      if (darkMediaQuery.matches) {
+        setTimeout(() => (this.$vuetify.theme.dark = true), 0)
       }
-    },
-  },
-  computed: {
-    ...mapState(["authenticatedUser", "snackbar"]),
-    pageHeight() {
-      if (!this.$route.meta.fullHeight) return "100%";
-      else if (this.$vuetify.breakpoint.mdAndUp) return "calc(100vh - 65px)";
-      else return "calc(100vh - 56px)";
-    },
-    primaryNavLinks() {
-      return this.$router.options.routes.filter(
-        (r) =>
-          r.meta &&
-          ((r.meta.icon && !r.meta.restrict) ||
-            (r.meta.icon &&
-              r.meta.restrict &&
-              this.authenticatedUser &&
-              r.meta.restrict.some((role) =>
-                this.authenticatedUser.roles.map((r) => r.id).includes(role)
-              )))
-      );
-    },
-    secondaryNavLinks() {
-      return this.$store.state.authenticatedUser
-        ? [{
-          text: 'Settings',
-          icon: 'mdi-cog',
-          to: 'settings',
-        }, {
-          text: 'Sign out',
-          icon: 'mdi-logout-variant',
-          click: this.signOut
-        }]
-        : [{
-          to: 'signIn',
-          text: 'Sign in',
-        }, {
-          to: 'signUp',
-          text: 'Sign up',
-        }]
+    } else {
+      this.$vuetify.theme.dark = userPrefDarkMode == 'Dark'
     }
-  },
-});
+  }
+
+  signOut(): void {
+    this.$store.dispatch('signOut')
+  }
+
+  get authenticatedUser(): User {
+    return this.$store.state.authenticatedUser
+  }
+
+  get snackbar() {
+    return this.$store.state.snackbar
+  }
+
+  get pageHeight() {
+    if (!this.$route.meta.fullHeight) return '100%'
+    else if (this.$vuetify.breakpoint.mdAndUp) return 'calc(100vh - 65px)'
+    else return 'calc(100vh - 56px)'
+  }
+
+  get primaryNavLinks() {
+    return this.$router.options.routes
+      ?.filter((route) => {
+        const meta = route.meta
+
+        if (!meta) return false
+
+        const icon = !!meta.icon
+        const restrict = !!meta.restrict
+
+        const userHasRequiredRole = !!meta.restrict?.some((role: UserRole) =>
+          this.authenticatedUser?.roles?.map((r: Role) => r.id).includes(role)
+        )
+
+        return (icon && !restrict) || (icon && userHasRequiredRole)
+      })
+      .map((route) => ({
+        text: route.name,
+        icon: route.meta.icon,
+        to: route.name,
+      }))
+  }
+
+  get secondaryNavLinks() {
+    return this.authenticatedUser
+      ?
+      [{
+        text: 'Settings',
+        icon: 'mdi-cog',
+        to: 'settings',
+      },
+      {
+        text: 'Sign out',
+        icon: 'mdi-logout-variant',
+        click: this.signOut,
+      }]
+      :
+      [{
+        text: 'About',
+        to: 'about',
+      },
+      {
+        text: 'Contact us',
+        to: 'contact',
+      }]
+  }
+}
 </script>
 
 <style lang="scss">

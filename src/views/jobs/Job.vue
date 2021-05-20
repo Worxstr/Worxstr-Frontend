@@ -119,74 +119,82 @@ div(v-else)
             v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Remove
 </template>
 
-<script>
+<script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import EditJobDialog from "./EditJobDialog";
-import CloseJobDialog from "./CloseJobDialog";
-import EditShiftDialog from "./EditShiftDialog";
-import DeleteShiftDialog from "./DeleteShiftDialog";
+import { Vue, Component } from "vue-property-decorator"
 
-import ClockEvents from "@/components/ClockEvents";
+import EditJobDialog from "./EditJobDialog.vue"
+import CloseJobDialog from "./CloseJobDialog.vue"
+import EditShiftDialog from "./EditShiftDialog.vue"
+import DeleteShiftDialog from "./DeleteShiftDialog.vue"
 
-import { userIs, ORGANIZATION_MANAGER } from "@/definitions/userRoles";
+import ClockEvents from "@/components/ClockEvents.vue"
 
-export default {
-  name: "job",
-  metaInfo() {
-    return {
-      title: this.job.name || 'Job'
-    }
-  },
+import { userIs, UserRole } from "@/definitions/User"
+import { Job, Shift } from "@/definitions/Job"
+
+@Component({
   components: {
     EditJobDialog,
     CloseJobDialog,
     EditShiftDialog,
     DeleteShiftDialog,
     ClockEvents,
-  },
-  computed: {
-    job() {
-      return this.$store.getters.job(this.$route.params.jobId);
-    },
-    location() {
-      return { lat: this.job.latitude, lng: this.job.longitude };
-    },
-    userIsOrgManager() {
-      return this.$store.state.authenticatedUser
-        ? userIs(ORGANIZATION_MANAGER, this.$store.state.authenticatedUser)
-        : false;
-    },
-  },
+  }
+})
+export default class JobView extends Vue {
+
+  loading = false
+  editJobDialog = false
+  closeJobDialog = false
+  addShiftDialog = false
+  editShiftDialog = false
+  deleteShiftDialog = false
+  selectedShift?: Shift
+  shifts = []
+
+  metaInfo() {
+    return {
+      title: this.job?.name || 'Job'
+    }
+  }
+  
   async mounted() {
     this.loading = true;
     await this.$store.dispatch("loadJob", this.$route.params.jobId);
     this.loading = false;
-  },
-  methods: {
-    openEditShiftDialog(shift) {
-      this.selectedShift = shift;
-      this.editShiftDialog = true;
-    },
-    openDeleteShiftDialog(shift) {
-      this.selectedShift = shift;
-      this.deleteShiftDialog = true;
-    },
-    employeeName(employeeId) {
-      const employee = this.job.employees.find((e) => e.id == employeeId);
-      return `${employee.first_name} ${employee.last_name}`;
-    },
-  },
-  data: () => ({
-    loading: false,
-    editJobDialog: false,
-    closeJobDialog: false,
-    addShiftDialog: false,
-    editShiftDialog: false,
-    deleteShiftDialog: false,
-    selectedShift: null,
-    shifts: [],
-  }),
-};
+  }
+
+  get job(): Job {
+    return this.$store.getters.job(this.$route.params.jobId)
+  }
+  
+  get location() {
+    return { lat: this.job.latitude, lng: this.job.longitude };
+  }
+
+  get userIsOrgManager() {
+    return this.$store.state.authenticatedUser
+      ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser)
+      : false;
+  }
+
+  openEditShiftDialog(shift: Shift) {
+    this.selectedShift = shift;
+    this.editShiftDialog = true;
+  }
+
+  openDeleteShiftDialog(shift: Shift) {
+    this.selectedShift = shift;
+    this.deleteShiftDialog = true;
+  }
+
+  employeeName(employeeId: number) {
+    const employee = this.job.employees.find((e) => e.id == employeeId)
+    if (!employee) return 'Unknown employee'
+    return `${employee.first_name} ${employee.last_name}`
+  }
+}
 </script>
 
 <style scoped>

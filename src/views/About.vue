@@ -1,28 +1,30 @@
 <template lang="pug">
 .d-flex.flex-column
 
-  v-dialog(v-model='memberDialog' max-width='500')
-    v-card(v-if='selectedMember' rounded='lg' outlined)
-      v-toolbar(flat)
-        v-spacer
-        v-btn(icon @click='memberDialog = false')
-          v-icon mdi-close
+  //- What is Worxstr?
+  v-container.d-flex.flex-column.justify-center.align-center.pa-16
+    p.text-h4.font-weight-bold.mb-15 What is Worxstr?
 
-      v-card-text.pa-4.d-flex.flex-column.justify-start.align-center
-        v-avatar.mb-7(size="180", elevation="15")
-          img(
-            :src="require(`@/assets/images/team/${selectedMember.photo}`)",
-            :alt="selectedMember.name"
-          )
-        span.text-center.mb-1.text-h5.font-weight-bold {{ selectedMember.name }}
-        span.text-center.mb-3.text-subtitle-1.font-weight-medium {{ selectedMember.title }}
-        span.text-center.mb-3 {{ selectedMember.description }}
-        .mb-3
-          v-btn(v-for='social in selectedMember.socials', icon :href='social.link' target="_blank")
-            v-icon(size='24px') {{ social.icon }}
+    p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
+    p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33 percent increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
 
-  v-container.d-flex.flex-column.justify-center.align-stretch.px-16.pt-8.text-center(fluid)
-    p.text-h4.font-weight-bold Our team
+
+  //- Our mission/vision
+  v-container.justify-center.align-center.pa-16.gradient.text-center(fluid)
+    v-row
+      v-col(cols="12", md="6")
+        v-icon.white--text.text-h2.mb-6 mdi-rocket-launch
+        p.text-h4.font-weight-bold.white--text Our mission
+        p.white--text At Worxstr our mission is to drive efficiency, consistency, and respect into the management systems for gig labor.
+
+      v-col(cols="12", md="6")
+        v-icon.white--text.text-h2.mb-6 mdi-eye-outline
+        p.text-h4.font-weight-bold.white--text Our vision
+        p.white--text At Worxstr we aspire to transform the gig labor industry by providing financial stability, transparency, and accountability through a management platform that will drive tomorrow's economy. At Worxstr we believe that every working American deserves the freedom that comes from opportunity and possibility.
+
+  //- Team
+  v-container.d-flex.flex-column.justify-center.align-stretch.px-16.py-16.text-center(fluid)
+    p.text-h4.font-weight-bold.mb-10 Our team
 
     v-row
       v-col(
@@ -42,6 +44,27 @@
               )
             span.text-center.mb-1.text-h5.font-weight-bold {{ member.name }}
             span.text-center.text-subtitle-2.font-weight-medium {{ member.title }}
+
+  //- Member dialog
+  v-dialog(v-model='memberDialog' max-width='500')
+    v-card(v-if='selectedMember' rounded='lg' outlined)
+      v-toolbar(flat)
+        v-spacer
+        v-btn(icon @click='memberDialog = false')
+          v-icon mdi-close
+
+      v-card-text.pa-4.d-flex.flex-column.justify-start.align-center
+        v-avatar.mb-7(size="180", elevation="15")
+          img(
+            :src="require(`@/assets/images/team/${selectedMember.photo}`)",
+            :alt="selectedMember.name"
+          )
+        span.text-center.mb-1.text-h5.font-weight-bold {{ selectedMember.name }}
+        span.text-center.mb-3.text-subtitle-1.font-weight-medium {{ selectedMember.title }}
+        span.text-center.mb-3 {{ selectedMember.description }}
+        .mb-3
+          v-btn(v-for='social in selectedMember.socials', icon :href='social.link' target="_blank" rel="noreferrer")
+            v-icon(size='24px') {{ social.icon }}
 
 </template>
 
@@ -64,7 +87,7 @@ export default {
     team: [
       {
         name: "Jackson Sippe",
-        title: "Co-Founder/Head of Product and Development",
+        title: "Co-Founder / Head of Product and Development",
         photo: "jackson.jpg",
         description: "Jackson Sippe is a second-generation operator of his family’s construction business with extensive experience managing contract labor. He is a software developer with experience working for a major Point-Of-Sale system provider in the retail industry. Jackson is also an MBA student at Appalachian State University with an undergraduate degree in Computer Science.",
         socials: [
@@ -84,7 +107,7 @@ export default {
       },
       {
         name: "James Wheeler",
-        title: "Co-Founder/Head of Sales and Marketing",
+        title: "Co-Founder / Head of Sales and Marketing",
         photo: "james.jpg",
         description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently completing his second undergraduate degree from Appalachian State University in Computer Information Systems Management with a prior degree in Advertising and General Business.",
         socials: [
@@ -100,7 +123,7 @@ export default {
       },
       {
         name: "Alex Wohlbruck",
-        title: "Lead frontend developer",
+        title: "Lead Frontend Developer",
         photo: "alex.jpg",
         description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He loves cats, and he is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
         socials: [
@@ -120,7 +143,7 @@ export default {
       },
       {
         name: 'Andrew Thorp',
-        title: "Lead backend developer & DevOps engineer",
+        title: "Lead Backend Developer / DevOps engineer",
         photo: 'andrew.jpg',
         description: "Andrew is a genius",
         socials: [
@@ -133,7 +156,23 @@ export default {
             icon: 'mdi-linkedin'
           },
         ]
-      }
+      },
+      {
+        name: 'Coley Lippard',
+        title: "Creative Marketing Director",
+        photo: 'coley.jpg',
+        description: "Coley Lippard has grown from a unique history of forward-thinking individuals that push the envelope of normalcy. As the son of a variety entertainer, his creativity has lead to a career in design and marketing with a fresh perspective and an eye on sustainable results. He is a recent Digital Marketing and Computer Information Service graduate at Appalachian State University and is currently guiding the creative direction of several businesses.",
+        socials: [
+          {
+            link: 'mailto:coleylipp237@gmail.com',
+            icon: 'mdi-at',
+          },
+          {
+            link: 'https://www.linkedin.com/in/coleylipp',
+            icon: 'mdi-linkedin'
+          },
+        ]
+      },
     ],
   }),
 };

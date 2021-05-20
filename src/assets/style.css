@@ -4,3 +4,22 @@ html {
 a {
     text-decoration: none;
 }
+.gradient {
+    background: rgb(46, 106, 239);
+    background: linear-gradient(
+        50deg,
+        rgba(46, 106, 239, 1) 0%,
+        rgba(46, 170, 230, 1) 100%
+    );
+
+}
+.gradient p,
+.gradient span,
+.gradient h1,
+.gradient h2,
+.gradient h3,
+.gradient h4,
+.gradient h5,
+.gradient h6 {
+    color: white !important;
+}

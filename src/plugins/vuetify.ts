@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
+import Vuetify, { colors } from 'vuetify/lib';
 
 Vue.use(Vuetify);
 
@@ -8,8 +8,11 @@ export default new Vuetify({
         themes: {
             light: {
                 primary: '#3b7bef',
-                // primary: '#449fea',
-                // secondary: '#b0bec5',
+                secondary: colors.amber.base,
+            },
+            dark: {
+                primary: '#3b7bef',
+                secondary: colors.amber.base,
             },
         },
     },

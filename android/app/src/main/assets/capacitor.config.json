@@ -1,16 +1,6 @@
 {
-  "appId": "com.worxstr.worxstr",
-  "appName": "worxstr",
-  "bundledWebRuntime": false,
-  "npmClient": "yarn",
-  "webDir": "dist",
-  "plugins": {
-    "SplashScreen": {
-      "launchShowDuration": 0
-    }
-  },
-  "cordova": {},
-  "server": {
-    "hostname": "worxstr.com"
-  }
+	"appId": "com.worxstr.app",
+	"appName": "worxstr",
+	"webDir": "dist",
+	"bundledWebRuntime": false
 }

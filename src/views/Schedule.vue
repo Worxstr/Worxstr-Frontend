@@ -42,10 +42,7 @@ v-container.home.d-flex.flex-column.align-stretch(
 
 <script>
 import { mapGetters } from "vuex";
-import {
-  EMPLOYEE_MANAGER,
-  ORGANIZATION_MANAGER,
-} from "@/definitions/userRoles";
+import { Manager } from "@/definitions/User";
 
 export default {
   name: "schedule",
@@ -77,10 +74,7 @@ export default {
       // nativeEvent is the browser click event, event is the calendar event data
 
       if (
-        this.$store.state.authenticatedUser.roles.some(
-          (role) =>
-            role.id == EMPLOYEE_MANAGER || role.id == ORGANIZATION_MANAGER
-        )
+        this.$store.state.authenticatedUser.roles.some((role) => Manager.includes(role.id))
       ) {
         this.$router.push({ name: "job", params: { jobId: event.job_id } });
       }
