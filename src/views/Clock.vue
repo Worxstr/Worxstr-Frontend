@@ -44,8 +44,15 @@
             v-card.sign-in.fill-height
               form(@submit.prevent='submitCode(verifyDialog.code)')
                 v-card-title Scan your clock in QR code
+
+                div
+                  v-btn(text @click='requestLocation')
+                    v-icon mdi-map-marker-radius
+                    span Use geolocation
+
                 div
                   qrcode-stream(@decode='submitCode' @init='qrInit')
+
                 v-card-text
                   v-text-field(label='Or enter the code manually' v-model='verifyDialog.code' hide-details)
                 v-card-actions
@@ -101,9 +108,12 @@
 
 <script>
 import Vue from "vue";
-import vueAwesomeCountdown from "vue-awesome-countdown";
-import { QrcodeStream } from "vue-qrcode-reader";
-import { mapState, mapGetters, mapActions } from "vuex";
+import vueAwesomeCountdown from "vue-awesome-countdown"
+import { QrcodeStream } from "vue-qrcode-reader"
+import { mapState, mapGetters, mapActions } from "vuex"
+
+import { Dialog } from '@capacitor/dialog'
+import { Geolocation } from '@capacitor/geolocation'
 
 import { ClockAction } from '@/definitions/Clock'
 import ClockEvents from '@/components/ClockEvents'
@@ -150,6 +160,13 @@ export default {
     ...mapActions(["clockIn", "clockOut", "toggleBreak"]),
     openVerifyDialog() {
       this.verifyDialog.opened = true;
+    },
+    async requestLocation() {
+      const { coords } = await Geolocation.getCurrentPosition()
+      Dialog.alert({
+        title: 'Got location',
+        message: `Lat: ${coords.latitude}, Long: ${coords.longitude}`
+      })
     },
     async qrInit(promise) {
       this.verifyDialog.cameraLoading = true;

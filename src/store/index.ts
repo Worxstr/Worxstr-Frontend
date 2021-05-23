@@ -4,6 +4,8 @@ import Vuex, { StoreOptions } from 'vuex'
 import axios from 'axios'
 import router from '../router'
 
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
+
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
 import { User } from '@/definitions/User'
@@ -252,16 +254,28 @@ const storeConfig: StoreOptions<RootState> = {
     },
     async signIn({ commit, dispatch }, credentials) {
       try {
-        console.log({ baseUrl })
         const { data } = await axios({
           method: 'POST',
           url: `${baseUrl}/auth/login`,
+          params: {
+            'include_auth_token': true
+          },
           data: {
             ...credentials,
             'remember_me': true
           },
         })
+        const authToken = data.response?.user?.authentication_token
+        // Use authentication token in subsequent requests
+        axios.defaults.headers.common['Authentication-Token'] = authToken
+        // Set token in secure storage on iOS/Android
+        await SecureStoragePlugin.set({
+          key: 'authToken',
+          value: authToken
+        })
+
         dispatch('getAuthenticatedUser')
+        
         router.push({ name: 'schedule' })
         return data
       }
