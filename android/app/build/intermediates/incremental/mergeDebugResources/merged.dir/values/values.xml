@@ -316,7 +316,6 @@
     <string name="common_signin_button_text">Sign in</string>
     <string name="common_signin_button_text_long">Sign in with Google</string>
     <string name="custom_url_scheme">com.worxstr.worxstr</string>
-    <string name="my_string">Just a simple string</string>
     <string name="ok">OK</string>
     <string name="package_name">com.worxstr.worxstr</string>
     <string name="picture">Picture</string>
