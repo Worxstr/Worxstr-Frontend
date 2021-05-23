@@ -44,8 +44,15 @@
             v-card.sign-in.fill-height
               form(@submit.prevent='submitCode(verifyDialog.code)')
                 v-card-title Scan your clock in QR code
+
+                div
+                  v-btn(text @click='requestLocation')
+                    v-icon mdi-map-marker-radius
+                    span Use geolocation
+
                 div
                   qrcode-stream(@decode='submitCode' @init='qrInit')
+
                 v-card-text
                   v-text-field(label='Or enter the code manually' v-model='verifyDialog.code' hide-details)
                 v-card-actions
@@ -101,11 +108,14 @@
 
 <script>
 import Vue from "vue";
-import vueAwesomeCountdown from "vue-awesome-countdown";
-import { QrcodeStream } from "vue-qrcode-reader";
-import { mapState, mapGetters, mapActions } from "vuex";
+import vueAwesomeCountdown from "vue-awesome-countdown"
+import { QrcodeStream } from "vue-qrcode-reader"
+import { mapState, mapGetters, mapActions } from "vuex"
 
-import { CLOCK_IN, CLOCK_OUT, START_BREAK, END_BREAK } from '@/definitions/clockActions'
+import { Dialog } from '@capacitor/dialog'
+import { Geolocation } from '@capacitor/geolocation'
+
+import { ClockAction } from '@/definitions/Clock'
 import ClockEvents from '@/components/ClockEvents'
 
 Vue.use(vueAwesomeCountdown, "vac");
@@ -135,21 +145,28 @@ export default {
     ...mapGetters(["clockHistory", "nextShift"]),
     clocked() {
       const lastClockEvent = this.clockHistory.find(
-        (event) => event.action == CLOCK_IN || event.action == CLOCK_OUT
+        (event) => event.action == ClockAction.ClockIn || event.action == ClockAction.ClockOut
       );
-      return lastClockEvent ? lastClockEvent.action == CLOCK_IN : null;
+      return lastClockEvent ? lastClockEvent.action == ClockAction.ClockIn : null;
     },
     onBreak() {
       const lastBreakEvent = this.clockHistory.find(
-        (event) => event.action == START_BREAK || event.action == END_BREAK
+        (event) => event.action == ClockAction.StartBreak || event.action == ClockAction.EndBreak
       );
-      return lastBreakEvent ? lastBreakEvent.action == START_BREAK : null;
+      return lastBreakEvent ? lastBreakEvent.action == ClockAction.StartBreak : null;
     },
   },
   methods: {
     ...mapActions(["clockIn", "clockOut", "toggleBreak"]),
     openVerifyDialog() {
       this.verifyDialog.opened = true;
+    },
+    async requestLocation() {
+      const { coords } = await Geolocation.getCurrentPosition()
+      Dialog.alert({
+        title: 'Got location',
+        message: `Lat: ${coords.latitude}, Long: ${coords.longitude}`
+      })
     },
     async qrInit(promise) {
       this.verifyDialog.cameraLoading = true;

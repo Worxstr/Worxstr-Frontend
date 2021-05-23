@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">worxstr</string>
+    <string name="title_activity_main">worxstr</string>
+    <string name="package_name">com.worxstr.worxstr</string>
+    <string name="custom_url_scheme">com.worxstr.worxstr</string>
+</resources>
