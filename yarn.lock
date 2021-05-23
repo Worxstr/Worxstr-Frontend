@@ -2671,13 +2671,6 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001165:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001170.tgz"
   integrity sha512-Dd4d/+0tsK0UNLrZs3CvNukqalnVTRrxb5mcQm8rHL49t7V5ZaTygwXkrq+FB+dVDf++4ri8eJnFEJAB8332PA==
 
-capacitor-secure-storage-plugin@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/capacitor-secure-storage-plugin/-/capacitor-secure-storage-plugin-0.6.0.tgz#ebbff1b1037acd711933e4b91581f75d28ce0d00"
-  integrity sha512-wTKpLXLSi/dkAyQGlbmOHwoFjGFOJku/N1kzsHL/8CklJuV3A6XYr8jU2bK7iHEr+VIRdhW7SNBMw6fmvRV2sg==
-  dependencies:
-    "@capacitor/core" "^3.0.0"
-
 case-sensitive-paths-webpack-plugin@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.3.0.tgz"

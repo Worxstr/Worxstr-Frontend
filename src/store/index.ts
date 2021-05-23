@@ -4,7 +4,7 @@ import Vuex, { StoreOptions } from 'vuex'
 import axios from 'axios'
 import router from '../router'
 
-import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
+import { Capacitor } from '@capacitor/core';
 
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
@@ -17,8 +17,12 @@ Vue.use(Vuex)
 
 axios.defaults.withCredentials = true
 
-const baseUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace('8080', '5000')
-
+const baseUrl = process.env.VUE_APP_API_BASE_URL || 
+(
+  Capacitor.isNativePlatform()
+    ? 'https://dev.worxstr.com'
+    : window.location.origin.replace('8080', '5000')
+)
 interface RootState {
   snackbar: {
     show: boolean;
@@ -265,14 +269,14 @@ const storeConfig: StoreOptions<RootState> = {
             'remember_me': true
           },
         })
-        const authToken = data.response?.user?.authentication_token
+        // const authToken = data.response?.user?.authentication_token
         // Use authentication token in subsequent requests
-        axios.defaults.headers.common['Authentication-Token'] = authToken
+        // axios.defaults.headers.common['Authentication-Token'] = authToken
         // Set token in secure storage on iOS/Android
-        await SecureStoragePlugin.set({
-          key: 'authToken',
-          value: authToken
-        })
+        // await SecureStoragePlugin.set({
+        //   key: 'authToken',
+        //   value: authToken
+        // })
 
         dispatch('getAuthenticatedUser')
         
