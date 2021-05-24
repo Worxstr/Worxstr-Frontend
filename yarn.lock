@@ -894,6 +894,16 @@
   dependencies:
     tslib "^2.1.0"
 
+"@capacitor/dialog@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@capacitor/dialog/-/dialog-1.0.0.tgz#2af3151086099e89983f6274db9eef525ecff7ac"
+  integrity sha512-MsSS4mUx2BIfsQMe6XM4jVVeRpl2OuTsktdSm9dfKXM1PysTqXt+mfDvt8kmS1ahHvWb0+5cO9MuLkAcFWGOCA==
+
+"@capacitor/geolocation@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@capacitor/geolocation/-/geolocation-1.0.0.tgz#672b7ce0ef359aefaba07cf5aa8df67f42dd8a16"
+  integrity sha512-ojhwwJuEq00yKesZDK1SZKQslVXqGmzgxDQymvTMSKJs5WJprgsbHEyNES8fT5FeistRjybr/es0dfv8Q/g1rg==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz"
