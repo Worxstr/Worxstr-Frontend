@@ -118,23 +118,15 @@ import { Role, User, UserRole } from './definitions/User'
 })
 export default class App extends Vue {
   async mounted() {
-    this.getLocalUserData()
-    this.initDarkMode()
+    // this.getLocalUserData()
 
     // Refresh user data in case of an update
-    await this.$store.dispatch('getAuthenticatedUser')
+    // await this.$store.dispatch('getAuthenticatedUser')
 
+    this.initDarkMode()
     this.promptSSN()
   }
 
-  getLocalUserData() {
-    const storedUser = localStorage.getItem('authenticatedUser')
-    if (storedUser) {
-      this.$store.commit('SET_AUTHENTICATED_USER', {
-        user: JSON.parse(storedUser),
-      })
-    }
-  }
 
   promptSSN() {
     // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN

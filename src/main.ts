@@ -41,9 +41,31 @@ Vue.use(new VueSocketIO({
 
 Vue.config.productionTip = false
 
-new Vue({
-  router,
-  store,
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+async function init() {
+
+  // Get local user data
+  const storedUser = JSON.parse(localStorage.getItem('authenticatedUser'))
+  if (storedUser) {
+    console.log(storedUser)
+    store.commit('SET_AUTHENTICATED_USER', {
+      user: storedUser,
+    })
+  }
+
+  try {
+    // Load new user data
+    await store.dispatch('getAuthenticatedUser')
+  }
+  catch (e) {
+    console.error(e)
+  }
+
+  new Vue({
+    router,
+    store,
+    vuetify,
+    render: h => h(App)
+  }).$mount('#app')
+}
+
+init()

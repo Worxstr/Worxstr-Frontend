@@ -1,19 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Meta from 'vue-meta'
+import store from '@/store'
+import { Capacitor } from '@capacitor/core'
 
 import Home from '@/views/Home.vue'
 import About from '@/views/About.vue'
 import Contact from '@/views/Contact.vue'
 import Privacy from '@/views/Privacy.vue'
 import Terms from '@/views/Terms.vue'
-
 import SignIn from '@/views/auth/SignIn.vue'
 import SignUp from '@/views/auth/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
-
 import User from '@/views/User.vue'
-
 import Clock from '@/views/Clock.vue'
 import Payments from '@/views/payments/Payments.vue'
 // import Availability from '@/views/Availability.vue'
@@ -23,15 +22,14 @@ import Workforce from '@/views/workforce/Workforce.vue'
 import Schedule from '@/views/Schedule.vue'
 import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
-
 import Settings from '@/views/settings/Settings.vue'
-
 import NotFound from '@/views/errors/NotFound.vue'
 
 Vue.use(VueRouter)
 Vue.use(Meta)
 
-import { UserRole, Manager } from '@/definitions/User'
+import { UserRole, Manager, defaultRoute } from '@/definitions/User'
+
 
 const routes = [
   {
@@ -40,7 +38,13 @@ const routes = [
     component: Home,
     meta: {
       showFooter: true,
-    }
+    },
+    beforeEnter(to, from, next) {
+      if (Capacitor.isNativePlatform() && store.state.authenticatedUser) {
+        next({ name: defaultRoute() })
+      }
+      else next()
+    },
   },
   {
     path: '/about',

@@ -12,7 +12,7 @@
             p.text-h5.font-weight-medium.white--text The adaptive solution to wide-scale temp labor management
 
           div(v-if='authenticatedUser')
-            v-btn.mr-3(color='secondary', :to='{ name: `schedule` }') Enter site
+            v-btn.mr-3(color='secondary', :to='{ name: defaultRoute }') Enter site
             v-btn.mr-3(outlined, color='secondary', @click='signOut') Sign out
 
           div(v-else)
@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import { defaultRoute } from '@/definitions/User'
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -118,6 +119,9 @@ export default {
       const { managers, contracts, contractors } = this.calculator
       return managers * contracts * 12 + 0.05 * (contractors / managers) * 52
     },
+    defaultRoute: function() {
+      return defaultRoute(this.authenticatedUser)
+    }
   },
   methods: {
     ...mapActions(['signOut']),
