@@ -1,17 +1,16 @@
 html {
-    overflow-y: auto;
+	overflow-y: auto;
 }
 a {
-    text-decoration: none;
+	text-decoration: none;
 }
 .gradient {
-    background: rgb(46, 106, 239);
-    background: linear-gradient(
-        50deg,
-        rgba(46, 106, 239, 1) 0%,
-        rgba(46, 170, 230, 1) 100%
-    );
-
+	background: rgb(46, 106, 239);
+	background: linear-gradient(
+		50deg,
+		rgba(46, 106, 239, 1) 0%,
+			rgba(46, 170, 230, 1) 100%
+	);
 }
 .gradient p,
 .gradient span,
@@ -21,5 +20,13 @@ a {
 .gradient h4,
 .gradient h5,
 .gradient h6 {
-    color: white !important;
+	color: white !important;
+}
+
+.v-select.fit {
+	width: min-content;
+}
+.v-select.fit  .v-select__selection--comma {
+	text-overflow: unset;
+	padding-right: 10px;
 }

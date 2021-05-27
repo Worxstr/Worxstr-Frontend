@@ -48,7 +48,7 @@ v-app
     :style="`padding-bottom: ${$route.meta && $route.meta.fullHeight ? '0px' : ''}`"
   )
     v-container.pa-0.align-start(fluid)
-      transition(appear name='slide-y-transition' mode='out-in' :duration="{ enter: 150, leave: 50 }")
+      transition(appear name='fade-transition' mode='out-in' :duration="{ enter: 150, leave: 50 }")
         router-view(:style='`height: ${pageHeight}`')
 
   transition(name='slide-fade')

@@ -4,14 +4,14 @@
       style='margin-top: 20vh; margin-bottom: 15vh; top: 120px; position: sticky'
     )
       div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
-        h6.text-h6
+        h6.text-h6.text-center.text-md-left
           | Your shift
           | {{ nextShift.shiftActive ? "ends" : "begins" }}
           | at
           | {{ nextShift.site_location }}
           | at
 
-        h3.text-h3.py-2.font-weight-bold
+        h3.text-h3.py-2.font-weight-bold.text-center.text-md-left
           | {{
           | (nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin)
           | .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
@@ -35,7 +35,7 @@
             template(v-slot:finish)
               span That's right now!
 
-        .d-flex.flex-row
+        .d-flex.flex-row.justify-center.justify-md-start
           v-dialog(
             v-model='verifyDialog.opened'
             :fullscreen='$vuetify.breakpoint.smAndDown'
