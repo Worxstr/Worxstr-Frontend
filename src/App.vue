@@ -48,7 +48,7 @@ v-app
     :style="`padding-bottom: ${$route.meta && $route.meta.fullHeight ? '0px' : ''}`"
   )
     v-container.pa-0.align-start(fluid)
-      transition(appear name='slide-y-transition' mode='out-in')
+      transition(appear name='slide-y-transition' mode='out-in' :duration="{ enter: 150, leave: 50 }")
         router-view(:style='`height: ${pageHeight}`')
 
   transition(name='slide-fade')
@@ -118,15 +118,9 @@ import { Role, User, UserRole } from './definitions/User'
 })
 export default class App extends Vue {
   async mounted() {
-    // this.getLocalUserData()
-
-    // Refresh user data in case of an update
-    // await this.$store.dispatch('getAuthenticatedUser')
-
     this.initDarkMode()
     this.promptSSN()
   }
-
 
   promptSSN() {
     // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
