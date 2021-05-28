@@ -9,9 +9,25 @@ v-container
   v-toolbar(flat, color="transparent")
     v-toolbar-title.text-h5.font-weight-medium Workforce
     v-spacer
-    v-btn(text, @click="addEmployeeDialog = true") Add employee
-    v-btn(text, @click="addManagerDialog = true", v-if="userIsOrgManager") Add manager
+    
+    div(v-if='$vuetify.breakpoint.smAndUp')
+      v-btn(text, @click="addEmployeeDialog = true")
+        span Add employee
 
+      v-btn(text, @click="addManagerDialog = true", v-if="userIsOrgManager")
+        span(v-if='$vuetify.breakpoint.smAndUp') Add manager
+
+    v-menu(v-else)
+      template(v-slot:activator='{ on, attrs }')
+        v-btn(text v-bind='attrs' v-on='on')
+          v-icon(left) mdi-account-plus
+          span Add member
+      v-list
+        v-list-item(@click='addEmployeeDialog = true')
+          v-list-item-title Add employee
+        v-list-item(@click='addManagerDialog = true')
+          v-list-item-title Add manager
+      
   v-card
     v-data-table(
       :headers="headers",

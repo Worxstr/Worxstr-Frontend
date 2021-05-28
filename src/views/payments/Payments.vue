@@ -42,9 +42,8 @@ div(v-else)
           v-chip.mx-3.pa-2.font-weight-black(small) {{ approvedTimecards.length }}
         v-spacer
         v-btn(text, @click="openPaymentDialog(approvedTimecards)")
-          v-icon mdi-currency-usd
-          |
-          | Complete payments
+          v-icon(left) mdi-bank-check
+          span Complete payments
 
       v-expansion-panels
         v-expansion-panel(
@@ -88,9 +87,8 @@ div(v-else)
           color="green",
           @click="openApproveDialog(unapprovedTimecards)"
         )
-          v-icon mdi-check
-          |
-          | Approve all
+          v-icon(left) mdi-check-all
+          span Approve all
 
       v-expansion-panels
         v-expansion-panel(
@@ -132,12 +130,11 @@ div(v-else)
                 color="green",
                 @click="openApproveDialog([timecard])"
               )
-                v-icon mdi-check
-                |
-                | Approve
+                v-icon(left) mdi-check
+                span Approve
               v-btn(text, color="red", @click="openDenyDialog(timecard)")
-                v-icon mdi-close
-                | Deny
+                v-icon(left) mdi-close
+                span Deny
 </template>
 
 <script>

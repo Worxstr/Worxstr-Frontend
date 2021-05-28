@@ -59,7 +59,7 @@ div(v-else)
           | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
         div
 
-      v-layout.justify-space-between
+      v-layout.flex-column.flex-sm-row.justify-space-between
         .flex-grow-1.px-5
           p.text-subtitle-2.mb-1 Organizational manager
           p {{ job.organization_manager | fullName }}
@@ -79,7 +79,9 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Shifts
       v-spacer
-      v-btn(text, @click="addShiftDialog = true") Add new shift
+      v-btn(text, @click="addShiftDialog = true")
+        v-icon(left) mdi-plus
+        span Add shift
 
     p.text-body-2.text-center.mt-3(v-if="!job.shifts || !job.shifts.length")
       | There aren't any shifts for this job.

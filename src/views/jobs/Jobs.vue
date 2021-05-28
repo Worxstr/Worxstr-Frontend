@@ -12,7 +12,9 @@ v-container.approvals(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Jobs
       v-spacer
-      v-btn(text, @click="openCreateJobDialog", v-if="userIsOrgManager") Add new job
+      v-btn(text, @click="openCreateJobDialog", v-if="userIsOrgManager")
+        v-icon(left) mdi-plus
+        span Add job
 
     v-card(v-if="directJobs.length")
       v-list
@@ -60,6 +62,7 @@ export default class JobsView extends Vue {
   
   loading = false
   createJobDialog = false
+  editJobDialog = false
 
   metaInfo() {
     return { title: 'Jobs' }
