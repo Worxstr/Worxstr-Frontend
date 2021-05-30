@@ -89,7 +89,7 @@ const timeValidate = (errorMessage: string) => (value: any) =>
 })
 export default class EditShiftDialog extends Vue {
 
-  editedShift!: Shift
+  editedShift: Shift | {} = {}
   isValid = false
   loading = false
   rules = {

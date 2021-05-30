@@ -6,7 +6,7 @@ v-container(v-if="loading && !(directJobs.length || indirectJobs.length)")
   )
 
 v-container.approvals(v-else)
-  edit-job-dialog(:opened.sync="createJobDialog", create)
+  edit-job-dialog(:opened.sync="createJobDialog", :create='true')
 
   .mb-5
     v-toolbar(flat, color="transparent")

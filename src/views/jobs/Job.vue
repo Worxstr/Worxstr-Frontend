@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(v-if="loading && !job.shifts")
+v-container(v-if="loading")
   v-skeleton-loader.py-4(type="heading")
   v-card.pa-4
     v-skeleton-loader.py-2(type="image, image")
@@ -109,9 +109,9 @@ div(v-else)
             span.my-1 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
         v-expansion-panel-content
-          v-card-content(v-if="shift.active")
+          div(v-if="shift.active")
             clock-events(
-              v-if="shift.timeclock_actions.length",
+              v-if="shift.timeclock_actions && shift.timeclock_actions.length",
               :events="shift.timeclock_actions"
             )
 
@@ -152,7 +152,7 @@ export default class JobView extends Vue {
   addShiftDialog = false
   editShiftDialog = false
   deleteShiftDialog = false
-  selectedShift?: Shift
+  selectedShift: Shift | {} = {}
   shifts = []
 
   metaInfo() {
@@ -192,6 +192,7 @@ export default class JobView extends Vue {
   }
 
   employeeName(employeeId: number) {
+    if (!this.job.employees) return ''
     const employee = this.job.employees.find((e) => e.id == employeeId)
     if (!employee) return 'Unknown employee'
     return `${employee.first_name} ${employee.last_name}`

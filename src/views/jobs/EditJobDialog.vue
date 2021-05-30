@@ -41,7 +41,7 @@ v-dialog(
 
         v-subheader Managers
         v-select(
-          v-if="managers.organization.length",
+          v-if="managers.organization && managers.organization.length",
           v-model="editedJob.organization_manager_id",
           :items="managers.organization",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
@@ -52,7 +52,7 @@ v-dialog(
           label="Organizational manager"
         )
         v-select(
-          v-if="managers.employee.length",
+          v-if="managers.employee && managers.employee.length",
           v-model="editedJob.employee_manager_id",
           :items="managers.employee",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
@@ -116,7 +116,7 @@ export default class EditJobDialog extends Vue {
   @Prop(Object) readonly job: Job | undefined
 
   isValid = false
-  editedJob?: Job
+  editedJob: Job | {} = {}
   loading = false
   place: any
 
@@ -151,7 +151,7 @@ export default class EditJobDialog extends Vue {
   }
 
   get managers(): User[] {
-    return this.$store.getters.managers
+    return this.$store.state.managers
   }
 
   closeDialog() {

@@ -40,7 +40,11 @@ export default class DeleteShiftDialog extends Vue {
   
   async deleteShift() {
     this.loading = true
-    await this.$store.dispatch("deleteShift", this.shift?.id);
+    if (this.shift)
+      await this.$store.dispatch("deleteShift", {
+        shiftId: this.shift.id,
+        jobId: this.$route.params.jobId
+      });
     this.loading = false
     this.closeDialog();
   }
