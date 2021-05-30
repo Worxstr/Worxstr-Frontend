@@ -15,7 +15,7 @@ div(v-else)
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
     edit-shift-dialog(
-      create,
+      :create='true'
       :opened.sync="addShiftDialog",
       :employees="job.employees"
     )

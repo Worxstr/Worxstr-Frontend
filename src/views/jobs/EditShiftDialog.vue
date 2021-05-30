@@ -85,7 +85,7 @@ const timeValidate = (errorMessage: string) => (value: any) =>
 
 
 @Component({
-  components: { TimeInput, DateInput }
+  components: { TimeInput, DateInput },
 })
 export default class EditShiftDialog extends Vue {
 
@@ -101,7 +101,7 @@ export default class EditShiftDialog extends Vue {
   }
 
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ default: false }) readonly create!: boolean
+  @Prop({ default: false }) readonly create!: boolean // Creating new shift or editing existing
   @Prop({ default: [] }) readonly employees!: User[]
   @Prop(Object) readonly shift: Shift | undefined
 
@@ -121,7 +121,6 @@ export default class EditShiftDialog extends Vue {
     this.loading = true
 
     let { date, time_begin, time_end } = this.editedShift
-
 
     // TODO: Validate shifts so that end time is after start time
 
@@ -144,6 +143,7 @@ export default class EditShiftDialog extends Vue {
     if (this.create)
       await this.$store.dispatch("createShift", {
         shift: {
+          ...this.editedShift,
           date,
           time_begin: timeBegin,
           time_end: timeEnd
@@ -152,10 +152,13 @@ export default class EditShiftDialog extends Vue {
       })
     else
       await this.$store.dispatch("updateShift", {
+        ...this.editedShift,
         date,
         time_begin: timeBegin,
         time_end: timeEnd
       })
+
+    console.log('worked')
 
     this.loading = false
     this.closeDialog()
