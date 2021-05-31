@@ -39,10 +39,14 @@ export default class CloseJobDialog extends Vue {
   }
   async closeJob() {
     this.loading = true
-    await this.$store.dispatch('closeJob', this.job?.id);
-    this.loading = false
-    this.closeDialog();
-    this.$router.push({name: 'jobs'})
- 1 }
+    try {
+      await this.$store.dispatch('closeJob', this.job?.id);
+      this.closeDialog();
+      this.$router.push({name: 'jobs'})
+    }
+    finally {
+      this.loading = false
+    }
+  }
 }
 </script>

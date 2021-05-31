@@ -66,10 +66,14 @@ export default {
     },
     async createConversation() {
       this.loading = true
-      const conversation = await this.$store.dispatch("createConversation", this.selectedUsers);
-      this.$router.push({name: 'conversation', params: {conversationId: conversation.id}})
-      this.loading = false
-      this.closeDialog()
+      try {
+        const conversation = await this.$store.dispatch("createConversation", this.selectedUsers)
+        this.$router.push({name: 'conversation', params: {conversationId: conversation.id}})
+        this.closeDialog()
+      }
+      finally {
+        this.loading = false
+      }
     },
   },
 };

@@ -144,7 +144,7 @@ export default class EditJobDialog extends Vue {
   }
 
   @Watch('opened')
-  onOpened(newVal: boolean, oldVal: boolean) {
+  onOpened(newVal: boolean) {
     if (newVal) this.$store.dispatch('loadManagers');
     if (newVal && this.job)
       this.editedJob = Object.assign({}, this.job);
@@ -171,11 +171,15 @@ export default class EditJobDialog extends Vue {
     this.place = place
   }
   async updateJob() {
-    this.loading = true;
-    if (this.create) await this.$store.dispatch("createJob", this.editedJob);
-    else await this.$store.dispatch("updateJob", this.editedJob);
-    this.loading = false;
-    this.closeDialog();
+    this.loading = true
+    try {
+      if (this.create) await this.$store.dispatch("createJob", this.editedJob)
+      else await this.$store.dispatch("updateJob", this.editedJob)
+      this.closeDialog()
+    }
+    finally {
+      this.loading = false
+    }
   }
 }
 </script>

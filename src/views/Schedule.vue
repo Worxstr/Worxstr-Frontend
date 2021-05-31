@@ -61,11 +61,15 @@ export default {
   methods: {
     async getEvents({ start, end }) {
       this.loading = true
-      await this.$store.dispatch("loadCalendarEvents", {
-        start: new Date(`${start.date}T00:00:00`).toISOString(),
-        end: new Date(`${end.date}T23:59:59`).toISOString(),
-      });
-      this.loading = false
+      try {
+        await this.$store.dispatch("loadCalendarEvents", {
+          start: new Date(`${start.date}T00:00:00`).toISOString(),
+          end: new Date(`${end.date}T23:59:59`).toISOString(),
+        });
+      }
+      finally {
+        this.loading = false
+      }
     },
     getEventColor(event) {
       return event.color;

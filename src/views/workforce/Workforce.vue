@@ -58,9 +58,13 @@ export default {
   },
   components: { AddWorkforceMemberDialog },
   async mounted() {
-    this.loading = true;
-    await this.$store.dispatch("loadWorkforce");
-    this.loading = false;
+    this.loading = true
+    try {
+      await this.$store.dispatch("loadWorkforce")
+    }
+    finally {
+      this.loading = false
+    }
   },
   data: () => ({
     loading: false,
@@ -94,12 +98,12 @@ export default {
     userIsOrgManager() {
       return this.$store.state.authenticatedUser
         ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser)
-        : false;
+        : false
     },
   },
   methods: {
     openUser(user) {
-      this.$router.push({ name: "user", params: { userId: user.id } });
+      this.$router.push({ name: "user", params: { userId: user.id } })
     },
   },
 };

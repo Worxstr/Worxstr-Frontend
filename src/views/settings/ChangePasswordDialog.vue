@@ -80,11 +80,15 @@ export default {
       if (this.create) this.$refs.form.reset();
     },
     async updatePassword() {
-      this.loading = true;
-      await this.$store.dispatch("updatePassword", this.password);
-      this.$store.dispatch("showSnackbar", { text: "Password changed" })
-      this.loading = false;
-      this.closeDialog();
+      this.loading = true
+      try {
+        await this.$store.dispatch("updatePassword", this.password)
+        this.$store.dispatch("showSnackbar", { text: "Password changed" })
+        this.closeDialog()
+      }
+      finally {
+        this.loading = false
+      }
     },
   },
 };

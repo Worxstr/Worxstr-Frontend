@@ -173,16 +173,20 @@ export default {
       if (this.create) this.$refs.form.reset();
     },
     async addWorkforceMember() {
-      this.loading = true;
-      if (this.type == 'manager') {
-        await this.$store.dispatch("addManager", this.workforceMember);
+      this.loading = true
+      try {
+        if (this.type == 'manager') {
+          await this.$store.dispatch("addManager", this.workforceMember)
+        }
+        else {
+          await this.$store.dispatch('addEmployee', this.workforceMember)
+        }
+        this.$store.dispatch("showSnackbar", { text: this.$options.filters.capitalize(this.type + " added")})
+        this.closeDialog()
       }
-      else {
-        await this.$store.dispatch('addEmployee', this.workforceMember)
+      finally {
+        this.loading = false
       }
-      this.$store.dispatch("showSnackbar", { text: this.$options.filters.capitalize(this.type + " added")})
-      this.loading = false;
-      this.closeDialog();
     },
   },
 };

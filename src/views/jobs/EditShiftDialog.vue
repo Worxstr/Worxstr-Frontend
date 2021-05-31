@@ -140,28 +140,30 @@ export default class EditShiftDialog extends Vue {
     time_begin = timeBegin.toISOString()
     time_end = timeEnd.toISOString()
 
-    if (this.create)
-      await this.$store.dispatch("createShift", {
-        shift: {
+    
+    try {
+      if (this.create)
+        await this.$store.dispatch("createShift", {
+          shift: {
+            ...this.editedShift,
+            date,
+            time_begin: timeBegin,
+            time_end: timeEnd
+          },
+          jobId: this.$route.params.jobId,
+        })
+      else
+        await this.$store.dispatch("updateShift", {
           ...this.editedShift,
           date,
           time_begin: timeBegin,
           time_end: timeEnd
-        },
-        jobId: this.$route.params.jobId,
-      })
-    else
-      await this.$store.dispatch("updateShift", {
-        ...this.editedShift,
-        date,
-        time_begin: timeBegin,
-        time_end: timeEnd
-      })
-
-    console.log('worked')
-
-    this.loading = false
-    this.closeDialog()
+        })
+      this.closeDialog()
+    }
+    finally {
+      this.loading = false
+    }
   }
 }
 </script>

@@ -116,8 +116,12 @@ export default {
   methods: {
     async signUp() {
       this.loading = true;
-      await this.$store.dispatch("signUp", this.form);
-      this.loading = false;
+      try {
+        await this.$store.dispatch("signUp", this.form);
+      }
+      finally {
+        this.loading = false;
+      }
     },
   },
 };

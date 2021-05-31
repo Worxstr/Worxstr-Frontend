@@ -162,9 +162,13 @@ export default class JobView extends Vue {
   }
   
   async mounted() {
-    this.loading = true;
-    await this.$store.dispatch("loadJob", this.$route.params.jobId);
-    this.loading = false;
+    this.loading = true
+    try {
+      await this.$store.dispatch("loadJob", this.$route.params.jobId)
+    }
+    finally {
+      this.loading = false
+    }
   }
 
   get job(): Job {
@@ -172,23 +176,23 @@ export default class JobView extends Vue {
   }
   
   get location() {
-    return { lat: this.job.latitude, lng: this.job.longitude };
+    return { lat: this.job.latitude, lng: this.job.longitude }
   }
 
   get userIsOrgManager() {
     return this.$store.state.authenticatedUser
       ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser)
-      : false;
+      : false
   }
 
   openEditShiftDialog(shift: Shift) {
-    this.selectedShift = shift;
-    this.editShiftDialog = true;
+    this.selectedShift = shift
+    this.editShiftDialog = true
   }
 
   openDeleteShiftDialog(shift: Shift) {
-    this.selectedShift = shift;
-    this.deleteShiftDialog = true;
+    this.selectedShift = shift
+    this.deleteShiftDialog = true
   }
 
   employeeName(employeeId: number) {

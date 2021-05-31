@@ -128,14 +128,16 @@ export default {
       newTimeclockEvents.push(this.form.data.timeOut);
 
       this.loading = true
-
-      await this.$store.dispatch("updateTimecard", {
-        timecardId: this.timecard.id,
-        events: newTimeclockEvents,
-      });
-
-      this.loading = false
-      this.closeDialog();
+      try {
+        await this.$store.dispatch("updateTimecard", {
+          timecardId: this.timecard.id,
+          events: newTimeclockEvents,
+        })
+        this.closeDialog()
+      }
+      finally {
+        this.loading = false
+      }
     },
   },
 };

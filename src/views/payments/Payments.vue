@@ -155,9 +155,13 @@ export default {
     title: 'Approvals'
   },
   async mounted() {
-    this.loading = true;
-    await this.$store.dispatch("loadApprovals");
-    this.loading = false;
+    this.loading = true
+    try {
+      await this.$store.dispatch("loadApprovals")
+    }
+    finally {
+      this.loading = false
+    }
   },
   components: {
     EditTimecardDialog,

@@ -70,8 +70,12 @@ export default class JobsView extends Vue {
 
   async mounted() {
     this.loading = true
-    await this.$store.dispatch("loadJobs")
-    this.loading = false
+    try {
+      await this.$store.dispatch("loadJobs")
+    }
+    finally {
+      this.loading = false
+    }
   }
 
   get directJobs(): Job[] {

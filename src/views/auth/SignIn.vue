@@ -55,8 +55,12 @@ export default {
   methods: {
     async signIn() {
       this.loading = true;
-      await this.$store.dispatch("signIn", this.form);
-      this.loading = false;
+      try {
+        await this.$store.dispatch("signIn", this.form);
+      }
+      finally {
+        this.loading = false;
+      }
     },
   },
 };
