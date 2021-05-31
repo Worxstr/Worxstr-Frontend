@@ -29,8 +29,10 @@
 					v-list-item-content
 						v-list-item-subtitle.mb-2 Roles
 						v-list-item-title
-							v-chip.mr-2(label v-for="role in authenticatedUser.roles")
-									| {{role.name | snakeToSpace | capitalize }}
+							div
+								div(v-for='role in authenticatedUser.roles' style='display: inline-block; width: 300px; height: 100px; background: red; border: white 2px solid;')
+								//- v-chip.mr-2(label v-for="role in authenticatedUser.roles")
+								//- 	| {{role.name | snakeToSpace | capitalize }}
 						
 				v-list-item(two-line v-if="authenticatedUser.employee_info && !authenticatedUser.employee_info.need_info")
 					v-list-item-content

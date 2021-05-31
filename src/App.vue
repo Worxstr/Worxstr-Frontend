@@ -45,23 +45,18 @@ v-app
 
   v-main(
     :class="{'grey': !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark}"
-    :style="`padding-bottom: ${$route.meta && $route.meta.fullHeight ? '0px' : ''}`"
+    :style="`padding-bottom: ${bottomPadding}`"
   )
     v-container.pa-0.align-start(fluid)
       transition(appear name='fade-transition' mode='out-in' :duration="{ enter: 150, leave: 50 }")
-        router-view(:style='`height: ${pageHeight}`')
+        router-view#router-view(:style='`height: ${pageHeight}`')
 
   transition(name='slide-fade')
     v-bottom-navigation(
       app
       color='indigo'
       grow
-      v-if="\
-        authenticatedUser &&\
-        authenticatedUser.roles &&\
-        $vuetify.breakpoint.smAndDown &&\
-        $route.name != 'conversation'&&\
-        $route.name != 'home'"
+      v-if="showBottomNav"
     )
         
       v-btn(
@@ -171,9 +166,28 @@ export default class App extends Vue {
     return this.$store.state.snackbar
   }
 
+  get showBottomNav() {
+    return this.authenticatedUser &&
+      this.authenticatedUser.roles &&
+      this.$vuetify.breakpoint.smAndDown &&
+      this.$route.name != 'conversation'&&
+      this.$route.name != 'home'
+  }
+  
+  get bottomPadding() {
+    return this.showBottomNav ? '56px' : '0px'
+  }
+
   get pageHeight() {
+    // Normal view
     if (!this.$route.meta.fullHeight) return '100%'
-    else if (this.$vuetify.breakpoint.mdAndUp) return 'calc(100vh - 65px)'
+    
+    // Full height, bottom nav visible
+    // 100% - (top bar height + bottom bar height)
+    else if (this.showBottomNav) return 'calc(100vh - (56px + 56px))'
+  
+    // Full height, bottom nav hidden
+    // 100% - top bar height
     else return 'calc(100vh - 56px)'
   }
 

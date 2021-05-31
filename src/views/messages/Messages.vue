@@ -10,7 +10,7 @@ div
       bottom,
       right,
       color="primary",
-      style="bottom: 70px",
+      style="bottom: 14px",
       @click="newConversationDialog = true"
     )
       v-icon mdi-plus
