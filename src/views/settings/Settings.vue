@@ -14,6 +14,8 @@
 					v-list-item-content
 						v-list-item-subtitle.mb-2 Name
 						v-list-item-title {{ authenticatedUser | fullName }}
+					v-list-item-action
+						v-btn(text color='primary' @click="signOut") Sign out
 				
 				v-list-item(two-line)
 					v-list-item-content
@@ -30,9 +32,8 @@
 						v-list-item-subtitle.mb-2 Roles
 						v-list-item-title
 							div
-								div(v-for='role in authenticatedUser.roles' style='display: inline-block; width: 300px; height: 100px; background: red; border: white 2px solid;')
-								//- v-chip.mr-2(label v-for="role in authenticatedUser.roles")
-								//- 	| {{role.name | snakeToSpace | capitalize }}
+								v-chip.mr-2(label v-for="role in authenticatedUser.roles")
+									| {{role.name | snakeToSpace | capitalize }}
 						
 				v-list-item(two-line v-if="authenticatedUser.employee_info && !authenticatedUser.employee_info.need_info")
 					v-list-item-content
@@ -108,7 +109,10 @@ export default {
 			}
 			window.localStorage.setItem('darkMode', this.preferences.darkMode)
 			this.$vuetify.theme.dark = dark
-		}
+		},
+		signOut() {
+			this.$store.dispatch('signOut')
+		},
 	}
 };
 </script>
