@@ -12,7 +12,11 @@ v-dialog(
       v-model="isValid"
     )
 
-      v-card-title.headline New conversation
+      v-toolbar.flex-grow-0(flat)
+        v-toolbar-title New conversation
+      
+      v-divider
+
       v-card-text
           p Select the person you want to message
           v-autocomplete(

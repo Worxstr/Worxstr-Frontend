@@ -2,7 +2,7 @@
 v-dialog(
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="600",
+  max-width="500",
   persistent
 )
   v-card.d-flex.flex-column
@@ -19,7 +19,11 @@ v-dialog(
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title {{ create ? 'Creating shift' : 'Editing shift' }}
 
-      v-card-text
+      v-divider
+
+      v-card-text.pt-0
+        v-subheader Info
+
         v-select(
           v-model="editedShift.employee_id",
           :items="employees",
@@ -37,35 +41,109 @@ v-dialog(
           :rules="rules.location",
           outlined,
           dense,
-          required
+          required,
           hide-details
         )
 
         v-subheader Date and time
-        
-        v-row
-          v-col
-            v-text-field(
-              type="datetime-local",
-              label="Start"
-              dense,
+
+        v-text-field(
+          type="datetime-local",
+          label="Start",
+          dense,
+          outlined,
+          required,
+          v-model="editedShift.time_begin",
+          :value="new Date(new Date(new Date().setSeconds(0, 0)).setMinutes(0)).toISOString().replace('Z', '')"
+        )
+        v-text-field(
+          type="datetime-local",
+          label="End",
+          dense,
+          outlined,
+          required,
+          hide-details,
+          v-model="editedShift.time_end",
+          :value="new Date(new Date(new Date().setSeconds(0, 0)).setMinutes(0) + 60 * 60 * 1000).toISOString().replace('Z', '')"
+        )
+
+        v-checkbox(label="Recurring shift")
+
+        div
+          .d-flex.align-center
+            p.text-no-wrap.mb-6.mr-1 Repeat every
+            v-text-field.px-2(
               outlined,
-              required
-              hide-details
-              v-model='editedShift.time_begin'
-              :value='new Date(new Date(new Date().setSeconds(0,0)).setMinutes(0)).toISOString().replace("Z","")'
-            )
-          v-col
-            v-text-field(
-              type="datetime-local",
-              label="End"
               dense,
-              outlined,
-              required
-              hide-details
-              v-model='editedShift.time_end'
-              :value='new Date(new Date(new Date().setSeconds(0,0)).setMinutes(0) + 60 * 60 * 1000).toISOString().replace("Z","")'
+              value="1",
+              type="number",
+              increment="1",
+              min="1"
             )
+            v-select(
+              outlined,
+              dense,
+              value="week",
+              :items="[{ text: 'day' }, { text: 'week' }, { text: 'month' }, { text: 'year' }]"
+            )
+
+          p.text-no-wrap.mb-0 Repeat on
+          .d-flex.align-center.pt-1
+            v-checkbox.mt-0(
+              v-model="editedShift.repeat.repeatOn",
+              on-icon="mdi-alpha-s-circle",
+              off-icon="mdi-alpha-s-circle-outline",
+              value="sunday"
+            )
+            v-checkbox.mt-0(
+              v-model="editedShift.repeat.repeatOn",
+              on-icon="mdi-alpha-m-circle",
+              off-icon="mdi-alpha-m-circle-outline",
+              value="monday"
+            )
+            v-checkbox.mt-0(
+              v-model="editedShift.repeat.repeatOn",
+              on-icon="mdi-alpha-t-circle",
+              off-icon="mdi-alpha-t-circle-outline",
+              value="tuesday"
+            )
+            v-checkbox.mt-0(
+              v-model="editedShift.repeat.repeatOn",
+              on-icon="mdi-alpha-w-circle",
+              off-icon="mdi-alpha-w-circle-outline",
+              value="wednesday"
+            )
+            v-checkbox.mt-0(
+              v-model="editedShift.repeat.repeatOn",
+              on-icon="mdi-alpha-t-circle",
+              off-icon="mdi-alpha-t-circle-outline",
+              value="thursday"
+            )
+            v-checkbox.mt-0(
+              v-model="editedShift.repeat.repeatOn",
+              on-icon="mdi-alpha-f-circle",
+              off-icon="mdi-alpha-f-circle-outline",
+              value="friday"
+            )
+            v-checkbox.mt-0(
+              v-model="editedShift.repeat.repeatOn",
+              on-icon="mdi-alpha-s-circle",
+              off-icon="mdi-alpha-s-circle-outline",
+              value="saturday"
+            )
+
+          p.text-no-wrap.mb-0 Ends
+          v-radio-group(v-model='idk')
+            v-radio(value='on')
+              template(v-slot:label)
+                span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") On
+                v-text-field(outlined dense hide-details type='datetime-local')
+            v-radio(value='after')
+              template(v-slot:label)
+                span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") After
+                v-text-field(outlined dense hide-details type='number' increment='1' min='1' suffix='occurences' value='1')
+
+      //- code {{ editedShift }}
 
       v-spacer
 
@@ -90,8 +168,20 @@ const timeValidate = (errorMessage: string) => (value: any) =>
 
 @Component
 export default class EditShiftDialog extends Vue {
-
-  editedShift: any = {}
+  editedShift: any = {
+    employee_id: null,
+    site_location: '',
+    repeat: {
+      repeatEvery: {
+        value: 1,
+        unit: 'week',
+      },
+      repeatOn: [],
+      ends: {
+        date: '2021-06-01T21:03:00Z'
+      }
+    }
+  }
   isValid = false
   loading = false
   rules = {

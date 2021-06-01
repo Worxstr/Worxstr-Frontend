@@ -10,6 +10,8 @@ v-dialog(
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title
           | Editing timecard for {{ timecard | fullName }}
+
+      v-divider
           
       v-card-text
         time-input(v-model="form.data.timeIn.time", label="Time in")
