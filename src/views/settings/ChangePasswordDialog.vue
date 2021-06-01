@@ -17,6 +17,8 @@ v-dialog(
     )
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title Update your password
+      
+      v-divider
 
       v-card-text.pb-0
         v-text-field(

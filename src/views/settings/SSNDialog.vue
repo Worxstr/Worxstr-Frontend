@@ -18,6 +18,8 @@ v-dialog(
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title Register your Social Security number
 
+      v-divider
+
       v-card-text.pb-0
         v-text-field(
           outlined,

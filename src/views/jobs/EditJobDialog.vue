@@ -18,6 +18,8 @@ v-dialog(
     )
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
+      
+      v-divider
 
       v-card-text.py-0
         v-subheader Job details
