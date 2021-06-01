@@ -92,8 +92,6 @@ v-app
 import { Component, Vue } from 'vue-property-decorator'
 import WorxstrFooter from '@/components/WorxstrFooter.vue'
 import { Role, User, UserRole } from './definitions/User'
-const HEADER_HEIGHT = 56
-const FOOTER_HEIGHT = 56
 
 @Component({
   metaInfo: {
@@ -111,6 +109,7 @@ const FOOTER_HEIGHT = 56
   },
 })
 export default class App extends Vue {
+
   async mounted() {
     this.initDarkMode()
     this.promptSSN()
@@ -174,18 +173,23 @@ export default class App extends Vue {
   }
 
   get bottomPadding() {
-    return this.showBottomNav ? FOOTER_HEIGHT : 0
+    return this.showBottomNav ? this.footerHeight : 0
   }
+
+  get headerHeight() {
+    return this.$vuetify.breakpoint.mdAndUp ? 64 : 56
+  }
+  footerHeight = 56
 
   get pageHeight() {
     // Normal view
     if (!this.$route.meta.fullHeight) return '100%'
 
     // Full height, bottom nav visible
-    else if (this.showBottomNav) return `calc(100vh - (${HEADER_HEIGHT}px + ${FOOTER_HEIGHT}px))`
+    else if (this.showBottomNav) return `calc(100vh - (${this.headerHeight}px + ${this.footerHeight}px))`
 
     // Full height, bottom nav hidden
-    else return `calc(100vh - ${HEADER_HEIGHT}px)`
+    else return `calc(100vh - ${this.headerHeight}px)`
   }
 
   get primaryNavLinks() {

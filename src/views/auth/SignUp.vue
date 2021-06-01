@@ -52,6 +52,12 @@
             ]"
             required
           )
+          v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
+            template(v-slot:label)
+              div
+                span I agree to the
+                a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
+
         v-card-actions
           v-spacer
           v-btn(
@@ -71,7 +77,7 @@
 export default {
   name: "signUp",
   metaInfo: {
-    title: 'Sign up',
+    title: "Sign up",
   },
   data: () => ({
     form: {
@@ -81,7 +87,8 @@ export default {
       email: "",
       manager_id: "",
       password: "",
-      confirm_password: "",
+      confirm_password: "", 
+      agreeToTerms: false,
     },
     isValid: false,
     rules: {
@@ -115,12 +122,11 @@ export default {
   }),
   methods: {
     async signUp() {
-      this.loading = true;
+      this.loading = true
       try {
-        await this.$store.dispatch("signUp", this.form);
-      }
-      finally {
-        this.loading = false;
+        await this.$store.dispatch("signUp", this.form)
+      } finally {
+        this.loading = false
       }
     },
   },

@@ -77,7 +77,7 @@ div(v-else)
           p {{ job.consultant_code }}
 
     v-toolbar(flat, color="transparent")
-      v-toolbar-title.text-h6 Shifts
+      v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
       v-btn(text, @click="addShiftDialog = true")
         v-icon(left) mdi-plus

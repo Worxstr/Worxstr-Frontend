@@ -2,7 +2,7 @@
 v-dialog(
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  max-width="600",
   persistent
 )
   v-card.d-flex.flex-column
@@ -38,27 +38,33 @@ v-dialog(
           outlined,
           dense,
           required
+          hide-details
         )
-        date-input(
-          required,
-          v-model="editedShift.date",
-          label="Date",
-          :rules="rules.date"
-        )
+
+        v-subheader Date and time
+        
         v-row
           v-col
-            time-input(
-              required,
-              v-model="editedShift.time_begin",
-              label="Start time",
-              :rules="rules.timeBegin"
+            v-text-field(
+              type="datetime-local",
+              label="Start"
+              dense,
+              outlined,
+              required
+              hide-details
+              v-model='editedShift.time_begin'
+              :value='new Date(new Date(new Date().setSeconds(0,0)).setMinutes(0)).toISOString().replace("Z","")'
             )
           v-col
-            time-input(
-              required,
-              v-model="editedShift.time_end",
-              label="End time",
-              :rules="rules.timeEnd"
+            v-text-field(
+              type="datetime-local",
+              label="End"
+              dense,
+              outlined,
+              required
+              hide-details
+              v-model='editedShift.time_end'
+              :value='new Date(new Date(new Date().setSeconds(0,0)).setMinutes(0) + 60 * 60 * 1000).toISOString().replace("Z","")'
             )
 
       v-spacer
@@ -72,8 +78,6 @@ v-dialog(
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import TimeInput from "@/components/inputs/TimeInput.vue"
-import DateInput from "@/components/inputs/DateInput.vue"
 import { Vue, Component, Prop, Watch } from "vue-property-decorator"
 import { User } from "@/definitions/User"
 import { Shift } from "@/definitions/Job"
@@ -84,12 +88,10 @@ const timeValidate = (errorMessage: string) => (value: any) =>
   /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(value)
 
 
-@Component({
-  components: { TimeInput, DateInput },
-})
+@Component
 export default class EditShiftDialog extends Vue {
 
-  editedShift: Shift | {} = {}
+  editedShift: any = {}
   isValid = false
   loading = false
   rules = {
@@ -105,13 +107,6 @@ export default class EditShiftDialog extends Vue {
   @Prop({ default: [] }) readonly employees!: User[]
   @Prop(Object) readonly shift: Shift | undefined
 
-  @Watch('opened')
-  onOpened(newVal: boolean, oldVal: boolean) {
-    // Set date string without time and assign copy to editedShift
-    const date = this.shift ? this.shift.time_begin : undefined
-    if (newVal == true) this.editedShift = Object.assign({ date: date }, this.shift)
-  }
-
   closeDialog() {
     this.$emit("update:opened", false);
     if (this.create) (this.$refs.form as HTMLFormElement).reset();
@@ -120,45 +115,21 @@ export default class EditShiftDialog extends Vue {
   async updateShift() {
     this.loading = true
 
-    let { date, time_begin, time_end } = this.editedShift
-
     // TODO: Validate shifts so that end time is after start time
 
-    // Concat the date input with time inputs
-    date = date ? new Date(date) : new Date()
-    const timeBegin = new Date(time_begin)
-    const timeEnd = new Date(time_end)
-
-    timeBegin.setUTCDate(date.getUTCDate())
-    timeBegin.setUTCMonth(date.getUTCMonth())
-    timeBegin.setUTCFullYear(date.getUTCFullYear())
-
-    timeEnd.setUTCDate(date.getUTCDate())
-    timeEnd.setUTCMonth(date.getUTCMonth())
-    timeEnd.setUTCFullYear(date.getUTCFullYear())
-
-    time_begin = timeBegin.toISOString()
-    time_end = timeEnd.toISOString()
-
-    
     try {
+      const shift = {
+        ...this.editedShift,
+        time_begin: (new Date(this.editedShift.time_begin)).toISOString(),
+        time_end: (new Date(this.editedShift.time_end)).toISOString()
+      }
       if (this.create)
         await this.$store.dispatch("createShift", {
-          shift: {
-            ...this.editedShift,
-            date,
-            time_begin: timeBegin,
-            time_end: timeEnd
-          },
+          shift,
           jobId: this.$route.params.jobId,
         })
       else
-        await this.$store.dispatch("updateShift", {
-          ...this.editedShift,
-          date,
-          time_begin: timeBegin,
-          time_end: timeEnd
-        })
+        await this.$store.dispatch("updateShift", shift)
       this.closeDialog()
     }
     finally {
