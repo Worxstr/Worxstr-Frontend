@@ -22,31 +22,48 @@ v-dialog(
       v-divider
 
       v-card-text.pt-0
-        v-subheader Info
+        v-subheader Employee shifts
 
+        //- Employee selector
         v-select(
-          v-model="editedShift.employee_id",
+          v-model="editedShift.employee_ids",
           :items="employees",
-          :item-text="(e) => `${e.first_name} ${e.last_name}`",
+          :item-text="(e) => e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`",
           :item-value="'id'",
-          :rules="rules.employee",
           outlined,
+          multiple
           dense,
           required,
-          label="Employee"
+          label="Employees"
         )
-        v-text-field(
-          v-model="editedShift.site_location",
-          label="Location",
-          :rules="rules.location",
-          outlined,
-          dense,
-          required,
-          hide-details
-        )
+          template(v-slot:append-item)
+            v-divider
+            v-list-item(ripple @click='addUnassignedEmployee')
+              v-list-item-avatar(:color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`")
+                v-icon mdi-plus
+              v-list-item-content
+                v-list-item-title Add unassigned
+        
+        //- Location fields
+        div(v-if='editedShift.employee_ids.length')
+          v-divider
+          v-subheader Shift locations
+          
+          v-expand-transition(appear v-for='employeeId in editedShift.employee_ids' :key='employeeId')
+            v-text-field(
+              v-model="editedShift.site_location",
+              :label="`Location for ${employeeName(employeeId)}`",
+              :rules="rules.location",
+              outlined,
+              dense,
+              required,
+            )
+
+        v-divider
 
         v-subheader Date and time
 
+        //- Start date
         v-text-field(
           type="datetime-local",
           label="Start",
@@ -56,6 +73,7 @@ v-dialog(
           v-model="editedShift.time_begin",
           :value="new Date(new Date(new Date().setSeconds(0, 0)).setMinutes(0)).toISOString().replace('Z', '')"
         )
+        //- End date
         v-text-field(
           type="datetime-local",
           label="End",
@@ -67,83 +85,87 @@ v-dialog(
           :value="new Date(new Date(new Date().setSeconds(0, 0)).setMinutes(0) + 60 * 60 * 1000).toISOString().replace('Z', '')"
         )
 
-        v-checkbox(label="Recurring shift")
+        //- Recurrence section
+        v-checkbox(label="Recurring shift" v-model='recurring')
 
-        div
-          .d-flex.align-center
-            p.text-no-wrap.mb-6.mr-1 Repeat every
-            v-text-field.px-2(
-              outlined,
-              dense,
-              value="1",
-              type="number",
-              increment="1",
-              min="1"
-            )
-            v-select(
-              outlined,
-              dense,
-              value="week",
-              :items="[{ text: 'day' }, { text: 'week' }, { text: 'month' }, { text: 'year' }]"
-            )
+        v-expand-transition
+          div(v-show='recurring')
 
-          p.text-no-wrap.mb-0 Repeat on
-          .d-flex.align-center.pt-1
-            v-checkbox.mt-0(
-              v-model="editedShift.repeat.repeatOn",
-              on-icon="mdi-alpha-s-circle",
-              off-icon="mdi-alpha-s-circle-outline",
-              value="sunday"
-            )
-            v-checkbox.mt-0(
-              v-model="editedShift.repeat.repeatOn",
-              on-icon="mdi-alpha-m-circle",
-              off-icon="mdi-alpha-m-circle-outline",
-              value="monday"
-            )
-            v-checkbox.mt-0(
-              v-model="editedShift.repeat.repeatOn",
-              on-icon="mdi-alpha-t-circle",
-              off-icon="mdi-alpha-t-circle-outline",
-              value="tuesday"
-            )
-            v-checkbox.mt-0(
-              v-model="editedShift.repeat.repeatOn",
-              on-icon="mdi-alpha-w-circle",
-              off-icon="mdi-alpha-w-circle-outline",
-              value="wednesday"
-            )
-            v-checkbox.mt-0(
-              v-model="editedShift.repeat.repeatOn",
-              on-icon="mdi-alpha-t-circle",
-              off-icon="mdi-alpha-t-circle-outline",
-              value="thursday"
-            )
-            v-checkbox.mt-0(
-              v-model="editedShift.repeat.repeatOn",
-              on-icon="mdi-alpha-f-circle",
-              off-icon="mdi-alpha-f-circle-outline",
-              value="friday"
-            )
-            v-checkbox.mt-0(
-              v-model="editedShift.repeat.repeatOn",
-              on-icon="mdi-alpha-s-circle",
-              off-icon="mdi-alpha-s-circle-outline",
-              value="saturday"
-            )
+            //- Repeat every {num} {day,week,month,year}
+            .d-flex.align-center
+              p.text-no-wrap.mb-6.mr-1 Repeat every
+              v-text-field.px-2(
+                outlined,
+                dense,
+                value="1",
+                type="number",
+                increment="1",
+                min="1"
+              )
+              v-select(
+                outlined,
+                dense,
+                value="week",
+                :items="[{ text: 'day' }, { text: 'week' }, { text: 'month' }, { text: 'year' }]"
+              )
 
-          p.text-no-wrap.mb-0 Ends
-          v-radio-group(v-model='idk')
-            v-radio(value='on')
-              template(v-slot:label)
-                span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") On
-                v-text-field(outlined dense hide-details type='datetime-local')
-            v-radio(value='after')
-              template(v-slot:label)
-                span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") After
-                v-text-field(outlined dense hide-details type='number' increment='1' min='1' suffix='occurences' value='1')
+            //- Weekday selector
+            p.text-no-wrap.mb-0 Repeat on
+            .d-flex.align-center.pt-1
+              v-checkbox.mt-0(
+                v-model="editedShift.repeat.repeatOn",
+                on-icon="mdi-alpha-s-circle",
+                off-icon="mdi-alpha-s-circle-outline",
+                value="sunday"
+              )
+              v-checkbox.mt-0(
+                v-model="editedShift.repeat.repeatOn",
+                on-icon="mdi-alpha-m-circle",
+                off-icon="mdi-alpha-m-circle-outline",
+                value="monday"
+              )
+              v-checkbox.mt-0(
+                v-model="editedShift.repeat.repeatOn",
+                on-icon="mdi-alpha-t-circle",
+                off-icon="mdi-alpha-t-circle-outline",
+                value="tuesday"
+              )
+              v-checkbox.mt-0(
+                v-model="editedShift.repeat.repeatOn",
+                on-icon="mdi-alpha-w-circle",
+                off-icon="mdi-alpha-w-circle-outline",
+                value="wednesday"
+              )
+              v-checkbox.mt-0(
+                v-model="editedShift.repeat.repeatOn",
+                on-icon="mdi-alpha-t-circle",
+                off-icon="mdi-alpha-t-circle-outline",
+                value="thursday"
+              )
+              v-checkbox.mt-0(
+                v-model="editedShift.repeat.repeatOn",
+                on-icon="mdi-alpha-f-circle",
+                off-icon="mdi-alpha-f-circle-outline",
+                value="friday"
+              )
+              v-checkbox.mt-0(
+                v-model="editedShift.repeat.repeatOn",
+                on-icon="mdi-alpha-s-circle",
+                off-icon="mdi-alpha-s-circle-outline",
+                value="saturday"
+              )
 
-      //- code {{ editedShift }}
+            //- End on selector
+            p.text-no-wrap.mb-0 Ends
+            v-radio-group(v-model='idk')
+              v-radio(value='on')
+                template(v-slot:label)
+                  span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") On
+                  v-text-field(outlined dense hide-details type='datetime-local')
+              v-radio(value='after')
+                template(v-slot:label)
+                  span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") After
+                  v-text-field(outlined dense hide-details type='number' increment='1' min='1' suffix='occurences' value='1')
 
       v-spacer
 
@@ -165,11 +187,17 @@ const exists = (errorMessage: string) => (value: any) => !!value || errorMessage
 const timeValidate = (errorMessage: string) => (value: any) =>
   /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(value)
 
+type UnassignedEmployee = {
+  id: number;
+}
 
 @Component
 export default class EditShiftDialog extends Vue {
+  
+  recurring = false
+
   editedShift: any = {
-    employee_id: null,
+    employee_ids: [],
     site_location: '',
     repeat: {
       repeatEvery: {
@@ -185,7 +213,6 @@ export default class EditShiftDialog extends Vue {
   isValid = false
   loading = false
   rules = {
-    employee: [exists("Employee required")],
     location: [exists("Location required")],
     date: [exists("Date required")],
     timeBegin: [exists("Start time required"), timeValidate("Time invalid")],
@@ -194,7 +221,7 @@ export default class EditShiftDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ default: false }) readonly create!: boolean // Creating new shift or editing existing
-  @Prop({ default: [] }) readonly employees!: User[]
+  @Prop({ default: [] }) readonly employees!: (User|UnassignedEmployee)[] 
   @Prop(Object) readonly shift: Shift | undefined
 
   closeDialog() {
@@ -202,8 +229,37 @@ export default class EditShiftDialog extends Vue {
     if (this.create) (this.$refs.form as HTMLFormElement).reset();
   }
 
+  /* 
+    List of selected employees contains negative IDs to represent unassigned employees
+    Every value has to be unique, so the values cannot be all 'null'. Before
+    sending off the request to create the shift, the negative values are converted to nulls
+  */
+  
+ 
+ employeeName(employeeId: number) {
+    if (employeeId > 0) {
+      const e: User = this.employees.find(e => e.id == employeeId)
+      return `${e.first_name} ${e.last_name}`
+    }
+    return `Unassigned ${-employeeId}`
+  }
+  
+  lastId = -1
+  addUnassignedEmployee() {
+    this.employees.push({
+      id: this.lastId
+    })
+    this.editedShift.employee_ids.push(this.lastId)
+    this.lastId--
+  }
+
   async updateShift() {
     this.loading = true
+
+    // Convert negative (unassigned) employee ids to nulls
+    this.editedShift.employee_ids = this.editedShift.employee_ids.map(id => {
+      id < 0 ? -id : id
+    })
 
     // TODO: Validate shifts so that end time is after start time
 
