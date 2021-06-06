@@ -109,53 +109,14 @@ v-dialog(
 
             //- Weekday selector
             p.text-no-wrap.mb-0 Repeat on
-            .d-flex.align-center.pt-1(v-if='editedShift.repeat.repeatEvery.unit == "week"')
-              v-checkbox.mt-0(
-                v-model="editedShift.repeat.repeatOn",
-                on-icon="mdi-alpha-s-circle",
-                off-icon="mdi-alpha-s-circle-outline",
-                value="sunday"
-              )
-              v-checkbox.mt-0(
-                v-model="editedShift.repeat.repeatOn",
-                on-icon="mdi-alpha-m-circle",
-                off-icon="mdi-alpha-m-circle-outline",
-                value="monday"
-              )
-              v-checkbox.mt-0(
-                v-model="editedShift.repeat.repeatOn",
-                on-icon="mdi-alpha-t-circle",
-                off-icon="mdi-alpha-t-circle-outline",
-                value="tuesday"
-              )
-              v-checkbox.mt-0(
-                v-model="editedShift.repeat.repeatOn",
-                on-icon="mdi-alpha-w-circle",
-                off-icon="mdi-alpha-w-circle-outline",
-                value="wednesday"
-              )
-              v-checkbox.mt-0(
-                v-model="editedShift.repeat.repeatOn",
-                on-icon="mdi-alpha-t-circle",
-                off-icon="mdi-alpha-t-circle-outline",
-                value="thursday"
-              )
-              v-checkbox.mt-0(
-                v-model="editedShift.repeat.repeatOn",
-                on-icon="mdi-alpha-f-circle",
-                off-icon="mdi-alpha-f-circle-outline",
-                value="friday"
-              )
-              v-checkbox.mt-0(
-                v-model="editedShift.repeat.repeatOn",
-                on-icon="mdi-alpha-s-circle",
-                off-icon="mdi-alpha-s-circle-outline",
-                value="saturday"
+              weekday-selector(
+                v-if='editedShift.repeat.repeatEvery.unit == "week"'
+                v-model='editedShift.repeat.repeatOn'
               )
 
             //- End on selector
             p.text-no-wrap.mb-0 Ends
-            v-radio-group(v-model='idk')
+            v-radio-group()
               v-radio(value='on')
                 template(v-slot:label)
                   span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") On
@@ -165,7 +126,7 @@ v-dialog(
                   span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") After
                   v-text-field(outlined dense hide-details type='number' increment='1' min='1' suffix='occurences' value='1')
 
-      //- code {{editedShift}}
+      code {{editedShift}}
       v-spacer
 
       v-card-actions
@@ -181,6 +142,8 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator"
 import { User } from "@/definitions/User"
 import { Shift } from "@/definitions/Job"
 
+import WeekdaySelector from '@/components/inputs/WeekdaySelector'
+
 // TODO: Move these to reusable import
 const exists = (errorMessage: string) => (value: any) => !!value || errorMessage
 const timeValidate = (errorMessage: string) => (value: any) =>
@@ -190,17 +153,17 @@ interface UnassignedEmployee {
   id: number;
 }
 
-function isUnassignedEmpoyee(employee: User | UnassignedEmployee): employee is UnassignedEmployee {
-  return employee.id < 0
-}
-
 const now: string | Date = new Date()
       now.setSeconds(0,0)
       now.setMinutes(0)
 const nowISO = now.toISOString().replace('Z','')
 const hourFromNowISO = new Date(now.getTime() + 60 * 60 * 1000).toISOString().replace('Z','')
 
-@Component
+@Component({
+  components: {
+    WeekdaySelector
+  }
+})
 export default class EditShiftDialog extends Vue {
   
   recurring = false
@@ -215,7 +178,7 @@ export default class EditShiftDialog extends Vue {
         value: 1,
         unit: 'week',
       },
-      repeatOn: [],
+      repeatOn: ['m','t','w','tr','f'],
       ends: {
         date: '2021-06-01T21:03:00Z'
       }

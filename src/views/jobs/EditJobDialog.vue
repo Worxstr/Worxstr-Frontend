@@ -118,7 +118,7 @@ export default class EditJobDialog extends Vue {
   @Prop(Object) readonly job: Job | undefined
 
   isValid = false
-  editedJob: any // TODO: add type
+  editedJob: any = {} // TODO: add type
   loading = false
   place: any
 
