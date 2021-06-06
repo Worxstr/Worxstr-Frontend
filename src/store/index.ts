@@ -278,9 +278,7 @@ const storeConfig: StoreOptions<RootState> = {
         //   value: authToken
         // })
 
-        const user = await dispatch('getAuthenticatedUser')
-        
-        router.push({ name: defaultRoute(user) })
+        router.push({ name: defaultRoute() })
         return data
       }
       catch (err) {

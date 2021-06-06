@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { Route } from 'vue-router/types';
 import Meta from 'vue-meta'
 import store from '@/store'
 import { Capacitor } from '@capacitor/core'
@@ -39,7 +40,7 @@ const routes = [
     meta: {
       showFooter: true,
     },
-    beforeEnter(to, from, next) {
+    beforeEnter(to: Route, from: Route, next: Function) {
       if (Capacitor.isNativePlatform() && store.state.authenticatedUser) {
         next({ name: defaultRoute() })
       }

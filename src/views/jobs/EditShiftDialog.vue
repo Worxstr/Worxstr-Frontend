@@ -47,7 +47,7 @@ v-dialog(
         //- Location fields
         div(v-if='editedShift.employee_ids.length')
           v-divider
-          v-subheader Shift locations
+          v-subheader Site locations
           
           v-expand-transition(appear v-for='employeeId in editedShift.employee_ids' :key='employeeId')
             v-text-field(
@@ -71,7 +71,6 @@ v-dialog(
           outlined,
           required,
           v-model="editedShift.time_begin",
-          :value="new Date(new Date(new Date().setSeconds(0, 0)).setMinutes(0)).toISOString().replace('Z', '')"
         )
         //- End date
         v-text-field(
@@ -82,7 +81,6 @@ v-dialog(
           required,
           hide-details,
           v-model="editedShift.time_end",
-          :value="new Date(new Date(new Date().setSeconds(0, 0)).setMinutes(0) + 60 * 60 * 1000).toISOString().replace('Z', '')"
         )
 
         //- Recurrence section
@@ -97,7 +95,7 @@ v-dialog(
               v-text-field.px-2(
                 outlined,
                 dense,
-                value="1",
+                v-model='editedShift.repeat.repeatEvery.value'
                 type="number",
                 increment="1",
                 min="1"
@@ -105,13 +103,13 @@ v-dialog(
               v-select(
                 outlined,
                 dense,
-                value="week",
+                v-model='editedShift.repeat.repeatEvery.unit'
                 :items="[{ text: 'day' }, { text: 'week' }, { text: 'month' }, { text: 'year' }]"
               )
 
             //- Weekday selector
             p.text-no-wrap.mb-0 Repeat on
-            .d-flex.align-center.pt-1
+            .d-flex.align-center.pt-1(v-if='editedShift.repeat.repeatEvery.unit == "week"')
               v-checkbox.mt-0(
                 v-model="editedShift.repeat.repeatOn",
                 on-icon="mdi-alpha-s-circle",
@@ -167,6 +165,7 @@ v-dialog(
                   span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") After
                   v-text-field(outlined dense hide-details type='number' increment='1' min='1' suffix='occurences' value='1')
 
+      //- code {{editedShift}}
       v-spacer
 
       v-card-actions
@@ -187,9 +186,19 @@ const exists = (errorMessage: string) => (value: any) => !!value || errorMessage
 const timeValidate = (errorMessage: string) => (value: any) =>
   /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(value)
 
-type UnassignedEmployee = {
+interface UnassignedEmployee {
   id: number;
 }
+
+function isUnassignedEmpoyee(employee: User | UnassignedEmployee): employee is UnassignedEmployee {
+  return employee.id < 0
+}
+
+const now: string | Date = new Date()
+      now.setSeconds(0,0)
+      now.setMinutes(0)
+const nowISO = now.toISOString().replace('Z','')
+const hourFromNowISO = new Date(now.getTime() + 60 * 60 * 1000).toISOString().replace('Z','')
 
 @Component
 export default class EditShiftDialog extends Vue {
@@ -199,6 +208,8 @@ export default class EditShiftDialog extends Vue {
   editedShift: any = {
     employee_ids: [],
     site_location: '',
+    time_begin: nowISO,
+    time_end: hourFromNowISO,
     repeat: {
       repeatEvery: {
         value: 1,
@@ -225,25 +236,24 @@ export default class EditShiftDialog extends Vue {
   @Prop(Object) readonly shift: Shift | undefined
 
   closeDialog() {
+    if (this.create) (this.$refs.form as HTMLFormElement).reset()
     this.$emit("update:opened", false);
-    if (this.create) (this.$refs.form as HTMLFormElement).reset();
   }
 
+  employeeName(employeeId: number) {
+    const e: any = this.employees.find(e => e.id == employeeId)
+
+    if (employeeId > 0) return `${e.first_name} ${e.last_name}`
+    
+    return `Unassigned ${-employeeId}`
+    
+  }
+  
   /* 
     List of selected employees contains negative IDs to represent unassigned employees
     Every value has to be unique, so the values cannot be all 'null'. Before
     sending off the request to create the shift, the negative values are converted to nulls
   */
-  
- 
- employeeName(employeeId: number) {
-    if (employeeId > 0) {
-      const e: User = this.employees.find(e => e.id == employeeId)
-      return `${e.first_name} ${e.last_name}`
-    }
-    return `Unassigned ${-employeeId}`
-  }
-  
   lastId = -1
   addUnassignedEmployee() {
     this.employees.push({
@@ -257,7 +267,7 @@ export default class EditShiftDialog extends Vue {
     this.loading = true
 
     // Convert negative (unassigned) employee ids to nulls
-    this.editedShift.employee_ids = this.editedShift.employee_ids.map(id => {
+    this.editedShift.employee_ids = this.editedShift.employee_ids.map((id: number) => {
       id < 0 ? -id : id
     })
 
