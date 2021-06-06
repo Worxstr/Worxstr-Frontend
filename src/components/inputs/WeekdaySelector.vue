@@ -58,47 +58,29 @@
 	)
 </template>
 
-<script>
+<script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator"
 
 const daysOfWeek = ['su','m','t','w','tr','f','s']
 
-export default {
-	name: 'WeekdaySelector',
-	props: ['value'],
+@Component
+export default class WeekdaySelector extends Vue {
+	selectedDays: string[] = []
+
+	@Prop({ default: [] }) readonly value!: string[]
+
 	mounted() {
 		this.selectedDays = this.value
-	},
-	data: () => ({
-		selectedDays: []
-	}),
-	methods: {
-		update(val) {
-			this.$emit('input', this.selectedDays)
-		}
-	},
-	computed: {
-		daySelected() {
-			const data = {};
-			daysOfWeek.map(day => {
-				data[day] = this.value.includes(day)
-			})
-			console.log(data)
-			return data
-		}
+	}
+	update() {
+		this.$emit('input', this.selectedDays)
+	}
+	get daySelected() {
+		const data: any = {};
+		daysOfWeek.map((day: string) => {
+			data[day] = this.value.includes(day)
+		})
+		return data
 	}
 }
-
-// @Component({
-// 	props: ['value'],
-// 	methods: {
-// 		update(val) {
-// 			console.log('update')
-// 			this.$emit('input', val)
-// 		}
-// 	}
-// })
-// export default class WeekdaySelector extends Vue {
-// 	// @Prop({ default: [] }) readonly value!: string[]
-// }
 </script>
