@@ -142,7 +142,7 @@ import { Vue, Component, Prop, Watch } from "vue-property-decorator"
 import { User } from "@/definitions/User"
 import { Shift } from "@/definitions/Job"
 
-import WeekdaySelector from '@/components/inputs/WeekdaySelector'
+import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
 
 // TODO: Move these to reusable import
 const exists = (errorMessage: string) => (value: any) => !!value || errorMessage
