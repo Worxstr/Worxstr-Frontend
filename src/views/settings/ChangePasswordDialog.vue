@@ -17,6 +17,8 @@ v-dialog(
     )
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title Update your password
+      
+      v-divider
 
       v-card-text.pb-0
         v-text-field(
@@ -80,11 +82,15 @@ export default {
       if (this.create) this.$refs.form.reset();
     },
     async updatePassword() {
-      this.loading = true;
-      await this.$store.dispatch("updatePassword", this.password);
-      this.$store.dispatch("showSnackbar", { text: "Password changed" })
-      this.loading = false;
-      this.closeDialog();
+      this.loading = true
+      try {
+        await this.$store.dispatch("updatePassword", this.password)
+        this.$store.dispatch("showSnackbar", { text: "Password changed" })
+        this.closeDialog()
+      }
+      finally {
+        this.loading = false
+      }
     },
   },
 };

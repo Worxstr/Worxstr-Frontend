@@ -12,6 +12,8 @@ v-dialog(
       v-btn(icon, @click="closeDialog")
         v-icon mdi-close
       v-toolbar-title Complete payment
+  
+    v-divider
 
     v-card-text.mt-5
       p.text-subtitle-1

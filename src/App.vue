@@ -1,99 +1,91 @@
 <template lang="pug">
-
 v-app
-  v-app-bar(app :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'" elevate-on-scroll)
+  v-app-bar(
+    app,
+    :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'",
+    elevate-on-scroll
+  )
     v-container.py-0.fill-height
-      router-link(to='/' style='text-decoration: none')
-        v-avatar.mr-10(tile size='50')
-          img(src='@/assets/logo.svg' alt='Worxstr logo')
+      router-link(to="/", style="text-decoration: none")
+        v-avatar.mr-10(tile, size="50")
+          img(src="@/assets/logo.svg", alt="Worxstr logo")
 
-      .d-flex.flex-row(v-if='!$vuetify.breakpoint.smAndDown')
-        v-btn(v-for='link in primaryNavLinks'
-        :key='link.text'
-        text
-        :to='{ name: link.to }'
-        active-class='primary--text')
+      .d-flex.flex-row(v-if="!$vuetify.breakpoint.smAndDown")
+        v-btn(
+          v-for="link in primaryNavLinks",
+          :key="link.text",
+          text,
+          :to="{ name: link.to }",
+          active-class="primary--text"
+        )
           | {{ link.text }}
 
       v-spacer
 
-      div(v-for='link in secondaryNavLinks')
-
+      div(v-for="link in secondaryNavLinks")
         //- Icon button
-        v-tooltip(v-if='link.icon' bottom)
-          template(v-slot:activator='{ on, attrs }')
+        v-tooltip(
+          v-if="link.icon && ($vuetify.breakpoint.mdAndUp || !link.desktopOnly)"
+          bottom
+        )
+          template(v-slot:activator="{ on, attrs }")
             v-btn(
-              icon
-              v-bind='attrs'
-              v-on='on'
-              :to='link.to ? { name: link.to } : null'
-              @click="() => link.click ? link.click() : ''"
+              icon,
+              v-bind="attrs",
+              v-on="on",
+              :to="link.to ? { name: link.to } : null",
+              @click="() => (link.click ? link.click() : '')"
             )
               v-icon {{ link.icon }}
-          
           span {{ link.text }}
 
         //- Text button
         v-btn(
-          v-else
-          text
-          :to='{ name: link.to }'
-          active-class='primary--text'
+          v-else-if='!link.icon',
+          v-hide="link.desktopOnly && $vuetify.breakpoint.mdAndUp",
+          text,
+          :to="{ name: link.to }",
+          active-class="primary--text"
         )
           | {{ link.text }}
-      
 
   v-main(
-    :class="{'grey': !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark}"
-    :style="`padding-bottom: ${$route.meta && $route.meta.fullHeight ? '0px' : ''}`"
+    :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }",
+    :style="`padding-bottom: ${bottomPadding}px`"
   )
     v-container.pa-0.align-start(fluid)
-      transition(appear name='slide-y-transition' mode='out-in')
-        router-view(:style='`height: ${pageHeight}`')
+      transition(
+        appear,
+        name="fade-transition",
+        mode="out-in",
+        :duration="{ enter: 150, leave: 50 }"
+      )
+        router-view#router-view(:style="`height: ${pageHeight}`")
 
-  transition(name='slide-fade')
-    v-bottom-navigation(
-      app
-      color='indigo'
-      grow
-      v-if="\
-        authenticatedUser &&\
-        authenticatedUser.roles &&\
-        $vuetify.breakpoint.smAndDown &&\
-        $route.name != 'conversation'&&\
-        $route.name != 'home'"
-    )
-        
+  transition(name="slide-fade")
+    v-bottom-navigation(app, color="indigo", grow, v-if="showBottomNav")
       v-btn(
-        v-for='link in primaryNavLinks'
-        :key='link.to'
-        :value='link.text'
-        :to='{ name: link.to }'
+        v-for="link in primaryNavLinks",
+        :key="link.to",
+        :value="link.text",
+        :to="{ name: link.to }"
       )
         span {{ link.text | capitalize }}
         v-icon {{ link.icon }}
-  
-  worxstr-footer(v-if='$route.meta.showFooter')
 
-  v-snackbar(
-    app
-    v-model='snackbar.show'
-    :timeout='snackbar.timeout'
-  )
+  worxstr-footer(v-if="$route.meta.showFooter")
+
+  v-snackbar(app, v-model="snackbar.show", :timeout="snackbar.timeout")
     | {{ snackbar.text }}
 
-    template(
-      v-slot:action='{ attrs }'
-      v-if='snackbar.action'
-    )
+    template(v-slot:action="{ attrs }", v-if="snackbar.action")
       v-btn(
-        color='blue'
-        text
-        v-bind='attrs'
-        @click='() => {snackbar.action(); snackbar.show = false}'
+        color="blue",
+        text,
+        v-bind="attrs",
+        @click="() => { snackbar.action(); snackbar.show = false; }"
       )
-        | {{snackbar.actionText}}
-
+        | {{ snackbar.actionText }}
 </template>
 
 <script lang="ts">
@@ -117,23 +109,10 @@ import { Role, User, UserRole } from './definitions/User'
   },
 })
 export default class App extends Vue {
+
   async mounted() {
-    this.getLocalUserData()
     this.initDarkMode()
-
-    // Refresh user data in case of an update
-    await this.$store.dispatch('getAuthenticatedUser')
-
     this.promptSSN()
-  }
-
-  getLocalUserData() {
-    const storedUser = localStorage.getItem('authenticatedUser')
-    if (storedUser) {
-      this.$store.commit('SET_AUTHENTICATED_USER', {
-        user: JSON.parse(storedUser),
-      })
-    }
   }
 
   promptSSN() {
@@ -185,10 +164,32 @@ export default class App extends Vue {
     return this.$store.state.snackbar
   }
 
+  get showBottomNav() {
+    return this.authenticatedUser &&
+      this.authenticatedUser.roles &&
+      this.$vuetify.breakpoint.smAndDown &&
+      this.$route.name != 'conversation' &&
+      this.$route.name != 'home'
+  }
+
+  get bottomPadding() {
+    return this.showBottomNav ? this.footerHeight : 0
+  }
+
+  get headerHeight() {
+    return this.$vuetify.breakpoint.mdAndUp ? 64 : 56
+  }
+  footerHeight = 56
+
   get pageHeight() {
+    // Normal view
     if (!this.$route.meta.fullHeight) return '100%'
-    else if (this.$vuetify.breakpoint.mdAndUp) return 'calc(100vh - 65px)'
-    else return 'calc(100vh - 56px)'
+
+    // Full height, bottom nav visible
+    else if (this.showBottomNav) return `calc(100vh - (${this.headerHeight}px + ${this.footerHeight}px))`
+
+    // Full height, bottom nav hidden
+    else return `calc(100vh - ${this.headerHeight}px)`
   }
 
   get primaryNavLinks() {
@@ -226,6 +227,7 @@ export default class App extends Vue {
         text: 'Sign out',
         icon: 'mdi-logout-variant',
         click: this.signOut,
+        desktopOnly: true,
       }]
       :
       [{

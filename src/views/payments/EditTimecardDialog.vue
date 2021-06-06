@@ -10,6 +10,8 @@ v-dialog(
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title
           | Editing timecard for {{ timecard | fullName }}
+
+      v-divider
           
       v-card-text
         time-input(v-model="form.data.timeIn.time", label="Time in")
@@ -128,14 +130,16 @@ export default {
       newTimeclockEvents.push(this.form.data.timeOut);
 
       this.loading = true
-
-      await this.$store.dispatch("updateTimecard", {
-        timecardId: this.timecard.id,
-        events: newTimeclockEvents,
-      });
-
-      this.loading = false
-      this.closeDialog();
+      try {
+        await this.$store.dispatch("updateTimecard", {
+          timecardId: this.timecard.id,
+          events: newTimeclockEvents,
+        })
+        this.closeDialog()
+      }
+      finally {
+        this.loading = false
+      }
     },
   },
 };

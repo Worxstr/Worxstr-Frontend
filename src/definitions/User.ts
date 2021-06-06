@@ -1,3 +1,5 @@
+import store from "@/store"
+
 export type User = {
 	id: number;
 	first_name: string;
@@ -26,4 +28,19 @@ export const Manager = [
 // Take a role and a user and determine if the user has that role
 export function userIs(role: UserRole, user: User) {
 	return user.roles.map((r) => r.id).includes(role)
+}
+
+export function defaultRoute() {
+	const user = store.state.authenticatedUser
+	if (!user || !user.roles) return 'schedule'
+
+	switch (user?.roles[0]?.id) {
+		case UserRole.Employee:
+			return 'clock'
+		case UserRole.EmployeeManager:
+		case UserRole.OrganizationManager:
+			return 'jobs'
+		default:
+			return 'schedule'
+	}
 }

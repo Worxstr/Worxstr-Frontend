@@ -1,5 +1,5 @@
 <template lang="pug">
-	v-container.home
+	v-container.pb-16
 		ChangePasswordDialog(:opened.sync="changePasswordDialog")
 		SSNDialog(:opened.sync="ssnDialog")
 
@@ -7,57 +7,64 @@
 			v-toolbar-title.text-h5.font-weight-medium Settings
 
 		v-card
-			v-card-content
-				v-list(rounded subheader)
-					v-subheader My profile
-
-					table.settings-table
-						tr
-							td Name
-							td.stretch {{ authenticatedUser | fullName }}
-						
-						tr 
-							td Organization
-							td.stretch {{ authenticatedUser.organization_info.name }}
-
-						tr
-							td Roles
-							td.stretch
-								v-chip.mx-1(label v-for="role in authenticatedUser.roles")
+			v-list.pa-0(rounded subheader)
+				v-subheader.text-subtitle-1.font-weight-medium Profile
+				
+				v-list-item(two-line)
+					v-list-item-content
+						v-list-item-subtitle.mb-2 Name
+						v-list-item-title {{ authenticatedUser | fullName }}
+					v-list-item-action
+						v-btn(text color='primary' @click="signOut") Sign out
+				
+				v-list-item(two-line)
+					v-list-item-content
+						v-list-item-subtitle.mb-2 Organization
+						v-list-item-title {{ authenticatedUser.organization_info.name }}
+								
+				v-list-item(two-line v-if="authenticatedUser.employee_info")
+					v-list-item-content
+						v-list-item-subtitle.mb-2 Address
+						v-list-item-title {{ authenticatedUser.employee_info.address }}
+				
+				v-list-item(two-line)
+					v-list-item-content
+						v-list-item-subtitle.mb-2 Roles
+						v-list-item-title
+							div
+								v-chip.mr-2(label v-for="role in authenticatedUser.roles")
 									| {{role.name | snakeToSpace | capitalize }}
-
-						tr(v-if="authenticatedUser.employee_info")
-							td Address
-							td.stretch {{ authenticatedUser.employee_info.address }}
-
-						tr(v-if="authenticatedUser.employee_info")
-							td Social Security number
-							td.stretch {{ authenticatedUser.employee_info.ssn}}
-							td
-								v-btn(text color='primary' @click="ssnDialog = true") Set SSN
-					
-					v-subheader Security
-					
-					table.settings-table
-						tr
-							td.stretch Change password
-							td
-								v-btn(text color='primary' @click="changePasswordDialog = true") Change
-							
-
-					v-subheader Preferences
 						
-					table.settings-table
-						tr
-							td.stretch Dark theme
-							td
-								v-select.input-small(
-									v-model="preferences.darkMode"
-									:items="['System default', 'Light', 'Dark']"
-									@change="updateDarkMode"
-									dense
-									hide-details
-								)
+				v-list-item(two-line v-if="authenticatedUser.employee_info && !authenticatedUser.employee_info.need_info")
+					v-list-item-content
+						v-list-item-title SSN
+					v-list-item-action
+						v-btn(text color='primary' @click="ssnDialog = true") Set SSN
+
+				v-divider
+				v-subheader.text-subtitle-1.font-weight-medium Security
+				
+				v-list-item(two-line)
+					v-list-item-content
+						v-list-item-title Password
+					v-list-item-action
+						v-btn(text color='primary' @click="changePasswordDialog = true") Change
+
+				v-divider
+				v-subheader.text-subtitle-1.font-weight-medium Preferences
+
+				v-list-item(two-line)
+					v-list-item-content
+						v-list-item-title Dark theme
+					v-list-item-action
+						v-select.fit(
+							v-model="preferences.darkMode"
+							:items="['System default', 'Light', 'Dark']"
+							@change="updateDarkMode"
+							dense
+							hide-details
+						)
+
 </template>
 
 <script>
@@ -102,27 +109,10 @@ export default {
 			}
 			window.localStorage.setItem('darkMode', this.preferences.darkMode)
 			this.$vuetify.theme.dark = dark
-		}
+		},
+		signOut() {
+			this.$store.dispatch('signOut')
+		},
 	}
 };
 </script>
-
-<style lang="scss">
-	
-	.settings-table {
-		th, td {
-			padding: 15px 20px;
-			white-space: nowrap;
-		}
-		td.stretch {
-			width: 100%;
-		}
-		.input-large {
-			width: 250px;
-		}
-		.input-small {
-			width: 150px;
-		}
-	}
-
-</style>

@@ -8,7 +8,7 @@ import { Capacitor } from '@capacitor/core';
 
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
-import { User } from '@/definitions/User'
+import { User, defaultRoute } from '@/definitions/User'
 import { ClockEvent, Timecard } from '@/definitions/Clock'
 import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
@@ -278,9 +278,7 @@ const storeConfig: StoreOptions<RootState> = {
         //   value: authToken
         // })
 
-        dispatch('getAuthenticatedUser')
-        
-        router.push({ name: 'schedule' })
+        router.push({ name: defaultRoute() })
         return data
       }
       catch (err) {
@@ -331,6 +329,7 @@ const storeConfig: StoreOptions<RootState> = {
 
       })
       commit('SET_AUTHENTICATED_USER', data.authenticated_user)
+      return data.authenticated_user
     },
 
     async loadUser({ commit }, userId) {

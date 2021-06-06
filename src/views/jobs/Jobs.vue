@@ -6,13 +6,15 @@ v-container(v-if="loading && !(directJobs.length || indirectJobs.length)")
   )
 
 v-container.approvals(v-else)
-  edit-job-dialog(:opened.sync="createJobDialog", create)
+  edit-job-dialog(:opened.sync="createJobDialog", :create='true')
 
   .mb-5
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Jobs
       v-spacer
-      v-btn(text, @click="openCreateJobDialog", v-if="userIsOrgManager") Add new job
+      v-btn(text, @click="openCreateJobDialog", v-if="userIsOrgManager")
+        v-icon(left) mdi-plus
+        span Add job
 
     v-card(v-if="directJobs.length")
       v-list
@@ -60,6 +62,7 @@ export default class JobsView extends Vue {
   
   loading = false
   createJobDialog = false
+  editJobDialog = false
 
   metaInfo() {
     return { title: 'Jobs' }
@@ -67,8 +70,12 @@ export default class JobsView extends Vue {
 
   async mounted() {
     this.loading = true
-    await this.$store.dispatch("loadJobs")
-    this.loading = false
+    try {
+      await this.$store.dispatch("loadJobs")
+    }
+    finally {
+      this.loading = false
+    }
   }
 
   get directJobs(): Job[] {

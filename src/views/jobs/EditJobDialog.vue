@@ -18,6 +18,8 @@ v-dialog(
     )
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
+      
+      v-divider
 
       v-card-text.py-0
         v-subheader Job details
@@ -41,7 +43,7 @@ v-dialog(
 
         v-subheader Managers
         v-select(
-          v-if="managers.organization.length",
+          v-if="managers.organization && managers.organization.length",
           v-model="editedJob.organization_manager_id",
           :items="managers.organization",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
@@ -52,7 +54,7 @@ v-dialog(
           label="Organizational manager"
         )
         v-select(
-          v-if="managers.employee.length",
+          v-if="managers.employee && managers.employee.length",
           v-model="editedJob.employee_manager_id",
           :items="managers.employee",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
@@ -116,7 +118,7 @@ export default class EditJobDialog extends Vue {
   @Prop(Object) readonly job: Job | undefined
 
   isValid = false
-  editedJob?: Job
+  editedJob: any // TODO: add type
   loading = false
   place: any
 
@@ -144,14 +146,14 @@ export default class EditJobDialog extends Vue {
   }
 
   @Watch('opened')
-  onOpened(newVal: boolean, oldVal: boolean) {
+  onOpened(newVal: boolean) {
     if (newVal) this.$store.dispatch('loadManagers');
     if (newVal && this.job)
       this.editedJob = Object.assign({}, this.job);
   }
 
   get managers(): User[] {
-    return this.$store.getters.managers
+    return this.$store.state.managers
   }
 
   closeDialog() {
@@ -171,11 +173,15 @@ export default class EditJobDialog extends Vue {
     this.place = place
   }
   async updateJob() {
-    this.loading = true;
-    if (this.create) await this.$store.dispatch("createJob", this.editedJob);
-    else await this.$store.dispatch("updateJob", this.editedJob);
-    this.loading = false;
-    this.closeDialog();
+    this.loading = true
+    try {
+      if (this.create) await this.$store.dispatch("createJob", this.editedJob)
+      else await this.$store.dispatch("updateJob", this.editedJob)
+      this.closeDialog()
+    }
+    finally {
+      this.loading = false
+    }
   }
 }
 </script>
