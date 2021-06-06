@@ -2,7 +2,7 @@
 node_modules
 /directories
 
-!types.d.ts
+!src/types.d.ts
 
 
 # local env files
