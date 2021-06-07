@@ -1,23 +1,27 @@
-# worxstr
+# Worxstr
 
-## Project setup
-```
+## Setup
+
+Install dependencies
+```bash
 yarn install
 ```
 
-### Compiles and hot-reloads for development
-```
+## Development
+
+```bash
 yarn serve
 ```
 
-### Compiles and minifies for production
-```
+## Production
+```bash
 yarn build
 ```
 
-### Lints and fixes files
-```
-yarn lint
+To build for mobile device or emulator:
+```bash
+npx cap sync
+npx cap run
 ```
 
 ### Customize configuration
