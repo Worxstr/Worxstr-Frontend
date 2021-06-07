@@ -49,9 +49,9 @@ v-dialog(
           v-divider
           v-subheader Site locations
           
-          v-expand-transition(appear v-for='employeeId in editedShift.employee_ids' :key='employeeId')
+          v-expand-transition(appear v-for='(employeeId, index) in editedShift.employee_ids' :key='employeeId')
             v-text-field(
-              v-model="editedShift.site_location",
+              v-model="editedShift.employee_locations[index]",
               :label="`Location for ${employeeName(employeeId)}`",
               :rules="rules.location",
               outlined,
@@ -84,7 +84,7 @@ v-dialog(
         )
 
         //- Recurrence section
-        v-checkbox(label="Recurring shift" v-model='recurring')
+        //- v-checkbox(label="Recurring shift" v-model='recurring')
 
         v-expand-transition
           div(v-show='recurring')
@@ -126,7 +126,6 @@ v-dialog(
                   span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") After
                   v-text-field(outlined dense hide-details type='number' increment='1' min='1' suffix='occurences' value='1')
 
-      code {{editedShift}}
       v-spacer
 
       v-card-actions
@@ -170,7 +169,7 @@ export default class EditShiftDialog extends Vue {
 
   editedShift: any = {
     employee_ids: [],
-    site_location: '',
+    employee_locations: [],
     time_begin: nowISO,
     time_end: hourFromNowISO,
     repeat: {
@@ -229,19 +228,24 @@ export default class EditShiftDialog extends Vue {
   async updateShift() {
     this.loading = true
 
-    // Convert negative (unassigned) employee ids to nulls
-    this.editedShift.employee_ids = this.editedShift.employee_ids.map((id: number) => {
-      id < 0 ? -id : id
-    })
+    
+    
+    const shift = {
+      ...this.editedShift,
+      time_begin: (new Date(this.editedShift.time_begin)).toISOString(),
+      time_end: (new Date(this.editedShift.time_end)).toISOString(),
+      employees: this.editedShift.employee_ids.map((id: number, index: number) => ({
+        id: id < 0 ? null : id, // Convert negative (unassigned) employee ids to nulls
+        site_location: this.editedShift.employee_locations[index]
+      }))
+    }
+    delete shift.employee_ids
+    delete shift.employee_locations
+    console.log(shift)
 
     // TODO: Validate shifts so that end time is after start time
 
     try {
-      const shift = {
-        ...this.editedShift,
-        time_begin: (new Date(this.editedShift.time_begin)).toISOString(),
-        time_end: (new Date(this.editedShift.time_end)).toISOString()
-      }
       if (this.create)
         await this.$store.dispatch("createShift", {
           shift,
