@@ -7,10 +7,9 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import { io } from "socket.io-client"
 import VueSocketIO from 'vue-socket.io'
-
 import * as VueGoogleMaps from 'vue2-google-maps'
-import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete';
-
+import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
+import VueAnalytics from 'vue-analytics'
 import './assets/style.css'
 import './plugins/filters'
 
@@ -25,7 +24,7 @@ Vue.use(VueGoogleMaps, {
 Vue.use(VuetifyGoogleAutocomplete, {
   apiKey: GOOGLE_MAPS_API_KEY,
   vueGoogleMapsCompatibility: true,
-});
+})
 
 Vue.use(new VueSocketIO({
   debug: true,
@@ -38,6 +37,11 @@ Vue.use(new VueSocketIO({
     mutationPrefix: 'SOCKET_'
   },
 }))
+
+Vue.use(VueAnalytics, {
+  id: 'G-B8WX7VT5ED',
+  router
+})
 
 Vue.config.productionTip = false
 
