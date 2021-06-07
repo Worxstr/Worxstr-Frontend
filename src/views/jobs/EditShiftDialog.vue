@@ -28,35 +28,41 @@ v-dialog(
         v-select(
           v-model="editedShift.employee_ids",
           :items="employees",
-          :item-text="(e) => e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`",
+          :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)",
           :item-value="'id'",
           outlined,
-          multiple
+          multiple,
           dense,
           required,
           label="Employees"
         )
           template(v-slot:append-item)
             v-divider
-            v-list-item(ripple @click='addUnassignedEmployee')
-              v-list-item-avatar(:color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`")
+            v-list-item(ripple, @click="addUnassignedEmployee")
+              v-list-item-avatar(
+                :color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`"
+              )
                 v-icon mdi-plus
               v-list-item-content
                 v-list-item-title Add unassigned
-        
+
         //- Location fields
-        div(v-if='editedShift.employee_ids.length')
+        div(v-if="editedShift.employee_ids.length")
           v-divider
           v-subheader Site locations
-          
-          v-expand-transition(appear v-for='(employeeId, index) in editedShift.employee_ids' :key='employeeId')
+
+          v-expand-transition(
+            appear,
+            v-for="(employeeId, index) in editedShift.employee_ids",
+            :key="employeeId"
+          )
             v-text-field(
               v-model="editedShift.employee_locations[index]",
               :label="`Location for ${employeeName(employeeId)}`",
               :rules="rules.location",
               outlined,
               dense,
-              required,
+              required
             )
 
         v-divider
@@ -70,7 +76,7 @@ v-dialog(
           dense,
           outlined,
           required,
-          v-model="editedShift.time_begin",
+          v-model="editedShift.time_begin"
         )
         //- End date
         v-text-field(
@@ -79,52 +85,90 @@ v-dialog(
           dense,
           outlined,
           required,
-          hide-details,
-          v-model="editedShift.time_end",
+          v-model="editedShift.time_end"
         )
 
+        v-divider
+
         //- Recurrence section
-        //- v-checkbox(label="Recurring shift" v-model='recurring')
+        v-checkbox(label="Recurring", v-model="recurring", hide-details)
 
         v-expand-transition
-          div(v-show='recurring')
-
+          .pt-5(v-show="recurring")
             //- Repeat every {num} {day,week,month,year}
             .d-flex.align-center
               p.text-no-wrap.mb-6.mr-1 Repeat every
               v-text-field.px-2(
                 outlined,
                 dense,
-                v-model='editedShift.repeat.repeatEvery.value'
+                v-model="editedShift.repeat.repeatEvery.value",
                 type="number",
                 increment="1",
                 min="1"
+                :rules="rules.repeatEvery"
               )
               v-select(
                 outlined,
                 dense,
-                v-model='editedShift.repeat.repeatEvery.unit'
+                v-model="editedShift.repeat.repeatEvery.unit",
                 :items="[{ text: 'day' }, { text: 'week' }, { text: 'month' }, { text: 'year' }]"
+                :item-text="i => `${i.text}${editedShift.repeat.repeatEvery.value == 1 ? '' : 's'}`"
+                item-value='text'
               )
 
-            //- Weekday selector
-            p.text-no-wrap.mb-0 Repeat on
-              weekday-selector(
-                v-if='editedShift.repeat.repeatEvery.unit == "week"'
-                v-model='editedShift.repeat.repeatOn'
+            //- Week option
+            div(v-if="editedShift.repeat.repeatEvery.unit == 'week'")
+              p.text-no-wrap.mb-0 Repeat on
+              weekday-selector(v-model="editedShift.repeat.weekly")
+
+            //- Month option
+            .d-flex.align-center(
+              v-if="editedShift.repeat.repeatEvery.unit == 'month'"
+            )
+              p.text-no-wrap.mb-6.mr-1 Repeat on
+              v-select.px-2(
+                outlined,
+                dense,
+                v-model="editedShift.repeat.monthly",
+                :items="[ { value: 'byDate', text: 'By date' }, { value: 'byDay', text: 'By day' }, ]"
               )
 
             //- End on selector
             p.text-no-wrap.mb-0 Ends
-            v-radio-group()
-              v-radio(value='on')
-                template(v-slot:label)
-                  span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") On
-                  v-text-field(outlined dense hide-details type='datetime-local')
-              v-radio(value='after')
-                template(v-slot:label)
-                  span.mr-3.mr-sm-0(:style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`") After
-                  v-text-field(outlined dense hide-details type='number' increment='1' min='1' suffix='occurences' value='1')
+            v-radio-group(v-model="ends")
+              .d-flex.mb-2
+                v-radio.mr-4.mr-sm-0(
+                  value="on",
+                  label="On",
+                  :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
+                )
+                v-text-field(
+                  v-model="editedShift.repeat.ends.date",
+                  outlined,
+                  dense,
+                  hide-details,
+                  type="datetime-local",
+                  :disabled="ends == 'after'"
+                  :rules="rules.endsOn"
+                )
+              .d-flex
+                v-radio.mr-4.mr-sm-0(
+                  value="after",
+                  label="After",
+                  :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
+                )
+                v-text-field(
+                  v-model="editedShift.repeat.ends.occurences",
+                  outlined,
+                  dense,
+                  hide-details,
+                  type="number",
+                  increment="1",
+                  min="1",
+                  suffix="occurences",
+                  value="1",
+                  :disabled="ends == 'on'"
+                )
 
       v-spacer
 
@@ -137,6 +181,7 @@ v-dialog(
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
+import dayjs from 'dayjs'
 import { Vue, Component, Prop, Watch } from "vue-property-decorator"
 import { User } from "@/definitions/User"
 import { Shift } from "@/definitions/Job"
@@ -152,11 +197,15 @@ interface UnassignedEmployee {
   id: number;
 }
 
-const now: string | Date = new Date()
-      now.setSeconds(0,0)
-      now.setMinutes(0)
-const nowISO = now.toISOString().replace('Z','')
-const hourFromNowISO = new Date(now.getTime() + 60 * 60 * 1000).toISOString().replace('Z','')
+const now = new Date()
+  if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
+  now.setSeconds(0, 0)
+  now.setMinutes(0)
+const hourFromNow = new Date(now.getTime() + 60 * 60 * 1000)
+const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+const nowLocal = dayjs(now).format('YYYY-MM-DDTHH:mm:ss')
+const hourFromNowLocal = dayjs(hourFromNow).format('YYYY-MM-DDTHH:mm:ss')
+const weekFromNowLocal = dayjs(weekFromNow).format('YYYY-MM-DDTHH:mm:ss')
 
 @Component({
   components: {
@@ -164,22 +213,25 @@ const hourFromNowISO = new Date(now.getTime() + 60 * 60 * 1000).toISOString().re
   }
 })
 export default class EditShiftDialog extends Vue {
-  
+
   recurring = false
+  ends = 'on'
 
   editedShift: any = {
     employee_ids: [],
     employee_locations: [],
-    time_begin: nowISO,
-    time_end: hourFromNowISO,
+    time_begin: nowLocal,
+    time_end: hourFromNowLocal,
     repeat: {
       repeatEvery: {
         value: 1,
         unit: 'week',
       },
-      repeatOn: ['m','t','w','tr','f'],
+      weekly: ['m', 't', 'w', 'tr', 'f'],
+      monthly: 'byDate',
       ends: {
-        date: '2021-06-01T21:03:00Z'
+        date: weekFromNowLocal,
+        occurences: 10
       }
     }
   }
@@ -190,11 +242,14 @@ export default class EditShiftDialog extends Vue {
     date: [exists("Date required")],
     timeBegin: [exists("Start time required"), timeValidate("Time invalid")],
     timeEnd: [exists("End time required"), timeValidate("Time invalid")],
+    repeatEvery: [exists("Repeat required")],
+    endsOn: [exists("End date required")],
+    endsAfter: [exists("Number of occurences required")],
   }
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ default: false }) readonly create!: boolean // Creating new shift or editing existing
-  @Prop({ default: [] }) readonly employees!: (User|UnassignedEmployee)[] 
+  @Prop({ default: [] }) readonly employees!: (User | UnassignedEmployee)[]
   @Prop(Object) readonly shift: Shift | undefined
 
   closeDialog() {
@@ -204,13 +259,11 @@ export default class EditShiftDialog extends Vue {
 
   employeeName(employeeId: number) {
     const e: any = this.employees.find(e => e.id == employeeId)
-
     if (employeeId > 0) return `${e.first_name} ${e.last_name}`
-    
     return `Unassigned ${-employeeId}`
-    
+
   }
-  
+
   /* 
     List of selected employees contains negative IDs to represent unassigned employees
     Every value has to be unique, so the values cannot be all 'null'. Before
@@ -228,23 +281,35 @@ export default class EditShiftDialog extends Vue {
   async updateShift() {
     this.loading = true
 
-    
-    
+    // Build request object
     const shift = {
       ...this.editedShift,
-      time_begin: (new Date(this.editedShift.time_begin)).toISOString(),
-      time_end: (new Date(this.editedShift.time_end)).toISOString(),
       employees: this.editedShift.employee_ids.map((id: number, index: number) => ({
         id: id < 0 ? null : id, // Convert negative (unassigned) employee ids to nulls
         site_location: this.editedShift.employee_locations[index]
       }))
     }
+    // Correct date strings
+    shift.time_begin = (new Date(shift.time_begin)).toISOString(),
+      shift.time_end = (new Date(shift.time_end)).toISOString(),
+      shift.repeat.ends.date = (new Date(shift.repeat.ends.date)).toISOString()
+
+    // Delete unwanted fields
     delete shift.employee_ids
     delete shift.employee_locations
-    console.log(shift)
+    if (!this.recurring) delete shift.repeat
+    else {
+      if (shift.repeat.repeatEvery.unit != 'week') delete shift.repeat.weekly
+      if (shift.repeat.repeatEvery.unit != 'month') delete shift.repeat.monthly
+
+      if (this.ends == 'on') delete shift.repeat.ends.occurences
+      else {
+        shift.repeat.ends.occurences = +shift.repeat.ends.occurences
+        delete shift.repeat.ends.date
+      }
+    }
 
     // TODO: Validate shifts so that end time is after start time
-
     try {
       if (this.create)
         await this.$store.dispatch("createShift", {
