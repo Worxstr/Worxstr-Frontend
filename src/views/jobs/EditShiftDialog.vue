@@ -104,16 +104,16 @@ v-dialog(
                 v-model="editedShift.repeat.repeatEvery.value",
                 type="number",
                 increment="1",
-                min="1"
+                min="1",
                 :rules="rules.repeatEvery"
               )
               v-select(
                 outlined,
                 dense,
                 v-model="editedShift.repeat.repeatEvery.unit",
-                :items="[{ text: 'day' }, { text: 'week' }, { text: 'month' }, { text: 'year' }]"
-                :item-text="i => `${i.text}${editedShift.repeat.repeatEvery.value == 1 ? '' : 's'}`"
-                item-value='text'
+                :items="[{ text: 'day' }, { text: 'week' }, { text: 'month' }, { text: 'year' }]",
+                :item-text="(i) => `${i.text}${editedShift.repeat.repeatEvery.value == 1 ? '' : 's'}`",
+                item-value="text"
               )
 
             //- Week option
@@ -130,7 +130,13 @@ v-dialog(
                 outlined,
                 dense,
                 v-model="editedShift.repeat.monthly",
-                :items="[ { value: 'byDate', text: 'By date' }, { value: 'byDay', text: 'By day' }, ]"
+                :items="[ {\
+                  value: 'byDate',\
+                  text: `Monthly on day ${(new Date()).getDate()}`\
+                }, {\
+                  value: 'byDay',\
+                  text: `Monthly on ${weekAndDay(new Date())}`\
+                }, ]"
               )
 
             //- End on selector
@@ -148,7 +154,7 @@ v-dialog(
                   dense,
                   hide-details,
                   type="datetime-local",
-                  :disabled="ends == 'after'"
+                  :disabled="ends == 'after'",
                   :rules="rules.endsOn"
                 )
               .d-flex
@@ -198,9 +204,9 @@ interface UnassignedEmployee {
 }
 
 const now = new Date()
-  if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
-  now.setSeconds(0, 0)
-  now.setMinutes(0)
+if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
+now.setSeconds(0, 0)
+now.setMinutes(0)
 const hourFromNow = new Date(now.getTime() + 60 * 60 * 1000)
 const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
 const nowLocal = dayjs(now).format('YYYY-MM-DDTHH:mm:ss')
@@ -261,7 +267,13 @@ export default class EditShiftDialog extends Vue {
     const e: any = this.employees.find(e => e.id == employeeId)
     if (employeeId > 0) return `${e.first_name} ${e.last_name}`
     return `Unassigned ${-employeeId}`
+  }
 
+  weekAndDay(date: Date) {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      prefixes = ['first', 'second', 'third', 'fourth', 'fifth']
+
+    return prefixes[Math.ceil(date.getDate() / 7 - 1)] + ' ' + days[date.getDay()]
   }
 
   /* 
