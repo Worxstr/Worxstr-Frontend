@@ -132,10 +132,10 @@ v-dialog(
                 v-model="editedShift.repeat.monthly",
                 :items="[ {\
                   value: 'byDate',\
-                  text: `Monthly on day ${(new Date()).getDate()}`\
+                  text: `Monthly on day ${monthlyText.byDate}`\
                 }, {\
                   value: 'byDay',\
-                  text: `Monthly on ${weekAndDay(new Date())}`\
+                  text: `Monthly on ${monthlyText.byDay}`\
                 }, ]"
               )
 
@@ -269,6 +269,14 @@ export default class EditShiftDialog extends Vue {
     return `Unassigned ${-employeeId}`
   }
 
+  get monthlyText() {
+    return {
+      byDate: (new Date(this.editedShift.time_begin)).getDate(),
+      byDay: this.weekAndDay(new Date(this.editedShift.time_begin)),
+    }
+  }
+
+  // Get numbered weekday of the month (ex. second Tuesday)
   weekAndDay(date: Date) {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       prefixes = ['first', 'second', 'third', 'fourth', 'fifth']
