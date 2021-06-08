@@ -9,7 +9,7 @@ import { io } from "socket.io-client"
 import VueSocketIO from 'vue-socket.io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
-import VueAnalytics from 'vue-analytics'
+import VueGtag from "vue-gtag";
 import './assets/style.css'
 import './plugins/filters'
 
@@ -38,10 +38,9 @@ Vue.use(new VueSocketIO({
   },
 }))
 
-Vue.use(VueAnalytics, {
-  id: 'G-PL4N7MNF5W',
-  router
-})
+Vue.use(VueGtag, {
+  config: { id: "UA-1234567-1" }
+});
 
 Vue.config.productionTip = false
 
