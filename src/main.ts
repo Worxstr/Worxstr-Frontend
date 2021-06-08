@@ -39,7 +39,7 @@ Vue.use(new VueSocketIO({
 }))
 
 Vue.use(VueAnalytics, {
-  id: 'G-B8WX7VT5ED',
+  id: 'G-PL4N7MNF5W',
   router
 })
 
