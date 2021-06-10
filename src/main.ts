@@ -13,8 +13,6 @@ import VueGtag from "vue-gtag";
 import './assets/style.css'
 import './plugins/filters'
 
-console.info(process.env)
-
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
 Vue.use(VueGoogleMaps, {
@@ -41,7 +39,7 @@ Vue.use(new VueSocketIO({
 }))
 
 Vue.use(VueGtag, {
-  config: { id: process.env.GTAG_API }
+  config: { id: process.env.VUE_APP_GTAG_API }
 });
 
 Vue.config.productionTip = false
