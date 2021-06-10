@@ -5,7 +5,8 @@ node_modules
 !src/types.d.ts
 
 
-# local env files
+# local env 
+.vscode
 .env.local
 .env.*.local
 
