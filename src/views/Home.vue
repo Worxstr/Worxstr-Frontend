@@ -61,7 +61,7 @@
               )
 
   //- Calculator
-  v-sheet#calculator.gradient(dark)
+  v-sheet#calculator.gradient.pb-10(dark)
     v-container.py-16.px-10
       v-row(cols='12', md='6')
         v-col.d-flex.flex-column.justify-center
@@ -101,6 +101,7 @@
         p.text-h2.font-weight-bold {{ savingsEstimate | numberFormat }}
           span.text-h6.ml-2 hours / year
         span.text-body-2(style='opacity: 0.8') In estimated savings
+
 </template>
 
 <script>
