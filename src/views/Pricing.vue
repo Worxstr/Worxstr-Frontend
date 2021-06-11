@@ -36,7 +36,7 @@ div
 						v-btn(
 							text,
 							:color="$vuetify.theme.dark ? 'secondary' : 'primary'",
-							v-if="tier.price == null",
+							v-if="tier.name == 'Advanced'",
 							:to="{ name: 'contact', params: { subject: 'My company is interested in the advanced plan' } }"
 						) Contact sales
 						v-btn(
