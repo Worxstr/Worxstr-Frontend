@@ -29,8 +29,11 @@ div
 								| {{ tier.contractors == Infinity ? 'Unlimited' : tier.contractors }} contractors
 
 							li.mb-1.text-subtitle-1.font-weight-medium
-								| ${{ tier.transactions | numberFormat }}/year/manager
-								.text-body-2 in total transactions
+								span(v-if='tier.transactions == null')
+									| Variable transaction caps
+								span(v-else)
+									| ${{ tier.transactions | numberFormat }}/year/manager
+									.text-body-2 in total transactions
 
 					v-card-actions.justify-center
 						v-btn(
@@ -76,7 +79,7 @@ export default class Pricing extends Vue {
 			priceIsMinimum: true,
 			name: 'Advanced',
 			contractors: Infinity,
-			transactions: 75000,
+			transactions: null,
 			support: '24/7 support',
 		}
 	]
