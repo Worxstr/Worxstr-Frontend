@@ -32,6 +32,10 @@ export default {
         text: "Contact us",
       },
       {
+        to: "pricing",
+        text: "Pricing",
+      },
+      {
         to: "privacy",
         text: "Privacy policy",
       },

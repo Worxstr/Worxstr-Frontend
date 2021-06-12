@@ -25,7 +25,7 @@ v-app
       div(v-for="link in secondaryNavLinks")
         //- Icon button
         v-tooltip(
-          v-if="link.icon && ($vuetify.breakpoint.mdAndUp || !link.desktopOnly)"
+          v-if="link.icon && ($vuetify.breakpoint.mdAndUp || !link.desktopOnly)",
           bottom
         )
           template(v-slot:activator="{ on, attrs }")
@@ -41,7 +41,7 @@ v-app
 
         //- Text button
         v-btn(
-          v-else-if='!link.icon',
+          v-else-if="!link.icon",
           v-hide="link.desktopOnly && $vuetify.breakpoint.mdAndUp",
           text,
           :to="{ name: link.to }",
@@ -230,14 +230,19 @@ export default class App extends Vue {
         desktopOnly: true,
       }]
       :
-      [{
-        text: 'About',
-        to: 'about',
-      },
-      {
-        text: 'Contact us',
-        to: 'contact',
-      }]
+      [
+        {
+          text: 'Pricing',
+          to: 'pricing'
+        }, {
+          text: 'About',
+          to: 'about',
+        },
+        {
+          text: 'Contact us',
+          to: 'contact',
+        }
+      ]
   }
 }
 </script>

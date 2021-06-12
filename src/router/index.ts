@@ -7,6 +7,7 @@ import { Capacitor } from '@capacitor/core'
 
 import Home from '@/views/Home.vue'
 import About from '@/views/About.vue'
+import Pricing from '@/views/Pricing.vue'
 import Contact from '@/views/Contact.vue'
 import Privacy from '@/views/Privacy.vue'
 import Terms from '@/views/Terms.vue'
@@ -53,6 +54,14 @@ const routes = [
     component: About,
     meta: {
       showFooter: true,
+    }
+  },
+  {
+    path: '/pricing',
+    name: 'pricing',
+    component: Pricing,
+    meta: {
+      showFooter: true
     }
   },
   {
