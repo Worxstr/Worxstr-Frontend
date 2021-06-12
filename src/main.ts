@@ -47,11 +47,9 @@ Vue.config.productionTip = false
 async function init() {
 
   // Get local user data
-  const storedUser = JSON.parse(localStorage.getItem('authenticatedUser') || '{}')
+  const storedUser = localStorage.getItem('authenticatedUser') 
   if (storedUser) {
-    store.commit('SET_AUTHENTICATED_USER', {
-      user: storedUser,
-    })
+    store.commit('SET_AUTHENTICATED_USER', JSON.parse(storedUser))
   }
 
   try {
