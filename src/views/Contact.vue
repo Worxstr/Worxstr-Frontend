@@ -2,7 +2,7 @@
 v-container.d-flex.flex-column.justify-center.align-center.pt-8
   p.text-h4.font-weight-bold.mb-10 Contact us
 
-  contact-form(style="width: 600px; max-width: 100%")
+  contact-form(:subject="subject" style="width: 600px; max-width: 100%")
 </template>
 
 <script>
@@ -16,23 +16,13 @@ export default {
   components: {
     ContactForm,
   },
+  data: () => ({
+    subject: '',
+  }),
   mounted() {
     if (this.$route.params.subject) {
       this.subject = this.$route.params.subject
     }
-  },
-  data: () => ({
-    subject: "",
-    message: "",
-  }),
-  methods: {
-    openEmailClient() {
-      const win = window.open(
-        `mailto:support@worxstr.com?subject=${this.subject}&body=${this.message}`,
-        "_blank"
-      );
-      win.focus();
-    },
-  },
+  }
 };
 </script>

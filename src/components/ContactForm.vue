@@ -4,38 +4,50 @@ v-form.flex-grow-1.d-flex.flex-column(
   v-model="isValid",
   style="width: 100%"
 )
-	v-text-field(
-		outlined,
-		filled,
-		dense,
-		label="Subject",
-		v-model="subject",
-		required
-	)
+  v-text-field(
+    outlined,
+    filled,
+    :color="color",
+    dense,
+    label="Subject",
+    v-model="subject",
+    required
+  )
 
-	v-textarea(
-		outlined,
-		filled,
-		dense,
-		label="Message",
-		v-model="message",
-		required,
-		hide-details
-	)
+  v-textarea(
+    outlined,
+    filled,
+    :color="color",
+    dense,
+    label="Message",
+    v-model="message",
+    required,
+    hide-details
+  )
 
-	v-spacer
+  v-spacer
 
-	v-card-actions
-		v-spacer
-		v-btn(text, @click="openEmailClient") Send message
-
+  v-card-actions
+    v-spacer
+    v-btn(text, @click="openEmailClient") Send message
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
 export default class ContactForm extends Vue {
 	
+  @Prop(String) readonly color: string | undefined
+	@Prop(String) readonly subject: string | undefined
+	@Prop(String) readonly message: string | undefined
+
+  openEmailClient() {
+    const win = window.open(
+      `mailto:support@worxstr.com?subject=${this.subject||''}&body=${this.message||''}`,
+      "_blank"
+    )
+    if (win) win.focus()
+  }
 }
 </script>
