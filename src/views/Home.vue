@@ -101,33 +101,32 @@
             min="1"
           )
 
-      .d-flex.flex-column.flex-md-row.mt-10.align-center.justify-center
+      v-row(cols="12", md="6")
+      
         //- Savings estimate and helpful prompt
-        .d-flex.flex-column.align-center
-          p.text-h2.mb-2.font-weight-bold {{ savingsEstimate | numberFormat }}
-            span.text-h6.ml-2 hours / year
+        v-col.d-flex.flex-column.justify-center
+          .d-flex.flex-column.align-center
+            p.text-h2.mb-2.font-weight-bold {{ savingsEstimate | numberFormat }}
+              span.text-h6.ml-2 hours / year
 
-          span.mb-4.text-body-2(style="opacity: 0.8") In estimated savings
+            span.mb-4.text-body-2(style="opacity: 0.8") In estimated savings
 
-          v-expand-transition
-            .d-flex(
-              v-if="savingsEstimate != 1805.2 && calculator.helpful == null"
-            )
-              p.mr-2.mb-0.text-h6.text-no-wrap Was this helpful?
-              v-btn(text, color="white", @click="calculator.helpful = true") Yes
-              v-btn(text, color="white", @click="calculator.helpful = false") No
-
+            v-expand-transition
+              .d-flex(
+                v-if="savingsEstimate != 1805.2 && calculator.helpful == null"
+              )
+                p.mr-2.mb-0.text-h6.text-no-wrap Was this helpful?
+                v-btn(text, color="white", @click="calculator.helpful = true") Yes
+                v-btn(text, color="white", @click="calculator.helpful = false") No
+                
         //- Feedback form
-        v-slide-x-transition
-          .d-flex.flex-column.ml-md-16.align-center(
-            v-if="calculator.helpful != null",
-            :style="`max-width: ${$vuetify.breakpoint.mdAndUp ? '400px' : '100%'}`"
-          )
-            p.mt-4.mt-md-0.text-center.text-md-start
-              span(v-if="calculator.helpful") Great! We'd love to get in touch with you about how Worxstr can help solve your management issues.
-              span(v-else) We're sorry to hear that. We would love a moment to speak with you about what we could be doing differently.
+        v-col(cols="12", md="6" v-if="calculator.helpful != null")
+          p.text-center.text-md-start
+            span(v-if="calculator.helpful") Great! We'd love to get in touch with you about how Worxstr can help solve your management issues.
+            span(v-else) We're sorry to hear that. We would love a moment to speak with you about what we could be doing differently.
             
-            contact-form
+          contact-form
+
 </template>
 
 <script>

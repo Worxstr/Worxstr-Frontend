@@ -2,7 +2,7 @@
 v-form.flex-grow-1.d-flex.flex-column(
   @submit.prevent="updateTimecard",
   v-model="isValid",
-  style="width: 600px; max-width: 100%"
+  style="width: 100%"
 )
 	v-text-field(
 		outlined,

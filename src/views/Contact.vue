@@ -2,7 +2,7 @@
 v-container.d-flex.flex-column.justify-center.align-center.pt-8
   p.text-h4.font-weight-bold.mb-10 Contact us
 
-  contact-form
+  contact-form(style="width: 600px; max-width: 100%")
 </template>
 
 <script>
