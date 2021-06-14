@@ -102,7 +102,6 @@
           )
 
       v-row(cols="12", md="6")
-      
         //- Savings estimate and helpful prompt
         v-col.d-flex.flex-column.justify-center
           .d-flex.flex-column.align-center
@@ -112,27 +111,26 @@
             span.mb-4.text-body-2(style="opacity: 0.8") In estimated savings
 
             v-expand-transition
-              .d-flex(
-                v-if="savingsEstimate != 1805.2 && calculator.helpful == null"
-              )
-                p.mr-2.mb-0.text-h6.text-no-wrap Was this helpful?
+              .d-flex.align-center(v-if="calculator.promptHelpful && calculator.helpful == null")
+                p.mr-2.mb-0.text-body-1.font-weight-medium.text-no-wrap Was this helpful?
                 v-btn(text, color="white", @click="calculator.helpful = true") Yes
                 v-btn(text, color="white", @click="calculator.helpful = false") No
-                
+
         //- Feedback form
-        v-col(cols="12", md="6" v-if="calculator.helpful != null")
+        v-col(cols="12", md="6", v-if="calculator.helpful != null")
           p.text-center.text-md-start
             span(v-if="calculator.helpful") Great! We'd love to get in touch with you about how Worxstr can help solve your management issues.
             span(v-else) We're sorry to hear that. We would love a moment to speak with you about what we could be doing differently.
-            
-          contact-form
 
+          contact-form
 </template>
 
 <script>
 import { defaultRoute } from "@/definitions/User";
 import { mapState, mapActions } from "vuex";
 import ContactForm from "@/components/ContactForm.vue";
+
+let timeout;
 
 export default {
   name: "home",
@@ -153,6 +151,12 @@ export default {
       return defaultRoute(this.authenticatedUser);
     },
   },
+  watch: {
+    savingsEstimate() {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => (this.calculator.promptHelpful = true), 1500);
+    },
+  },
   methods: {
     ...mapActions(["signOut"]),
   },
@@ -161,6 +165,7 @@ export default {
       managers: 10,
       contracts: 15,
       contractors: 20,
+      promptHelpful: false,
       helpful: null,
     },
     carouselIndex: 0,
