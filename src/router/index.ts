@@ -117,6 +117,12 @@ const routes = [
     path: '/users/:userId',
     name: 'user',
     component: User,
+    meta: {
+      paramMap: {
+        userId: 'users',
+        prop: 'first_name'
+      },
+    }
   },
   {
     path: '/clock',
@@ -150,7 +156,11 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      restrict: Manager
+      restrict: Manager,
+      paramMap: {
+        jobId: 'jobs',
+        prop: 'name'
+      }
     }
   },
   {
@@ -192,7 +202,7 @@ const routes = [
     },
     children: [{
       name: 'conversation',
-      path: 'conversation/:conversationId',
+      path: ':conversationId',
       component: Conversation,
       meta: {
         fullHeight: true,

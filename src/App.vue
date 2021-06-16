@@ -1,14 +1,14 @@
 <template lang="pug">
 v-app
   v-navigation-drawer.d-flex.flex-column(
-    v-if='$vuetify.breakpoint.mdAndUp'
+    v-if="$vuetify.breakpoint.mdAndUp",
     app,
     :mini-variant="miniNav",
     mini-variant-width="68",
     permanent
   )
     v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
-      a(@click='miniNav = !miniNav' text)
+      a(@click="miniNav = !miniNav", text)
         v-avatar.mb-1(tile, size="40")
           img(src="@/assets/logo.svg", alt="Worxstr logo")
 
@@ -34,7 +34,6 @@ v-app
 
         v-list-item-content
           v-list-item-title {{ link.text | capitalize }}
-      
 
     template(v-slot:append)
       v-list(dense)
@@ -44,7 +43,7 @@ v-app
           v-for="link in secondaryNavLinks",
           :key="link.text",
           link,
-          active-class="primary--text"
+          active-class="primary--text",
           :to="link.to ? { name: link.to } : null",
           @click="() => (link.click ? link.click() : '')"
         )
@@ -56,7 +55,7 @@ v-app
 
   v-app-bar(
     app,
-    outlined
+    outlined,
     :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'",
     elevate-on-scroll
   )
@@ -70,12 +69,12 @@ v-app
 
     v-container.pa-0.fill-height
       v-breadcrumbs.py-0.pl-1(:items="breadcrumbs", large)
-        template(v-slot:item='{ item }')
-          v-breadcrumbs-item(:to='item.to' exact) {{ item.text | capitalize }}
-      
+        template(v-slot:item="{ item }")
+          v-breadcrumbs-item(:to="item.to", exact) {{ item.text | capitalize }}
+
       v-spacer
 
-      portal-target(name='toolbarActions')
+      portal-target(name="toolbarActions")
 
   v-main(
     :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }",
@@ -120,6 +119,7 @@ v-app
 import { Component, Vue } from "vue-property-decorator";
 import WorxstrFooter from "@/components/WorxstrFooter.vue";
 import { Role, User, UserRole } from "./definitions/User";
+import dayjs from "dayjs";
 
 @Component({
   metaInfo: {
@@ -194,14 +194,52 @@ export default class App extends Vue {
   }
 
   get breadcrumbs() {
+
+    /* This generates breadcrumbs for the toolbar dynamically
+       The route path is used to generate these.
+       If a route path contains a parameter, ie. /jobs/:jobId, then
+       the route metadata can be used to map the parameter name to an item
+       in the store state. For example, the metadata
+       meta: {
+         paramMap: {
+           jobId: 'jobs',
+           prop: 'name'
+         }
+       }
+       will replace the :jobId param with the 'name' property of the job in state.jobs
+       that matches the id given.
+    */
+
     const segments = this.$route.path
-      .replace('/','')
+      .replace('/', '')
       .split('/')
 
-    return segments.map((pathSegment, i) => ({
-        text: pathSegment,
-        to: '/' + segments.slice(0, i+1).join('/'),
-      }), '')
+    const matched = this.$route.matched[0].path
+      .replace('/', '')
+      .split('/')
+
+
+    return segments.map((pathSegment, i) => {
+      let dynamicName
+      try {
+        // Get param mapping from route metadata
+        const paramMap = this.$route.meta.paramMap
+        // Extract the param name
+        const param = matched[i].replace(':','')
+        // Find the item in the store state
+        const item = this.$store.state[paramMap[param] || segments[0]].byId[pathSegment]
+
+        dynamicName = item[paramMap.prop || 'name']
+      }
+      catch (e) {
+        dynamicName = pathSegment
+      }
+
+      return {
+        text: matched[i].includes(':') ? dynamicName : pathSegment,
+        to: '/' + segments.slice(0, i + 1).join('/'),
+      }
+    })
   }
 
   get showBottomNav() {
@@ -259,32 +297,32 @@ export default class App extends Vue {
   get secondaryNavLinks() {
     return this.authenticatedUser
       ? [
-          {
-            text: "Settings",
-            icon: "mdi-cog",
-            to: "settings",
-          },
-          {
-            text: "Sign out",
-            icon: "mdi-logout-variant",
-            click: this.signOut,
-            desktopOnly: true,
-          },
-        ]
+        {
+          text: "Settings",
+          icon: "mdi-cog",
+          to: "settings",
+        },
+        {
+          text: "Sign out",
+          icon: "mdi-logout-variant",
+          click: this.signOut,
+          desktopOnly: true,
+        },
+      ]
       : [
-          {
-            text: "Pricing",
-            to: "pricing",
-          },
-          {
-            text: "About",
-            to: "about",
-          },
-          {
-            text: "Contact us",
-            to: "contact",
-          },
-        ];
+        {
+          text: "Pricing",
+          to: "pricing",
+        },
+        {
+          text: "About",
+          to: "about",
+        },
+        {
+          text: "Contact us",
+          to: "contact",
+        },
+      ];
   }
 }
 </script>
