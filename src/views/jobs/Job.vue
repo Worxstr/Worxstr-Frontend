@@ -1,6 +1,5 @@
 <template lang="pug">
 v-container(v-if="loading")
-  v-skeleton-loader.py-4(type="heading")
   v-card.pa-4
     v-skeleton-loader.py-2(type="image, image")
     v-skeleton-loader.py-2(type="sentences, sentences")

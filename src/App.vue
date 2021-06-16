@@ -1,7 +1,7 @@
 <template lang="pug">
 v-app
   v-navigation-drawer.d-flex.flex-column(
-    v-if="$vuetify.breakpoint.mdAndUp",
+    v-if="!$route.meta.landing && $vuetify.breakpoint.mdAndUp",
     app,
     :mini-variant="miniNav",
     mini-variant-width="68",
@@ -59,22 +59,28 @@ v-app
     :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'",
     elevate-on-scroll
   )
-    router-link(
+    router-link.mb-1.mr-2(
       to="/",
       style="text-decoration: none",
-      v-if="$route.name == 'home'"
+      v-if="$route.meta.landing"
     )
       v-avatar(tile, size="40")
         img(src="@/assets/logo.svg", alt="Worxstr logo")
 
-    v-container.pa-0.fill-height
-      v-breadcrumbs.py-0.pl-1(:items="breadcrumbs", large)
-        template(v-slot:item="{ item }")
-          v-breadcrumbs-item(:to="item.to", exact) {{ item.text | capitalize }}
+    v-breadcrumbs.py-0.pl-1(
+      :items="breadcrumbs",
+      large,
+      v-if="!$route.meta.landing"
+    )
+      template(v-slot:item="{ item }")
+        v-breadcrumbs-item(:to="item.to", exact) {{ item.text | capitalize }}
 
-      v-spacer
+    v-spacer
 
-      portal-target(name="toolbarActions")
+    portal-target(name="toolbarActions")
+
+    div(v-if="$route.meta.landing")
+      v-btn(v-for="link in landingLinks", text, :to="link.to") {{ link.text }}
 
   v-main(
     :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }",
@@ -100,7 +106,7 @@ v-app
         span {{ link.text | capitalize }}
         v-icon {{ link.icon }}
 
-  worxstr-footer(v-if="$route.meta.showFooter")
+  worxstr-footer(v-if="$route.meta.landing")
 
   v-snackbar(app, v-model="snackbar.show", :timeout="snackbar.timeout")
     | {{ snackbar.text }}
@@ -225,7 +231,7 @@ export default class App extends Vue {
         // Get param mapping from route metadata
         const paramMap = this.$route.meta.paramMap
         // Extract the param name
-        const param = matched[i].replace(':','')
+        const param = matched[i].replace(':', '')
         // Find the item in the store state
         const item = this.$store.state[paramMap[param] || segments[0]].byId[pathSegment]
 
@@ -294,36 +300,34 @@ export default class App extends Vue {
       }));
   }
 
-  get secondaryNavLinks() {
-    return this.authenticatedUser
-      ? [
-        {
-          text: "Settings",
-          icon: "mdi-cog",
-          to: "settings",
-        },
-        {
-          text: "Sign out",
-          icon: "mdi-logout-variant",
-          click: this.signOut,
-          desktopOnly: true,
-        },
-      ]
-      : [
-        {
-          text: "Pricing",
-          to: "pricing",
-        },
-        {
-          text: "About",
-          to: "about",
-        },
-        {
-          text: "Contact us",
-          to: "contact",
-        },
-      ];
-  }
+  secondaryNavLinks = [
+    {
+      text: "Settings",
+      icon: "mdi-cog",
+      to: "settings",
+    },
+    {
+      text: "Sign out",
+      icon: "mdi-logout-variant",
+      click: this.signOut,
+      desktopOnly: true,
+    },
+  ]
+
+  landingLinks = [
+    {
+      text: "Pricing",
+      to: "pricing",
+    },
+    {
+      text: "About",
+      to: "about",
+    },
+    {
+      text: "Contact us",
+      to: "contact",
+    },
+  ]
 }
 </script>
 

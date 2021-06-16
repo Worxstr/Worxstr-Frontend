@@ -39,7 +39,7 @@ const routes = [
     name: 'home',
     component: Home,
     meta: {
-      showFooter: true,
+      landing: true,
     },
     beforeEnter(to: Route, from: Route, next: Function) {
       if (Capacitor.isNativePlatform() && store.state.authenticatedUser) {
@@ -53,7 +53,7 @@ const routes = [
     name: 'about',
     component: About,
     meta: {
-      showFooter: true,
+      landing: true,
     }
   },
   {
@@ -61,7 +61,7 @@ const routes = [
     name: 'pricing',
     component: Pricing,
     meta: {
-      showFooter: true
+      landing: true
     }
   },
   {
@@ -69,7 +69,7 @@ const routes = [
     name: 'contact',
     component: Contact,
     meta: {
-      showFooter: true,
+      landing: true,
     }
   },
   {
@@ -77,7 +77,7 @@ const routes = [
     name: 'privacy',
     component: Privacy,
     meta: {
-      showFooter: true,
+      landing: true,
     }
   },
   {
@@ -85,7 +85,7 @@ const routes = [
     name: 'terms',
     component: Terms,
     meta: {
-      showFooter: true,
+      landing: true,
     }
   },
   {
@@ -93,7 +93,8 @@ const routes = [
     name: 'signIn',
     component: SignIn,
     meta: {
-      fullHeight: true
+      landing: true,
+      fullHeight: true,
     }
   },
   {
@@ -102,7 +103,8 @@ const routes = [
     name: 'signUp',
     component: SignUp,
     meta: {
-      fullHeight: true
+      landing: true,
+      fullHeight: true,
     }
   },
   {
@@ -110,6 +112,7 @@ const routes = [
     name: 'resetPassword',
     component: ResetPassword,
     meta: {
+      landing: true,
       fullHeight: true,
     }
   },
