@@ -3,6 +3,7 @@ node_modules
 /directories
 
 !src/types.d.ts
+dist/
 
 
 # local env 
