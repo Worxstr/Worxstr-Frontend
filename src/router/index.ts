@@ -143,6 +143,14 @@ const routes = [
     meta: {
       icon: 'mdi-calendar-check',
       restrict: Manager
+    },
+  },
+  {
+    path: '/jobs/:jobId',
+    name: 'job',
+    component: Job,
+    meta: {
+      restrict: Manager
     }
   },
   {
@@ -151,14 +159,6 @@ const routes = [
     component: Payments,
     meta: {
       icon: 'mdi-clock-check-outline',
-      restrict: Manager
-    }
-  },
-  {
-    path: '/jobs/:jobId',
-    name: 'job',
-    component: Job,
-    meta: {
       restrict: Manager
     }
   },

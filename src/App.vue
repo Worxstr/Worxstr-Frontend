@@ -3,12 +3,12 @@ v-app
   v-navigation-drawer.d-flex.flex-column(
     v-if='$vuetify.breakpoint.mdAndUp'
     app,
-    :mini-variant.sync="miniNav",
+    :mini-variant="miniNav",
     mini-variant-width="68",
     permanent
   )
     v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
-      router-link(to="/", style="text-decoration: none")
+      a(@click='miniNav = !miniNav' text)
         v-avatar.mb-1(tile, size="40")
           img(src="@/assets/logo.svg", alt="Worxstr logo")
 
@@ -21,7 +21,7 @@ v-app
 
     v-divider
 
-    v-list(dense)
+    v-list.pt-0(dense)
       v-list-item.py-1(
         v-for="link in primaryNavLinks",
         :key="link.text",
@@ -69,36 +69,17 @@ v-app
         img(src="@/assets/logo.svg", alt="Worxstr logo")
 
     v-container.pa-0.fill-height
-      v-breadcrumbs.py-0.pl-1(:items="items", large)
-
+      v-breadcrumbs.py-0.pl-1(:items="breadcrumbs", large)
+        template(v-slot:item='{ item }')
+          v-breadcrumbs-item(:to='item.to' exact) {{ item.text }}
+      
       v-spacer
 
-      //- div(v-for="link in secondaryNavLinks")
-      //-   //- Icon button
-      //-   v-tooltip(
-      //-     v-if="link.icon && ($vuetify.breakpoint.mdAndUp || !link.desktopOnly)",
-      //-     bottom
-      //-   )
-      //-     template(v-slot:activator="{ on, attrs }")
-      //-       v-btn(
-      //-         icon,
-      //-         v-bind="attrs",
-      //-         v-on="on",
-      //-         :to="link.to ? { name: link.to } : null",
-      //-         @click="() => (link.click ? link.click() : '')"
-      //-       )
-      //-         v-icon {{ link.icon }}
-      //-     span {{ link.text }}
-
-      //-   //- Text button
-      //-   v-btn(
-      //-     v-else-if="!link.icon",
-      //-     v-hide="link.desktopOnly && $vuetify.breakpoint.mdAndUp",
-      //-     text,
-      //-     :to="{ name: link.to }",
-      //-     active-class="primary--text"
-      //-   )
-      //-     | {{ link.text }}
+      v-btn(text, ) Edit
+      v-btn(
+        text,
+        color="red",
+      ) Close
 
   v-main(
     :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }",
@@ -161,18 +142,6 @@ import { Role, User, UserRole } from "./definitions/User";
 })
 export default class App extends Vue {
   miniNav = false;
-  items = [
-    {
-      text: "Home",
-      disabled: false,
-      href: "breadcrumbs_dashboard",
-    },
-    {
-      text: "Jobs",
-      disabled: true,
-      href: "breadcrumbs_link_2",
-    },
-  ];
 
   async mounted() {
     this.initDarkMode();
@@ -226,6 +195,17 @@ export default class App extends Vue {
 
   get snackbar() {
     return this.$store.state.snackbar;
+  }
+
+  get breadcrumbs() {
+    const segments = this.$route.path
+      .replace('/','')
+      .split('/')
+
+    return segments.map((pathSegment, i) => ({
+        text: pathSegment.charAt(0).toUpperCase() + pathSegment.slice(1),
+        to: '/' + segments.slice(0, i+1).join('/'),
+      }), '')
   }
 
   get showBottomNav() {
@@ -323,5 +303,8 @@ export default class App extends Vue {
   transform: translateY(100%) !important;
   height: 0 !important;
   opacity: 0;
+}
+.v-breadcrumbs__item--disabled {
+  color: black !important;
 }
 </style>
