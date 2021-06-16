@@ -1,5 +1,0 @@
-version: "Apple Swift version 5.4 (swiftlang-1205.0.26.9 clang-1205.0.19.55)"
-options: "4b6191d16b4c374631bd27884565ffcf"
-build_time: [1623475255, 540600000]
-inputs:
-  "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/node_modules/@capacitor/dialog/ios/Plugin/DialogPlugin.swift": [1623273476, 265000000]

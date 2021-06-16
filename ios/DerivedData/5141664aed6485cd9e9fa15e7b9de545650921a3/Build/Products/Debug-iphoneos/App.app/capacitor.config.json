@@ -1,6 +1,0 @@
-{
-	"appId": "com.worxstr.app",
-	"appName": "worxstr",
-	"webDir": "dist",
-	"bundledWebRuntime": false
-}

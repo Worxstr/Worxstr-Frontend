@@ -1,5 +1,0 @@
-version: "Apple Swift version 5.4 (swiftlang-1205.0.26.9 clang-1205.0.19.55)"
-options: "69a07647a640069cdb3ffabc78e0bf70"
-build_time: [1623475255, 441526000]
-inputs:
-  "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/node_modules/@capacitor/geolocation/ios/Plugin/GeolocationPlugin.swift": [1623273476, 311000000]

@@ -1,5 +1,0 @@
-version: "Apple Swift version 5.4 (swiftlang-1205.0.26.9 clang-1205.0.19.55)"
-options: "db38906cb6e151fec20c71c84c4ff3e8"
-build_time: [1623475275, 173541000]
-inputs:
-  "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/ios/App/App/AppDelegate.swift": [1623474834, 850889075]
