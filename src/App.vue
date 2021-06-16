@@ -1,53 +1,104 @@
 <template lang="pug">
 v-app
-  v-app-bar(
+  v-navigation-drawer.d-flex.flex-column(
+    v-if='$vuetify.breakpoint.mdAndUp'
     app,
-    :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'",
-    elevate-on-scroll
+    :mini-variant.sync="miniNav",
+    mini-variant-width="68",
+    permanent
   )
-    v-container.py-0.fill-height
+    v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
       router-link(to="/", style="text-decoration: none")
-        v-avatar.mr-10(tile, size="50")
+        v-avatar.mb-1(tile, size="40")
           img(src="@/assets/logo.svg", alt="Worxstr logo")
 
-      .d-flex.flex-row(v-if="!$vuetify.breakpoint.smAndDown")
-        v-btn(
-          v-for="link in primaryNavLinks",
-          :key="link.text",
-          text,
-          :to="{ name: link.to }",
-          active-class="primary--text"
-        )
-          | {{ link.text }}
+      v-toolbar-title.ml-3.font-weight-medium Worxstr
 
       v-spacer
 
-      div(v-for="link in secondaryNavLinks")
-        //- Icon button
-        v-tooltip(
-          v-if="link.icon && ($vuetify.breakpoint.mdAndUp || !link.desktopOnly)",
-          bottom
-        )
-          template(v-slot:activator="{ on, attrs }")
-            v-btn(
-              icon,
-              v-bind="attrs",
-              v-on="on",
-              :to="link.to ? { name: link.to } : null",
-              @click="() => (link.click ? link.click() : '')"
-            )
-              v-icon {{ link.icon }}
-          span {{ link.text }}
+      v-btn(icon, @click.stop="miniNav = !miniNav")
+        v-icon mdi-chevron-left
 
-        //- Text button
-        v-btn(
-          v-else-if="!link.icon",
-          v-hide="link.desktopOnly && $vuetify.breakpoint.mdAndUp",
-          text,
-          :to="{ name: link.to }",
+    v-divider
+
+    v-list(dense)
+      v-list-item.py-1(
+        v-for="link in primaryNavLinks",
+        :key="link.text",
+        link,
+        :to="{ name: link.to }",
+        active-class="primary--text"
+      )
+        v-list-item-icon
+          v-icon {{ link.icon }}
+
+        v-list-item-content
+          v-list-item-title {{ link.text | capitalize }}
+      
+
+    template(v-slot:append)
+      v-list(dense)
+        v-divider
+
+        v-list-item.py-1(
+          v-for="link in secondaryNavLinks",
+          :key="link.text",
+          link,
           active-class="primary--text"
+          :to="link.to ? { name: link.to } : null",
+          @click="() => (link.click ? link.click() : '')"
         )
-          | {{ link.text }}
+          v-list-item-icon
+            v-icon {{ link.icon }}
+
+          v-list-item-content
+            v-list-item-title {{ link.text | capitalize }}
+
+  v-app-bar(
+    app,
+    outlined
+    :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'",
+    elevate-on-scroll
+  )
+    router-link(
+      to="/",
+      style="text-decoration: none",
+      v-if="$route.name == 'home'"
+    )
+      v-avatar(tile, size="40")
+        img(src="@/assets/logo.svg", alt="Worxstr logo")
+
+    v-container.pa-0.fill-height
+      v-breadcrumbs.py-0.pl-1(:items="items", large)
+
+      v-spacer
+
+      //- div(v-for="link in secondaryNavLinks")
+      //-   //- Icon button
+      //-   v-tooltip(
+      //-     v-if="link.icon && ($vuetify.breakpoint.mdAndUp || !link.desktopOnly)",
+      //-     bottom
+      //-   )
+      //-     template(v-slot:activator="{ on, attrs }")
+      //-       v-btn(
+      //-         icon,
+      //-         v-bind="attrs",
+      //-         v-on="on",
+      //-         :to="link.to ? { name: link.to } : null",
+      //-         @click="() => (link.click ? link.click() : '')"
+      //-       )
+      //-         v-icon {{ link.icon }}
+      //-     span {{ link.text }}
+
+      //-   //- Text button
+      //-   v-btn(
+      //-     v-else-if="!link.icon",
+      //-     v-hide="link.desktopOnly && $vuetify.breakpoint.mdAndUp",
+      //-     text,
+      //-     :to="{ name: link.to }",
+      //-     active-class="primary--text"
+      //-   )
+      //-     | {{ link.text }}
 
   v-main(
     :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }",
@@ -89,18 +140,18 @@ v-app
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import WorxstrFooter from '@/components/WorxstrFooter.vue'
-import { Role, User, UserRole } from './definitions/User'
+import { Component, Vue } from "vue-property-decorator";
+import WorxstrFooter from "@/components/WorxstrFooter.vue";
+import { Role, User, UserRole } from "./definitions/User";
 
 @Component({
   metaInfo: {
-    titleTemplate: '%s | Worxstr',
+    titleTemplate: "%s | Worxstr",
     meta: [
-      { charset: 'utf-8' },
+      { charset: "utf-8" },
       {
-        name: 'description',
-        content: 'The adaptive solution to wide-scale temp labor management.',
+        name: "description",
+        content: "The adaptive solution to wide-scale temp labor management.",
       },
     ],
   },
@@ -109,140 +160,155 @@ import { Role, User, UserRole } from './definitions/User'
   },
 })
 export default class App extends Vue {
+  miniNav = false;
+  items = [
+    {
+      text: "Home",
+      disabled: false,
+      href: "breadcrumbs_dashboard",
+    },
+    {
+      text: "Jobs",
+      disabled: true,
+      href: "breadcrumbs_link_2",
+    },
+  ];
 
   async mounted() {
-    this.initDarkMode()
-    this.promptSSN()
+    this.initDarkMode();
+    this.promptSSN();
   }
 
   promptSSN() {
     // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
-    const user = this.$store.state.authenticatedUser
+    const user = this.$store.state.authenticatedUser;
     if (user.employee_info && user.employee_info.need_info) {
-      this.$store.dispatch('showSnackbar', {
+      this.$store.dispatch("showSnackbar", {
         text: `You haven't set your Social Security number.`,
         action: () => {
           this.$router.push({
-            name: 'settings',
+            name: "settings",
             params: {
-              openSSNDialog: 'true',
+              openSSNDialog: "true",
             },
-          })
+          });
         },
-        actionText: 'Set SSN',
-      })
+        actionText: "Set SSN",
+      });
     }
   }
 
   initDarkMode() {
-    const userPrefDarkMode = window.localStorage.getItem('darkMode')
-    const darkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const userPrefDarkMode = window.localStorage.getItem("darkMode");
+    const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-    if (userPrefDarkMode == 'System default') {
+    if (userPrefDarkMode == "System default") {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      darkMediaQuery.addEventListener('change', e => {
-        this.$vuetify.theme.dark = !this.$vuetify.theme.dark
-      })
+      darkMediaQuery.addEventListener("change", (e) => {
+        this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      });
 
       if (darkMediaQuery.matches) {
-        setTimeout(() => (this.$vuetify.theme.dark = true), 0)
+        setTimeout(() => (this.$vuetify.theme.dark = true), 0);
       }
     } else {
-      this.$vuetify.theme.dark = userPrefDarkMode == 'Dark'
+      this.$vuetify.theme.dark = userPrefDarkMode == "Dark";
     }
   }
 
   signOut(): void {
-    this.$store.dispatch('signOut')
+    this.$store.dispatch("signOut");
   }
 
   get authenticatedUser(): User {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.authenticatedUser;
   }
 
   get snackbar() {
-    return this.$store.state.snackbar
+    return this.$store.state.snackbar;
   }
 
   get showBottomNav() {
-    return this.authenticatedUser &&
+    return (
+      this.authenticatedUser &&
       this.authenticatedUser.roles &&
       this.$vuetify.breakpoint.smAndDown &&
-      this.$route.name != 'conversation' &&
-      this.$route.name != 'home'
+      this.$route.name != "conversation" &&
+      this.$route.name != "home"
+    );
   }
 
   get bottomPadding() {
-    return this.showBottomNav ? this.footerHeight : 0
+    return this.showBottomNav ? this.footerHeight : 0;
   }
 
   get headerHeight() {
-    return this.$vuetify.breakpoint.mdAndUp ? 64 : 56
+    return this.$vuetify.breakpoint.mdAndUp ? 64 : 56;
   }
-  footerHeight = 56
+  footerHeight = 56;
 
   get pageHeight() {
     // Normal view
-    if (!this.$route.meta.fullHeight) return '100%'
-
+    if (!this.$route.meta.fullHeight) return "100%";
     // Full height, bottom nav visible
-    else if (this.showBottomNav) return `calc(100vh - (${this.headerHeight}px + ${this.footerHeight}px))`
-
+    else if (this.showBottomNav)
+      return `calc(100vh - (${this.headerHeight}px + ${this.footerHeight}px))`;
     // Full height, bottom nav hidden
-    else return `calc(100vh - ${this.headerHeight}px)`
+    else return `calc(100vh - ${this.headerHeight}px)`;
   }
 
   get primaryNavLinks() {
     return this.$router.options.routes
       ?.filter((route) => {
-        const meta = route.meta
+        const meta = route.meta;
 
-        if (!meta) return false
+        if (!meta) return false;
 
-        const icon = !!meta.icon
-        const restrict = !!meta.restrict
+        const icon = !!meta.icon;
+        const restrict = !!meta.restrict;
 
         const userHasRequiredRole = !!meta.restrict?.some((role: UserRole) =>
           this.authenticatedUser?.roles?.map((r: Role) => r.id).includes(role)
-        )
+        );
 
-        return (icon && !restrict) || (icon && userHasRequiredRole)
+        return (icon && !restrict) || (icon && userHasRequiredRole);
       })
       .map((route) => ({
         text: route.name,
         icon: route.meta.icon,
         to: route.name,
-      }))
+      }));
   }
 
   get secondaryNavLinks() {
     return this.authenticatedUser
-      ?
-      [{
-        text: 'Settings',
-        icon: 'mdi-cog',
-        to: 'settings',
-      },
-      {
-        text: 'Sign out',
-        icon: 'mdi-logout-variant',
-        click: this.signOut,
-        desktopOnly: true,
-      }]
-      :
-      [
-        {
-          text: 'Pricing',
-          to: 'pricing'
-        }, {
-          text: 'About',
-          to: 'about',
-        },
-        {
-          text: 'Contact us',
-          to: 'contact',
-        }
-      ]
+      ? [
+          {
+            text: "Settings",
+            icon: "mdi-cog",
+            to: "settings",
+          },
+          {
+            text: "Sign out",
+            icon: "mdi-logout-variant",
+            click: this.signOut,
+            desktopOnly: true,
+          },
+        ]
+      : [
+          {
+            text: "Pricing",
+            to: "pricing",
+          },
+          {
+            text: "About",
+            to: "about",
+          },
+          {
+            text: "Contact us",
+            to: "contact",
+          },
+        ];
   }
 }
 </script>
