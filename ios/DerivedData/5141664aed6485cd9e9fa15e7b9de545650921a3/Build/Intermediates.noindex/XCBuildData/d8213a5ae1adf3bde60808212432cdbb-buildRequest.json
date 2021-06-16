@@ -1,0 +1,64 @@
+{
+  "buildCommand" : "build",
+  "configuredTargets" : [
+    {
+      "guid" : "83930e71c04a837c34588c040431182934df47fa015b7e467e67e9235d8a1297"
+    }
+  ],
+  "continueBuildingAfterErrors" : false,
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "activeArchitecture" : "arm64",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : false,
+      "platform" : "iphoneos",
+      "sdk" : "iphoneos14.5",
+      "sdkVariant" : "iphoneos",
+      "supportedArchitectures" : [
+        "arm64v8",
+        "arm64",
+        "armv8"
+      ],
+      "targetArchitecture" : "arm64"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/ios/DerivedData/5141664aed6485cd9e9fa15e7b9de545650921a3/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/ios/DerivedData/5141664aed6485cd9e9fa15e7b9de545650921a3/Build/Products",
+      "derivedDataPath" : "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/ios/DerivedData/5141664aed6485cd9e9fa15e7b9de545650921a3",
+      "indexDataStoreFolderPath" : "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/ios/DerivedData/5141664aed6485cd9e9fa15e7b9de545650921a3/Index/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/ios/DerivedData/5141664aed6485cd9e9fa15e7b9de545650921a3/Index/PrecompiledHeaders",
+      "pchPath" : "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/ios/DerivedData/5141664aed6485cd9e9fa15e7b9de545650921a3/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "commandLine" : {
+        "table" : {
+
+        }
+      },
+      "synthesized" : {
+        "table" : {
+          "ACTION" : "build",
+          "ASSETCATALOG_FILTER_FOR_DEVICE_MODEL" : "iPhone10,3",
+          "ASSETCATALOG_FILTER_FOR_DEVICE_OS_VERSION" : "14.6",
+          "BUILD_ACTIVE_RESOURCES_ONLY" : "YES",
+          "ENABLE_PREVIEWS" : "NO",
+          "TARGET_DEVICE_IDENTIFIER" : "5141664aed6485cd9e9fa15e7b9de545650921a3",
+          "TARGET_DEVICE_MODEL" : "iPhone10,3",
+          "TARGET_DEVICE_OS_VERSION" : "14.6",
+          "TARGET_DEVICE_PLATFORM_NAME" : "iphoneos"
+        }
+      }
+    }
+  },
+  "schemeCommand" : "launch",
+  "shouldCollectMetrics" : false,
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

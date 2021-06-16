@@ -1,6 +1,6 @@
 {
   "appId": "com.worxstr.worxstr",
-  "appName": "worxstr",
+  "appName": "Worxstr",
   "bundledWebRuntime": false,
   "npmClient": "yarn",
   "webDir": "dist",

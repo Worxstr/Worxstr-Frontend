@@ -1,0 +1,13 @@
+{
+  'version': 0,
+  'case-sensitive': 'false',
+  'roots': [{
+    'type': 'directory',
+    'name': "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/ios/DerivedData/5141664aed6485cd9e9fa15e7b9de545650921a3/Build/Products/Debug-iphoneos/CapacitorDialog/CapacitorDialog.framework/Modules"
+    'contents': [{
+      'type': 'file',
+      'name': "module.modulemap",
+      'external-contents': "/Users/alexwohlbruck/worxstr/Worxstr-Frontend/ios/DerivedData/5141664aed6485cd9e9fa15e7b9de545650921a3/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/CapacitorDialog.build/unextended-module.modulemap",
+    }]
+  }]
+}

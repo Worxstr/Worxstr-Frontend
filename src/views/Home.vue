@@ -2,9 +2,9 @@
 .home
   //- Main CTA
   v-sheet.gradient
-    v-container
+    v-container.px-10
       v-row.jumbo.d-flex.align-center
-        v-col.ma-8
+        v-col.flex-grow-1
           img.svg-shadow(src='@/assets/logo.svg', width='150' alt='Worxstr logo')
 
           .my-8
@@ -20,19 +20,19 @@
             v-btn.mr-3(outlined, color='secondary', :to='{ name: `signIn` }') Sign in
 
           v-spacer(style='height: 70px')
-
-        v-col(v-if='$vuetify.breakpoint.mdAndUp')
+        v-col.flex-grow-1(v-if='$vuetify.breakpoint.mdAndUp' style='width: 50%')
           v-img(
             src='@/assets/images/landing/devices.svg',
             alt='Worxstr on mobile and web',
             :style="`transform: scale(${$vuetify.breakpoint.xl ? 1.5 : 2.5}) translate(${$vuetify.breakpoint.xl ? '3%' : '25%'}, ${$vuetify.breakpoint.xl ? '13px' : '36px'})`"
           )
+            
 
   //- Feature carousel
   v-carousel(
     v-model='carouselIndex',
     cycle,
-    interval='8000',
+    interval='80000',
     height='700',
     hide-delimiter-background,
     show-arrows-on-hover,
@@ -42,29 +42,27 @@
   )
     v-carousel-item(v-for='feature in carousel')
       v-sheet(:color='feature.color', :dark='feature.dark', height='100%')
-        .carousel-content.d-flex.flex-column.flex-md-row(
-          :class="feature.reverse ? 'flex-md-row-reverse' : ''"
-        )
-          .px-15.pt-15.pb-10.pt-md-0.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start(
-            :style='`width: ${$vuetify.breakpoint.mdAndUp ? 40 : 100}%;  : 100%`'
-          )
-            v-icon.text-h2.mb-6 {{ feature.icon }}
-            p.text-h4.font-weight-bold {{ feature.title }}
-            p {{ feature.description }}
-          .flex-grow-1
-            div(
+
+
+        v-row.jumbo.carousel-content.flex-column.flex-md-row.jumbo.d-flex.align-center.justify-center(:class="feature.reverse ? 'flex-md-row-reverse' : ''")
+          v-col.flex-grow-1
+            .px-15.pt-15.pt-md-0.pb-md-10.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start
+              v-icon.text-h2.mb-6 {{ feature.icon }}
+              p.text-h4.font-weight-bold {{ feature.title }}
+              p {{ feature.description }}
+
+          v-col.flex-grow-1(style='width: 30%')
+            v-img(
+              :src='require(`@/assets/images/landing/${feature.image}`)',
+              :alt='feature.title'
               :style='$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small'
             )
-              v-img(
-                :src='require(`@/assets/images/landing/${feature.image}`)',
-                :alt='feature.title'
-              )
 
   //- Calculator
   v-sheet#calculator.gradient(dark)
     v-container.py-16.px-10
-      v-row(cols='12', md='6')
-        v-col.d-flex.flex-column.justify-center
+      v-row
+        v-col.d-flex.flex-column.justify-center(cols='12', md='6')
           h4.text-h4.font-weight-bold.mb-4 Calculate savings with Worxstr
           p With features aimed at saving your workforce time and money, we’ve created this easy to use savings calculator that can give you an estimate of the time and value provided to your organization.
         v-col(cols='12', md='6')
@@ -143,8 +141,8 @@ export default {
           'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
         image: 'schedule.svg',
         style: {
-          large: 'transform: rotate(-2.5deg) scale(1.2) translate(100px,100px)',
-          small: 'transform: rotate(-2.5deg) scale(1.2) translate(100px,50px)',
+          large: 'transform: rotate(-2.5deg) scale(1.5) translate(20%,15%)',
+          small: 'transform: rotate(-2.5deg) scale(3.5) translatey(50px)',
         },
       },
       {
@@ -157,7 +155,7 @@ export default {
         image: 'approvals.svg',
         style: {
           large: 'transform: scale(1) translate(0px,100px)',
-          small: 'transform: scale(.9) translatey(-80px)',
+          small: 'transform: scale(3.5) translateY(30%)',
         },
       },
       {
@@ -169,8 +167,8 @@ export default {
           'Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.',
         image: 'onboarding.svg',
         style: {
-          large: 'transform: scale(1.7) translate(120px, 100px)',
-          small: 'transform: scale(1.7) translatex(150px)',
+          large: 'transform: scale(1.7) translatex(20%)',
+          small: 'transform: scale(6) translate(20px, 10%)',
         },
       },
       {
@@ -183,7 +181,7 @@ export default {
         image: 'approvals.svg',
         style: {
           large: 'transform: scale(1) translate(0px,100px)',
-          small: 'transform: scale(.9) translatey(-80px)',
+          small: 'transform: scale(3.5) translateY(30%)',
         },
       },
     ],
@@ -194,6 +192,7 @@ export default {
 <style lang="scss" scoped>
 .jumbo {
   min-height: 50vh;
+  width: 100%;
 }
 .svg-shadow {
   -webkit-filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.3));
