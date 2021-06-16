@@ -5,6 +5,7 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+import PortalVue, { Portal } from 'portal-vue'
 import { io } from "socket.io-client"
 import VueSocketIO from 'vue-socket.io'
 import * as VueGoogleMaps from 'vue2-google-maps'
@@ -14,6 +15,8 @@ import './assets/style.css'
 import './plugins/filters'
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
+
+Vue.use(PortalVue)
 
 Vue.use(VueGoogleMaps, {
   load: {

@@ -6,16 +6,19 @@ v-container(v-if="loading && !(directJobs.length || indirectJobs.length)")
   )
 
 v-container.approvals(v-else)
-  edit-job-dialog(:opened.sync="createJobDialog", :create='true')
+  edit-job-dialog(:opened.sync="createJobDialog", :create="true")
+
+  portal(to="toolbarActions")
+    v-btn(
+      text,
+      color="primary",
+      @click="openCreateJobDialog",
+      v-if="userIsOrgManager"
+    )
+      v-icon(left) mdi-plus
+      span Add job
 
   .mb-5
-    v-toolbar(flat, color="transparent")
-      v-toolbar-title.text-h6 Jobs
-      v-spacer
-      v-btn(text, @click="openCreateJobDialog", v-if="userIsOrgManager")
-        v-icon(left) mdi-plus
-        span Add job
-
     v-card(v-if="directJobs.length")
       v-list
         v-list-item(
@@ -28,7 +31,7 @@ v-container.approvals(v-else)
             v-list-item-title(v-text="job.name")
               v-list-item-subtitle(v-text="job.address")
 
-    div.d-flex.flex-column.justify-center(v-else)
+    .d-flex.flex-column.justify-center(v-else)
       v-icon.text-h2.ma-5 mdi-calendar-check
       p.text-center.text-body-1 No jobs yet.
 
@@ -59,7 +62,7 @@ import { Vue, Component } from 'vue-property-decorator'
   components: { EditJobDialog },
 })
 export default class JobsView extends Vue {
-  
+
   loading = false
   createJobDialog = false
   editJobDialog = false
@@ -85,11 +88,11 @@ export default class JobsView extends Vue {
   get indirectJobs(): Job[] {
     return this.$store.getters.indirectJobs
   }
-  
+
   get userIsOrgManager() {
     return this.$store.state.authenticatedUser ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser) : false
   }
-  
+
   openCreateJobDialog() {
     this.createJobDialog = true
   }

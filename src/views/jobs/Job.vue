@@ -15,7 +15,7 @@ div(v-else)
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
     edit-shift-dialog(
-      :create='true'
+      :create="true",
       :opened.sync="addShiftDialog",
       :employees="job.employees"
     )
@@ -31,11 +31,13 @@ div(v-else)
       :employeeName="employeeName(selectedShift.employee_id)"
     )
 
-    v-toolbar(flat, color="transparent")
-      v-toolbar-title.text-h5.font-weight-medium
-        | {{ job.name }}
-      v-spacer
-      v-btn(v-if="userIsOrgManager", text, @click="editJobDialog = true") Edit
+    portal(to="toolbarActions")
+      v-btn(
+        v-if="userIsOrgManager",
+        text,
+        color="primary",
+        @click="editJobDialog = true"
+      ) Edit
       v-btn(
         v-if="userIsOrgManager",
         text,
@@ -160,7 +162,7 @@ export default class JobView extends Vue {
       title: this.job?.name || 'Job'
     }
   }
-  
+
   async mounted() {
     this.loading = true
     try {
@@ -174,7 +176,7 @@ export default class JobView extends Vue {
   get job(): Job {
     return this.$store.getters.job(this.$route.params.jobId)
   }
-  
+
   get location() {
     return { lat: this.job.latitude, lng: this.job.longitude }
   }

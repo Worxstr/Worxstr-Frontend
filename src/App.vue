@@ -71,15 +71,11 @@ v-app
     v-container.pa-0.fill-height
       v-breadcrumbs.py-0.pl-1(:items="breadcrumbs", large)
         template(v-slot:item='{ item }')
-          v-breadcrumbs-item(:to='item.to' exact) {{ item.text }}
+          v-breadcrumbs-item(:to='item.to' exact) {{ item.text | capitalize }}
       
       v-spacer
 
-      v-btn(text, ) Edit
-      v-btn(
-        text,
-        color="red",
-      ) Close
+      portal-target(name='toolbarActions')
 
   v-main(
     :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }",
@@ -203,7 +199,7 @@ export default class App extends Vue {
       .split('/')
 
     return segments.map((pathSegment, i) => ({
-        text: pathSegment.charAt(0).toUpperCase() + pathSegment.slice(1),
+        text: pathSegment,
         to: '/' + segments.slice(0, i+1).join('/'),
       }), '')
   }
