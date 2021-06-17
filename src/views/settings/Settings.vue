@@ -3,9 +3,6 @@
 		ChangePasswordDialog(:opened.sync="changePasswordDialog")
 		SSNDialog(:opened.sync="ssnDialog")
 
-		v-toolbar(flat, color="transparent")
-			v-toolbar-title.text-h5.font-weight-medium Settings
-
 		v-card
 			v-list.pa-0(rounded subheader)
 				v-subheader.text-subtitle-1.font-weight-medium Profile
