@@ -1,6 +1,5 @@
 <template lang="pug">
 v-navigation-drawer.d-flex.flex-column(
-  v-if="!$route.meta.landing && $vuetify.breakpoint.mdAndUp",
   app,
   :mini-variant="miniNav",
   mini-variant-width="68",
@@ -55,7 +54,7 @@ v-navigation-drawer.d-flex.flex-column(
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { User } from '@/definitions/User'
+import { User, Role, UserRole } from '@/definitions/User'
 
 @Component
 export default class NavDrawer extends Vue {

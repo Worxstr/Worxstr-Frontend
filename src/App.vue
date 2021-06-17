@@ -1,29 +1,8 @@
 <template lang="pug">
 v-app
-  nav-drawer
+  nav-drawer(v-if="showNavDrawer")
 
-  v-app-bar(
-    app,
-    outlined,
-    :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'",
-    elevate-on-scroll
-  )
-    router-link.mb-1.mr-2(
-      to="/",
-      style="text-decoration: none",
-      v-if="$route.meta.landing"
-    )
-      v-avatar(tile, size="40")
-        img(src="@/assets/logo.svg", alt="Worxstr logo")
-
-    breadcrumbs
-
-    v-spacer
-
-    portal-target(name="toolbarActions")
-
-    div(v-if="$route.meta.landing")
-      v-btn(v-for="link in landingLinks", text, :to="link.to") {{ link.text }}
+  app-bar
 
   v-main(
     :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }",
@@ -38,39 +17,22 @@ v-app
       )
         router-view#router-view(:style="`height: ${pageHeight}`")
 
-  transition(name="slide-fade")
-    v-bottom-navigation(app, color="indigo", grow, v-if="showBottomNav")
-      v-btn(
-        v-for="link in primaryNavLinks",
-        :key="link.to",
-        :value="link.text",
-        :to="{ name: link.to }"
-      )
-        span {{ link.text | capitalize }}
-        v-icon {{ link.icon }}
+  bottom-nav(:show="showBottomNav")
 
-  worxstr-footer(v-if="$route.meta.landing")
+  worxstr-footer(v-if="showFooter")
 
-  v-snackbar(app, v-model="snackbar.show", :timeout="snackbar.timeout")
-    | {{ snackbar.text }}
-
-    template(v-slot:action="{ attrs }", v-if="snackbar.action")
-      v-btn(
-        color="blue",
-        text,
-        v-bind="attrs",
-        @click="() => { snackbar.action(); snackbar.show = false; }"
-      )
-        | {{ snackbar.actionText }}
+  message-snackbar
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Role, User, UserRole } from './definitions/User'
+import { User } from './definitions/User'
 
+import AppBar from '@/layouts/AppBar.vue'
 import NavDrawer from '@/layouts/NavDrawer.vue'
-import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
-import WorxstrFooter from '@/components/WorxstrFooter.vue'
+import BottomNav from '@/layouts/BottomNav.vue'
+import WorxstrFooter from '@/layouts/Footer.vue'
+import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 
 @Component({
   metaInfo: {
@@ -84,9 +46,11 @@ import WorxstrFooter from '@/components/WorxstrFooter.vue'
     ],
   },
   components: {
+    AppBar,
     NavDrawer,
-    Breadcrumbs,
+    BottomNav,
     WorxstrFooter,
+    MessageSnackbar,
   },
 })
 export default class App extends Vue {
@@ -137,8 +101,8 @@ export default class App extends Vue {
     return this.$store.state.authenticatedUser;
   }
 
-  get snackbar() {
-    return this.$store.state.snackbar;
+  get showNavDrawer() {
+    return !this.$route.meta.landing && this.$vuetify.breakpoint.mdAndUp
   }
 
   get showBottomNav() {
@@ -149,6 +113,10 @@ export default class App extends Vue {
       this.$route.name != "conversation" &&
       this.$route.name != "home"
     );
+  }
+
+  get showFooter() {
+    return this.$route.meta.landing
   }
 
   get bottomPadding() {
@@ -186,22 +154,3 @@ export default class App extends Vue {
   ]
 }
 </script>
-
-<style lang="scss">
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 0.2s ease !important;
-}
-.slide-fade-enter,
-.slide-fade-leave-to {
-  transform: translateY(100%) !important;
-  height: 0 !important;
-  opacity: 0;
-}
-.v-breadcrumbs__item--disabled {
-  color: black !important;
-}
-.white-text .v-breadcrumbs__item--disabled {
-  color: white !important;
-}
-</style>

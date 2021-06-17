@@ -1,12 +1,16 @@
 <template lang="pug">
-  v-breadcrumbs.py-0.pl-1(
-    :items="breadcrumbs",
-    large,
-    v-if="!$route.meta.landing"
-  )
-    template(v-slot:item="{ item }")
-      v-breadcrumbs-item(:to="item.to", exact :class="$vuetify.theme.dark ? 'white-text' : ''")
-        | {{ item.text | capitalize }}
+v-breadcrumbs.py-0.pl-1(
+  :items="breadcrumbs",
+  large,
+  v-if="!$route.meta.landing"
+)
+  template(v-slot:item="{ item }")
+    v-breadcrumbs-item(
+      :to="item.to",
+      exact,
+      :class="$vuetify.theme.dark ? 'white-text' : ''"
+    )
+      | {{ item.text | capitalize }}
 </template>
 
 <script lang="ts">
@@ -65,3 +69,12 @@ export default class Breadcrumbs extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.v-breadcrumbs__item--disabled {
+  color: black !important;
+}
+.white-text .v-breadcrumbs__item--disabled {
+  color: white !important;
+}
+</style>

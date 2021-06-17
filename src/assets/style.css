@@ -33,3 +33,14 @@ a {
 	text-overflow: unset;
 	padding-right: 10px;
 }
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.2s ease !important;
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateY(100%) !important;
+  height: 0 !important;
+  opacity: 0;
+}
