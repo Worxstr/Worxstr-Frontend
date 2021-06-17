@@ -5,6 +5,8 @@ import Meta from 'vue-meta'
 import store from '@/store'
 import { Capacitor } from '@capacitor/core'
 
+import { fullName, groupNameList } from '@/plugins/filters'
+
 import Home from '@/views/Home.vue'
 import About from '@/views/About.vue'
 import Pricing from '@/views/Pricing.vue'
@@ -123,7 +125,7 @@ const routes = [
     meta: {
       paramMap: {
         userId: 'users',
-        prop: 'first_name'
+        propBuilder: fullName
       },
     }
   },
@@ -203,14 +205,22 @@ const routes = [
       icon: 'mdi-message-text-outline',
       restrict: [UserRole.Employee, ...Manager],
     },
-    children: [{
-      name: 'conversation',
-      path: ':conversationId',
-      component: Conversation,
-      meta: {
-        fullHeight: true,
-      }
-    }]
+    children: [
+      {
+        name: 'conversation',
+        path: ':conversationId',
+        component: Conversation,
+        meta: {
+          fullHeight: true,
+          paramMap: {
+            conversationId: 'conversations',
+            propBuilder(conversation) {
+              return groupNameList(conversation, store.state.authenticatedUser)
+            },
+          },
+        },
+      },
+    ],
   },
   {
     path: '/settings',

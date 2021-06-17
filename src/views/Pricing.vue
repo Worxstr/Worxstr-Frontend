@@ -8,7 +8,7 @@ div
 		v-row
 			v-col(cols="12", sm="4", v-for="tier in pricingTiers")
 				v-card.hover-effect(elevation="15")
-					v-card-title {{ tier.name }}
+					v-card-title {{ tier.name | capitalize }}
 
 					v-card-text.pb-0
 						p
@@ -62,14 +62,14 @@ export default class Pricing extends Vue {
 	pricingTiers = [
 		{
 			price: 0,
-			name: 'Free',
+			name: 'free',
 			contractors: 10,
 			transactions: 75000,
 			support: 'Free tier chat assistance',
 		},
 		{
 			price: 100,
-			name: 'Standard',
+			name: 'standard',
 			contractors: 100,
 			transactions: 150000,
 			support: 'Standard support',
@@ -77,7 +77,7 @@ export default class Pricing extends Vue {
 		{
 			price: 150,
 			priceIsMinimum: true,
-			name: 'Advanced',
+			name: 'advanced',
 			contractors: Infinity,
 			transactions: null,
 			support: '24/7 support',

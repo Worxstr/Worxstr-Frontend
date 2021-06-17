@@ -67,13 +67,16 @@ v-app
       v-avatar(tile, size="40")
         img(src="@/assets/logo.svg", alt="Worxstr logo")
 
+
+
     v-breadcrumbs.py-0.pl-1(
       :items="breadcrumbs",
       large,
       v-if="!$route.meta.landing"
     )
       template(v-slot:item="{ item }")
-        v-breadcrumbs-item(:to="item.to", exact) {{ item.text | capitalize }}
+        v-breadcrumbs-item(:to="item.to", exact :class="$vuetify.theme.dark ? 'white-text' : ''")
+          | {{ item.text | capitalize }}
 
     v-spacer
 
@@ -214,16 +217,17 @@ export default class App extends Vue {
        }
        will replace the :jobId param with the 'name' property of the job in state.jobs
        that matches the id given.
+       paramMap can also contain a prop 'propBuilder' that will specify how to build
+       the text string
     */
 
     const segments = this.$route.path
       .replace('/', '')
       .split('/')
 
-    const matched = this.$route.matched[0].path
+    const matched = this.$route.matched[this.$route.matched.length - 1].path
       .replace('/', '')
       .split('/')
-
 
     return segments.map((pathSegment, i) => {
       let dynamicName
@@ -234,15 +238,15 @@ export default class App extends Vue {
         const param = matched[i].replace(':', '')
         // Find the item in the store state
         const item = this.$store.state[paramMap[param] || segments[0]].byId[pathSegment]
-
-        dynamicName = item[paramMap.prop || 'name']
+        // Use the specified prop or propBuilder to get the name of the object
+        dynamicName = paramMap.propBuilder ? paramMap.propBuilder(item) : item[paramMap.prop || 'name']
       }
       catch (e) {
         dynamicName = pathSegment
       }
 
       return {
-        text: matched[i].includes(':') ? dynamicName : pathSegment,
+        text: matched[i]?.includes(':') ? dynamicName : pathSegment,
         to: '/' + segments.slice(0, i + 1).join('/'),
       }
     })
@@ -344,5 +348,8 @@ export default class App extends Vue {
 }
 .v-breadcrumbs__item--disabled {
   color: black !important;
+}
+.white-text .v-breadcrumbs__item--disabled {
+  color: white !important;
 }
 </style>

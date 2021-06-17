@@ -4,6 +4,9 @@ html {
 a {
 	text-decoration: none;
 }
+.v-btn__content {
+	text-transform: none;
+}
 .gradient {
 	background: rgb(46, 106, 239);
 	background: linear-gradient(
