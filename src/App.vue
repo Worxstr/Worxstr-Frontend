@@ -55,48 +55,6 @@ import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 })
 export default class App extends Vue {
 
-  async mounted() {
-    this.initDarkMode();
-    this.promptSSN();
-  }
-
-  promptSSN() {
-    // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
-    const user = this.$store.state.authenticatedUser;
-    if (user.employee_info && user.employee_info.need_info) {
-      this.$store.dispatch("showSnackbar", {
-        text: `You haven't set your Social Security number.`,
-        action: () => {
-          this.$router.push({
-            name: "settings",
-            params: {
-              openSSNDialog: "true",
-            },
-          });
-        },
-        actionText: "Set SSN",
-      });
-    }
-  }
-
-  initDarkMode() {
-    const userPrefDarkMode = window.localStorage.getItem("darkMode");
-    const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    if (userPrefDarkMode == "System default") {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      darkMediaQuery.addEventListener("change", (e) => {
-        this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      });
-
-      if (darkMediaQuery.matches) {
-        setTimeout(() => (this.$vuetify.theme.dark = true), 0);
-      }
-    } else {
-      this.$vuetify.theme.dark = userPrefDarkMode == "Dark";
-    }
-  }
-
   get authenticatedUser(): User {
     return this.$store.state.authenticatedUser;
   }

@@ -47,10 +47,47 @@ Vue.use(VueGtag, {
 
 Vue.config.productionTip = false
 
+function initDarkMode() {
+  const userPrefDarkMode = window.localStorage.getItem("darkMode")
+  const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+
+  if (userPrefDarkMode == "System default") {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    darkMediaQuery.addEventListener("change", (e) => {
+      vuetify.framework.theme.dark = !vuetify.framework.theme.dark
+    });
+
+    if (darkMediaQuery.matches) {
+      setTimeout(() => (vuetify.framework.theme.dark = true), 0)
+    }
+  } else {
+    vuetify.framework.theme.dark = userPrefDarkMode == "Dark"
+  }
+}
+
+function promptSSN() {
+  // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
+  const user = store.state.authenticatedUser
+  if (user && user.employee_info?.need_info) {
+    store.dispatch("showSnackbar", {
+      text: `You haven't set your Social Security number.`,
+      action: () => {
+        router.push({
+          name: "settings",
+          params: {
+            openSSNDialog: "true",
+          },
+        })
+      },
+      actionText: "Set SSN",
+    })
+  }
+}
+
 async function init() {
 
   // Get local user data
-  const storedUser = localStorage.getItem('authenticatedUser') 
+  const storedUser = localStorage.getItem('authenticatedUser')
   if (storedUser) {
     store.commit('SET_AUTHENTICATED_USER', JSON.parse(storedUser))
   }
@@ -69,6 +106,9 @@ async function init() {
     vuetify,
     render: h => h(App)
   }).$mount('#app')
+
+  initDarkMode()
+  promptSSN()
 }
 
 init()
