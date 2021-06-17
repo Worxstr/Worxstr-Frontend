@@ -1,8 +1,8 @@
 <template lang="pug">
 v-app
-  nav-drawer(v-if="showNavDrawer")
+  nav-drawer(v-if="showNavDrawer" v-model='drawer')
 
-  app-bar
+  toolbar(@toggleDrawer='drawer = !drawer')
 
   v-main(
     :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }",
@@ -28,7 +28,7 @@ v-app
 import { Component, Vue } from 'vue-property-decorator'
 import { User } from './definitions/User'
 
-import AppBar from '@/layouts/AppBar.vue'
+import Toolbar from '@/layouts/Toolbar.vue'
 import NavDrawer from '@/layouts/NavDrawer.vue'
 import BottomNav from '@/layouts/BottomNav.vue'
 import WorxstrFooter from '@/layouts/Footer.vue'
@@ -46,7 +46,7 @@ import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
     ],
   },
   components: {
-    AppBar,
+    Toolbar,
     NavDrawer,
     BottomNav,
     WorxstrFooter,
@@ -55,12 +55,14 @@ import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 })
 export default class App extends Vue {
 
+  drawer = false
+
   get authenticatedUser(): User {
     return this.$store.state.authenticatedUser;
   }
 
   get showNavDrawer() {
-    return !this.$route.meta.landing && this.$vuetify.breakpoint.mdAndUp
+    return !this.$route.meta.landing
   }
 
   get showBottomNav() {
@@ -95,20 +97,5 @@ export default class App extends Vue {
     // Full height, bottom nav hidden
     else return `calc(100vh - ${this.headerHeight}px)`;
   }
-
-  landingLinks = [
-    {
-      text: "Pricing",
-      to: "pricing",
-    },
-    {
-      text: "About",
-      to: "about",
-    },
-    {
-      text: "Contact us",
-      to: "contact",
-    },
-  ]
 }
 </script>

@@ -1,13 +1,18 @@
 <template lang="pug">
 v-navigation-drawer.d-flex.flex-column(
   app,
-  :mini-variant="miniNav",
+  v-model='value'
+  v-bind:value='value'
+  v-on:input="$emit('input', $event)"
+  :mini-variant="mini",
   mini-variant-width="68",
-  permanent
+  :permanent='$vuetify.breakpoint.mdAndUp'
+  :temporary='$vuetify.breakpoint.smAndDown'
 )
+
   //- Logo and collapse button
   v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
-    a(@click="miniNav = !miniNav", text)
+    a(@click="mini = !mini", text)
       v-avatar.mb-1(tile, size="40")
         img(src="@/assets/logo.svg", alt="Worxstr logo")
 
@@ -15,7 +20,7 @@ v-navigation-drawer.d-flex.flex-column(
 
     v-spacer
 
-    v-btn(icon, @click.stop="miniNav = !miniNav")
+    v-btn(icon, @click.stop="mini = !mini")
       v-icon mdi-chevron-left
 
   v-divider
@@ -26,7 +31,7 @@ v-navigation-drawer.d-flex.flex-column(
       v-for="link in primaryNavLinks",
       :key="link.text",
       right,
-      :disabled="!miniNav"
+      :disabled="!mini"
     )
       span {{ link.text | capitalize }}
       template(v-slot:activator="{ on, attrs }")
@@ -53,7 +58,7 @@ v-navigation-drawer.d-flex.flex-column(
         v-for="link in secondaryNavLinks",
         :key="link.text",
         right,
-        :disabled="!miniNav"
+        :disabled="!mini"
       )
         span {{ link.text | capitalize }}
         template(v-slot:activator="{ on, attrs }")
@@ -73,13 +78,18 @@ v-navigation-drawer.d-flex.flex-column(
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { User, Role, UserRole } from '@/definitions/User'
 
 @Component
 export default class NavDrawer extends Vue {
 
-  miniNav = false
+  mini = false
+  @Prop({ default: false }) value!: boolean
+
+  test() {
+    console.log('toggeld')
+  }
 
   signOut(): void {
     this.$store.dispatch("signOut");

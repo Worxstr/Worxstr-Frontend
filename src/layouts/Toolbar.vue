@@ -5,6 +5,9 @@
     :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'",
     elevate-on-scroll
   )
+    v-btn(icon @click="$emit('toggleDrawer')" v-if='$vuetify.breakpoint.smAndDown') 
+      v-icon mdi-menu
+
     router-link.mb-1.mr-2(
       to="/",
       style="text-decoration: none",
@@ -24,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
 
 @Component({
@@ -32,7 +35,23 @@ import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
     Breadcrumbs
   }
 })
-export default class AppBar extends Vue {
-  
+export default class Toolbar extends Vue {
+
+  @Prop({ default: false }) drawer!: boolean
+
+  landingLinks = [
+    {
+      text: "Pricing",
+      to: "pricing",
+    },
+    {
+      text: "About",
+      to: "about",
+    },
+    {
+      text: "Contact us",
+      to: "contact",
+    },
+  ]
 }
 </script>

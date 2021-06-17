@@ -144,7 +144,7 @@ const routes = [
   //   component: Availability,
   //   meta: {
   //     icon: 'mdi-calendar-check',
-  //     restrict: [EMPLOYEE]
+  //     restrict: [UserRole.Employee]
   //   }
   // },
   {

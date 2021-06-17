@@ -1,5 +1,5 @@
 <template lang="pug">
-v-breadcrumbs.py-0.pl-1(
+v-breadcrumbs.pl-1(
   :items="breadcrumbs",
   large,
   v-if="!$route.meta.landing"
