@@ -1,5 +1,5 @@
 <template lang="pug">
-v-navigation-drawer.d-flex.flex-column(
+v-navigation-drawer#bottom-nav.d-flex.flex-column(
   app,
   v-model='value'
   v-bind:value='value'
@@ -101,7 +101,6 @@ export default class NavDrawer extends Vue {
   }
 
   // TODO: Combine primary and secondary links
-  // TODO: Primary links are duplicated in BottomNav.vue
 
   get primaryNavLinks() {
     return this.$router.options.routes
@@ -141,3 +140,10 @@ export default class NavDrawer extends Vue {
   ]
 }
 </script>
+
+<style lang="scss">
+  #bottom-nav {
+    height: auto !important;
+    max-height: 100%;
+  }
+</style>

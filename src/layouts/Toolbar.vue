@@ -4,6 +4,7 @@
     outlined,
     :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'",
     elevate-on-scroll
+    :bottom='$vuetify.breakpoint.smAndDown'
   )
     v-btn(icon @click="$emit('toggleDrawer')" v-if='$vuetify.breakpoint.smAndDown') 
       v-icon mdi-menu

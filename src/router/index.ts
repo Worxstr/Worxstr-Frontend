@@ -5,6 +5,7 @@ import Meta from 'vue-meta'
 import store from '@/store'
 import { Capacitor } from '@capacitor/core'
 
+import * as MessagesTypes from '@/definitions/Messages'
 import { fullName, groupNameList } from '@/plugins/filters'
 
 import Home from '@/views/Home.vue'
@@ -214,7 +215,7 @@ const routes = [
           fullHeight: true,
           paramMap: {
             conversationId: 'conversations',
-            propBuilder(conversation) {
+            propBuilder(conversation: MessagesTypes.Conversation) {
               return groupNameList(conversation, store.state.authenticatedUser)
             },
           },
