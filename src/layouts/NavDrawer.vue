@@ -4,10 +4,11 @@ v-navigation-drawer.d-flex.flex-column(
   v-model='value'
   v-bind:value='value'
   v-on:input="$emit('input', $event)"
-  :mini-variant="mini",
+  :mini-variant="mini && $vuetify.breakpoint.mdAndUp",
   mini-variant-width="68",
   :permanent='$vuetify.breakpoint.mdAndUp'
   :temporary='$vuetify.breakpoint.smAndDown'
+  :bottom='$vuetify.breakpoint.smAndDown'
 )
 
   //- Logo and collapse button
@@ -20,8 +21,8 @@ v-navigation-drawer.d-flex.flex-column(
 
     v-spacer
 
-    v-btn(icon, @click.stop="mini = !mini")
-      v-icon mdi-chevron-left
+    v-btn(icon, @click.stop="$vuetify.breakpoint.mdAndUp ? (mini = !mini) : (value = !value)")
+      v-icon mdi-chevron-{{$vuetify.breakpoint.mdAndUp ? 'left' : 'down'}}
 
   v-divider
 
