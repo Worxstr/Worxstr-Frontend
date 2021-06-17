@@ -3,10 +3,10 @@
     app,
     outlined,
     :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'",
-    elevate-on-scroll
-    :bottom='$vuetify.breakpoint.smAndDown'
+    :elevate-on-scroll='$vuetify.breakpoint.mdAndUp'
+    :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
   )
-    v-btn(icon @click="$emit('toggleDrawer')" v-if='$vuetify.breakpoint.smAndDown') 
+    v-btn(icon @click="$emit('toggleDrawer')" v-if='$vuetify.breakpoint.smAndDown && !$route.meta.landing') 
       v-icon mdi-menu
 
     router-link.mb-1.mr-2(

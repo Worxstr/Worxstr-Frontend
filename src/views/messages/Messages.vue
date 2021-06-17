@@ -1,28 +1,13 @@
 <template lang="pug">
 div
   new-conversation-dialog(:opened.sync="newConversationDialog")
-  v-fab-transition
-    v-btn(
-      v-if="!$vuetify.breakpoint.mdAndUp && $route.name == 'messages' && transitionFinished",
-      fab,
-      app,
-      absolute,
-      bottom,
-      right,
-      color="primary",
-      style="bottom: 14px",
-      @click="newConversationDialog = true"
-    )
-      v-icon mdi-plus
 
-      
   portal(to='toolbarActions')
     v-tooltip(bottom)
       template(v-slot:activator="{ on, attrs }")
         v-btn(
           text
           color="primary",
-          v-if="$vuetify.breakpoint.mdAndUp",
           v-bind="attrs",
           v-on="on"
         )

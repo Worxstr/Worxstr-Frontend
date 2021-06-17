@@ -1,5 +1,5 @@
 <template lang="pug">
-v-navigation-drawer#bottom-nav.d-flex.flex-column(
+v-navigation-drawer#nav.d-flex.flex-column(
   app,
   v-model='value'
   v-bind:value='value'
@@ -142,7 +142,7 @@ export default class NavDrawer extends Vue {
 </script>
 
 <style lang="scss">
-  #bottom-nav {
+  #nav.v-navigation-drawer--bottom{
     height: auto !important;
     max-height: 100%;
   }
