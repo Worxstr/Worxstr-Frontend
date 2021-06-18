@@ -32,7 +32,7 @@
   v-carousel(
     v-model="carouselIndex",
     cycle,
-    interval='80000',
+    interval='8000',
     height='700',
     hide-delimiter-background,
     show-arrows-on-hover,
