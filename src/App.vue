@@ -62,7 +62,7 @@ v-app
       )
         router-view#router-view(:style="`height: ${pageHeight}`")
 
-  transition(name="slide-fade")
+  transition(name="slide-y-reverse-transition")
     v-bottom-navigation(app, color="indigo", grow, v-if="showBottomNav")
       v-btn(
         v-for="link in primaryNavLinks",
