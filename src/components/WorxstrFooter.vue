@@ -61,6 +61,10 @@ export default {
         icon: "mdi-linkedin",
         link: "https://www.linkedin.com/company/worxstr-llc/",
       },
+      {
+        icon: "mdi-youtube",
+        link: "https://www.youtube.com/channel/UCIthM10Z0VK6U0Tm1MjZXHQ",
+      },
     ],
   }),
 };
