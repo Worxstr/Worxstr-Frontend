@@ -11,9 +11,9 @@
             h2.text-h2.font-weight-bold.mb-2.white--text Worxstr
             p.text-h5.font-weight-medium.white--text The adaptive solution to wide-scale temp labor management
 
-          div(v-if="authenticatedUser")
-            v-btn.mr-3(color="secondary", :to="{ name: defaultRoute }") Enter site
-            v-btn.mr-3(outlined, color="secondary", @click="signOut") Sign out
+          div(v-if='authenticatedUser')
+            v-btn.mr-3(color='secondary', :to='{ name: defaultRoute }') Enter app
+            v-btn.mr-3(outlined, color='secondary', @click='signOut') Sign out
 
           div(v-else)
             v-btn.mr-3(color="secondary", :to="{ name: `signUp` }") Start now

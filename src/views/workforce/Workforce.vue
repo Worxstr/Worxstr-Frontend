@@ -6,28 +6,30 @@ v-container
   )
   add-workforce-member-dialog(:opened.sync="addManagerDialog", type="manager")
 
-  v-toolbar(flat, color="transparent")
-    v-toolbar-title.text-h5.font-weight-medium Workforce
-    v-spacer
-    
-    div(v-if='$vuetify.breakpoint.smAndUp')
-      v-btn(text, @click="addEmployeeDialog = true")
+  portal(to="toolbarActions")
+    div(v-if="$vuetify.breakpoint.smAndUp")
+      v-btn(text, color="primary", @click="addEmployeeDialog = true")
         span Add employee
 
-      v-btn(text, @click="addManagerDialog = true", v-if="userIsOrgManager")
-        span(v-if='$vuetify.breakpoint.smAndUp') Add manager
+      v-btn(
+        text,
+        color="primary",
+        @click="addManagerDialog = true",
+        v-if="userIsOrgManager"
+      )
+        span(v-if="$vuetify.breakpoint.smAndUp") Add manager
 
     v-menu(v-else)
-      template(v-slot:activator='{ on, attrs }')
-        v-btn(text v-bind='attrs' v-on='on')
+      template(v-slot:activator="{ on, attrs }")
+        v-btn(text, v-bind="attrs", v-on="on")
           v-icon(left) mdi-account-plus
           span Add member
       v-list
-        v-list-item(@click='addEmployeeDialog = true')
+        v-list-item(@click="addEmployeeDialog = true")
           v-list-item-title Add employee
-        v-list-item(@click='addManagerDialog = true')
+        v-list-item(@click="addManagerDialog = true")
           v-list-item-title Add manager
-      
+
   v-card
     v-data-table(
       :headers="headers",
@@ -58,12 +60,11 @@ export default {
   },
   components: { AddWorkforceMemberDialog },
   async mounted() {
-    this.loading = true
+    this.loading = true;
     try {
-      await this.$store.dispatch("loadWorkforce")
-    }
-    finally {
-      this.loading = false
+      await this.$store.dispatch("loadWorkforce");
+    } finally {
+      this.loading = false;
     }
   },
   data: () => ({
@@ -97,13 +98,16 @@ export default {
     ...mapGetters(["workforce"]),
     userIsOrgManager() {
       return this.$store.state.authenticatedUser
-        ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser)
-        : false
+        ? userIs(
+            UserRole.OrganizationManager,
+            this.$store.state.authenticatedUser
+          )
+        : false;
     },
   },
   methods: {
     openUser(user) {
-      this.$router.push({ name: "user", params: { userId: user.id } })
+      this.$router.push({ name: "user", params: { userId: user.id } });
     },
   },
 };
