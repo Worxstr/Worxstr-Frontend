@@ -61,13 +61,13 @@ export default class Pricing extends Vue {
     },
     {
       price: 100,
-      name: 'standard',
+      name: 'premium',
       contractors: 100,
       support: 'Standard support',
     },
     {
       price: null,
-      name: 'advanced',
+      name: 'enterprise',
       contractors: Infinity,
       support: '24/7 support',
     }
