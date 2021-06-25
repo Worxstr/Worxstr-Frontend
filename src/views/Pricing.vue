@@ -2,7 +2,7 @@
 div
   v-sheet.gradient.overlap
     v-container.py-16
-      h3.text-h3.font-weight-bold(style="margin-bottom: 103px") Pricing
+      h3.text-h3.font-weight-bold Pricing
 
   v-container.shift-down.mb-3
     v-row
@@ -35,6 +35,7 @@ div
               v-if="tier.name == 'Advanced'",
               :to="{ name: 'contact', params: { subject: 'My company is interested in the advanced plan' } }"
             ) Contact sales
+
             v-btn(
               text,
               :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
@@ -76,14 +77,6 @@ export default class Pricing extends Vue {
 </script>
 
 <style lang="scss">
-.overlap {
-  position: absolute;
-  width: 100%;
-}
-.shift-down {
-  padding-top: 160px !important;
-}
-
 .hover-effect {
   transform: scale(1);
   z-index: 1;
