@@ -7,7 +7,7 @@ div
   v-container.shift-down.mb-3
     v-row
       v-col(cols="12", sm="4", v-for="tier in pricingTiers")
-        v-card.hover-effect(elevation="15")
+        v-card.hover-effect.test(elevation="15")
           v-card-title {{ tier.name | capitalize }}
 
           v-card-text.pb-0
@@ -85,5 +85,8 @@ export default class Pricing extends Vue {
 .hover-effect:hover {
   transform: scale(1.03);
   z-index: 2;
+}
+.test {
+  background-color: var(--v-accent-lighten2)
 }
 </style>
