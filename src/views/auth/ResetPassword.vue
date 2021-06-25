@@ -20,6 +20,8 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
 </template>
 
 <script>
+import { emailRules } from '@/plugins/inputValidation'
+
 export default {
   name: "resetPassword",
   mounted() {
@@ -32,13 +34,7 @@ export default {
       email: "",
     },
     isValid: false,
-    emailRules: [
-      (value) => !!value || "Email required",
-      (value) => {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || "Invalid email";
-      },
-    ],
+    emailRules,
     loading: false,
   }),
   methods: {

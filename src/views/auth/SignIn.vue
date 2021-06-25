@@ -28,6 +28,8 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
 </template>
 
 <script>
+import { emailRules, passwordRules } from '@/plugins/inputValidation'
+
 export default {
   name: "signIn",
   metaInfo: {
@@ -39,17 +41,8 @@ export default {
       password: "",
     },
     isValid: false,
-    emailRules: [
-      (value) => !!value || "Email required",
-      (value) => {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || "Invalid email";
-      },
-    ],
-    passwordRules: [
-      (value) => !!value || "Password required",
-      (value) => value.length >= 8 || "Password must be 8 characters",
-    ],
+    emailRules,
+    passwordRules,
     loading: false,
   }),
   methods: {

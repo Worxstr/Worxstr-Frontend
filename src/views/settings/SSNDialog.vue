@@ -29,6 +29,7 @@ v-dialog(
           :rules="rules.ssn",
           required,
           pattern="\d{3}[\-]\d{2}[\-]\d{4}"
+          v-mask="'###-##-####'"
         )
 
         v-text-field(
@@ -36,9 +37,10 @@ v-dialog(
           dense,
           label="Confirm SSN",
           v-model="confirmSSN",
-          :rules="[...rules.ssn, rules.matches(ssn, confirmSSN)]",
+          :rules="[...rules.ssn, rules.ssnMatches(ssn, confirmSSN)]",
           required,
           pattern="\d{3}[\-]\d{2}[\-]\d{4}"
+          v-mask="'###-##-####'"
         )
 
       v-spacer
@@ -46,15 +48,13 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="green", :disabled="!isValid", type="submit")
-          | Save SSN
+        v-btn(text, color="green", :disabled="!isValid", type="submit") Save SSN
 </template>
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 
-// TODO: Move this to reusable import
-const exists = (errorString) => (value) => !!value || errorString;
+import { ssnRules, ssnMatches } from '@/plugins/inputValidation'
 
 export default {
   name: "ssnDialog",
@@ -67,19 +67,8 @@ export default {
     ssn: "",
     confirmSSN: "",
     rules: {
-      ssn: [
-        exists("SSN required"),
-        (value) => {
-          const pattern = /^\d{3}-\d{2}-\d{4}|\d{9}$/
-          return pattern.test(value) || "Invalid SSN"
-        },
-      ],
-      matches: (val1, val2) => {
-        return (
-          val1.replaceAll("-", "") == val2.replaceAll("-", "") ||
-          "SSNs must match"
-        );
-      },
+      ssn: ssnRules,
+      ssnMatches,
     },
   }),
   methods: {

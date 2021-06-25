@@ -106,9 +106,7 @@ v-dialog(
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import { User } from '@/definitions/User'
 import { Job } from '@/definitions/Job';
-
-// TODO: Move this to reusable import
-const exists = (errorMessage: string) => (value: any) => !!value || errorMessage;
+import { exists, phone, email } from '@/plugins/inputValidation'
 
 @Component
 export default class EditJobDialog extends Vue {
@@ -128,20 +126,11 @@ export default class EditJobDialog extends Vue {
     consultantName: [exists("Consultant name required")],
     consultantPhone: [
       exists("Consultant phone required"),
-      (value: string) => {
-        // https://stackoverflow.com/questions/4338267/validate-phone-number-with-javascript
-        // TODO: Use a library for these rules
-
-        const pattern = /^(()?\d{3}())?(-|\s)?\d{3}(-|\s)?\d{4}$/;
-        return pattern.test(value) || "Invalid phone";
-      },
+      phone,
     ],
     consultantEmail: [
       exists("Email required"),
-      (value: string) => {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || "Invalid email";
-      },
+      email,
     ],
   }
 
