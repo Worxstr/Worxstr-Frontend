@@ -14,17 +14,16 @@ div
             p {{ option.text }}
 
           v-card-actions.pb-5.justify-center
-            v-dialog(v-model="option.dialog")
-              
+            v-dialog(v-model="option.dialog", max-width="700")
               template(v-slot:activator="{ on, attrs }")
                 v-btn(v-bind="attr", v-on="on", :color="option.button.color") {{ option.button.text }}
-              
+
               //- Contact form
               v-card
                 v-card-title
                   h5.text-h5.font-weight-bold.mb-4 Contact sales
                 v-card-text
-                  contact-form(color='primary')
+                  contact-form(color="primary")
 
     div
       h4.text-h4.font-weight-black.mb-3 Need help now?

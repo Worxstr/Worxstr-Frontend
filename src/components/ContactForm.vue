@@ -5,49 +5,135 @@ v-form.flex-grow-1.d-flex.flex-column(
   style="width: 100%"
 )
   v-text-field(
+    v-model="form.business_name",
+    label="Business name",
+    required,
     autofocus,
     outlined,
-    :color="color",
     dense,
-    label="Subject",
-    v-model="subject",
-    required
+    :color="color"
+    :filled='filled'
   )
 
-  v-textarea(
-    outlined,
-    :color="color",
-    dense,
-    label="Message",
-    v-model="message",
+  .d-flex.flex-column.flex-md-row
+    v-text-field.mr-2(
+      v-model="form.first_name",
+      label="First name",
+      required,
+      autofocus,
+      outlined,
+      dense,
+      :color="color"
+      :filled='filled'
+    )
+    v-text-field.ml-2(
+      v-model="form.last_name",
+      label="Last name",
+      required,
+      autofocus,
+      outlined,
+      dense,
+      :color="color"
+      :filled='filled'
+    )
+
+  .d-flex
+    v-text-field(
+      v-if='usePhone'
+      v-model="form.phone",
+      type="tel",
+      v-mask="'(###) ###-####'"
+      label="Phone number",
+      required,
+      autofocus,
+      outlined,
+      dense,
+      :color="color"
+      :filled='filled'
+    )
+    v-text-field(
+      v-else
+      v-model="form.email",
+      type="email",
+      label="Email",
+      required,
+      autofocus,
+      outlined,
+      dense,
+      :color="color"
+      :filled='filled'
+    )
+    v-btn.ml-2.mt-1(text, color="primary", @click="usePhone = !usePhone") Use {{ usePhone ? 'email' : 'phone' }} instead
+
+  v-text-field(
+    v-model="form.website",
+    label="Business website",
     required,
-    hide-details
+    autofocus,
+    outlined,
+    dense,
+    :color="color"
+    :filled='filled'
   )
 
+  .d-flex.flex-column.flex-md-row
+    v-text-field.mr-2(
+      v-model="form.num_managers",
+      label="Number of managers",
+      type="number",
+      min="1",
+      required,
+      autofocus,
+      outlined,
+      dense,
+      :color="color"
+      :filled='filled'
+    )
+    v-text-field.ml-2(
+      v-model="form.num_contractors",
+      label="Number of contractors",
+      type="number",
+      min="1",
+      required,
+      autofocus,
+      outlined,
+      dense,
+      :color="color"
+      :filled='filled'
+    )
+    
   v-spacer
 
   v-card-actions
     v-spacer
-    v-btn(text, @click="openEmailClient", :text="text" :color='color') Send message
+    v-btn(text, :text="text", :color="color") Send message
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/camelcase */
+
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
 export default class ContactForm extends Vue {
 
-  @Prop(String) readonly color: string | undefined
-  @Prop(String) readonly subject: string | undefined
-  @Prop(String) readonly message: string | undefined
-  @Prop({ default: false }) readonly text!: boolean
-
-  openEmailClient() {
-    const win = window.open(
-      `mailto:support@worxstr.com?subject=${this.subject || ''}&body=${this.message || ''}`,
-      "_blank"
-    )
-    if (win) win.focus()
+  form = {
+    business_name: '',
+    contact_name: '',
+    contact_title: '',
+    phone: '',
+    email: '',
+    website: '',
+    num_managers: null,
+    num_contractors: null,
+    notes: '',
   }
+
+  usePhone = false
+
+  @Prop(String) readonly color: string | undefined
+  @Prop({ default: false }) readonly text!: boolean
+  @Prop({ default: false }) readonly filled!: boolean
+
 }
 </script>

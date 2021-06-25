@@ -119,7 +119,7 @@
             span(v-if="calculator.helpful") Great! We'd love to get in touch with you about how Worxstr can help solve your management issues.
             span(v-else) We're sorry to hear that. We would love a moment to speak with you about what we could be doing differently.
 
-          contact-form(color='white' text)
+          contact-form(color='white' filled text)
 </template>
 
 <script>
