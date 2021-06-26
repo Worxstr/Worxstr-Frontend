@@ -72,46 +72,47 @@
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
+
+import { Component, Vue } from 'vue-property-decorator'
 import { exists, emailRules, phoneRules, passwordRules, passwordMatches } from '@/plugins/inputValidation'
 
-export default {
-  name: "signUp",
+@Component({
   metaInfo: {
-    title: "Sign up",
-  },
-  data: () => ({
-    form: {
-      first_name: "",
-      last_name: "",
-      phone: "",
-      email: "",
-      manager_id: "",
-      password: "",
-      confirm_password: "", 
-      agreeToTerms: false,
-    },
-    isValid: false,
-    rules: {
-      firstName: [exists('First name required')],
-      lastName: [exists('Last name required')],
-      phone: phoneRules,
-      email: emailRules,
-      managerId: [exists('Manager ID required')],
-      password: passwordRules,
-      confirmPassword: [exists('Password confirmation required')],
-      passwordMatches
-    },
-    loading: false,
-  }),
-  methods: {
-    async signUp() {
-      this.loading = true
-      try {
-        await this.$store.dispatch("signUp", this.form)
-      } finally {
-        this.loading = false
-      }
-    },
-  },
-};
+    title: 'Sign up'
+  }
+})
+export default class SignUp extends Vue {
+  loading = false
+  isValid = false
+
+  form = {
+    first_name: "",
+    last_name: "",
+    phone: "",
+    email: "",
+    manager_id: "",
+    password: "",
+    confirm_password: "", 
+    agreeToTerms: false,
+  }
+  rules = {
+    firstName: [exists('First name required')],
+    lastName: [exists('Last name required')],
+    phone: phoneRules,
+    email: emailRules,
+    managerId: [exists('Manager ID required')],
+    password: passwordRules,
+    confirmPassword: [exists('Password confirmation required')],
+    passwordMatches,
+  }
+
+  async signUp() {
+    this.loading = true
+    try {
+      await this.$store.dispatch("signUp", this.form)
+    } finally {
+      this.loading = false
+    }
+  }
+}
 </script>
