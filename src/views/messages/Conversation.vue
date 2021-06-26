@@ -5,7 +5,9 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
   //-   name="scroll-y-reverse-transition",
   //-   tag="div"
   //- )
-  .message-container.px-4.d-flex.flex-column-reverse.align-start
+  .message-container.px-4.pt-4.d-flex.flex-column.align-start
+    v-spacer
+
     .message.d-flex.flex-column(
       v-for="(message, i) in conversation.messages"
       :key="message.id"
@@ -71,8 +73,8 @@ export default {
         this.$route.params.conversationId
       );
       // conversation.messages = conversation.messages.sort()
-      if (conversation && conversation.messages)
-        conversation.messages = conversation.messages.reverse();
+      // if (conversation && conversation.messages)
+      //   conversation.messages = conversation.messages.reverse();
       return conversation;
     },
   },
