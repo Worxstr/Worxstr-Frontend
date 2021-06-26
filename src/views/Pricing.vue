@@ -2,7 +2,7 @@
 div
   v-sheet.gradient.overlap
     v-container.py-16
-      h3.text-h3.font-weight-bold(style="margin-bottom: 103px") Pricing built to fit your business
+      h3.text-h3.font-weight-bold(style="margin-bottom: 103px") Pricing
 
   v-container.shift-down.mb-3
     v-row.mb-12
@@ -31,13 +31,7 @@ div
           v-card-actions.justify-center
             v-btn.mb-3(
               :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
-              v-if="tier.name == 'Advanced'",
-              :to="{ name: 'contact', params: { subject: 'My company is interested in the advanced plan' } }"
-            ) Contact sales
-            v-btn.mb-3(
-              :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
-              v-else,
-              :to="{ name: 'signUp' }"
+              :to="{ name: tier.price == null ? 'contact' : 'signUp' }"
             ) {{ tier.price == null ? 'Contact sales' : 'Get started' }}
 
     div
