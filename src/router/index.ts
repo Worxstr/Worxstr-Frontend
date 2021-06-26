@@ -234,6 +234,7 @@ const routes = [
     component: NotFound,
     meta: {
       fullHeight: true,
+      landing: true
     }
   }
 ]

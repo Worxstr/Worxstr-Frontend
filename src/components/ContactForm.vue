@@ -78,24 +78,26 @@ v-form.flex-grow-1.d-flex.flex-column(
   )
 
   .d-flex.flex-column.flex-md-row
-    v-text-field.mr-2(
+    v-select.mr-2(
       v-model="form.num_managers",
       label="Number of managers",
       type="number",
       min="1",
       required,
+      :items='employeeCountOptions'
       :rules='rules.numManagers'
       outlined,
       dense,
       :color="color",
       :filled="filled"
     )
-    v-text-field.ml-2(
+    v-select.ml-2(
       v-model="form.num_contractors",
       label="Number of contractors",
       type="number",
       min="1",
       required,
+      :items='employeeCountOptions'
       :rules='rules.numContractors'
       outlined,
       dense,
@@ -105,10 +107,10 @@ v-form.flex-grow-1.d-flex.flex-column(
 
   v-spacer
 
-  v-card-actions
+  v-card-actions.pt-0
     v-spacer
     slot
-    v-btn(text, :text="text", :color="color" :disabled='!isValid') Send message
+    v-btn(text, :text="text", :color="color" :disabled='!isValid' type='submit') Send message
 </template>
 
 <script lang="ts">
@@ -146,11 +148,22 @@ export default class ContactForm extends Vue {
     numContractors: [exists('Number of contractors required')],
   }
 
+  employeeCountOptions = [{
+    text: '0-25',
+    value: 0
+  },{
+    text: '26-100',
+    value: 1
+  },{
+    text: '101+',
+    value: 2
+  }]
+
   @Prop(String) readonly color: string | undefined
   @Prop({ default: false }) readonly text!: boolean
   @Prop({ default: false }) readonly filled!: boolean
 
-  submitForm() {
+  async submitForm() {
     console.log('dummy submit')
   }
 

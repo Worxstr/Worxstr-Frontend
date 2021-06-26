@@ -4,7 +4,10 @@ rules: {
   name: [exists('You must enter a name')]
 }
 */
-export const exists = (errorMessage: string) => (value: string) => !!value || errorMessage
+export const exists = (errorMessage: string) => (value: string | number) => {
+  if (typeof(value) === 'number') return value === 0 ? true : !!value
+  return !!value || errorMessage
+}
 
 export const matches = (errorMessage: string) => (val1: string, val2: string) => {
   return (

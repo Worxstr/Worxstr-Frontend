@@ -5,22 +5,15 @@ div
       h3.text-h3.font-weight-bold Contact us
 
   v-container.shift-down
-    v-row.mb-12
-    
+    v-row.mb-12.justify-center
       v-col(
+        v-for="(option, i) in helpOptions", :index="i"
         cols="12",
-        :sm="chosenOption == option.name ? 12 : 6",
-        v-for="(option, i) in helpOptions",
-        :index='i'
+        :md="chosenOption == option.name ? 9 : 6",
         v-if="chosenOption == option.name || chosenOption == null"
       )
-        v-card.hover-effect(elevation="15")
+        v-card(elevation="15" :class="chosenOption ? '' : 'hover-effect'")
           v-card-title {{ option.title }}
-
-          v-expand-transition(appear)
-            v-card-text.pb-0(v-if="chosenOption == option.name")
-              contact-form(color="primary")
-                v-btn(text, @click="chosenOption = null") Cancel
 
           v-expand-transition(appear)
             div(v-if="chosenOption != option.name")
@@ -35,11 +28,16 @@ div
                   @click="chosenOption = option.name"
                 ) {{ option.button.text }}
 
+          v-expand-transition(appear)
+            v-card-text.py-0(v-if="chosenOption == option.name")
+              contact-form(color="primary")
+                v-btn(text, @click="chosenOption = null") Cancel
+
     div
       h4.text-h4.font-weight-black.mb-3 Need help now?
       p
         | Visit our
-        router-link(:to="{ name: 'support' }") &nbsp;support page&nbsp;
+        router-link(to="/support") &nbsp;support page&nbsp;
         | for common questions and answers.
 </template>
 
