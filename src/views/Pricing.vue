@@ -2,10 +2,10 @@
 div
   v-sheet.gradient.overlap
     v-container.py-16
-      h3.text-h3.font-weight-bold(style="margin-bottom: 103px") Pricing
+      h3.text-h3.font-weight-bold(style="margin-bottom: 103px") Pricing built to fit your business
 
   v-container.shift-down.mb-3
-    v-row
+    v-row.mb-12
       v-col(cols="12", sm="4", v-for="tier in pricingTiers")
         v-card.hover-effect(elevation="15")
           v-card-title {{ tier.name | capitalize }}
@@ -29,18 +29,25 @@ div
                 | {{ tier.contractors == Infinity ? 'Unlimited' : tier.contractors }} contractors
 
           v-card-actions.justify-center
-            v-btn(
-              text,
+            v-btn.mb-3(
               :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
               v-if="tier.name == 'Advanced'",
               :to="{ name: 'contact', params: { subject: 'My company is interested in the advanced plan' } }"
             ) Contact sales
-            v-btn(
-              text,
+            v-btn.mb-3(
               :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
               v-else,
               :to="{ name: 'signUp' }"
             ) {{ tier.price == null ? 'Contact sales' : 'Get started' }}
+
+    div
+      h4.text-h4.font-weight-black.mb-3 Need help deciding?
+      p
+        | Contact us
+        router-link(:to="{name: 'contact'}") &nbsp;here&nbsp;
+        | or visit our
+        router-link(to="/support") &nbsp;support page
+        | .
 </template>
 
 <script lang="ts">
