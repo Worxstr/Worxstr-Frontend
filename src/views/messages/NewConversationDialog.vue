@@ -19,6 +19,7 @@ v-dialog(
       v-card-text
         p Select the person you want to message
         v-autocomplete(
+          autofocus
           v-model="selectedUsers",
           :items="contacts",
           multiple,

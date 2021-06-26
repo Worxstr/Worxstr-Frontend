@@ -26,6 +26,7 @@ v-dialog(
 
         //- Employee selector
         v-select(
+          autofocus
           v-model="editedShift.employee_ids",
           :items="employees",
           :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)",

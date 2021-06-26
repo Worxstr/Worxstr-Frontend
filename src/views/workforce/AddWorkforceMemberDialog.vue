@@ -20,6 +20,7 @@ v-dialog(
 
       v-card-text
         v-text-field(
+          autofocus
           label="First name",
           dense,
           outlined,

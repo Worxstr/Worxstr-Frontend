@@ -24,6 +24,7 @@ v-dialog(
       v-card-text.py-0
         v-subheader Job details
         v-text-field(
+          autofocus
           outlined,
           dense,
           label="Job name",

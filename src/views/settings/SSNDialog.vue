@@ -22,6 +22,7 @@ v-dialog(
 
       v-card-text.pb-0
         v-text-field(
+          autofocus
           outlined,
           dense,
           label="Social Security number",

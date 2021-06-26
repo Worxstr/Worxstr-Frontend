@@ -5,6 +5,7 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
       v-card-title Sign in
       v-card-text
         v-text-field(
+          autofocus
           label="Email",
           type="email",
           required="",
