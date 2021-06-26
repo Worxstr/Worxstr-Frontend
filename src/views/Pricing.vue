@@ -54,54 +54,54 @@ div
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-	metaInfo: {
-		title: "Pricing",
-	},
+  metaInfo: {
+    title: 'Pricing',
+  },
 })
 export default class Pricing extends Vue {
-	pricingTiers = [
-		{
-			price: 0,
-			name: 'free',
-			contractors: 10,
-			transactions: 75000,
-			support: 'Free tier chat assistance',
-		},
-		{
-			price: 100,
-			name: 'standard',
-			contractors: 100,
-			transactions: 150000,
-			support: 'Standard support',
-		},
-		{
-			price: 150,
-			priceIsMinimum: true,
-			name: 'advanced',
-			contractors: Infinity,
-			transactions: null,
-			support: '24/7 support',
-		}
-	]
+  pricingTiers = [
+    {
+      price: 0,
+      name: 'free',
+      contractors: 10,
+      transactions: 75000,
+      support: 'Free tier chat assistance',
+    },
+    {
+      price: 100,
+      name: 'standard',
+      contractors: 100,
+      transactions: 150000,
+      support: 'Standard support',
+    },
+    {
+      price: 150,
+      priceIsMinimum: true,
+      name: 'advanced',
+      contractors: Infinity,
+      transactions: null,
+      support: '24/7 support',
+    },
+  ]
 }
 </script>
 
 <style lang="scss">
 .overlap {
-	position: absolute;
-	width: 100%;
+  position: absolute;
+  width: 100%;
 }
 .shift-down {
-	padding-top: 160px !important;
+  padding-top: 160px !important;
 }
 
 .hover-effect {
-	transform: scale(1);
-	z-index: 1;
-	transition: cubic-bezier(0.165, 0.84, 0.44, 1) transform 0.3s !important;
+  transform: scale(1);
+  z-index: 1;
+  transition: cubic-bezier(0.165, 0.84, 0.44, 1) transform 0.3s !important;
 }
 .hover-effect:hover {
-	transform: scale(1.03);
-	z-index: 2;
+  transform: scale(1.03);
+  z-index: 2;
 }
 </style>

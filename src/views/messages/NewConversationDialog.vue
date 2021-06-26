@@ -18,7 +18,7 @@ v-dialog(
       v-divider
 
       v-card-text
-          p Select the person you want to message
+          p Select the people you want to message
           v-autocomplete(
               v-model="selectedUsers"
               :items="contacts"
@@ -36,7 +36,7 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="primary", @click="createConversation" :disabled="!isValid") Send message
+        v-btn(text, color="primary", @click="createConversation" :disabled="!isValid") Create conversation
         
       v-fade-transition
         v-overlay(v-if="loading", absolute, opacity=".2")
