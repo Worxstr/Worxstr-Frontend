@@ -80,11 +80,5 @@ export default class Contact extends Vue {
       dialog: false,
     },
   ]
-
-  mounted() {
-    if (this.$route.params.subject) {
-      this.subject = this.$route.params.subject;
-    }
-  }
 }
 </script>

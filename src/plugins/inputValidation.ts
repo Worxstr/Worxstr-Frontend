@@ -38,7 +38,7 @@ export const phoneRules = [
     const pattern = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/
     return pattern.test(value) || "Invalid phone"
   },
-],
+]
 
 export const ssnRules = [
   exists("SSN required"),

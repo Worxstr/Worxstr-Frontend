@@ -77,8 +77,9 @@ v-dialog(
         v-text-field(
           outlined,
           dense,
-          label="Phone",
-          type="phone",
+          label="Phone number",
+          type="tel",
+          v-mask="'(###) ###-####'",
           v-model="editedJob.consultant_phone",
           :rules="rules.consultantPhone",
           required
@@ -107,7 +108,7 @@ v-dialog(
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import { User } from '@/definitions/User'
 import { Job } from '@/definitions/Job';
-import { exists, phone, email } from '@/plugins/inputValidation'
+import { exists, phoneRules, emailRules } from '@/plugins/inputValidation'
 
 @Component
 export default class EditJobDialog extends Vue {
@@ -125,14 +126,8 @@ export default class EditJobDialog extends Vue {
     name: [exists("Job name required")],
     address: [exists("Address required")],
     consultantName: [exists("Consultant name required")],
-    consultantPhone: [
-      exists("Consultant phone required"),
-      phone,
-    ],
-    consultantEmail: [
-      exists("Email required"),
-      email,
-    ],
+    consultantPhone: phoneRules,
+    consultantEmail: emailRules,
   }
 
   @Watch('opened')
