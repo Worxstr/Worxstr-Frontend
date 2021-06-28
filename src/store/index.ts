@@ -126,7 +126,7 @@ const storeConfig: StoreOptions<RootState> = {
     },
     workforce: [],
     managers: {
-      employee: [],
+      contractor: [],
       organization: []
     },
     events: {
@@ -164,8 +164,8 @@ const storeConfig: StoreOptions<RootState> = {
         state.users.all.push(user.id)
     },
     SET_SSN_REGISTERED(state) {
-      if (state.authenticatedUser?.employee_info)
-        state.authenticatedUser.employee_info.need_info = false
+      if (state.authenticatedUser?.contractor_info)
+        state.authenticatedUser.contractor_info.need_info = false
     },
     ADD_CLOCK_EVENT(state, event: ClockEvent) {
       Vue.set(state.clock.history.byId, event.id, event)
@@ -478,7 +478,7 @@ const storeConfig: StoreOptions<RootState> = {
         }
       })
       data.employee_managers.forEach((m: User) => {
-        commit('ADD_MANAGER', { type: 'employee', manager: m })
+        commit('ADD_MANAGER', { type: 'contractor', manager: m })
       })
       data.organization_managers.forEach((m: User) => {
         commit('ADD_MANAGER', { type: 'organization', manager: m })
@@ -584,11 +584,11 @@ const storeConfig: StoreOptions<RootState> = {
       })
     },
 
-    async addEmployee({ commit }, employee) {
+    async addContractor({ commit }, contractor) {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/users/add-employee`,
-        data: employee
+        data: contractor
       })
     },
 

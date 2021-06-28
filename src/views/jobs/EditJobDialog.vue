@@ -54,15 +54,15 @@ v-dialog(
           label="Organizational manager"
         )
         v-select(
-          v-if="managers.employee && managers.employee.length",
-          v-model="editedJob.employee_manager_id",
-          :items="managers.employee",
+          v-if="managers.contractor && managers.contractor.length",
+          v-model="editedJob.contractor_manager_id",
+          :items="managers.contractor",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
           :item-value="'id'",
           outlined,
           dense,
           required,
-          label="Employee manager"
+          label="Contractor manager"
         )
         v-subheader Consultant info
         v-text-field(
