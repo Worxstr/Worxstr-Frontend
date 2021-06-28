@@ -12,12 +12,12 @@
             p.text-h5.font-weight-medium.white--text The adaptive solution to wide-scale temp labor management
 
           div(v-if='authenticatedUser')
-            v-btn.mr-3(color='secondary', :to='{ name: defaultRoute }') Enter app
-            v-btn.mr-3(outlined, color='secondary', @click='signOut') Sign out
+            v-btn.mr-3(color='accent', :to='{ name: defaultRoute }') Enter app
+            v-btn.mr-3(outlined, color='accent', @click='signOut') Sign out
 
           div(v-else)
-            v-btn.mr-3(color="secondary", :to="{ name: `signUp` }") Start now
-            v-btn.mr-3(outlined, color="secondary", :to="{ name: `signIn` }") Sign in
+            v-btn.mr-3(color="accent", :to="{ name: `signUp` }") Start now
+            v-btn.mr-3(outlined, color="accent", :to="{ name: `signIn` }") Sign in
 
           v-spacer(style='height: 70px')
         v-col.flex-grow-1(v-if='$vuetify.breakpoint.mdAndUp' style='width: 50%')
@@ -119,7 +119,7 @@
             span(v-if="calculator.helpful") Great! We'd love to get in touch with you about how Worxstr can help solve your management issues.
             span(v-else) We're sorry to hear that. We would love a moment to speak with you about what we could be doing differently.
 
-          contact-form(color='white')
+          contact-form(color='white' filled text)
 </template>
 
 <script>

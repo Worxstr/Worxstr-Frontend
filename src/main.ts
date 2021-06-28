@@ -5,18 +5,22 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import PortalVue from 'portal-vue'
 import { io } from "socket.io-client"
+
+import './assets/style.scss'
+import './plugins/filters'
+
+import VueMask from 'v-mask'
+import PortalVue from 'portal-vue'
 import VueSocketIO from 'vue-socket.io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
-import VueGtag from "vue-gtag";
-import './assets/style.css'
-import './plugins/filters'
+import VueGtag from "vue-gtag"
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
 Vue.use(PortalVue)
+Vue.use(VueMask)
 
 Vue.use(VueGoogleMaps, {
   load: {

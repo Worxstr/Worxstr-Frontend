@@ -30,13 +30,10 @@ v-dialog(
             :key="timecard.id"
           )
             v-icon.mr-2(color="red") mdi-alert-circle-outline
-            |
-            | Be sure to pay
-            |
-            | {{ timecard.first_name | fullName }}
+              | Be sure to pay
+              | {{ timecard.first_name | fullName }}
             span.font-weight-black.mx-1 ${{ timecard.total_payment }}
-            |
-            | in cash.
+              | in cash.
 
     v-spacer
             

@@ -11,41 +11,45 @@ v-dialog(
       ref="form",
       v-model="isValid"
     )
-
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title New conversation
-      
+
       v-divider
 
       v-card-text
-          p Select the person you want to message
-          v-autocomplete(
-              v-model="selectedUsers"
-              :items="contacts"
-              multiple
-              placeholder="Find someone"
-              outlined
-              dense
-              :rules="[ v => v.length != 0 ]"
-              :item-text="(u) => `${u.first_name} ${u.last_name}`",
-              :item-value="u => u.id"
-          )
+        p Select the person you want to message
+        v-autocomplete(
+          autofocus
+          v-model="selectedUsers",
+          :items="contacts",
+          multiple,
+          placeholder="Find someone",
+          outlined,
+          dense,
+          :rules="[(v) => v.length != 0]",
+          :item-text="(u) => `${u.first_name} ${u.last_name}`",
+          :item-value="(u) => u.id"
+        )
 
       v-spacer
 
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="primary", @click="createConversation" :disabled="!isValid") Send message
-        
+        v-btn(
+          text,
+          color="primary",
+          @click="createConversation",
+          :disabled="!isValid"
+        ) Send message
+
       v-fade-transition
         v-overlay(v-if="loading", absolute, opacity=".2")
           v-progress-circular(indeterminate)
-
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 
 export default {
   name: "newConversationDialog",
@@ -53,15 +57,15 @@ export default {
     opened: Boolean,
   },
   mounted() {
-    this.$store.dispatch('loadContacts');
+    this.$store.dispatch("loadContacts");
   },
   computed: {
-    ...mapState(['contacts'])
+    ...mapState(["contacts"]),
   },
   data: () => ({
     isValid: false,
     loading: false,
-    selectedUsers: []
+    selectedUsers: [],
   }),
   methods: {
     closeDialog() {
@@ -69,14 +73,19 @@ export default {
       this.$refs.form.reset();
     },
     async createConversation() {
-      this.loading = true
+      this.loading = true;
       try {
-        const conversation = await this.$store.dispatch("createConversation", this.selectedUsers)
-        this.$router.push({name: 'conversation', params: {conversationId: conversation.id}})
-        this.closeDialog()
-      }
-      finally {
-        this.loading = false
+        const conversation = await this.$store.dispatch(
+          "createConversation",
+          this.selectedUsers
+        );
+        this.$router.push({
+          name: "conversation",
+          params: { conversationId: conversation.id },
+        });
+        this.closeDialog();
+      } finally {
+        this.loading = false;
       }
     },
   },

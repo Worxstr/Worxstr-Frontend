@@ -20,6 +20,7 @@ v-dialog(
 
       v-card-text
         v-text-field(
+          autofocus
           label="First name",
           dense,
           outlined,
@@ -46,7 +47,8 @@ v-dialog(
         )
         v-text-field(
           label="Phone",
-          type="phone",
+          type="tel",
+          v-mask="'(###) ###-####'"
           dense,
           outlined,
           v-model="workforceMember.phone",
@@ -71,8 +73,8 @@ v-dialog(
           suffix="/ hour"
           label="Hourly wage",
           type="number",
-          min="0.01"
-          step="0.01"
+          min="0.01",
+          step="0.01",
           dense,
           outlined,
           :rules="rules.currency",
@@ -102,29 +104,35 @@ v-dialog(
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
+import {
+  exists,
+  emailRules,
+  phoneRules,
+  currencyRules,
+} from "@/plugins/inputValidation";
 
 export default {
   name: "addWorkforceMemberDialog",
   props: ["opened", "type"],
   computed: {
-    ...mapState(['managers'])
+    ...mapState(["managers"]),
   },
   watch: {
-    opened(newVal, oldVal) {
-      if (newVal) this.$store.dispatch('loadManagers');
+    opened(newVal) {
+      if (newVal) this.$store.dispatch("loadManagers");
     },
   },
   data: () => ({
     isValid: false,
     workforceMember: {
-      hourly_rate: 12.00
+      hourly_rate: 12.0,
     },
     loading: false,
     managerTypes: [
       {
         text: "Organization manager",
-        value: "organization_manager"
+        value: "organization_manager",
       },
       {
         text: "Contractor manager",
@@ -132,39 +140,12 @@ export default {
       }
     ],
     rules: {
-      firstName: [(value) => !!value || "First name required"],
-      lastName: [(value) => !!value || "Last name required"],
-      phone: [
-        (value) => !!value || "Phone required",
-        (value) => {
-          // https://stackoverflow.com/questions/4338267/validate-phone-number-with-javascript
-          // TODO: Use a library for these rules
-
-          const pattern = /^(()?\d{3}())?(-|\s)?\d{3}(-|\s)?\d{4}$/;
-          return pattern.test(value) || "Invalid phone";
-        },
-      ],
-      email: [
-        (value) => !!value || "Email required",
-        (value) => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || "Invalid email";
-        },
-      ],
-      currency: [
-        (value) => !!value || "Wage required",
-        (value) => {
-          // https://regexlib.com/Search.aspx?k=currency&c=-1&m=5&ps=20
-          const pattern = /^\$?-?([1-9]{1}[0-9]{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^-?\$?([1-9]{1}\d{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^\(\$?([1-9]{1}\d{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))\)$/
-          return pattern.text(value) || "Invalid wage"
-        }
-      ],
+      firstName: [exists("First name required")],
+      lastName: [exists("Last name required")],
+      phone: phoneRules,
+      email: emailRules,
+      currency: currencyRules,
       managerId: [(value) => !!value || "Manager ID required"],
-      password: [
-        (value) => !!value || "Password required",
-        (value) => value.length >= 8 || "Password must be 8 characters",
-      ],
-      confirmPassword: [(value) => !!value || "Password confirmation required"],
     },
   }),
   methods: {
@@ -173,7 +154,7 @@ export default {
       if (this.create) this.$refs.form.reset();
     },
     async addWorkforceMember() {
-      this.loading = true
+      this.loading = true;
       try {
         if (this.type == 'manager') {
           await this.$store.dispatch("addManager", this.workforceMember)
@@ -181,11 +162,12 @@ export default {
         else {
           await this.$store.dispatch('addContractor', this.workforceMember)
         }
-        this.$store.dispatch("showSnackbar", { text: this.$options.filters.capitalize(this.type + " added")})
-        this.closeDialog()
-      }
-      finally {
-        this.loading = false
+        this.$store.dispatch("showSnackbar", {
+          text: this.$options.filters.capitalize(this.type + " added"),
+        });
+        this.closeDialog();
+      } finally {
+        this.loading = false;
       }
     },
   },

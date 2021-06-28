@@ -5,6 +5,7 @@
         v-card-title Sign up
         v-card-text
           v-text-field(
+            autofocus,
             label='First name'
             v-model='form.first_name'
             :rules='rules.firstName'
@@ -24,11 +25,12 @@
             required
           )
           v-text-field(
-            label='Phone'
-            type='phone' 
-            v-model='form.phone'
+            v-model="form.phone",
             :rules='rules.phone'
-            required
+            type="tel",
+            v-mask="'(###) ###-####'"
+            label="Phone number",
+            required,
           )
           v-text-field(
             label='Manager ID'
@@ -46,10 +48,7 @@
             label='Confirm password'
             type='password'
             v-model='form.confirm_password'
-            :rules="[\
-              ...rules.confirmPassword,\
-              (value) => value == form.password || 'Passwords must match',\
-            ]"
+            :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
             required
           )
           v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
@@ -74,61 +73,46 @@
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 
-export default {
-  name: "signUp",
-  metaInfo: {
-    title: "Sign up",
-  },
-  data: () => ({
-    form: {
-      first_name: "",
-      last_name: "",
-      phone: "",
-      email: "",
-      manager_id: "",
-      password: "",
-      confirm_password: "", 
-      agreeToTerms: false,
-    },
-    isValid: false,
-    rules: {
-      firstName: [(value) => !!value || "First name required"],
-      lastName: [(value) => !!value || "Last name required"],
-      phone: [
-        (value) => !!value || "Phone required",
-        (value) => {
-          // https://stackoverflow.com/questions/4338267/validate-phone-number-with-javascript
-          // TODO: Use a library for these rules
+import { Component, Vue } from 'vue-property-decorator'
+import { exists, emailRules, phoneRules, passwordRules, passwordMatches } from '@/plugins/inputValidation'
 
-          const pattern = /^(()?\d{3}())?(-|\s)?\d{3}(-|\s)?\d{4}$/;
-          return pattern.test(value) || "Invalid phone";
-        },
-      ],
-      email: [
-        (value) => !!value || "Email required",
-        (value) => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || "Invalid email";
-        },
-      ],
-      managerId: [(value) => !!value || "Manager ID required"],
-      password: [
-        (value) => !!value || "Password required",
-        (value) => value.length >= 8 || "Password must be 8 characters",
-      ],
-      confirmPassword: [(value) => !!value || "Password confirmation required"],
-    },
-    loading: false,
-  }),
-  methods: {
-    async signUp() {
-      this.loading = true
-      try {
-        await this.$store.dispatch("signUp", this.form)
-      } finally {
-        this.loading = false
-      }
-    },
-  },
-};
+@Component({
+  metaInfo: {
+    title: 'Sign up'
+  }
+})
+export default class SignUp extends Vue {
+  loading = false
+  isValid = false
+
+  form = {
+    first_name: "",
+    last_name: "",
+    phone: "",
+    email: "",
+    manager_id: "",
+    password: "",
+    confirm_password: "", 
+    agreeToTerms: false,
+  }
+  rules = {
+    firstName: [exists('First name required')],
+    lastName: [exists('Last name required')],
+    phone: phoneRules,
+    email: emailRules,
+    managerId: [exists('Manager ID required')],
+    password: passwordRules,
+    confirmPassword: [exists('Password confirmation required')],
+    passwordMatches,
+  }
+
+  async signUp() {
+    this.loading = true
+    try {
+      await this.$store.dispatch("signUp", this.form)
+    } finally {
+      this.loading = false
+    }
+  }
+}
 </script>

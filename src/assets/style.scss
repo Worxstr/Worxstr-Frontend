@@ -25,6 +25,14 @@ a {
 .gradient h6 {
 	color: white !important;
 }
+.overlap {
+  position: absolute;
+  width: 100%;
+	padding-bottom: 103px;
+}
+.shift-down {
+  padding-top: 160px !important;
+}
 
 .v-select.fit {
 	width: min-content;
