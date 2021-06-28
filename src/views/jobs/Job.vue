@@ -197,8 +197,8 @@ export default class JobView extends Vue {
   }
 
   contractorName(contractorId: number) {
-    if (!this.job.contractors) return ''
-    const contractor = this.job.contractors.find((e) => e.id == contractorId)
+    if (!this.job.employees) return ''
+    const contractor = this.job.employees.find((e) => e.id == contractorId)
     if (!contractor) return 'Unknown contractor'
     return `${contractor.first_name} ${contractor.last_name}`
   }

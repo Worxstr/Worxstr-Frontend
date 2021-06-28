@@ -132,6 +132,11 @@ export default class NavDrawer extends Vue {
       to: "settings",
     },
     {
+      text: "Support",
+      icon: "mdi-help-circle-outline",
+      to: "support",
+    },
+    {
       text: "Sign out",
       icon: "mdi-logout-variant",
       click: this.signOut,

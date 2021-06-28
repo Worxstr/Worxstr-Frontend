@@ -50,6 +50,10 @@ export default class Toolbar extends Vue {
       to: "contact",
     },
     {
+      text: "Support",
+      to: "support",
+    },
+    {
       text: "Pricing",
       to: "pricing",
     },

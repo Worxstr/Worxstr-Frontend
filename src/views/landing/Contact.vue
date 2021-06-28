@@ -5,7 +5,7 @@ div
       h3.text-h3.font-weight-bold Contact us
 
   v-container.shift-down
-    v-row.mb-12.justify-center
+    v-row.justify-center
       v-col(
         v-for="(option, i) in helpOptions", :index="i"
         cols="12",
@@ -33,7 +33,7 @@ div
               contact-form(color="primary")
                 v-btn(text, @click="chosenOption = null") Cancel
 
-    div
+    .mt-12
       h4.text-h4.font-weight-black.mb-3 Need help now?
       p
         | Visit our

@@ -12,6 +12,7 @@ import Home from '@/views/landing/Home.vue'
 import About from '@/views/landing/About.vue'
 import Pricing from '@/views/landing/Pricing.vue'
 import Contact from '@/views/landing/Contact.vue'
+import Support from '@/views/support/Support.vue'
 import Privacy from '@/views/landing/Privacy.vue'
 import Terms from '@/views/landing/Terms.vue'
 import SignIn from '@/views/auth/SignIn.vue'
@@ -71,6 +72,14 @@ const routes = [
     path: '/contact',
     name: 'contact',
     component: Contact,
+    meta: {
+      landing: true,
+    }
+  },
+  {
+    path: '/support',
+    name: 'support',
+    component: Support,
     meta: {
       landing: true,
     }
@@ -136,7 +145,7 @@ const routes = [
     component: Clock,
     meta: {
       icon: 'mdi-clock-outline',
-      restrict: [UserRole.Employee]
+      restrict: [UserRole.Contractor]
     }
   },
   // {
@@ -145,7 +154,7 @@ const routes = [
   //   component: Availability,
   //   meta: {
   //     icon: 'mdi-calendar-check',
-  //     restrict: [UserRole.Employee]
+  //     restrict: [UserRole.Contractor]
   //   }
   // },
   {
@@ -184,7 +193,7 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      restrict: [UserRole.Employee, ...Manager],
+      restrict: [UserRole.Contractor, ...Manager],
       fullHeight: true,
       hideNav: true,
     }
@@ -204,7 +213,7 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      restrict: [UserRole.Employee, ...Manager],
+      restrict: [UserRole.Contractor, ...Manager],
     },
     children: [
       {
