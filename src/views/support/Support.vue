@@ -6,7 +6,18 @@ div
       
 
   v-container.shift-down
-    v-autocomplete.support-search(solo placeholder='Search for help...' style='max-width: 600px')
+    v-autocomplete.support-search(
+      solo
+      autofocus
+      auto-select-first
+      clearable
+      placeholder='Search for help...'
+      :items='allArticles'
+      item-text='title'
+      style='max-width: 600px'
+      return-object
+      @change='openArticle'
+    )
 
     v-card.mt-2
       v-card-title Browse articles
@@ -30,7 +41,11 @@ div
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-@Component
+@Component({
+  metaInfo: {
+    title: 'Support',
+  },
+})
 export default class Support extends Vue {
   categories = [
     {
@@ -38,74 +53,84 @@ export default class Support extends Vue {
       articles: [
         {
           title: 'Some article 1 blah',
-          id: '1'
+          id: '1',
         },
         {
           title: 'Some article 2 blah',
-          id: '2'
+          id: '2',
         },
         {
           title: 'Some article 11 blah',
-          id: '11'
+          id: '11',
         },
         {
           title: 'Some article 12 blah',
-          id: '12'
+          id: '12',
         },
-      ]
+      ],
     },
     {
       title: 'Payments',
       articles: [
         {
           title: 'Some article 3 blah',
-          id: '3'
+          id: '3',
         },
         {
           title: 'Some article 4 blah',
-          id: '4'
+          id: '4',
         },
-      ]
+      ],
     },
     {
       title: 'Scheduling',
       articles: [
         {
           title: 'Some article 5 blah',
-          id: '5'
+          id: '5',
         },
         {
           title: 'Some article 6 blah',
-          id: '6'
+          id: '6',
         },
-      ]
+      ],
     },
     {
       title: 'Managing your workforce',
       articles: [
         {
           title: 'Some article 7 blah',
-          id: '7'
+          id: '7',
         },
         {
           title: 'Some article 8 blah',
-          id: '8'
+          id: '8',
         },
-      ]
+      ],
     },
     {
       title: 'Messaging',
       articles: [
         {
           title: 'Some article 9 blah',
-          id: '9'
+          id: '9',
         },
         {
           title: 'Some article 10 blah',
-          id: '10'
+          id: '10',
         },
-      ]
-    }
+      ],
+    },
   ]
+
+  openArticle(article) {
+    this.$router.push({ name: 'supportArticle', params: { articleId: article.id }})
+  }
+
+  get allArticles() {
+    return this.categories
+      .map((c) => c.articles)
+      .reduce((a, b) => a.concat(b), [])
+  }
 }
 </script>
