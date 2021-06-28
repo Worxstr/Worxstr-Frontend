@@ -29,12 +29,12 @@ div
           v-expansion-panel-content
             ul
               li.mb-2(v-for='article in category.articles' :index='article.id')
-                router-link(to='/') {{ article.title }} 
+                router-link(:to="{name: 'supportArticle', params: {articleId: article.id}}") {{ article.title }} 
 
     .mt-12
       h4.text-h4.font-weight-black.mb-3 Can't find what you need?
       p
-        router-link(to="/contact") &nbsp;Contact us&nbsp;
+        router-link(:to="{name: 'contact'}") &nbsp;Contact us&nbsp;
         | for personalized help and assistance.
 </template>
 
@@ -44,7 +44,7 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({
   metaInfo: {
     title: 'Support',
-  },
+  }
 })
 export default class Support extends Vue {
   categories = [
@@ -52,19 +52,19 @@ export default class Support extends Vue {
       title: 'Jobs',
       articles: [
         {
-          title: 'Some article 1 blah',
+          title: 'Creating a new job',
           id: '1',
         },
         {
-          title: 'Some article 2 blah',
+          title: 'Editing an existing job',
           id: '2',
         },
         {
-          title: 'Some article 11 blah',
+          title: 'Adding shifts to a job',
           id: '11',
         },
         {
-          title: 'Some article 12 blah',
+          title: 'Editing shifts on a job',
           id: '12',
         },
       ],
@@ -73,11 +73,11 @@ export default class Support extends Vue {
       title: 'Payments',
       articles: [
         {
-          title: 'Some article 3 blah',
+          title: 'Approving and denying timecards',
           id: '3',
         },
         {
-          title: 'Some article 4 blah',
+          title: 'Payouts',
           id: '4',
         },
       ],
@@ -86,12 +86,8 @@ export default class Support extends Vue {
       title: 'Scheduling',
       articles: [
         {
-          title: 'Some article 5 blah',
+          title: 'Viewing your schedule',
           id: '5',
-        },
-        {
-          title: 'Some article 6 blah',
-          id: '6',
         },
       ],
     },
@@ -99,11 +95,15 @@ export default class Support extends Vue {
       title: 'Managing your workforce',
       articles: [
         {
-          title: 'Some article 7 blah',
+          title: 'Adding a contractor',
+          id: '6',
+        },
+        {
+          title: 'Adding a manager',
           id: '7',
         },
         {
-          title: 'Some article 8 blah',
+          title: 'Viewing your workforce members',
           id: '8',
         },
       ],
@@ -112,11 +112,11 @@ export default class Support extends Vue {
       title: 'Messaging',
       articles: [
         {
-          title: 'Some article 9 blah',
+          title: 'Creating a direct or group message',
           id: '9',
         },
         {
-          title: 'Some article 10 blah',
+          title: 'Sending messages',
           id: '10',
         },
       ],

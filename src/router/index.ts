@@ -13,6 +13,7 @@ import About from '@/views/landing/About.vue'
 import Pricing from '@/views/landing/Pricing.vue'
 import Contact from '@/views/landing/Contact.vue'
 import Support from '@/views/support/Support.vue'
+import SupportArticle from '@/views/support/SupportArticle.vue'
 import Privacy from '@/views/landing/Privacy.vue'
 import Terms from '@/views/landing/Terms.vue'
 import SignIn from '@/views/auth/SignIn.vue'
@@ -80,6 +81,14 @@ const routes = [
     path: '/support',
     name: 'support',
     component: Support,
+    meta: {
+      landing: true,
+    }
+  },
+  {
+    path: '/support/:articleId',
+    name: 'supportArticle',
+    component: SupportArticle,
     meta: {
       landing: true,
     }
