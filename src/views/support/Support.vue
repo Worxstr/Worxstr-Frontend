@@ -20,16 +20,19 @@ div
     )
 
     v-card.mt-2
-      v-card-title Browse articles
+      v-card-title Browse support topics
 
       v-expansion-panels(accordion flat)
         v-expansion-panel(v-for='(category, i) in categories' :index='i')
           v-divider
           v-expansion-panel-header {{ category.title }}
           v-expansion-panel-content
-            ul
-              li.mb-2(v-for='article in category.articles' :index='article.id')
-                router-link(:to="{name: 'supportArticle', params: {articleId: article.id}}") {{ article.title }} 
+            .d-flex.flex-column
+              router-link.mb-2(
+                v-for='article in category.articles'
+                :index='article.id'
+                :to="{name: 'supportArticle', params: {articleId: article.id}}"
+              ) {{ article.title }} 
 
     .mt-12
       h4.text-h4.font-weight-black.mb-3 Can't find what you need?
