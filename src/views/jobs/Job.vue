@@ -13,10 +13,9 @@ div(v-else)
   v-container.approvals.mb-50(v-if="job")
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
-    edit-shift-dialog(
-      :create="true",
-      :opened.sync="addShiftDialog",
-      :contractors="job.employees"
+    create-shift-dialog(
+      :opened.sync='createShiftDialog',
+      :contractors='job.employees'
     )
     edit-shift-dialog(
       :opened.sync="editShiftDialog",
@@ -80,7 +79,7 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text, @click="addShiftDialog = true")
+      v-btn(text, @click="createShiftDialog = true")
         v-icon(left) mdi-plus
         span Add shift
 
@@ -128,6 +127,7 @@ import { Vue, Component } from "vue-property-decorator"
 
 import EditJobDialog from "./EditJobDialog.vue"
 import CloseJobDialog from "./CloseJobDialog.vue"
+import CreateShiftDialog from "./CreateShiftDialog.vue"
 import EditShiftDialog from "./EditShiftDialog.vue"
 import DeleteShiftDialog from "./DeleteShiftDialog.vue"
 
@@ -140,6 +140,7 @@ import { Job, Shift } from "@/definitions/Job"
   components: {
     EditJobDialog,
     CloseJobDialog,
+    CreateShiftDialog,
     EditShiftDialog,
     DeleteShiftDialog,
     ClockEvents,
@@ -150,7 +151,7 @@ export default class JobView extends Vue {
   loading = false
   editJobDialog = false
   closeJobDialog = false
-  addShiftDialog = false
+  createShiftDialog = false
   editShiftDialog = false
   deleteShiftDialog = false
   selectedShift: Shift | {} = {}
