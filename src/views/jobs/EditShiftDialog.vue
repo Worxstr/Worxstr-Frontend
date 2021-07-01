@@ -102,7 +102,7 @@ v-dialog(
               v-text-field.px-2(
                 outlined,
                 dense,
-                v-model="editedShift.repeat.repeatEvery.value",
+                v-model.number="editedShift.repeat.repeatEvery.value",
                 type="number",
                 increment="1",
                 min="1",
@@ -165,7 +165,7 @@ v-dialog(
                   :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
                 )
                 v-text-field(
-                  v-model="editedShift.repeat.ends.occurences",
+                  v-model.number="editedShift.repeat.ends.occurences",
                   outlined,
                   dense,
                   hide-details,

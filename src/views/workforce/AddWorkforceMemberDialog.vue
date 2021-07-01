@@ -78,7 +78,7 @@ v-dialog(
           dense,
           outlined,
           :rules="rules.currency",
-          v-model="workforceMember.hourly_rate",
+          v-model.number="workforceMember.hourly_rate",
           required
         )
 

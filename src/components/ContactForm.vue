@@ -71,26 +71,24 @@ v-form.flex-grow-1.d-flex.flex-column(
     :filled="filled"
   )
 
-  .d-flex.flex-column.flex-md-row
-    v-select.mr-2(
-      v-model="form.num_managers",
+  .d-flex.flex-column.flex-md-row(v-if='showManagerContractorFields')
+    v-text-field.mr-2(
+      v-model.number="form.num_managers",
       label="Number of managers",
       type="number",
       min="1",
       required,
-      :items='employeeCountOptions'
       outlined,
       dense,
       :color="color",
       :filled="filled"
     )
-    v-select.ml-2(
-      v-model="form.num_contractors",
+    v-text-field.ml-2(
+      v-model.number="form.num_contractors",
       label="Number of contractors",
       type="number",
       min="1",
       required,
-      :items='employeeCountOptions'
       outlined,
       dense,
       :color="color",
@@ -146,22 +144,22 @@ export default class ContactForm extends Vue {
     email: emailRules,
   }
 
-  employeeCountOptions = [{
-    text: '0-25',
-    value: 0
-  },{
-    text: '26-100',
-    value: 1
-  },{
-    text: '101+',
-    value: 2
-  }]
-
   @Prop(String) readonly color: string | undefined
   @Prop({ default: false }) readonly text!: boolean
   @Prop({ default: false }) readonly filled!: boolean
+  @Prop({ default: true }) readonly showManagerContractorFields!: boolean
+  @Prop(Object) readonly dataSupplement: object | undefined
 
   loading = false
+
+  mounted() {
+    if (this.dataSupplement) {
+      this.form = {
+        ...this.form,
+        ...this.dataSupplement
+      }
+    }
+  }
 
   async submitForm() {
     this.loading = true 
