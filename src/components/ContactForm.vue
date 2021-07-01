@@ -110,7 +110,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       :color="color"
       :disabled='!isValid'
       :loading="loading"
-    ) Send message
+    ) Request information
 </template>
 
 <script lang="ts">
