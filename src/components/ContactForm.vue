@@ -9,7 +9,6 @@ v-form.flex-grow-1.d-flex.flex-column(
     v-model="form.business_name",
     label="Business name",
     required,
-    :rules='rules.businessName'
     outlined,
     dense,
     :color="color",
@@ -31,7 +30,6 @@ v-form.flex-grow-1.d-flex.flex-column(
       v-model="form.contact_title",
       label="Job title",
       required,
-      :rules='rules.contactTitle'
       outlined,
       dense,
       :color="color",
@@ -67,7 +65,6 @@ v-form.flex-grow-1.d-flex.flex-column(
     v-model="form.website",
     label="Business website",
     required,
-    :rules='rules.website'
     outlined,
     dense,
     :color="color",
@@ -82,7 +79,6 @@ v-form.flex-grow-1.d-flex.flex-column(
       min="1",
       required,
       :items='employeeCountOptions'
-      :rules='rules.numManagers'
       outlined,
       dense,
       :color="color",
@@ -95,7 +91,6 @@ v-form.flex-grow-1.d-flex.flex-column(
       min="1",
       required,
       :items='employeeCountOptions'
-      :rules='rules.numContractors'
       outlined,
       dense,
       :color="color",
@@ -147,13 +142,8 @@ export default class ContactForm extends Vue {
   }
 
   rules = {
-    businessName: [exists('Business name required')],
     contactName: [exists('Name required')],
-    contactTitle: [exists('Title required')],
     email: emailRules,
-    website: [exists('Business website required')],
-    numManagers: [exists('Number of managers required')],
-    numContractors: [exists('Number of contractors required')],
   }
 
   employeeCountOptions = [{
@@ -176,15 +166,18 @@ export default class ContactForm extends Vue {
   async submitForm() {
     this.loading = true 
 
-    const phoneFields = {
-      country_code: '1',
-      area_code: this.form.phone.substring(1,4),
-      phone_number: this.form.phone.substring(6,9) + this.form.phone.substring(10,14)
-    }
+    const request: any = {...this.form}
 
-    const request = {
-      ...this.form,
-      phone: phoneFields,
+    if (this.form.phone) {
+      request.phone = {
+        country_code: '1',
+        area_code: this.form.phone.substring(1,4),
+        phone_number: this.form.phone.substring(6,9) + this.form.phone.substring(10,14)
+      }
+      delete request.email
+    }
+    else {
+      delete request.phone
     }
     
     await this.$store.dispatch('contactSales', request)

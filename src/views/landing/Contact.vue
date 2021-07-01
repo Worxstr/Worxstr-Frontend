@@ -59,16 +59,16 @@ export default class Contact extends Vue {
   chosenOption: 'support' | 'sales' | null = null
 
   helpOptions = [
-    {
-      name: 'support',
-      title: "Help and support",
-      text: "Having technical trouble? Contact our support team and we will get back to you soon.",
-      button: {
-        text: "Contact support",
-        color: "primary",
-      },
-      dialog: false,
-    },
+    // {
+    //   name: 'support',
+    //   title: "Help and support",
+    //   text: "Having technical trouble? Contact our support team and we will get back to you soon.",
+    //   button: {
+    //     text: "Contact support",
+    //     color: "primary",
+    //   },
+    //   dialog: false,
+    // },
     {
       name: 'sales',
       title: "Sales and pricing",
