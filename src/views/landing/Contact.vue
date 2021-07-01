@@ -33,12 +33,12 @@ div
               contact-form(color="primary" @submitted='chosenOption = null')
                 v-btn(text, @click="chosenOption = null") Cancel
 
-    .mt-12
-      h4.text-h4.font-weight-black.mb-3 Need help now?
-      p
-        | Visit our
-        router-link(to="/support") &nbsp;support page&nbsp;
-        | for common questions and answers.
+    //- .mt-12
+    //-   h4.text-h4.font-weight-black.mb-3 Need help now?
+    //-   p
+    //-     | Visit our
+    //-     router-link(to="/support") &nbsp;support page&nbsp;
+    //-     | for common questions and answers.
 </template>
 
 <script lang='ts'>
