@@ -3,13 +3,13 @@ export type ClockEvent = {
 	action: number;
 	time: string;
 	timecard_id: number;
-	employee_id: number;
+	contractor_id: number;
 }
 
 export type Timecard = {
 	approved: boolean;
 	denied: boolean;
-	employee_id: number;
+	contractor_id: number;
 	fees_payment: string;
 	first_name: string;
 	last_name: string;

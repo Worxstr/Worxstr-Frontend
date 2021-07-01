@@ -7,7 +7,7 @@ v-dialog(
 )
   v-card.d-flex.flex-column
     v-card-title.headline Delete shift {{shift.id}}?
-    v-card-text {{ employeeName }} will no longer work this shift.
+    v-card-text {{ contractorName }} will no longer work this shift.
 
     v-spacer
     
@@ -32,7 +32,7 @@ export default class DeleteShiftDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop(Object) readonly shift: Shift | undefined
-  @Prop(String) readonly employeeName: string | undefined
+  @Prop(String) readonly contractorName: string | undefined
 
   closeDialog() {
     this.$emit("update:opened", false);
