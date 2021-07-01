@@ -31,10 +31,10 @@ export default {
         to: 'contact',
         text: 'Contact us',
       },
-      {
-        to: 'support',
-        text: 'Support',
-      },
+      // {
+      //   to: 'support',
+      //   text: 'Support',
+      // },
       {
         to: 'pricing',
         text: 'Pricing',

@@ -131,11 +131,11 @@ export default class NavDrawer extends Vue {
       icon: "mdi-cog",
       to: "settings",
     },
-    {
-      text: "Support",
-      icon: "mdi-help-circle-outline",
-      to: "support",
-    },
+    // {
+    //   text: "Support",
+    //   icon: "mdi-help-circle-outline",
+    //   to: "support",
+    // },
     {
       text: "Sign out",
       icon: "mdi-logout-variant",

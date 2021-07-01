@@ -126,7 +126,7 @@ export default class Support extends Vue {
     },
   ]
 
-  openArticle(article) {
+  openArticle(article: any) {
     this.$router.push({ name: 'supportArticle', params: { articleId: article.id }})
   }
 
