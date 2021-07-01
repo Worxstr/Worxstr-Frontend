@@ -39,13 +39,10 @@ v-form.flex-grow-1.d-flex.flex-column(
     )
 
   .d-flex
-    v-text-field(
+    phone-input(
       v-if="usePhone",
       v-model="form.phone",
       :rules='rules.phone'
-      type="tel",
-      v-mask="'(###) ###-####'",
-      label="Phone number",
       required,
       outlined,
       dense,
@@ -110,16 +107,28 @@ v-form.flex-grow-1.d-flex.flex-column(
   v-card-actions.pt-0
     v-spacer
     slot
-    v-btn(text, :text="text", :color="color" :disabled='!isValid' type='submit') Send message
+    v-btn(
+      type='submit'
+      text
+      :text="text"
+      :color="color"
+      :disabled='!isValid'
+      :loading="loading"
+    ) Send message
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { emailRules, exists, phoneRules } from '@/plugins/inputValidation'
+import { emailRules, exists } from '@/plugins/inputValidation'
+import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
-@Component
+@Component({
+  components: {
+    PhoneInput
+  }
+})
 export default class ContactForm extends Vue {
   
   isValid = false
@@ -141,7 +150,6 @@ export default class ContactForm extends Vue {
     businessName: [exists('Business name required')],
     contactName: [exists('Name required')],
     contactTitle: [exists('Title required')],
-    phone: phoneRules,
     email: emailRules,
     website: [exists('Business website required')],
     numManagers: [exists('Number of managers required')],
@@ -163,9 +171,26 @@ export default class ContactForm extends Vue {
   @Prop({ default: false }) readonly text!: boolean
   @Prop({ default: false }) readonly filled!: boolean
 
-  async submitForm() {
-    console.log('dummy submit')
-  }
+  loading = false
 
+  async submitForm() {
+    this.loading = true 
+
+    const phoneFields = {
+      country_code: '1',
+      area_code: this.form.phone.substring(1,4),
+      phone_number: this.form.phone.substring(6,9) + this.form.phone.substring(10,14)
+    }
+
+    const request = {
+      ...this.form,
+      phone: phoneFields,
+    }
+    
+    await this.$store.dispatch('contactSales', request)
+
+    this.loading = false
+    this.$emit('submitted')
+  }
 }
 </script>

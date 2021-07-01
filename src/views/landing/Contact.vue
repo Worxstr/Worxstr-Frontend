@@ -30,7 +30,7 @@ div
 
           v-expand-transition(appear)
             v-card-text.py-0(v-if="chosenOption == option.name")
-              contact-form(color="primary")
+              contact-form(color="primary" @submitted='chosenOption = null')
                 v-btn(text, @click="chosenOption = null") Cancel
 
     div
