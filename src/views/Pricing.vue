@@ -2,7 +2,7 @@
 div
   v-sheet.gradient.overlap
     v-container.py-16
-      h3.text-h3.font-weight-bold(style="margin-bottom: 103px") Pricing
+      h3.text-h3.font-weight-bold Pricing
 
   v-container.shift-down.mb-3
     v-row.mb-12

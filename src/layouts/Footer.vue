@@ -20,52 +20,56 @@ v-footer.worxstr-footer(padless)
 
 <script>
 export default {
-  name: "worxstrFooter",
+  name: 'worxstrFooter',
   data: () => ({
     links: [
       {
-        to: "about",
-        text: "About",
+        to: 'about',
+        text: 'About',
       },
       {
-        to: "contact",
-        text: "Contact us",
+        to: 'contact',
+        text: 'Contact us',
+      },
+      // {
+      //   to: 'support',
+      //   text: 'Support',
+      // },
+      {
+        to: 'pricing',
+        text: 'Pricing',
       },
       {
-        to: "pricing",
-        text: "Pricing",
+        to: 'privacy',
+        text: 'Privacy policy',
       },
       {
-        to: "privacy",
-        text: "Privacy policy",
-      },
-      {
-        to: "terms",
-        text: "Terms of use",
+        to: 'terms',
+        text: 'Terms of use',
       },
     ],
     socials: [
       {
-        icon: "mdi-facebook",
-        link: "https://www.facebook.com/worxstr",
+        icon: 'mdi-facebook',
+        link: 'https://www.facebook.com/worxstr',
       },
       {
-        icon: "mdi-instagram",
-        link: "https://www.instagram.com/worxstr/",
+        icon: 'mdi-instagram',
+        link: 'https://www.instagram.com/worxstr/',
       },
       {
-        icon: "mdi-twitter",
-        link: "https://twitter.com/worxstr",
+        icon: 'mdi-twitter',
+        link: 'https://twitter.com/worxstr',
       },
       {
-        icon: "mdi-linkedin",
-        link: "https://www.linkedin.com/company/worxstr-llc/",
+        icon: 'mdi-linkedin',
+        link: 'https://www.linkedin.com/company/worxstr-llc/',
       },
       {
-        icon: "mdi-youtube",
-        link: "https://www.youtube.com/channel/UCIthM10Z0VK6U0Tm1MjZXHQ",
+        icon: 'mdi-youtube',
+        link: 'https://www.youtube.com/channel/UCIthM10Z0VK6U0Tm1MjZXHQ',
       },
     ],
   }),
-};
+}
 </script>
