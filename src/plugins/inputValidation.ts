@@ -40,6 +40,12 @@ export const phoneRules = [
   },
 ]
 
+export const url = (value: string) => {
+  if (!value.length) return true
+  const pattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/
+  return pattern.test(value) || "Invalid url"
+}
+
 export const ssnRules = [
   exists("SSN required"),
   (value: string) => {

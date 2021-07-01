@@ -30,15 +30,15 @@ div
 
           v-expand-transition(appear)
             v-card-text.py-0(v-if="chosenOption == option.name")
-              contact-form(color="primary")
+              contact-form(color="primary" @submitted='chosenOption = null')
                 v-btn(text, @click="chosenOption = null") Cancel
 
-    .mt-12
-      h4.text-h4.font-weight-black.mb-3 Need help now?
-      p
-        | Visit our
-        router-link(to="/support") &nbsp;support page&nbsp;
-        | for common questions and answers.
+    //- .mt-12
+    //-   h4.text-h4.font-weight-black.mb-3 Need help now?
+    //-   p
+    //-     | Visit our
+    //-     router-link(to="/support") &nbsp;support page&nbsp;
+    //-     | for common questions and answers.
 </template>
 
 <script lang='ts'>
@@ -59,16 +59,16 @@ export default class Contact extends Vue {
   chosenOption: 'support' | 'sales' | null = null
 
   helpOptions = [
-    {
-      name: 'support',
-      title: "Help and support",
-      text: "Having technical trouble? Contact our support team and we will get back to you soon.",
-      button: {
-        text: "Contact support",
-        color: "primary",
-      },
-      dialog: false,
-    },
+    // {
+    //   name: 'support',
+    //   title: "Help and support",
+    //   text: "Having technical trouble? Contact our support team and we will get back to you soon.",
+    //   button: {
+    //     text: "Contact support",
+    //     color: "primary",
+    //   },
+    //   dialog: false,
+    // },
     {
       name: 'sales',
       title: "Sales and pricing",
