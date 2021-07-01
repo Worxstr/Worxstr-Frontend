@@ -1,15 +1,15 @@
 <template lang="pug">
 v-container
   add-workforce-member-dialog(
-    :opened.sync="addEmployeeDialog",
-    type="employee"
+    :opened.sync="addContractorDialog",
+    type="contractor"
   )
   add-workforce-member-dialog(:opened.sync="addManagerDialog", type="manager")
 
   portal(to="toolbarActions")
     div(v-if="$vuetify.breakpoint.smAndUp")
-      v-btn(text, color="primary", @click="addEmployeeDialog = true")
-        span Add employee
+      v-btn(text, color="primary", @click="addContractorDialog = true")
+        span Add contractor
 
       v-btn(
         text,
@@ -25,8 +25,8 @@ v-container
           v-icon(left) mdi-account-plus
           span Add member
       v-list
-        v-list-item(@click="addEmployeeDialog = true")
-          v-list-item-title Add employee
+        v-list-item(@click="addContractorDialog = true")
+          v-list-item-title Add contractor
         v-list-item(@click="addManagerDialog = true")
           v-list-item-title Add manager
 
@@ -69,7 +69,7 @@ export default {
   },
   data: () => ({
     loading: false,
-    addEmployeeDialog: false,
+    addContractorDialog: false,
     addManagerDialog: false,
     headers: [
       {

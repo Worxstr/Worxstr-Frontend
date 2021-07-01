@@ -68,9 +68,9 @@ v-dialog(
         )
 
         v-text-field(
-          v-if="type == 'employee'",
-          prefix="$",
-          suffix="/ hour",
+          v-if="type == 'contractor'"
+          prefix="$"
+          suffix="/ hour"
           label="Hourly wage",
           type="number",
           min="0.01",
@@ -83,9 +83,9 @@ v-dialog(
         )
 
         v-select(
-          v-if="managers.employee.length",
+          v-if="managers.contractor.length",
           v-model="workforceMember.manager_id",
-          :items="managers.employee",
+          :items="managers.contractor",
           :item-text="(m) => `${m.first_name} ${m.last_name}`",
           :item-value="'id'",
           outlined,
@@ -135,9 +135,9 @@ export default {
         value: "organization_manager",
       },
       {
-        text: "Employee manager",
-        value: "employee_manager",
-      },
+        text: "Contractor manager",
+        value: "contractor_manager"
+      }
     ],
     rules: {
       firstName: [exists("First name required")],
@@ -156,10 +156,11 @@ export default {
     async addWorkforceMember() {
       this.loading = true;
       try {
-        if (this.type == "manager") {
-          await this.$store.dispatch("addManager", this.workforceMember);
-        } else {
-          await this.$store.dispatch("addEmployee", this.workforceMember);
+        if (this.type == 'manager') {
+          await this.$store.dispatch("addManager", this.workforceMember)
+        }
+        else {
+          await this.$store.dispatch('addContractor', this.workforceMember)
         }
         this.$store.dispatch("showSnackbar", {
           text: this.$options.filters.capitalize(this.type + " added"),
