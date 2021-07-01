@@ -64,6 +64,9 @@ v-form.flex-grow-1.d-flex.flex-column(
   v-text-field(
     v-model="form.website",
     label="Business website",
+    type='url'
+    :rules='rules.url'
+    placeholder='https://example.com'
     required,
     outlined,
     dense,
@@ -114,7 +117,7 @@ v-form.flex-grow-1.d-flex.flex-column(
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { emailRules, exists } from '@/plugins/inputValidation'
+import { emailRules, exists, url } from '@/plugins/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
 @Component({
@@ -142,6 +145,7 @@ export default class ContactForm extends Vue {
   rules = {
     contactName: [exists('Name required')],
     email: emailRules,
+    url: [url],
   }
 
   @Prop(String) readonly color: string | undefined
