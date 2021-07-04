@@ -45,14 +45,9 @@ v-dialog(
           v-model="workforceMember.email",
           required
         )
-        v-text-field(
-          label="Phone",
-          type="tel",
-          v-mask="'(###) ###-####'"
-          dense,
-          outlined,
+        phone-input(
           v-model="workforceMember.phone",
-          :rules="rules.phone",
+          outlined
           required
         )
 
