@@ -24,7 +24,7 @@ export default class PhoneInput extends Vue {
   @Prop({ type: Object, required: true, default: '' }) readonly value: {
     countryCode: string;
     areaCode: string;
-    number: string;
+    phoneNumber: string;
   } | ''
 
   @Prop(String) readonly color: string | undefined
@@ -36,8 +36,8 @@ export default class PhoneInput extends Vue {
 
   get raw() {
     if (!this.value) return ''
-    const number1 = this.value.number.slice(0,3)
-    const number2 = this.value.number.slice(3,7)
+    const number1 = this.value.phoneNumber.slice(0,3)
+    const number2 = this.value.phoneNumber.slice(3,7)
 
     let formatted = '('
     formatted += this.value.areaCode
@@ -55,10 +55,10 @@ export default class PhoneInput extends Vue {
     const raw = value.replace(/\W/g, '')
     const countryCode = '1'
     const areaCode = raw.slice(0,3)
-    const number = raw.slice(3,10)
+    const phoneNumber = raw.slice(3,10)
 
     this.$emit('input', {
-      countryCode, areaCode, number
+      countryCode, areaCode, phoneNumber
     })
   }
 }
