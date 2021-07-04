@@ -79,7 +79,6 @@ v-dialog(
           outlined
           required
         )
-        p {{editedJob.consultant_phone}}
         v-text-field(
           outlined,
           dense,
