@@ -21,7 +21,7 @@ import { phoneRules } from '@/plugins/inputValidation'
 @Component
 export default class PhoneInput extends Vue {
 
-  @Prop({ type: Object, required: true, default: '' }) readonly value: {
+  @Prop({ type: Object, required: true, default: '' }) readonly value?: {
     countryCode: string;
     areaCode: string;
     phoneNumber: string;
