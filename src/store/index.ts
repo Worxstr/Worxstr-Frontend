@@ -596,6 +596,8 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/users/add-manager`,
         data: manager
       })
+      commit('ADD_USER', data)
+      commit('ADD_WORKFORCE_MEMBER', data.id)
     },
 
     async addContractor({ commit }, contractor) {
@@ -604,6 +606,8 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/users/add-contractor`,
         data: contractor
       })
+      commit('ADD_USER', data)
+      commit('ADD_WORKFORCE_MEMBER', data.id)
     },
 
     async loadCalendarEvents({ commit }, { start, end }) {

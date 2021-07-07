@@ -98,17 +98,19 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
-
 import { mapState } from "vuex";
 import {
   exists,
   emailRules,
-  phoneRules,
   currencyRules,
 } from "@/plugins/inputValidation";
+import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
 export default {
   name: "addWorkforceMemberDialog",
+  components: {
+    PhoneInput
+  },
   props: ["opened", "type"],
   computed: {
     ...mapState(["managers"]),
@@ -137,7 +139,6 @@ export default {
     rules: {
       firstName: [exists("First name required")],
       lastName: [exists("Last name required")],
-      phone: phoneRules,
       email: emailRules,
       currency: currencyRules,
       managerId: [(value) => !!value || "Manager ID required"],
