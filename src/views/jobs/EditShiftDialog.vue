@@ -118,7 +118,7 @@ export default class EditShiftDialog extends Vue {
   @Watch('shift')
   onShiftUpdated(shift: Shift) {
     this.editedShift = shift
-    this.editedShift.contractor_id = shift.employee_id
+    this.editedShift.contractor_id = shift.contractor_id
   }
 
   closeDialog() {

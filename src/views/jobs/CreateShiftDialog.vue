@@ -256,7 +256,7 @@ export default class CreateShiftDialog extends Vue {
 
   mounted() {
     this.editedShift.id = this.shift?.id
-    this.editedShift.contractor_ids = this.shift?.employee_id
+    this.editedShift.contractor_ids = this.shift?.contractor_id
     this.editedShift.time_begin = this.shift?.time_begin
     this.editedShift.time_end = this.shift?.time_end
   }
