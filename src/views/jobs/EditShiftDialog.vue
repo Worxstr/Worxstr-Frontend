@@ -22,11 +22,12 @@ v-dialog(
       v-divider
 
       v-card-text.pt-0
-        v-subheader Employee shifts
+        v-subheader Contractor shifts
 
-        //- Employee selector
+        //- Contractor selector
         v-select(
-          v-model="editedShift.employee_ids",
+          autofocus
+          v-model="editedShift.contractor_ids",
           :items="employees",
           :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)",
           :item-value="'id'",
@@ -34,11 +35,11 @@ v-dialog(
           multiple,
           dense,
           required,
-          label="Employees"
+          label="Contractors"
         )
           template(v-slot:append-item)
             v-divider
-            v-list-item(ripple, @click="addUnassignedEmployee")
+            v-list-item(ripple, @click="addUnassignedContractor")
               v-list-item-avatar(
                 :color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`"
               )
@@ -47,18 +48,18 @@ v-dialog(
                 v-list-item-title Add unassigned
 
         //- Location fields
-        div(v-if="editedShift.employee_ids.length")
+        div(v-if="editedShift.contractor_ids.length")
           v-divider
           v-subheader Site locations
 
           v-expand-transition(
             appear,
-            v-for="(employeeId, index) in editedShift.employee_ids",
-            :key="employeeId"
+            v-for="(contractorId, index) in editedShift.contractor_ids",
+            :key="contractorId"
           )
             v-text-field(
-              v-model="editedShift.employee_locations[index]",
-              :label="`Location for ${employeeName(employeeId)}`",
+              v-model="editedShift.contractor_locations[index]",
+              :label="`Location for ${contractorName(contractorId)}`",
               :rules="rules.location",
               outlined,
               dense,
@@ -199,7 +200,7 @@ const exists = (errorMessage: string) => (value: any) => !!value || errorMessage
 const timeValidate = (errorMessage: string) => (value: any) =>
   /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(value)
 
-interface UnassignedEmployee {
+interface UnassignedContractor {
   id: number;
 }
 
@@ -224,8 +225,8 @@ export default class EditShiftDialog extends Vue {
   ends = 'on'
 
   editedShift: any = {
-    employee_ids: [],
-    employee_locations: [],
+    contractor_ids: [],
+    contractor_locations: [],
     time_begin: nowLocal,
     time_end: hourFromNowLocal,
     repeat: {
@@ -255,7 +256,7 @@ export default class EditShiftDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ default: false }) readonly create!: boolean // Creating new shift or editing existing
-  @Prop({ default: [] }) readonly employees!: (User | UnassignedEmployee)[]
+  @Prop({ default: [] }) readonly contractors!: (User | UnassignedContractor)[]
   @Prop(Object) readonly shift: Shift | undefined
 
   closeDialog() {
@@ -263,10 +264,10 @@ export default class EditShiftDialog extends Vue {
     this.$emit("update:opened", false);
   }
 
-  employeeName(employeeId: number) {
-    const e: any = this.employees.find(e => e.id == employeeId)
-    if (employeeId > 0) return `${e.first_name} ${e.last_name}`
-    return `Unassigned ${-employeeId}`
+  contractorName(contractorId: number) {
+    const e: any = this.contractors.find(e => e.id == contractorId)
+    if (contractorId > 0) return `${e.first_name} ${e.last_name}`
+    return `Unassigned ${-contractorId}`
   }
 
   weekAndDay(date: Date) {
@@ -277,16 +278,16 @@ export default class EditShiftDialog extends Vue {
   }
 
   /* 
-    List of selected employees contains negative IDs to represent unassigned employees
+    List of selected contractors contains negative IDs to represent unassigned contractors
     Every value has to be unique, so the values cannot be all 'null'. Before
     sending off the request to create the shift, the negative values are converted to nulls
   */
   lastId = -1
-  addUnassignedEmployee() {
-    this.employees.push({
+  addUnassignedContractor() {
+    this.contractors.push({
       id: this.lastId
     })
-    this.editedShift.employee_ids.push(this.lastId)
+    this.editedShift.contractor_ids.push(this.lastId)
     this.lastId--
   }
 
@@ -296,9 +297,9 @@ export default class EditShiftDialog extends Vue {
     // Build request object
     const shift = {
       ...this.editedShift,
-      employees: this.editedShift.employee_ids.map((id: number, index: number) => ({
-        id: id < 0 ? null : id, // Convert negative (unassigned) employee ids to nulls
-        site_location: this.editedShift.employee_locations[index]
+      contractors: this.editedShift.contractor_ids.map((id: number, index: number) => ({
+        id: id < 0 ? null : id, // Convert negative (unassigned) contractor ids to nulls
+        site_location: this.editedShift.contractor_locations[index]
       }))
     }
     // Correct date strings
@@ -307,8 +308,8 @@ export default class EditShiftDialog extends Vue {
       shift.repeat.ends.date = (new Date(shift.repeat.ends.date)).toISOString()
 
     // Delete unwanted fields
-    delete shift.employee_ids
-    delete shift.employee_locations
+    delete shift.contractor_ids
+    delete shift.contractor_locations
     if (!this.recurring) delete shift.repeat
     else {
       if (shift.repeat.repeatEvery.unit != 'week') delete shift.repeat.weekly

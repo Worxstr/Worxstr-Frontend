@@ -6,14 +6,21 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import { io } from "socket.io-client"
+
+import './assets/style.scss'
+import './plugins/filters'
+
+import VueMask from 'v-mask'
+import PortalVue from 'portal-vue'
 import VueSocketIO from 'vue-socket.io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
-import VueGtag from "vue-gtag";
-import './assets/style.css'
-import './plugins/filters'
+import VueGtag from "vue-gtag"
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
+
+Vue.use(PortalVue)
+Vue.use(VueMask)
 
 Vue.use(VueGoogleMaps, {
   load: {
@@ -39,19 +46,54 @@ Vue.use(new VueSocketIO({
 }))
 
 Vue.use(VueGtag, {
-  config: { id: "UA-1234567-1" }
+  config: { id: process.env.VUE_APP_GTAG_API }
 });
 
 Vue.config.productionTip = false
 
+function initDarkMode() {
+  const userPrefDarkMode = window.localStorage.getItem("darkMode")
+  const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+
+  if (userPrefDarkMode == "System default") {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    darkMediaQuery.addEventListener("change", (e) => {
+      vuetify.framework.theme.dark = !vuetify.framework.theme.dark
+    });
+
+    if (darkMediaQuery.matches) {
+      setTimeout(() => (vuetify.framework.theme.dark = true), 0)
+    }
+  } else {
+    vuetify.framework.theme.dark = userPrefDarkMode == "Dark"
+  }
+}
+
+function promptSSN() {
+  // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
+  const user = store.state.authenticatedUser
+  if (user && user.employee_info?.need_info) {
+    store.dispatch("showSnackbar", {
+      text: `You haven't set your Social Security number.`,
+      action: () => {
+        router.push({
+          name: "settings",
+          params: {
+            openSSNDialog: "true",
+          },
+        })
+      },
+      actionText: "Set SSN",
+    })
+  }
+}
+
 async function init() {
 
   // Get local user data
-  const storedUser = JSON.parse(localStorage.getItem('authenticatedUser') || '{}')
+  const storedUser = localStorage.getItem('authenticatedUser')
   if (storedUser) {
-    store.commit('SET_AUTHENTICATED_USER', {
-      user: storedUser,
-    })
+    store.commit('SET_AUTHENTICATED_USER', JSON.parse(storedUser))
   }
 
   try {
@@ -68,6 +110,9 @@ async function init() {
     vuetify,
     render: h => h(App)
   }).$mount('#app')
+
+  initDarkMode()
+  promptSSN()
 }
 
 init()

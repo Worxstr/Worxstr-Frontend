@@ -8,8 +8,7 @@ v-dialog(
   v-card.d-flex.flex-column
     v-form.flex-grow-1.d-flex.flex-column(@submit.prevent="updateTimecard", v-model="form.isValid" v-if="timecard")
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title
-          | Editing timecard for {{ timecard | fullName }}
+        v-toolbar-title Editing timecard for {{ timecard | fullName }}
 
       v-divider
           
@@ -19,6 +18,7 @@ v-dialog(
         .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
           v-row
             v-col
+              //- TODO: Use datetime-local instead
               time-input(
                 required,
                 hide-details,

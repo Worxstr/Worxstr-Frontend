@@ -3,9 +3,11 @@ node_modules
 /directories
 
 !src/types.d.ts
+dist/
 
 
-# local env files
+# local env 
+.vscode
 .env.local
 .env.*.local
 

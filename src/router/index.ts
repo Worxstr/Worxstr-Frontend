@@ -5,11 +5,17 @@ import Meta from 'vue-meta'
 import store from '@/store'
 import { Capacitor } from '@capacitor/core'
 
-import Home from '@/views/Home.vue'
-import About from '@/views/About.vue'
-import Contact from '@/views/Contact.vue'
-import Privacy from '@/views/Privacy.vue'
-import Terms from '@/views/Terms.vue'
+import * as MessagesTypes from '@/definitions/Messages'
+import { fullName, groupNameList } from '@/plugins/filters'
+
+import Home from '@/views/landing/Home.vue'
+import About from '@/views/landing/About.vue'
+import Pricing from '@/views/landing/Pricing.vue'
+import Contact from '@/views/landing/Contact.vue'
+import Support from '@/views/support/Support.vue'
+import SupportArticle from '@/views/support/SupportArticle.vue'
+import Privacy from '@/views/landing/Privacy.vue'
+import Terms from '@/views/landing/Terms.vue'
 import SignIn from '@/views/auth/SignIn.vue'
 import SignUp from '@/views/auth/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
@@ -38,7 +44,7 @@ const routes = [
     name: 'home',
     component: Home,
     meta: {
-      showFooter: true,
+      landing: true,
     },
     beforeEnter(to: Route, from: Route, next: Function) {
       if (Capacitor.isNativePlatform() && store.state.authenticatedUser) {
@@ -52,7 +58,15 @@ const routes = [
     name: 'about',
     component: About,
     meta: {
-      showFooter: true,
+      landing: true,
+    }
+  },
+  {
+    path: '/pricing',
+    name: 'pricing',
+    component: Pricing,
+    meta: {
+      landing: true
     }
   },
   {
@@ -60,7 +74,23 @@ const routes = [
     name: 'contact',
     component: Contact,
     meta: {
-      showFooter: true,
+      landing: true,
+    }
+  },
+  {
+    path: '/support',
+    name: 'support',
+    component: Support,
+    meta: {
+      landing: true,
+    }
+  },
+  {
+    path: '/support/:articleId',
+    name: 'supportArticle',
+    component: SupportArticle,
+    meta: {
+      landing: true,
     }
   },
   {
@@ -68,7 +98,7 @@ const routes = [
     name: 'privacy',
     component: Privacy,
     meta: {
-      showFooter: true,
+      landing: true,
     }
   },
   {
@@ -76,7 +106,7 @@ const routes = [
     name: 'terms',
     component: Terms,
     meta: {
-      showFooter: true,
+      landing: true,
     }
   },
   {
@@ -84,7 +114,8 @@ const routes = [
     name: 'signIn',
     component: SignIn,
     meta: {
-      fullHeight: true
+      landing: true,
+      fullHeight: true,
     }
   },
   {
@@ -93,7 +124,8 @@ const routes = [
     name: 'signUp',
     component: SignUp,
     meta: {
-      fullHeight: true
+      landing: true,
+      fullHeight: true,
     }
   },
   {
@@ -101,6 +133,7 @@ const routes = [
     name: 'resetPassword',
     component: ResetPassword,
     meta: {
+      landing: true,
       fullHeight: true,
     }
   },
@@ -108,6 +141,12 @@ const routes = [
     path: '/users/:userId',
     name: 'user',
     component: User,
+    meta: {
+      paramMap: {
+        userId: 'users',
+        propBuilder: fullName
+      },
+    }
   },
   {
     path: '/clock',
@@ -115,7 +154,7 @@ const routes = [
     component: Clock,
     meta: {
       icon: 'mdi-clock-outline',
-      restrict: [UserRole.Employee]
+      restrict: [UserRole.Contractor]
     }
   },
   // {
@@ -124,7 +163,7 @@ const routes = [
   //   component: Availability,
   //   meta: {
   //     icon: 'mdi-calendar-check',
-  //     restrict: [EMPLOYEE]
+  //     restrict: [UserRole.Contractor]
   //   }
   // },
   {
@@ -134,6 +173,18 @@ const routes = [
     meta: {
       icon: 'mdi-calendar-check',
       restrict: Manager
+    },
+  },
+  {
+    path: '/jobs/:jobId',
+    name: 'job',
+    component: Job,
+    meta: {
+      restrict: Manager,
+      paramMap: {
+        jobId: 'jobs',
+        prop: 'name'
+      }
     }
   },
   {
@@ -146,20 +197,12 @@ const routes = [
     }
   },
   {
-    path: '/jobs/:jobId',
-    name: 'job',
-    component: Job,
-    meta: {
-      restrict: Manager
-    }
-  },
-  {
     path: '/schedule',
     name: 'schedule',
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      restrict: [UserRole.Employee, ...Manager],
+      restrict: [UserRole.Contractor, ...Manager],
       fullHeight: true,
       hideNav: true,
     }
@@ -179,16 +222,24 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      restrict: [UserRole.Employee, ...Manager],
+      restrict: [UserRole.Contractor, ...Manager],
     },
-    children: [{
-      name: 'conversation',
-      path: 'conversation/:conversationId',
-      component: Conversation,
-      meta: {
-        fullHeight: true,
-      }
-    }]
+    children: [
+      {
+        name: 'conversation',
+        path: ':conversationId',
+        component: Conversation,
+        meta: {
+          fullHeight: true,
+          paramMap: {
+            conversationId: 'conversations',
+            propBuilder(conversation: MessagesTypes.Conversation) {
+              return groupNameList(conversation, store.state.authenticatedUser)
+            },
+          },
+        },
+      },
+    ],
   },
   {
     path: '/settings',
@@ -201,6 +252,7 @@ const routes = [
     component: NotFound,
     meta: {
       fullHeight: true,
+      landing: true
     }
   }
 ]

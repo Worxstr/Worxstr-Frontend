@@ -1,14 +1,5 @@
 <template lang="pug">
 v-card.messages.d-flex.flex-column(v-if="conversation")
-  v-toolbar(flat, rounded="lg")
-    v-btn(
-      icon,
-      v-if="$vuetify.breakpoint.smAndDown",
-      @click="$router.push({ name: 'messages' })"
-    )
-      v-icon mdi-arrow-left
-
-    v-toolbar-title {{ conversation | groupNameList(authenticatedUser) }}
 
   //- transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
   //-   name="scroll-y-reverse-transition",
