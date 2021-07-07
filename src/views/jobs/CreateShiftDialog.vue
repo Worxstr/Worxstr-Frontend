@@ -186,7 +186,7 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import dayjs from 'dayjs'
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { User } from '@/definitions/User'
 import { Shift } from '@/definitions/Job'
 

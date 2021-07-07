@@ -153,10 +153,16 @@ export default {
       this.loading = true;
       try {
         if (this.type == 'manager') {
-          await this.$store.dispatch("addManager", this.workforceMember)
+          await this.$store.dispatch("addManager", {
+            ...this.workforceMember,
+            password: 'test'
+          })
         }
         else {
-          await this.$store.dispatch('addContractor', this.workforceMember)
+          await this.$store.dispatch('addContractor', {
+            ...this.workforceMember,
+            password: 'test'
+          })
         }
         this.$store.dispatch("showSnackbar", {
           text: this.$options.filters.capitalize(this.type + " added"),
