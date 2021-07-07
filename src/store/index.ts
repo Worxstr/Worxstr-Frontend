@@ -555,10 +555,12 @@ const storeConfig: StoreOptions<RootState> = {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/shifts`,
-        data: { shift },
+        data: shift,
         params: { job_id: jobId }
       })
-      commit('ADD_SHIFT', { shift: data.shift, jobId })
+      data.shifts.forEach((shift: Shift) => {
+        commit('ADD_SHIFT', { shift, jobId })
+      })
     },
 
     async updateShift({ commit }, shift) {
