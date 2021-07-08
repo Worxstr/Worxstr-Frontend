@@ -488,7 +488,7 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/jobs/managers`,
         params: {
-          manager_id: state.authenticatedUser?.manager_id
+          manager_id: state.authenticatedUser?.manager_id || state.authenticatedUser?.id
         }
       })
       data.contractor_managers.forEach((m: User) => {
