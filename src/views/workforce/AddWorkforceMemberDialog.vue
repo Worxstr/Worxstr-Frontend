@@ -120,6 +120,10 @@ export default {
       if (newVal) this.$store.dispatch("loadManagers");
     },
   },
+  mounted() {
+    console.log(this)
+    this.workforceMember.manager_id = this.$store.state.authenticatedUser?.id
+  },
   data: () => ({
     isValid: false,
     workforceMember: {
