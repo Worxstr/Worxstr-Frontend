@@ -81,10 +81,10 @@ v-dialog(
           label='End'
         )
 
-        v-divider
+        //- v-divider
 
         //- Recurrence section
-        v-checkbox(label="Recurring", v-model="recurring", hide-details)
+        //- v-checkbox(label="Recurring", v-model="recurring", hide-details)
 
         v-expand-transition
           .pt-5(v-show="recurring")
