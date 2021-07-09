@@ -45,28 +45,22 @@ v-dialog(
           required
         )
             
-
         v-divider
 
         v-subheader Date and time
 
         //- Start date
-        v-text-field(
-          type="datetime-local",
-          label="Start",
-          dense,
-          outlined,
-          required,
-          v-model="editedShift.time_begin"
+        datetime-input(
+          v-model='editedShift.time_begin'
+          outlined
+          label='Start'
         )
+        
         //- End date
-        v-text-field(
-          type="datetime-local",
-          label="End",
-          dense,
-          outlined,
-          required,
+        datetime-input(
           v-model="editedShift.time_end"
+          outlined
+          label='End'
         )
 
       v-spacer
@@ -84,10 +78,12 @@ import { User } from '@/definitions/User'
 import { Shift } from '@/definitions/Job'
 import { exists } from '@/plugins/inputValidation'
 
+import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
 
 @Component({
   components: {
+    DatetimeInput,
     WeekdaySelector,
   },
 })
