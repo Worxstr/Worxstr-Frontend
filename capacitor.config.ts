@@ -2,9 +2,18 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.worxstr.app',
-  appName: 'worxstr',
+  appName: 'Worxstr',
   webDir: 'dist',
-  bundledWebRuntime: false
+  bundledWebRuntime: false,
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 0
+    }
+  },
+  cordova: {},
+  server: {
+    // hostname: "worxstr.com"
+  }
 };
 
 export default config;

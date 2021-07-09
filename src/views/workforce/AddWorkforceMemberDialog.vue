@@ -45,14 +45,9 @@ v-dialog(
           v-model="workforceMember.email",
           required
         )
-        v-text-field(
-          label="Phone",
-          type="tel",
-          v-mask="'(###) ###-####'"
-          dense,
-          outlined,
+        phone-input(
           v-model="workforceMember.phone",
-          :rules="rules.phone",
+          outlined
           required
         )
 
@@ -103,17 +98,19 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
-
 import { mapState } from "vuex";
 import {
   exists,
   emailRules,
-  phoneRules,
   currencyRules,
 } from "@/plugins/inputValidation";
+import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
 export default {
   name: "addWorkforceMemberDialog",
+  components: {
+    PhoneInput
+  },
   props: ["opened", "type"],
   computed: {
     ...mapState(["managers"]),
@@ -122,6 +119,10 @@ export default {
     opened(newVal) {
       if (newVal) this.$store.dispatch("loadManagers");
     },
+  },
+  mounted() {
+    console.log(this)
+    this.workforceMember.manager_id = this.$store.state.authenticatedUser?.id
   },
   data: () => ({
     isValid: false,
@@ -142,7 +143,6 @@ export default {
     rules: {
       firstName: [exists("First name required")],
       lastName: [exists("Last name required")],
-      phone: phoneRules,
       email: emailRules,
       currency: currencyRules,
       managerId: [(value) => !!value || "Manager ID required"],
@@ -157,10 +157,16 @@ export default {
       this.loading = true;
       try {
         if (this.type == 'manager') {
-          await this.$store.dispatch("addManager", this.workforceMember)
+          await this.$store.dispatch("addManager", {
+            ...this.workforceMember,
+            password: 'test'
+          })
         }
         else {
-          await this.$store.dispatch('addContractor', this.workforceMember)
+          await this.$store.dispatch('addContractor', {
+            ...this.workforceMember,
+            password: 'test'
+          })
         }
         this.$store.dispatch("showSnackbar", {
           text: this.$options.filters.capitalize(this.type + " added"),

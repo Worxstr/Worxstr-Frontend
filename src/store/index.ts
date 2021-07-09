@@ -488,10 +488,10 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/jobs/managers`,
         params: {
-          manager_id: state.authenticatedUser?.manager_id
+          manager_id: state.authenticatedUser?.manager_id || state.authenticatedUser?.id
         }
       })
-      data.employee_managers.forEach((m: User) => {
+      data.contractor_managers.forEach((m: User) => {
         commit('ADD_MANAGER', { type: 'contractor', manager: m })
       })
       data.organization_managers.forEach((m: User) => {
@@ -521,6 +521,10 @@ const storeConfig: StoreOptions<RootState> = {
       //   commit('ADD_SHIFT', shift)
       //   return shift.id
       // })
+
+      data.job.contractors.forEach((c: User) => {
+        commit('ADD_USER', c)
+      })
 
       commit('ADD_JOB', data.job)
     },
@@ -555,10 +559,12 @@ const storeConfig: StoreOptions<RootState> = {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/shifts`,
-        data: { shift },
+        data: shift,
         params: { job_id: jobId }
       })
-      commit('ADD_SHIFT', { shift: data.shift, jobId })
+      data.shifts.forEach((shift: Shift) => {
+        commit('ADD_SHIFT', { shift, jobId })
+      })
     },
 
     async updateShift({ commit }, shift) {
@@ -582,7 +588,7 @@ const storeConfig: StoreOptions<RootState> = {
     async loadWorkforce({ commit }) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/users/employees`
+        url: `${baseUrl}/users/contractors`
       })
       data.users.forEach((u: User) => {
         commit('ADD_USER', u)
@@ -596,14 +602,18 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/users/add-manager`,
         data: manager
       })
+      commit('ADD_USER', data)
+      commit('ADD_WORKFORCE_MEMBER', data.id)
     },
 
     async addContractor({ commit }, contractor) {
       const { data } = await axios({
         method: 'POST',
-        url: `${baseUrl}/users/add-employee`,
+        url: `${baseUrl}/users/add-contractor`,
         data: contractor
       })
+      commit('ADD_USER', data)
+      commit('ADD_WORKFORCE_MEMBER', data.id)
     },
 
     async loadCalendarEvents({ commit }, { start, end }) {

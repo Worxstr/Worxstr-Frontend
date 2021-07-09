@@ -10,7 +10,7 @@ import { io } from "socket.io-client"
 import './assets/style.scss'
 import './plugins/filters'
 
-import VueMask from 'v-mask'
+import VueMask  from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueSocketIO from 'vue-socket.io'
 import * as VueGoogleMaps from 'vue2-google-maps'
@@ -19,8 +19,8 @@ import VueGtag from "vue-gtag"
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
-Vue.use(PortalVue)
 Vue.use(VueMask)
+Vue.use(PortalVue)
 
 Vue.use(VueGoogleMaps, {
   load: {
@@ -72,7 +72,7 @@ function initDarkMode() {
 function promptSSN() {
   // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
   const user = store.state.authenticatedUser
-  if (user && user.employee_info?.need_info) {
+  if (user && user.contractor_info?.need_info) {
     store.dispatch("showSnackbar", {
       text: `You haven't set your Social Security number.`,
       action: () => {
