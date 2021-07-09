@@ -4,6 +4,14 @@
         "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_round.png"
     },
     {
+        "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi_ic_launcher_background.png.flat",
+        "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher_background.png"
+    },
+    {
+        "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-mdpi_ic_launcher_background.png.flat",
+        "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher_background.png"
+    },
+    {
         "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\xml_config.xml.flat",
         "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\xml\\config.xml"
     },
@@ -52,6 +60,10 @@
         "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\drawable-land-xxhdpi\\splash.png"
     },
     {
+        "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxxhdpi_ic_launcher_background.png.flat",
+        "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_background.png"
+    },
+    {
         "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxxhdpi_ic_launcher_round.png.flat",
         "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher_round.png"
     },
@@ -88,6 +100,10 @@
         "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png"
     },
     {
+        "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi_ic_launcher_background.png.flat",
+        "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher_background.png"
+    },
+    {
         "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\drawable-port-xhdpi_splash.png.flat",
         "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\drawable-port-xhdpi\\splash.png"
     },
@@ -106,6 +122,10 @@
     {
         "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxhdpi_ic_launcher_foreground.png.flat",
         "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxhdpi_ic_launcher_background.png.flat",
+        "source": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_background.png"
     },
     {
         "merged": "C:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi_ic_launcher_foreground.png.flat",

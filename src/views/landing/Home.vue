@@ -68,7 +68,7 @@
         v-col(cols="12", md="6")
           p.text-h6.mb-4.pl-2 My company has:
           v-text-field.pb-4(
-            v-model="calculator.managers",
+            v-model.number="calculator.managers",
             suffix="managers",
             outlined,
             color="white",
@@ -78,7 +78,7 @@
             filled
           )
           v-text-field.pb-4(
-            v-model="calculator.contracts",
+            v-model.number="calculator.contracts",
             suffix="contracts / year",
             outlined,
             color="white",
@@ -88,7 +88,7 @@
             filled
           )
           v-text-field.pb-4(
-            v-model="calculator.contractors",
+            v-model.number="calculator.contractors",
             suffix="contractors",
             outlined,
             color="white",
@@ -119,7 +119,13 @@
             span(v-if="calculator.helpful") Great! We'd love to get in touch with you about how Worxstr can help solve your management issues.
             span(v-else) We're sorry to hear that. We would love a moment to speak with you about what we could be doing differently.
 
-          contact-form(color='white' filled text)
+          contact-form(
+            color='white'
+            filled
+            text
+            :data-supplement='{num_contractors: this.calculator.contractors, num_managers: this.calculator.managers}'
+            :show-manager-contractor-fields='false'
+          )
 </template>
 
 <script>
