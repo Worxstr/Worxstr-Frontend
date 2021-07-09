@@ -28,14 +28,11 @@ export default class DatetimeInput extends Vue {
 
 
   get raw() {
-    console.log({recieve: dayjs(this.value).format('YYYY-MM-DDTHH:mm')})
     return dayjs(this.value).format('YYYY-MM-DDTHH:mm')
   }
 
   updateValue(value: string) {
     if (!value) return
-    
-    console.log({emit: dayjs(value).format('YYYY-MM-DDTHH:mm:ssZ')})
     this.$emit('input', dayjs(value).format('YYYY-MM-DDTHH:mm:ssZ'))
   }
 }

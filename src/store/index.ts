@@ -522,6 +522,10 @@ const storeConfig: StoreOptions<RootState> = {
       //   return shift.id
       // })
 
+      data.job.contractors.forEach((c: User) => {
+        commit('ADD_USER', c)
+      })
+
       commit('ADD_JOB', data.job)
     },
 

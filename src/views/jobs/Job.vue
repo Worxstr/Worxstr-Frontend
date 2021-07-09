@@ -91,7 +91,7 @@ div(v-else)
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0
           p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ shift.contractor | fullName }}
+            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ (shift.contractor ? shift.contractor : getContractor(shift.contractor_id)) | fullName }}
             span.my-1 {{ shift.site_location }}
 
           v-chip.mx-4.px-2.flex-grow-0(
@@ -118,7 +118,7 @@ div(v-else)
           v-card-actions
             v-spacer
             v-btn(text, @click="openEditShiftDialog(shift)") Edit
-            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Remove
+            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Delete
 </template>
 
 <script lang="ts">
@@ -185,6 +185,10 @@ export default class JobView extends Vue {
     return this.$store.state.authenticatedUser
       ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser)
       : false
+  }
+
+  getContractor(contractorId: number) {
+    return this.$store.getters.user(contractorId)
   }
 
   openEditShiftDialog(shift: Shift) {
