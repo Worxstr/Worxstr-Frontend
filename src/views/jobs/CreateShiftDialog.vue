@@ -25,7 +25,7 @@ v-dialog(
         //- Contractor selector
         v-select(
           autofocus
-          v-model="editedShift.contractor_ids",
+          v-model="shift.contractor_ids",
           :items="contractors",
           :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)",
           :item-value="'id'",
@@ -46,17 +46,17 @@ v-dialog(
                 v-list-item-title Add unassigned
 
         //- Location fields
-        div(v-if="editedShift.contractor_ids && editedShift.contractor_ids.length")
+        div(v-if="shift.contractor_ids && shift.contractor_ids.length")
           v-divider
           v-subheader Site locations
 
           v-expand-transition(
             appear,
-            v-for="(contractorId, index) in editedShift.contractor_ids",
+            v-for="(contractorId, index) in shift.contractor_ids",
             :key="contractorId"
           )
             v-text-field(
-              v-model="editedShift.site_locations[index]",
+              v-model="shift.site_locations[index]",
               :label="`Site location for ${contractorName(contractorId)}`",
               :rules="rules.location",
               outlined,
@@ -69,22 +69,16 @@ v-dialog(
         v-subheader Date and time
 
         //- Start date
-        v-text-field(
-          type="datetime-local",
-          label="Start",
-          dense,
-          outlined,
-          required,
-          v-model="editedShift.time_begin"
+        datetime-input(
+          v-model='shift.time_begin'
+          outlined
+          label='Start'
         )
         //- End date
-        v-text-field(
-          type="datetime-local",
-          label="End",
-          dense,
-          outlined,
-          required,
-          v-model="editedShift.time_end"
+        datetime-input(
+          v-model="shift.time_end"
+          outlined
+          label='End'
         )
 
         v-divider
@@ -100,7 +94,7 @@ v-dialog(
               v-text-field.px-2(
                 outlined,
                 dense,
-                v-model.number="editedShift.repeat.repeatEvery.value",
+                v-model.number="shift.repeat.repeatEvery.value",
                 type="number",
                 increment="1",
                 min="1",
@@ -109,26 +103,26 @@ v-dialog(
               v-select(
                 outlined,
                 dense,
-                v-model="editedShift.repeat.repeatEvery.unit",
+                v-model="shift.repeat.repeatEvery.unit",
                 :items="[{ text: 'day' }, { text: 'week' }, { text: 'month' }, { text: 'year' }]",
-                :item-text="(i) => `${i.text}${editedShift.repeat.repeatEvery.value == 1 ? '' : 's'}`",
+                :item-text="(i) => `${i.text}${shift.repeat.repeatEvery.value == 1 ? '' : 's'}`",
                 item-value="text"
               )
 
             //- Week option
-            div(v-if="editedShift.repeat.repeatEvery.unit == 'week'")
+            div(v-if="shift.repeat.repeatEvery.unit == 'week'")
               p.text-no-wrap.mb-0 Repeat on
-              weekday-selector(v-model="editedShift.repeat.weekly")
+              weekday-selector(v-model="shift.repeat.weekly")
 
             //- Month option
             .d-flex.align-center(
-              v-if="editedShift.repeat.repeatEvery.unit == 'month'"
+              v-if="shift.repeat.repeatEvery.unit == 'month'"
             )
               p.text-no-wrap.mb-6.mr-1 Repeat on
               v-select.px-2(
                 outlined,
                 dense,
-                v-model="editedShift.repeat.monthly",
+                v-model="shift.repeat.monthly",
                 :items="[ {\
                   value: 'byDate',\
                   text: `Monthly on day ${(new Date()).getDate()}`\
@@ -148,7 +142,7 @@ v-dialog(
                   :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
                 )
                 v-text-field(
-                  v-model="editedShift.repeat.ends.date",
+                  v-model="shift.repeat.ends.date",
                   outlined,
                   dense,
                   hide-details,
@@ -163,7 +157,7 @@ v-dialog(
                   :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
                 )
                 v-text-field(
-                  v-model.number="editedShift.repeat.ends.occurences",
+                  v-model.number="shift.repeat.ends.occurences",
                   outlined,
                   dense,
                   hide-details,
@@ -190,6 +184,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { User } from '@/definitions/User'
 import { Shift } from '@/definitions/Job'
 
+import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
 
 // TODO: Move these to reusable import
@@ -211,16 +206,8 @@ const nowLocal = dayjs(now).format('YYYY-MM-DDTHH:mm:ss')
 const hourFromNowLocal = dayjs(hourFromNow).format('YYYY-MM-DDTHH:mm:ss')
 const weekFromNowLocal = dayjs(weekFromNow).format('YYYY-MM-DDTHH:mm:ss')
 
-@Component({
-  components: {
-    WeekdaySelector,
-  },
-})
-export default class CreateShiftDialog extends Vue {
-  recurring = false
-  ends = 'on'
-
-  editedShift: any = {
+function initialState() {
+  return {
     contractor_ids: [],
     site_locations: [],
     time_begin: nowLocal,
@@ -238,6 +225,19 @@ export default class CreateShiftDialog extends Vue {
       },
     },
   }
+}
+
+@Component({
+  components: {
+    DatetimeInput,
+    WeekdaySelector,
+  },
+})
+export default class CreateShiftDialog extends Vue {
+  recurring = false
+  ends = 'on'
+
+  shift: any = initialState()
   isValid = false
   loading = false
   rules = {
@@ -252,17 +252,16 @@ export default class CreateShiftDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ default: [] }) readonly contractors!: (User | UnassignedContractor)[]
-  @Prop(Object) readonly shift: Shift | undefined
 
   mounted() {
-    this.editedShift.id = this.shift?.id
-    this.editedShift.contractor_ids = this.shift?.contractor_id
-    this.editedShift.time_begin = this.shift?.time_begin
-    this.editedShift.time_end = this.shift?.time_end
+    this.shift.id = this.shift?.id
+    this.shift.contractor_ids = this.shift?.contractor_id
+    this.shift.time_begin = this.shift?.time_begin
+    this.shift.time_end = this.shift?.time_end
   }
 
   closeDialog() {
-    (this.$refs.form as HTMLFormElement).reset()
+    this.shift = initialState()
     this.$emit('update:opened', false)
   }
 
@@ -299,7 +298,7 @@ export default class CreateShiftDialog extends Vue {
     this.contractors.push({
       id: this.lastId,
     })
-    this.editedShift.contractor_ids.push(this.lastId)
+    this.shift.contractor_ids.push(this.lastId)
     this.lastId--
   }
 
@@ -308,9 +307,9 @@ export default class CreateShiftDialog extends Vue {
 
     // Build request object
     const shift = {
-      ...this.editedShift,
-      contractor_ids: this.editedShift.contractor_ids.map((id: number) => id < 0 ? null : id),
-      site_location: this.editedShift.site_locations[0],
+      ...this.shift,
+      contractor_ids: this.shift.contractor_ids.map((id: number) => id < 0 ? null : id),
+      site_location: this.shift.site_locations[0],
     }
     // Correct date strings
     ;(shift.time_begin = new Date(shift.time_begin).toISOString()),
