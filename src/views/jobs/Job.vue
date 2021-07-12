@@ -13,15 +13,14 @@ div(v-else)
   v-container.approvals.mb-50(v-if="job")
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
-    edit-shift-dialog(
-      :create="true",
-      :opened.sync="addShiftDialog",
-      :contractors="job.employees"
+    create-shift-dialog(
+      :opened.sync='createShiftDialog',
+      :contractors='job.contractors'
     )
     edit-shift-dialog(
       :opened.sync="editShiftDialog",
       :shift.sync="selectedShift",
-      :contractors="job.employees"
+      :contractors="job.contractors"
     )
     delete-shift-dialog(
       v-if="selectedShift",
@@ -67,7 +66,7 @@ div(v-else)
 
         .flex-grow-1.px-5
           p.text-subtitle-2.mb-1 Contractor manager
-          p {{ job.employee_manager | fullName }}
+          p {{ job.contractor_manager | fullName }}
 
         .flex-grow-1.px-5
           p.text-subtitle-2.mb-1 Consultant
@@ -80,7 +79,7 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text, @click="addShiftDialog = true")
+      v-btn(text, @click="createShiftDialog = true")
         v-icon(left) mdi-plus
         span Add shift
 
@@ -92,7 +91,7 @@ div(v-else)
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0
           p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ shift.contractor | fullName }}
+            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ (shift.contractor ? shift.contractor : getContractor(shift.contractor_id)) | fullName }}
             span.my-1 {{ shift.site_location }}
 
           v-chip.mx-4.px-2.flex-grow-0(
@@ -119,7 +118,7 @@ div(v-else)
           v-card-actions
             v-spacer
             v-btn(text, @click="openEditShiftDialog(shift)") Edit
-            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Remove
+            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Delete
 </template>
 
 <script lang="ts">
@@ -128,6 +127,7 @@ import { Vue, Component } from "vue-property-decorator"
 
 import EditJobDialog from "./EditJobDialog.vue"
 import CloseJobDialog from "./CloseJobDialog.vue"
+import CreateShiftDialog from "./CreateShiftDialog.vue"
 import EditShiftDialog from "./EditShiftDialog.vue"
 import DeleteShiftDialog from "./DeleteShiftDialog.vue"
 
@@ -140,6 +140,7 @@ import { Job, Shift } from "@/definitions/Job"
   components: {
     EditJobDialog,
     CloseJobDialog,
+    CreateShiftDialog,
     EditShiftDialog,
     DeleteShiftDialog,
     ClockEvents,
@@ -150,7 +151,7 @@ export default class JobView extends Vue {
   loading = false
   editJobDialog = false
   closeJobDialog = false
-  addShiftDialog = false
+  createShiftDialog = false
   editShiftDialog = false
   deleteShiftDialog = false
   selectedShift: Shift | {} = {}
@@ -186,6 +187,10 @@ export default class JobView extends Vue {
       : false
   }
 
+  getContractor(contractorId: number) {
+    return this.$store.getters.user(contractorId)
+  }
+
   openEditShiftDialog(shift: Shift) {
     this.selectedShift = shift
     this.editShiftDialog = true
@@ -197,8 +202,8 @@ export default class JobView extends Vue {
   }
 
   contractorName(contractorId: number) {
-    if (!this.job.employees) return ''
-    const contractor = this.job.employees.find((e) => e.id == contractorId)
+    if (!this.job.contractors) return ''
+    const contractor = this.job.contractors.find((e) => e.id == contractorId)
     if (!contractor) return 'Unknown contractor'
     return `${contractor.first_name} ${contractor.last_name}`
   }

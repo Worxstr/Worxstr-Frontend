@@ -24,13 +24,9 @@
             v-model='form.email'
             required
           )
-          v-text-field(
-            v-model="form.phone",
-            :rules='rules.phone'
-            type="tel",
-            v-mask="'(###) ###-####'"
-            label="Phone number",
-            required,
+          phone-input(
+            v-model='form.phone'
+            required
           )
           v-text-field(
             label='Manager ID'
