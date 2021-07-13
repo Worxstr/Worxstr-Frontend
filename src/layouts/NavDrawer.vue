@@ -14,10 +14,8 @@ v-navigation-drawer#nav.d-flex.flex-column(
   //- Logo and collapse button
   v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
     a(@click="mini = !mini", text)
-      v-avatar.mb-1(tile, size="40")
-        img(src="@/assets/logos/icon.svg", alt="Worxstr logo")
-
-    v-toolbar-title.ml-3.font-weight-medium Worxstr
+      v-avatar.mb-1(tile, :size="mini ? 40 : 130")
+        img(:src="require(`@/assets/logos/${mini ? 'icon' : 'logotype'}.svg`)", alt="Worxstr logo")
 
     v-spacer
 

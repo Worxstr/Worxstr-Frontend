@@ -9,7 +9,7 @@
     v-btn(icon @click="$emit('toggleDrawer')" v-if='$vuetify.breakpoint.smAndDown && !$route.meta.landing') 
       v-icon mdi-menu
 
-    router-link.mb-1.mr-3(
+    router-link.mb-2.mr-2(
       to="/",
       style="text-decoration: none",
       v-if="$route.meta.landing"
