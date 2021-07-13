@@ -5,7 +5,6 @@
     v-container.px-10
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
-          img.svg-shadow(src='@/assets/logo.svg', width='150' alt='Worxstr logo')
 
           .my-8
             h2.text-h2.font-weight-bold.mb-2.white--text Worxstr

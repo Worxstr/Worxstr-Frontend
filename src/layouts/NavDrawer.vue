@@ -15,7 +15,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
   v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
     a(@click="mini = !mini", text)
       v-avatar.mb-1(tile, size="40")
-        img(src="@/assets/logo.svg", alt="Worxstr logo")
+        img(src="@/assets/logotype.svg", alt="Worxstr logo")
 
     v-toolbar-title.ml-3.font-weight-medium Worxstr
 

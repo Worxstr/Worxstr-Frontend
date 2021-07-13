@@ -625,7 +625,6 @@ const storeConfig: StoreOptions<RootState> = {
           date_end: end
         }
       })
-      console.log(data)
       data.events.forEach((event: CalendarEvent) => commit('ADD_EVENT', event))
     },
 

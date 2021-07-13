@@ -7,7 +7,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import { io } from "socket.io-client"
 
-import './assets/style.scss'
+import './styles/style.scss'
 import './plugins/filters'
 
 import VueMask  from 'v-mask'
