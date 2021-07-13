@@ -10,7 +10,7 @@
           stop(offset='0%' style='stop-color:#611bea;stop-opacity:1')
           stop(offset='100%' style='stop-color:#2e6aef;stop-opacity:1')
 
-        linearGradient#light-blue(x1='10%' y1='20%' x2='100%' y2='20%' gradientTransform='rotate(-10)')
+        linearGradient#light-blue(x1='10%' y1='20%' x2='100%' y2='20%' gradientTransform='rotate(-20)')
           stop(offset='0%' style='stop-color:#06b8ef;stop-opacity:1')
           stop(offset='100%' style='stop-color:#2e6aef;stop-opacity:1')
 
@@ -18,9 +18,9 @@
           stop(offset='0%' style='stop-color:#2e6aef;stop-opacity:1')
           stop(offset='100%' style='stop-color:#06b8ef;stop-opacity:1')
 
-        linearGradient#purple(x1='10%' y1='20%' x2='100%' y2='20%' gradientTransform='rotate(-10)')
-          stop(offset='0%' style='stop-color:#2e6aef;stop-opacity:1')
-          stop(offset='100%' style='stop-color:#18202d;stop-opacity:1')
+        linearGradient#purple(x1='10%' y1='20%' x2='100%' y2='20%' gradientTransform='rotate(-20)')
+          stop(offset='0%' style='stop-color:#18202d;stop-opacity:1')
+          stop(offset='100%' style='stop-color:#611bea;stop-opacity:1')
 
       g(v-for='arrow in arrows' :style='`transform: scale(${arrow.scale}) translate(${arrow.offset.x}px, ${arrow.offset.y}px)`')
         path.arrow(:fill='`url(#${arrow.color})`' :style='`animation-duration: ${arrow.animationDuration}s`' d='M712.3,266.5L519.4,405c-3,2.2-2.6,6.8,0.7,8.4l35.5,17c2.4,1.2,3.5,4.1,2.3,6.5L312.2,950.5c-1.2,2.4-0.1,5.4,2.3,6.5\
@@ -39,7 +39,7 @@ export default class Arrows extends Vue {
       color: 'blue',
       offset: {
         y: -150,
-        x: 0
+        x: -190
       },
       scale: 1,
       animationDuration: 10,
@@ -47,8 +47,8 @@ export default class Arrows extends Vue {
     {
       color: 'blue-reverse',
       offset: {
-        y: 400,
-        x: 350
+        y: 200,
+        x: 150
       },
       scale: .7,
       animationDuration: 8,
@@ -57,7 +57,7 @@ export default class Arrows extends Vue {
       color: 'light-blue',
       offset: {
         y: 90,
-        x: -190
+        x: -390
       },
       scale: .85,
       animationDuration: 6,
@@ -66,7 +66,7 @@ export default class Arrows extends Vue {
       color: 'purple',
       offset: {
         y: 450,
-        x: -20
+        x: -100
       },
       scale: .7,
       animationDuration: 7,
@@ -74,8 +74,8 @@ export default class Arrows extends Vue {
     {
       color: 'light-blue-reverse',
       offset: {
-        y: 1200,
-        x: 800
+        y: 1300,
+        x: 600
       },
       scale: .4,
       animationDuration: 3,
@@ -86,7 +86,7 @@ export default class Arrows extends Vue {
 
 <style lang="scss">
   .arrow-container {
-    transform: translate(-40%, 8px)
+    transform: translateY(8px)
   }
   // Angle ratio: -2.75
   @keyframes example {
