@@ -1,5 +1,5 @@
 <template lang="pug">
-  .arrow-container(:style='`transform: translateY(${type == "background" ? "0" : "11"}px)`')
+  div(:style='`transform: translateY(${type == "background" ? "0" : "11"}px)`')
     svg(:width='groupType.size.x' :height='groupType.size.y')
       defs
         linearGradient#blue(x1='10%' y1='20%' x2='100%' y2='20%' gradientTransform='rotate(-10)')
@@ -22,6 +22,10 @@
           stop(offset='0%' style='stop-color:#18202d;stop-opacity:1')
           stop(offset='100%' style='stop-color:#611bea;stop-opacity:1')
 
+        linearGradient#amber(x1='10%' y1='20%' x2='100%' y2='20%' gradientTransform='rotate(-20)')
+          stop(offset='0%' style='stop-color:#ffc91f;stop-opacity:1')
+          stop(offset='100%' style='stop-color:#ffd45c;stop-opacity:1')
+
       g(v-for='arrow in groupType.arrows' :style='`opacity: ${arrow.opacity}; transform: scale(${arrow.scale}) translate(${arrow.offset.x}px, ${arrow.offset.y}px)`')
         path.arrow(:fill='`url(#${arrow.color})`' :style='`animation-duration: ${arrow.animationDuration}s`' d='M712.3,266.5L519.4,405c-3,2.2-2.6,6.8,0.7,8.4l35.5,17c2.4,1.2,3.5,4.1,2.3,6.5L312.2,950.5c-1.2,2.4-0.1,5.4,2.3,6.5\
           l117.5,56.2c2.4,1.2,5.4,0.1,6.5-2.3l245.8-513.7c1.2-2.4,4.1-3.5,6.5-2.3l35.5,17c3.4,1.6,7.2-1,7-4.7l-13.2-237.1\
@@ -38,7 +42,6 @@ export default class Arrows extends Vue {
     | 'largeGroup'
     | 'smallGroup'
     | 'background'
-  @Prop({ default: 'primary' }) readonly color!: 'primary' | 'accent'
 
   types: any = {
     largeGroup: {
@@ -185,6 +188,33 @@ export default class Arrows extends Vue {
         },
       ],
     },
+    'background-accent': {
+      size: {
+        x: 1630,
+        y: 2050,
+      },
+      arrows: [
+        {
+          color: 'amber',
+          offset: {
+            y: -300,
+            x: -500,
+          },
+          scale: 3.2,
+          animationDuration: 25,
+          opacity: .1,
+        },
+        {
+          color: 'amber',
+          offset: {
+            y: -200,
+            x: -220,
+          },
+          scale: 2,
+          animationDuration: 20,
+          opacity: .1,
+        },
+      ],}
   }
 
   get groupType() {
@@ -194,8 +224,6 @@ export default class Arrows extends Vue {
 </script>
 
 <style lang="scss">
-.arrow-container {
-}
 // Angle ratio: -2.75
 @keyframes example {
   0% {

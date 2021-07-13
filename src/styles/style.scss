@@ -1,34 +1,34 @@
 @font-face {
-	font-family: "Greycliff";
+  font-family: 'Greycliff';
   font-weight: 900;
-	src: url("../assets/fonts/greycliff/GreycliffCF-Heavy.eot") format("eot"),
-	     url("../assets/fonts/greycliff/GreycliffCF-Heavy.woff2") format("woff2"),
-	     url("../assets/fonts/greycliff/GreycliffCF-Heavy.woff") format("woff"),
+  src: url('../assets/fonts/greycliff/GreycliffCF-Heavy.eot') format('eot'),
+    url('../assets/fonts/greycliff/GreycliffCF-Heavy.woff2') format('woff2'),
+    url('../assets/fonts/greycliff/GreycliffCF-Heavy.woff') format('woff');
 }
 @font-face {
-	font-family: "Greycliff";
+  font-family: 'Greycliff';
   font-weight: 700;
-	src: url("../assets/fonts/greycliff/GreycliffCF-Bold.eot") format("eot"),
-	     url("../assets/fonts/greycliff/GreycliffCF-Bold.woff2") format("woff2"),
-	     url("../assets/fonts/greycliff/GreycliffCF-Bold.woff") format("woff"),
+  src: url('../assets/fonts/greycliff/GreycliffCF-Bold.eot') format('eot'),
+    url('../assets/fonts/greycliff/GreycliffCF-Bold.woff2') format('woff2'),
+    url('../assets/fonts/greycliff/GreycliffCF-Bold.woff') format('woff');
 }
 
 html {
-	overflow-y: auto;
+  overflow-y: auto;
 }
 a {
-	text-decoration: none;
+  text-decoration: none;
 }
 .v-btn__content {
-	text-transform: none;
+  text-transform: none;
 }
 .gradient {
-	background: rgb(46, 106, 239);
-	background: linear-gradient(
-		50deg,
-		rgba(46, 106, 239, 1) 0%,
-			rgba(46, 170, 230, 1) 100%
-	);
+  background: rgb(46, 106, 239);
+  background: linear-gradient(
+    50deg,
+    rgba(46, 106, 239, 1) 0%,
+    rgba(46, 170, 230, 1) 100%
+  );
 }
 .gradient p,
 .gradient span,
@@ -38,23 +38,23 @@ a {
 .gradient h4,
 .gradient h5,
 .gradient h6 {
-	color: white !important;
+  color: white !important;
 }
 .overlap {
   position: absolute;
   width: 100%;
-	padding-bottom: 103px;
+  padding-bottom: 103px;
 }
 .shift-down {
   padding-top: 160px !important;
 }
 
 .v-select.fit {
-	width: min-content;
+  width: min-content;
 }
-.v-select.fit  .v-select__selection--comma {
-	text-overflow: unset;
-	padding-right: 10px;
+.v-select.fit .v-select__selection--comma {
+  text-overflow: unset;
+  padding-right: 10px;
 }
 
 .slide-fade-enter-active,
@@ -66,4 +66,10 @@ a {
   transform: translateY(100%) !important;
   height: 0 !important;
   opacity: 0;
+}
+
+.arrow-container {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 }

@@ -1,10 +1,10 @@
 <template lang="pug">
 .home
   //- Main CTA
-  v-sheet
-    arrows(style='position: absolute' type='background')
+  v-sheet.arrow-container
+    arrows(type='background' style='position: absolute')
+    
     v-container.px-10
-
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
@@ -56,7 +56,10 @@
             )
 
   //- Calculator
-  v-sheet#calculator
+  v-sheet.arrow-container#calculator
+
+    arrows(style='position: absolute' type='background-accent')
+
     v-container.py-16.px-10
       v-row
         v-col.d-flex.flex-column.justify-center(cols='12', md='6')
@@ -116,7 +119,8 @@
             span(v-if="calculator.helpful") Great! We'd love to get in touch with you about how Worxstr can help solve your management issues.
             span(v-else) We're sorry to hear that. We would love a moment to speak with you about what we could be doing differently.
 
-          contact-form(color='amber' filled text)
+          contact-form(color='accent' filled text)
+  
 </template>
 
 <script>

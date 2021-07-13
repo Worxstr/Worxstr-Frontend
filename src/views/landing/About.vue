@@ -43,7 +43,7 @@
                 :alt="member.name"
               )
             span.text-center.mb-1.text-h5.font-weight-bold {{ member.name }}
-            span.text-center.text-subtitle-2.font-weight-medium {{ member.title }}
+            span.text-center.font-weight-medium {{ member.title }}
 
   //- Member dialog
   v-dialog(v-model='memberDialog' max-width='500')
