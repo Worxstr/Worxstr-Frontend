@@ -1,0 +1,21 @@
+// @import '~vuetify/src/styles/styles.sass';
+
+// $material-light: map-merge($material-light, (
+//   'background': var(--v-background-base, map-get($material-light, 'background')) !important,
+// ));
+// $material-dark: map-merge($material-dark, (
+//   'background': var(--v-background-base, map-get($material-dark, 'background')) !important,
+// ));
+
+// $heading-font-family: 'Comic Sans', sans-serif
+
+// $body-font-family: cursive, serif;
+
+// @font-face {
+//   font-family: 'Rubik';
+//   src: url('https://fonts.googleapis.com/css2?family=Rubik:wght@600&display=swap') format('truetype');
+// }
+
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@600&display=swap');
+
+$heading-font-family: 'Rubik', serif;

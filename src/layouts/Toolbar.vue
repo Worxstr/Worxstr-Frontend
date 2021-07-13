@@ -9,13 +9,13 @@
     v-btn(icon @click="$emit('toggleDrawer')" v-if='$vuetify.breakpoint.smAndDown && !$route.meta.landing') 
       v-icon mdi-menu
 
-    router-link.mb-1.mr-2(
+    router-link.mb-1.mr-3(
       to="/",
       style="text-decoration: none",
       v-if="$route.meta.landing"
     )
-      v-avatar(tile, size="40")
-        img(src="@/assets/logo.svg", alt="Worxstr logo")
+      v-avatar(tile, size="130")
+        img(src="@/assets/logos/logotype.svg", alt="Worxstr logo")
 
     breadcrumbs
 

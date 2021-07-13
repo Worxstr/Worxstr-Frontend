@@ -1,31 +1,24 @@
 <template lang="pug">
 .home
   //- Main CTA
-  v-sheet.gradient
+  v-sheet
     v-container.px-10
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
-          img.svg-shadow(src='@/assets/logo.svg', width='150' alt='Worxstr logo')
-
           .my-8
-            h2.text-h2.font-weight-bold.mb-2.white--text Worxstr
-            p.text-h5.font-weight-medium.white--text The adaptive solution to wide-scale temp labor management
+            h3.text-h3.font-weight-bold.mb-2 The adaptive solution to widescale temp labor management
 
           div(v-if='authenticatedUser')
-            v-btn.mr-3(color='accent', :to='{ name: defaultRoute }') Enter app
+            v-btn.mr-3(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
             v-btn.mr-3(outlined, color='accent', @click='signOut') Sign out
 
           div(v-else)
-            v-btn.mr-3(color="accent", :to="{ name: `signUp` }") Start now
-            v-btn.mr-3(outlined, color="accent", :to="{ name: `signIn` }") Sign in
+            v-btn.mr-3.black--text(elevation='0' color="accent", :to="{ name: `signUp` }") Start now
+            v-btn.mr-3.black--text(outlined, color="accent", :to="{ name: `signIn` }") Sign in
 
           v-spacer(style='height: 70px')
-        v-col.flex-grow-1(v-if='$vuetify.breakpoint.mdAndUp' style='width: 50%')
-          v-img(
-            src="@/assets/images/landing/devices.svg",
-            alt="Worxstr on mobile and web",
-            :style="`transform: scale(${$vuetify.breakpoint.xl ? 1.5 : 2.5}) translate(${$vuetify.breakpoint.xl ? '3%' : '25%'}, ${$vuetify.breakpoint.xl ? '13px' : '36px'})`"
-          )
+        v-col.flex-grow-1.pa-0(v-if='$vuetify.breakpoint.mdAndUp' style='width: 50%')
+          arrows
             
 
   //- Feature carousel
@@ -51,7 +44,7 @@
               p.text-h4.font-weight-bold {{ feature.title }}
               p {{ feature.description }}
 
-          v-col.flex-grow-1(style='width: 30%')
+          v-col.flex-grow-1(style='width: 30')
             v-img(
               :src='require(`@/assets/images/landing/${feature.image}`)',
               :alt='feature.title'
@@ -123,39 +116,41 @@
 </template>
 
 <script>
-import { defaultRoute } from "@/definitions/User";
-import { mapState, mapActions } from "vuex";
-import ContactForm from "@/components/ContactForm.vue";
+import { defaultRoute } from '@/definitions/User'
+import { mapState, mapActions } from 'vuex'
+import Arrows from '@/components/Arrows.vue'
+import ContactForm from '@/components/ContactForm.vue'
 
-let timeout;
+let timeout
 
 export default {
-  name: "home",
+  name: 'home',
   metaInfo: {
-    title: "Worxstr",
+    title: 'Worxstr',
     titleTemplate: null,
   },
   components: {
+    Arrows,
     ContactForm,
   },
   computed: {
-    ...mapState(["authenticatedUser"]),
-    savingsEstimate: function () {
-      const { managers, contracts, contractors } = this.calculator;
-      return managers * contracts * 12 + 0.05 * (contractors / managers) * 52;
+    ...mapState(['authenticatedUser']),
+    savingsEstimate: function() {
+      const { managers, contracts, contractors } = this.calculator
+      return managers * contracts * 12 + 0.05 * (contractors / managers) * 52
     },
-    defaultRoute: function () {
-      return defaultRoute(this.authenticatedUser);
+    defaultRoute: function() {
+      return defaultRoute(this.authenticatedUser)
     },
   },
   watch: {
     savingsEstimate() {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => (this.calculator.promptHelpful = true), 1500);
+      clearTimeout(timeout)
+      timeout = setTimeout(() => (this.calculator.promptHelpful = true), 1500)
     },
   },
   methods: {
-    ...mapActions(["signOut"]),
+    ...mapActions(['signOut']),
   },
   data: () => ({
     calculator: {
@@ -169,12 +164,12 @@ export default {
     carousel: [
       {
         dark: true,
-        color: "indigo",
-        icon: "mdi-clock-fast",
-        title: "Scheduling",
+        color: 'indigo',
+        icon: 'mdi-clock-fast',
+        title: 'Scheduling',
         description:
-          "Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.",
-        image: "schedule.svg",
+          'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
+        image: 'schedule.svg',
         style: {
           large: 'transform: rotate(-2.5deg) scale(1.5) translate(20%,15%)',
           small: 'transform: rotate(-2.5deg) scale(3.5) translatey(50px)',
@@ -182,12 +177,12 @@ export default {
       },
       {
         reverse: true,
-        color: "grey lighten-2",
-        icon: "mdi-clock-check-outline",
-        title: "Time Approvals",
+        color: 'grey lighten-2',
+        icon: 'mdi-clock-check-outline',
+        title: 'Time Approvals',
         description:
-          "Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.",
-        image: "approvals.svg",
+          'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
+        image: 'approvals.svg',
         style: {
           large: 'transform: scale(1) translate(0px,100px)',
           small: 'transform: scale(3.5) translateY(30%)',
@@ -195,12 +190,12 @@ export default {
       },
       {
         dark: true,
-        color: "blue darken-3",
-        icon: "mdi-badge-account",
-        title: "Onboarding",
+        color: 'blue darken-3',
+        icon: 'mdi-badge-account',
+        title: 'Onboarding',
         description:
-          "Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.",
-        image: "onboarding.svg",
+          'Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.',
+        image: 'onboarding.svg',
         style: {
           large: 'transform: scale(1.7) translatex(20%)',
           small: 'transform: scale(6) translate(20px, 10%)',
@@ -208,12 +203,12 @@ export default {
       },
       {
         dark: true,
-        color: "green",
-        icon: "mdi-cash-lock",
-        title: "Payments",
+        color: 'green',
+        icon: 'mdi-cash-lock',
+        title: 'Payments',
         description:
-          "Worxstr’s streamlined payment system allows for flexible payment methods to contractors.",
-        image: "approvals.svg",
+          'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
+        image: 'approvals.svg',
         style: {
           large: 'transform: scale(1) translate(0px,100px)',
           small: 'transform: scale(3.5) translateY(30%)',
@@ -221,7 +216,7 @@ export default {
       },
     ],
   }),
-};
+}
 </script>
 
 <style lang="scss" scoped>
