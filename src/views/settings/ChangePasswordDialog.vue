@@ -22,6 +22,7 @@ v-dialog(
 
       v-card-text.pb-0
         v-text-field(
+          autofocus
           outlined,
           dense,
           label="New password",
@@ -36,7 +37,7 @@ v-dialog(
           dense,
           label="Confirm new password",
           v-model="confirmPassword",
-          :rules="[...rules.password, rules.matches(password, confirmPassword)]",
+          :rules="[...rules.confirmPassword, rules.passwordMatches(password, confirmPassword)]",
           required
           type="password"
         )
@@ -52,6 +53,7 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
+import { exists, passwordRules, passwordMatches } from '@/plugins/inputValidation'
 
 export default {
   name: "changePasswordDialog",
@@ -64,16 +66,9 @@ export default {
     password: "",
     confirmPassword: "",
     rules: {
-      password: [
-        (value) => !!value || "Password required",
-        (value) => value.length >= 8 || "Password must be 8 characters",
-      ],
-      matches: (val1, val2) => {
-        return (
-          val1.replaceAll("-", "") == val2.replaceAll("-", "") ||
-          "Passwords must match"
-        );
-      },
+      password: passwordRules,
+      confirmPassword: [exists('Password confirmation required')],
+      passwordMatches,
     },
   }),
   methods: {

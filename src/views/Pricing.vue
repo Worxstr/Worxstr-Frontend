@@ -1,53 +1,47 @@
 <template lang="pug">
 div
-	v-sheet.gradient.overlap
-		v-container.py-16
-			h3.text-h3.font-weight-bold(style="margin-bottom: 103px") Pricing
+  v-sheet.gradient.overlap
+    v-container.py-16
+      h3.text-h3.font-weight-bold Pricing
 
-	v-container.shift-down.mb-3
-		v-row
-			v-col(cols="12", sm="4", v-for="tier in pricingTiers")
-				v-card.hover-effect(elevation="15")
-					v-card-title {{ tier.name | capitalize }}
+  v-container.shift-down.mb-3
+    v-row.mb-12
+      v-col(cols="12", sm="4", v-for="tier in pricingTiers")
+        v-card.hover-effect(elevation="15")
+          v-card-title {{ tier.name | capitalize }}
 
-					v-card-text.pb-0
-						p
-							span.mr-1.text-h4.font-weight-bold(
-								:class="`${$vuetify.theme.dark ? 'secondary' : 'primary'}--text`"
-							)
-								span ${{ tier.price }}
-								span(v-if="tier.priceIsMinimum") +
-							span / month
+          v-card-text.pb-0
+            p(v-if="tier.price != null")
+              span.mr-1.text-h4.font-weight-bold(
+                :class="`${$vuetify.theme.dark ? 'secondary' : 'primary'}--text`"
+              )
+                span ${{ tier.price }}
+              span / month
+            p(v-else) Speak with sales
 
-					v-divider
+          v-divider
 
-					v-card-text
-						ul
-							li.mb-3.text-subtitle-1.font-weight-medium {{ tier.support }}
+          v-card-text
+            ul
+              li.mb-3.text-subtitle-1.font-weight-medium {{ tier.support }}
 
-							li.mb-3.text-subtitle-1.font-weight-medium
-								| {{ tier.contractors == Infinity ? 'Unlimited' : tier.contractors }} contractors
+              li.mb-3.text-subtitle-1.font-weight-medium
+                | {{ tier.contractors == Infinity ? 'Unlimited' : tier.contractors }} contractors
 
-							li.mb-1.text-subtitle-1.font-weight-medium
-								span(v-if='tier.transactions == null')
-									| Variable transaction caps
-								span(v-else)
-									| ${{ tier.transactions | numberFormat }}/year/manager
-									.text-body-2 in total transactions
+          v-card-actions.justify-center
+            v-btn.mb-3(
+              :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
+              :to="{ name: tier.price == null ? 'contact' : 'signUp' }"
+            ) {{ tier.price == null ? 'Contact sales' : 'Get started' }}
 
-					v-card-actions.justify-center
-						v-btn(
-							text,
-							:color="$vuetify.theme.dark ? 'secondary' : 'primary'",
-							v-if="tier.name == 'Advanced'",
-							:to="{ name: 'contact', params: { subject: 'My company is interested in the advanced plan' } }"
-						) Contact sales
-						v-btn(
-							text,
-							:color="$vuetify.theme.dark ? 'secondary' : 'primary'",
-							v-else,
-							:to="{ name: 'signUp' }"
-						) Get {{ tier.name }}
+    div
+      h4.text-h4.font-weight-black.mb-3 Need help deciding?
+      p
+        | Contact us
+        router-link(:to="{name: 'contact'}") &nbsp;here&nbsp;
+        | or visit our
+        router-link(to="/support") &nbsp;support page
+        | .
 </template>
 
 <script lang="ts">
@@ -64,24 +58,20 @@ export default class Pricing extends Vue {
       price: 0,
       name: 'free',
       contractors: 10,
-      transactions: 75000,
       support: 'Free tier chat assistance',
     },
     {
       price: 100,
-      name: 'standard',
+      name: 'premium',
       contractors: 100,
-      transactions: 150000,
       support: 'Standard support',
     },
     {
-      price: 150,
-      priceIsMinimum: true,
-      name: 'advanced',
+      price: null,
+      name: 'enterprise',
       contractors: Infinity,
-      transactions: null,
       support: '24/7 support',
-    },
+    }
   ]
 }
 </script>

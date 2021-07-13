@@ -42,16 +42,20 @@ export default class Toolbar extends Vue {
 
   landingLinks = [
     {
-      text: "Pricing",
-      to: "pricing",
-    },
-    {
       text: "About",
       to: "about",
     },
     {
       text: "Contact us",
       to: "contact",
+    },
+    // {
+    //   text: "Support",
+    //   to: "support",
+    // },
+    {
+      text: "Pricing",
+      to: "pricing",
     },
   ]
 }

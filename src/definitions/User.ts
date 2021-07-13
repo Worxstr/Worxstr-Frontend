@@ -15,13 +15,13 @@ export type Role = {
 }
 
 export enum UserRole {
-	Employee = 1,
-	EmployeeManager = 2,
+	Contractor = 1,
+	ContractorManager = 2,
 	OrganizationManager = 3,
 }
 
 export const Manager = [
-	UserRole.EmployeeManager,
+	UserRole.ContractorManager,
 	UserRole.OrganizationManager,
 ]
 
@@ -35,9 +35,9 @@ export function defaultRoute() {
 	if (!user || !user.roles) return 'schedule'
 
 	switch (user?.roles[0]?.id) {
-		case UserRole.Employee:
+		case UserRole.Contractor:
 			return 'clock'
-		case UserRole.EmployeeManager:
+		case UserRole.ContractorManager:
 		case UserRole.OrganizationManager:
 			return 'jobs'
 		default:
