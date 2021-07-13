@@ -2,11 +2,13 @@
 .home
   //- Main CTA
   v-sheet
+    arrows(style='position: absolute' type='background')
     v-container.px-10
+
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
-            h3.text-h3.font-weight-bold.mb-2 The adaptive solution to widescale temp labor management
+            h3.text-h3.font-weight-black.mb-2 The adaptive solution to widescale temp labor management
 
           div(v-if='authenticatedUser')
             v-btn.mr-3(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
@@ -17,8 +19,9 @@
             v-btn.mr-3.black--text(outlined, color="accent", :to="{ name: `signIn` }") Sign in
 
           v-spacer(style='height: 70px')
+
         v-col.flex-grow-1.pa-0(v-if='$vuetify.breakpoint.mdAndUp' style='width: 50%')
-          arrows
+          arrows(type='largeGroup')
             
 
   //- Feature carousel
@@ -35,7 +38,6 @@
   )
     v-carousel-item(v-for='feature in carousel')
       v-sheet(:color='feature.color', :dark='feature.dark', height='100%')
-
 
         v-row.jumbo.carousel-content.flex-column.flex-md-row.jumbo.d-flex.align-center.justify-center(:class="feature.reverse ? 'flex-md-row-reverse' : ''")
           v-col.flex-grow-1

@@ -1,3 +1,18 @@
+@font-face {
+	font-family: "Greycliff";
+  font-weight: 900;
+	src: url("../assets/fonts/greycliff/GreycliffCF-Heavy.eot") format("eot"),
+	     url("../assets/fonts/greycliff/GreycliffCF-Heavy.woff2") format("woff2"),
+	     url("../assets/fonts/greycliff/GreycliffCF-Heavy.woff") format("woff"),
+}
+@font-face {
+	font-family: "Greycliff";
+  font-weight: 700;
+	src: url("../assets/fonts/greycliff/GreycliffCF-Bold.eot") format("eot"),
+	     url("../assets/fonts/greycliff/GreycliffCF-Bold.woff2") format("woff2"),
+	     url("../assets/fonts/greycliff/GreycliffCF-Bold.woff") format("woff"),
+}
+
 html {
 	overflow-y: auto;
 }

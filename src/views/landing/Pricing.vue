@@ -42,15 +42,23 @@ div
               v-else,
               :to="{ name: 'signUp' }"
             ) {{ tier.price == null ? 'Contact sales' : 'Get started' }}
+      
+  .d-flex
+    v-spacer
+    arrows(type='largeGroup')
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import Arrows from '@/components/Arrows.vue'
 
 @Component({
   metaInfo: {
     title: "Pricing",
   },
+  components: {
+    Arrows
+  }
 })
 export default class Pricing extends Vue {
   pricingTiers = [
