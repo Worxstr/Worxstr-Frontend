@@ -12,11 +12,13 @@
 
           div(v-if='authenticatedUser')
             v-btn.mr-3.black--text(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
-            v-btn.mr-3.black--text(outlined, color='accent', @click='signOut') Sign out
+            v-btn.mr-3(outlined, color='accent', @click='signOut')
+              span.black--text Sign out
 
           div(v-else)
             v-btn.mr-3.black--text(elevation='0' color="accent", :to="{ name: `signUp` }") Start now
-            v-btn.mr-3.black--text(outlined, color="accent", :to="{ name: `signIn` }") Sign in
+            v-btn.mr-3(outlined, color="accent", :to="{ name: `signIn` }")
+              span.black--text Sign in
 
           v-spacer(style='height: 70px')
 
@@ -54,7 +56,7 @@
             )
 
   //- Calculator
-  v-sheet#calculator.gradient(dark)
+  v-sheet#calculator
     v-container.py-16.px-10
       v-row
         v-col.d-flex.flex-column.justify-center(cols='12', md='6')
@@ -66,7 +68,7 @@
             v-model="calculator.managers",
             suffix="managers",
             outlined,
-            color="white",
+            color="accent",
             hide-details,
             type="number",
             min="1"
@@ -76,7 +78,7 @@
             v-model="calculator.contracts",
             suffix="contracts / year",
             outlined,
-            color="white",
+            color="accent",
             hide-details,
             type="number",
             min="1"
@@ -86,7 +88,7 @@
             v-model="calculator.contractors",
             suffix="contractors",
             outlined,
-            color="white",
+            color="accent",
             hide-details,
             type="number",
             min="1"
@@ -97,7 +99,7 @@
         //- Savings estimate and helpful prompt
         v-col.d-flex.flex-column.justify-center
           .d-flex.flex-column.align-center
-            p.text-h2.mb-2.font-weight-bold {{ savingsEstimate | numberFormat }}
+            p.text-h2.mb-2.font-weight-black {{ savingsEstimate | numberFormat }}
               span.text-h6.ml-2 hours / year
 
             span.mb-4.text-body-2(style="opacity: 0.8") In estimated savings
@@ -105,8 +107,8 @@
             v-expand-transition
               .d-flex.align-center(v-if="calculator.promptHelpful && calculator.helpful == null")
                 p.mr-2.mb-0.text-body-1.font-weight-medium.text-no-wrap Was this helpful?
-                v-btn(text, color="white", @click="calculator.helpful = true") Yes
-                v-btn(text, color="white", @click="calculator.helpful = false") No
+                v-btn(text @click="calculator.helpful = true") Yes
+                v-btn(text @click="calculator.helpful = false") No
 
         //- Feedback form
         v-col(cols="12", md="6", v-if="calculator.helpful != null")
@@ -114,7 +116,7 @@
             span(v-if="calculator.helpful") Great! We'd love to get in touch with you about how Worxstr can help solve your management issues.
             span(v-else) We're sorry to hear that. We would love a moment to speak with you about what we could be doing differently.
 
-          contact-form(color='white' filled text)
+          contact-form(color='amber' filled text)
 </template>
 
 <script>

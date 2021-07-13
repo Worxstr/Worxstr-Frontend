@@ -13,4 +13,13 @@
 
 
 
-$heading-font-family: 'Greycliff', serif;
+$heading-font-family: 'Greycliff', sans-serif;
+
+$headings: (
+  'subtitle-1': (
+    'font-family': $heading-font-family
+  ),
+  'subtitle-2': (
+    'font-family': $heading-font-family
+  )
+)

@@ -14,7 +14,7 @@ div
           v-icon(@click="newConversationDialog = true") mdi-plus
           span New
       
-  v-container.messages.fill-height.align-start.d-flex.flex-row.pa-md-2.pa-0
+  v-container.messages.fill-height.align-start.d-flex.flex-row.pa-md-2.pa-0(fluid)
 
     .d-flex.flex-column(
       v-if="$route.name == 'messages' || $vuetify.breakpoint.mdAndUp",

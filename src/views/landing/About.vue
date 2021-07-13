@@ -23,7 +23,7 @@
         p.white--text At Worxstr we aspire to transform the gig labor industry by providing financial stability, transparency, and accountability through a management platform that will drive tomorrow's economy. At Worxstr we believe that every working American deserves the freedom that comes from opportunity and possibility.
 
   //- Team
-  v-container.d-flex.flex-column.justify-center.align-stretch.px-16.py-16.text-center(fluid)
+  v-container.d-flex.flex-column.justify-center.align-stretch.px-16.py-16.text-center(fluid style='position: relative; z-index: 1')
     p.text-h4.font-weight-black.mb-10 Our team
 
     v-row
@@ -65,9 +65,8 @@
         .mb-3
           v-btn(v-for='social in selectedMember.socials', icon :href='social.link' target="_blank" rel="noreferrer")
             v-icon(size='24px') {{ social.icon }}
-  .d-flex
-    v-spacer
-    arrows(type='smallGroup')
+  
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0')
 
 </template>
 

@@ -43,9 +43,7 @@ div
               :to="{ name: 'signUp' }"
             ) {{ tier.price == null ? 'Contact sales' : 'Get started' }}
       
-  .d-flex
-    v-spacer
-    arrows(type='smallGroup')
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0')
 </template>
 
 <script lang="ts">

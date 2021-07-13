@@ -1,5 +1,5 @@
 <template lang="pug">
-  .arrow-container(:style='`transform: translateY(${type == "background" ? "0" : "10"}px)`')
+  .arrow-container(:style='`transform: translateY(${type == "background" ? "0" : "11"}px)`')
     svg(:width='groupType.size.x' :height='groupType.size.y')
       defs
         linearGradient#blue(x1='10%' y1='20%' x2='100%' y2='20%' gradientTransform='rotate(-10)')
