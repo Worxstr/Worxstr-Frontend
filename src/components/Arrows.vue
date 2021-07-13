@@ -101,10 +101,61 @@ export default class Arrows extends Vue {
     },
     smallGroup: {
       size: {
-        x: 100,
-        y: 100,
+        x: 630,
+        y: 650,
       },
-      arrows: [],
+      arrows: [
+        {
+          color: 'blue-reverse',
+          offset: {
+            y: -150,
+            x: -150,
+          },
+          scale: 1,
+          animationDuration: 20,
+          opacity: .1,
+        },
+        {
+          color: 'light-blue-reverse',
+          offset: {
+            y: 100,
+            x: -350,
+          },
+          scale: .8,
+          animationDuration: 20,
+          opacity: .1,
+        },
+        {
+          color: 'purple',
+          offset: {
+            y: 150,
+            x: 150,
+          },
+          scale: 0.7,
+          animationDuration: 7,
+          opacity: 1,
+        },
+        {
+          color: 'blue-reverse',
+          offset: {
+            y: 350,
+            x: 150,
+          },
+          scale: 0.7,
+          animationDuration: 8,
+          opacity: 1,
+        },
+        {
+          color: 'light-blue-reverse',
+          offset: {
+            y: 1000,
+            x: 300,
+          },
+          scale: 0.4,
+          animationDuration: 3,
+          opacity: 1,
+        },
+      ],
     },
     background: {
       size: {
@@ -119,7 +170,7 @@ export default class Arrows extends Vue {
             x: -500,
           },
           scale: 3.2,
-          animationDuration: 10,
+          animationDuration: 25,
           opacity: .1,
         },
         {
@@ -129,7 +180,7 @@ export default class Arrows extends Vue {
             x: -250,
           },
           scale: 1.5,
-          animationDuration: 10,
+          animationDuration: 20,
           opacity: .1,
         },
       ],

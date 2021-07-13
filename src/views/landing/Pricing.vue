@@ -2,7 +2,7 @@
 div
   v-sheet.gradient.overlap
     v-container.py-16
-      h3.text-h3.font-weight-bold Pricing
+      h3.text-h3.font-weight-black Pricing
 
   v-container.shift-down.mb-3
     v-row
@@ -12,7 +12,7 @@ div
 
           v-card-text.pb-0
             p(v-if="tier.price != null")
-              span.mr-1.text-h4.font-weight-bold(
+              span.mr-1.text-h4.font-weight-black(
                 :class="`${$vuetify.theme.dark ? 'secondary' : 'primary'}--text`"
               )
                 span ${{ tier.price }}
@@ -45,7 +45,7 @@ div
       
   .d-flex
     v-spacer
-    arrows(type='largeGroup')
+    arrows(type='smallGroup')
 </template>
 
 <script lang="ts">

@@ -11,8 +11,8 @@
             h3.text-h3.font-weight-black.mb-2 The adaptive solution to widescale temp labor management
 
           div(v-if='authenticatedUser')
-            v-btn.mr-3(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
-            v-btn.mr-3(outlined, color='accent', @click='signOut') Sign out
+            v-btn.mr-3.black--text(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
+            v-btn.mr-3.black--text(outlined, color='accent', @click='signOut') Sign out
 
           div(v-else)
             v-btn.mr-3.black--text(elevation='0' color="accent", :to="{ name: `signUp` }") Start now

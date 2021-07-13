@@ -2,7 +2,7 @@
 div
   v-sheet.gradient.overlap
     v-container.py-16
-      h3.text-h3.font-weight-bold Contact us
+      h3.text-h3.font-weight-black Contact us
 
   v-container.shift-down
     v-row.justify-center
@@ -39,12 +39,17 @@ div
         | Visit our
         router-link(to="/support") &nbsp;support page&nbsp;
         | for common questions and answers.
+
+  .d-flex
+    v-spacer
+    arrows(type='smallGroup')
 </template>
 
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
 import ContactForm from "@/components/ContactForm.vue"
+import Arrows from '@/components/Arrows.vue'
 
 @Component({
   metaInfo: {
@@ -52,6 +57,7 @@ import ContactForm from "@/components/ContactForm.vue"
   },
   components: {
     ContactForm,
+    Arrows
   },
 })
 export default class Contact extends Vue {
