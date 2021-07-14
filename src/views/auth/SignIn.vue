@@ -5,25 +5,32 @@ div
       v-form(@submit.prevent="signIn", v-model="isValid")
         v-card-title.text-h5 Sign in
         v-card-text
-          v-text-field(
-            autofocus
-            label="Email",
-            type="email",
-            required="",
-            v-model="form.email",
-            :rules="emailRules"
-          )
-          v-text-field(
-            label="Password",
-            type="password",
-            required="",
-            v-model="form.password",
-            :rules="passwordRules"
-          )
+          v-window(v-model='step')
+            v-window-item(:value='0')
+              v-text-field(
+                autofocus
+                label="Email",
+                type="email",
+                required="",
+                v-model="form.email",
+                :rules="emailRules"
+              )
+            v-window-item(:value='1')
+              v-text-field(
+                label="Password",
+                type="password",
+                required="",
+                v-model="form.password",
+                :rules="passwordRules"
+              )
         v-card-actions
-          v-btn(text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
+          v-btn(v-if='step == 1' text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
+          
           v-spacer
-          v-btn(text, color="primary", type="submit", :disabled="!isValid") Sign in
+
+          v-btn(v-if='step != 0' text @click='step--') Back
+          v-btn(v-if='step != 1' text @click='step++') Next
+          v-btn(v-if='step == 1' text color="primary" type="submit" :disabled="!isValid") Sign in
       v-fade-transition
         v-overlay(absolute, opacity="0.2", v-if="loading")
           v-progress-circular(indeterminate)
@@ -44,6 +51,7 @@ export default {
     Arrows,
   },
   data: () => ({
+    step: 0,
     form: {
       email: "",
       password: "",

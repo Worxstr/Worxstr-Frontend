@@ -29,10 +29,10 @@ div
             v-card-actions.justify-center.pb-5
               v-btn(
                 elevation='0'
-                :color="highlight(tier) ? 'accent' : ($vuetify.theme.dark ? 'secondary' : 'primary')",
+                :color="highlight(tier) ? 'accent' : 'primary'",
                 :to="tier.to"
               )
-                | {{ tier.buttonText }}
+                span(:class="highlight(tier) ? 'black--text' : ''") {{ tier.buttonText }}
 
     .mt-12
       h4.text-h4.font-weight-black.mb-3 Need help deciding?

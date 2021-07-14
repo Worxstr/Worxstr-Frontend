@@ -5,62 +5,70 @@ div
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5 Sign up
         v-card-text
-          v-text-field(
-            autofocus,
-            label='First name'
-            v-model='form.first_name'
-            :rules='rules.firstName'
-            required
-          )
-          v-text-field(
-            label='Last name'
-            v-model='form.last_name'
-            :rules='rules.lastName' 
-            required
-          )
-          v-text-field(
-            label='Email'
-            type='email'
-            :rules='rules.email'
-            v-model='form.email'
-            required
-          )
-          v-text-field(
-            v-model="form.phone",
-            :rules='rules.phone'
-            type="tel",
-            v-mask="'(###) ###-####'"
-            label="Phone number",
-            required,
-          )
-          v-text-field(
-            label='Manager ID'
-            v-model='form.manager_id'
-            :rules='rules.managerId'
-          )
-          v-text-field(
-            label='Password'
-            type='password'
-            v-model='form.password'
-            :rules='rules.password'
-            required
-          )
-          v-text-field(
-            label='Confirm password'
-            type='password'
-            v-model='form.confirm_password'
-            :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
-            required
-          )
-          v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
-            template(v-slot:label)
-              div
-                span I agree to the
-                a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
+          v-window(v-model='step')
+            v-window-item(:value='0')
+              v-text-field(
+                autofocus,
+                label='First name'
+                v-model='form.first_name'
+                :rules='rules.firstName'
+                required
+              )
+              v-text-field(
+                label='Last name'
+                v-model='form.last_name'
+                :rules='rules.lastName' 
+                required
+              )
+            v-window-item(:value='1')
+              v-text-field(
+                label='Email'
+                type='email'
+                :rules='rules.email'
+                v-model='form.email'
+                required
+              )
+              v-text-field(
+                v-model="form.phone",
+                :rules='rules.phone'
+                type="tel",
+                v-mask="'(###) ###-####'"
+                label="Phone number",
+                required,
+              )
+            v-window-item(:value='2')
+              v-text-field(
+                label='Manager ID'
+                v-model='form.manager_id'
+                :rules='rules.managerId'
+              )
+            v-window-item(:value='3')
+              v-text-field(
+                label='Password'
+                type='password'
+                v-model='form.password'
+                :rules='rules.password'
+                required
+              )
+              v-text-field(
+                label='Confirm password'
+                type='password'
+                v-model='form.confirm_password'
+                :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
+                required
+              )
+              v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
+                template(v-slot:label)
+                  div
+                    span I agree to the
+                    a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
 
         v-card-actions
           v-spacer
+          v-btn(v-if='step != 0' text @click='step--') Back
+          v-btn(v-if='step != 3' text @click='step++') Next
           v-btn(
+            v-if='step == 3'
             text
             color='primary'
             type='submit'
@@ -90,6 +98,8 @@ import Arrows from '@/components/Arrows.vue'
 export default class SignUp extends Vue {
   loading = false
   isValid = false
+
+  step = 0
 
   form = {
     first_name: "",
