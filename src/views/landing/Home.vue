@@ -39,14 +39,14 @@
     :light="!carousel[carouselIndex].dark"
   )
     v-carousel-item(v-for='feature in carousel')
-      v-sheet(:color='feature.color', :dark='feature.dark', height='100%')
+      v-sheet(:dark='feature.dark', height='100%' :class='`gradient-${feature.gradient}`')
 
         v-row.jumbo.carousel-content.flex-column.flex-md-row.jumbo.d-flex.align-center.justify-center(:class="feature.reverse ? 'flex-md-row-reverse' : ''")
           v-col.flex-grow-1
             .px-15.pt-15.pt-md-0.pb-md-10.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start
               .d-flex
                 v-icon.text-h2.mb-6 {{ feature.icon }}
-                p.text-h4.font-weight-black.ml-4.mt-2 {{ feature.title }}
+                h3.text-h3.font-weight-black.ml-4.mt-1 {{ feature.title }}
               p {{ feature.description }}
 
           v-col.flex-grow-1(style='width: 30')
@@ -173,7 +173,7 @@ export default {
     carousel: [
       {
         dark: true,
-        color: 'indigo',
+        gradient: 'primary',
         icon: 'mdi-clock-fast',
         title: 'Scheduling',
         description:
@@ -181,12 +181,12 @@ export default {
         image: 'schedule.svg',
         style: {
           large: 'transform: rotate(-2.5deg) scale(1.5) translate(20%,15%)',
-          small: 'transform: rotate(-2.5deg) scale(3.5) translatey(50px)',
+          small: 'transform: rotate(-2.5deg) scale(1) translate(-100%, 200px)',
         },
       },
       {
         reverse: true,
-        color: 'grey lighten-2',
+        gradient: 'secondary',
         icon: 'mdi-clock-check-outline',
         title: 'Time Approvals',
         description:
@@ -199,7 +199,7 @@ export default {
       },
       {
         dark: true,
-        color: 'blue darken-3',
+        gradient: 'tertiary',
         icon: 'mdi-badge-account',
         title: 'Onboarding',
         description:
@@ -212,7 +212,7 @@ export default {
       },
       {
         dark: true,
-        color: 'green',
+        gradient: 'secondary',
         icon: 'mdi-cash-lock',
         title: 'Payments',
         description:

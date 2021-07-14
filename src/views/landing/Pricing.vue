@@ -11,13 +11,13 @@ div
           v-card-title.text-h5 {{ tier.name | capitalize }}
 
           v-card-text.pb-0
-            p(v-if="tier.price != null")
+            p(v-if="tier.description") {{ tier.description }}
+            p(v-else)
               span.mr-1.text-h4.font-weight-black(
                 :class="`${highlight(tier) ? 'accent' : ($vuetify.theme.dark ? 'secondary' : 'primary')}--text`"
               )
                 span ${{ tier.price }}
               span / month
-            p(v-else) Speak with sales
 
           div(:style="`background: rgba(255,255,255,${highlight(tier) ? '.1' : '.8'})`")
             v-card-text
@@ -40,7 +40,7 @@ div
       p
         | Contact us
         router-link(to="/contact") &nbsp;here&nbsp;
-        | for common questions and answers.
+        | for support.
       
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0' v-if='$vuetify.breakpoint.smAndUp')
 </template>
@@ -62,6 +62,7 @@ export default class Pricing extends Vue {
     {
       price: 0,
       name: 'free',
+      description: 'Free forever',
       contractors: 10,
       support: 'Free tier chat assistance',
     },
@@ -74,6 +75,7 @@ export default class Pricing extends Vue {
     {
       price: null,
       name: 'enterprise',
+      description: 'Speak with sales',
       contractors: Infinity,
       support: '24/7 support',
     }

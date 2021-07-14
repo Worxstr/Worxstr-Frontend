@@ -31,17 +31,18 @@ div
           v-card-actions.justify-center
             v-btn.mb-3(
               :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
-              :to="{ name: tier.price == null ? 'contact' : 'signUp' }"
-            ) {{ tier.price == null ? 'Contact sales' : 'Get started' }}
+              :to="{ name: tier.to }"
+            ) {{ tier.buttonText }}
 
     div
       h4.text-h4.font-weight-black.mb-3 Need help deciding?
       p
         | Contact us
         router-link(:to="{name: 'contact'}") &nbsp;here&nbsp;
-        | or visit our
-        router-link(to="/support") &nbsp;support page
-        | .
+        | for support.
+        //- | or visit our
+        //- router-link(to="/support") &nbsp;support page
+        //- | .
 </template>
 
 <script lang="ts">
@@ -59,18 +60,24 @@ export default class Pricing extends Vue {
       name: 'free',
       contractors: 10,
       support: 'Free tier chat assistance',
+      to: 'sign-up',
+      buttonText: 'Get free',
     },
     {
       price: 100,
       name: 'premium',
       contractors: 100,
       support: 'Standard support',
+      to: 'sign-up',
+      buttonText: 'Get premium',
     },
     {
       price: null,
       name: 'enterprise',
       contractors: Infinity,
       support: '24/7 support',
+      to: 'contact',
+      buttonText: 'Contact sales',
     }
   ]
 }

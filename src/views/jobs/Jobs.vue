@@ -1,11 +1,11 @@
 <template lang="pug">
-v-container(v-if="loading && !(directJobs.length || indirectJobs.length)")
+v-container(fluid v-if="loading && !(directJobs.length || indirectJobs.length)")
   v-skeleton-loader.my-4(type="heading")
   v-skeleton-loader(
     type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
   )
 
-v-container.approvals(v-else)
+v-container.approvals(fluid v-else)
   edit-job-dialog(:opened.sync="createJobDialog", :create="true")
 
   portal(to="toolbarActions")
@@ -19,7 +19,7 @@ v-container.approvals(v-else)
       span Add job
 
   .mb-5
-    v-card(v-if="directJobs.length")
+    v-card.soft-shadow(v-if="directJobs.length")
       v-list
         v-list-item(
           v-for="job in directJobs",
