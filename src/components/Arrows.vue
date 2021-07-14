@@ -212,7 +212,7 @@ export default class Arrows extends Vue {
           },
           scale: 2,
           animationDuration: 10,
-          opacity: .07s,
+          opacity: .07,
         },
       ],}
   }
