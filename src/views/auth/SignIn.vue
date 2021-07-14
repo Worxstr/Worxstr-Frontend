@@ -1,8 +1,8 @@
 <template lang="pug">
 v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
-  v-card(width="500")
+  v-card.soft-shadow(width="500")
     v-form(@submit.prevent="signIn", v-model="isValid")
-      v-card-title Sign in
+      v-card-title.text-h5 Sign in
       v-card-text
         v-text-field(
           autofocus

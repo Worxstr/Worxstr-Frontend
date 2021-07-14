@@ -13,7 +13,7 @@ div
         v-if="chosenOption == option.name || chosenOption == null"
       )
         v-card.soft-shadow(outlined :class="chosenOption ? '' : 'hover-effect'")
-          v-card-title {{ option.title }}
+          v-card-title.text-h5 {{ option.title }}
 
           v-expand-transition(appear)
             div(v-if="chosenOption != option.name")

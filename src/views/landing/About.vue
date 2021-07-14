@@ -4,7 +4,7 @@
   //- What is Worxstr?
   v-sheet
     v-container.d-flex.flex-column.justify-center.align-center.pa-16
-      p.text-h4.font-weight-black.mb-15 What is Worxstr?
+      h3.text-h3.font-weight-black.mb-15 What is Worxstr?
 
       p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
       p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33 percent increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
@@ -26,7 +26,7 @@
   //- Team
   v-sheet
     v-container.d-flex.flex-column.justify-center.align-stretch.px-16.py-16.text-center(fluid style='position: relative; z-index: 1')
-      p.text-h4.font-weight-black.mb-10 Our team
+      h3.text-h3.font-weight-black.mb-10 Our team
 
       v-row
         v-col(

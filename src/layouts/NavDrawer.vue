@@ -45,7 +45,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
             v-icon {{ link.icon }}
 
           v-list-item-content
-            v-list-item-title {{ link.text | capitalize }}
+            v-list-item-title.subtitle-2 {{ link.text | capitalize }}
 
 
   //- Secondary items
@@ -73,7 +73,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
               v-icon {{ link.icon }}
 
             v-list-item-content
-              v-list-item-title {{ link.text | capitalize }}
+              v-list-item-title.subtitle-2 {{ link.text | capitalize }}
 </template>
 
 <script lang="ts">

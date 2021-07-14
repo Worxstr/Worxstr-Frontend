@@ -22,7 +22,7 @@ div(v-else)
     v-icon.text-h2.ma-5 mdi-clock-check-outline
     p.text-body-1 No timecard approvals left!
 
-  v-container.approvals(fluid v-else)
+  v-container.approvals.pt-0(fluid v-else)
     edit-timecard-dialog(
       :opened.sync="editTimecardDialog",
       :timecard="selectedTimecards[0]"
@@ -53,7 +53,7 @@ div(v-else)
           :key="timecard.id"
         )
           v-expansion-panel-header.d-flex
-            span.text-subtitle-1.flex-grow-0
+            span.py-1.font-weight-medium.flex-grow-0
               | {{ timecard | fullName }}
             v-spacer
             span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
@@ -99,7 +99,7 @@ div(v-else)
           :key="timecard.id"
         )
           v-expansion-panel-header
-            span.text-subtitle-1.flex-grow-0 {{ timecard | fullName }}
+            span.py-1.font-weight-medium.flex-grow-0 {{ timecard | fullName }}
             v-spacer
             span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
             span.flex-grow-0.px-2(
