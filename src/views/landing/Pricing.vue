@@ -1,49 +1,48 @@
 <template lang="pug">
 div
-  v-sheet.gradient.overlap
+  v-sheet.gradient-secondary.overlap
     v-container.py-16
       h3.text-h3.font-weight-black Pricing
 
   v-container.shift-down.mb-3
     v-row
       v-col(cols="12", sm="4", v-for="tier in pricingTiers")
-        v-card.hover-effect.test(elevation="15")
-          v-card-title {{ tier.name | capitalize }}
+        v-card.hover-effect.soft-shadow(outlined :class='highlight(tier) ? "gradient-tertiary" : "light-color"')
+          v-card-title.text-h5 {{ tier.name | capitalize }}
 
           v-card-text.pb-0
             p(v-if="tier.price != null")
               span.mr-1.text-h4.font-weight-black(
-                :class="`${$vuetify.theme.dark ? 'secondary' : 'primary'}--text`"
+                :class="`${highlight(tier) ? 'accent' : ($vuetify.theme.dark ? 'secondary' : 'primary')}--text`"
               )
                 span ${{ tier.price }}
               span / month
             p(v-else) Speak with sales
 
-          v-divider
+          div(:style="`background: rgba(255,255,255,${highlight(tier) ? '.1' : '.8'})`")
+            v-card-text
+              ul
+                li.mb-3.text-subtitle-1.font-weight-medium {{ tier.support }}
 
-          v-card-text
-            ul
-              li.mb-3.text-subtitle-1.font-weight-medium {{ tier.support }}
+                li.mb-3.text-subtitle-1.font-weight-medium
+                  | {{ tier.contractors == Infinity ? 'Unlimited' : tier.contractors }} contractors
 
-              li.mb-3.text-subtitle-1.font-weight-medium
-                | {{ tier.contractors == Infinity ? 'Unlimited' : tier.contractors }} contractors
+            v-card-actions.justify-center.pb-5
+              v-btn(
+                elevation='0'
+                :color="highlight(tier) ? 'accent' : ($vuetify.theme.dark ? 'secondary' : 'primary')",
+                :to="{ name: 'signUp' }"
+              )
+                | {{ tier.price == null ? 'Contact sales' : 'Get started' }}
 
-          v-card-actions.justify-center
-            v-btn(
-              text,
-              :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
-              v-if="tier.name == 'Advanced'",
-              :to="{ name: 'contact', params: { subject: 'My company is interested in the advanced plan' } }"
-            ) Contact sales
-
-            v-btn(
-              text,
-              :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
-              v-else,
-              :to="{ name: 'signUp' }"
-            ) {{ tier.price == null ? 'Contact sales' : 'Get started' }}
+    .mt-12
+      h4.text-h4.font-weight-black.mb-3 Need help deciding?
+      p
+        | Contact us
+        router-link(to="/contact") &nbsp;here&nbsp;
+        | for common questions and answers.
       
-  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0')
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0' v-if='$vuetify.breakpoint.smAndUp')
 </template>
 
 <script lang="ts">
@@ -79,6 +78,10 @@ export default class Pricing extends Vue {
       support: '24/7 support',
     }
   ]
+
+  highlight(tier: any) {
+    return tier.name == "premium"
+  }
 }
 </script>
 

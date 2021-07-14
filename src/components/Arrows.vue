@@ -201,8 +201,8 @@ export default class Arrows extends Vue {
             x: -500,
           },
           scale: 3.2,
-          animationDuration: 25,
-          opacity: .1,
+          animationDuration: 15,
+          opacity: .05,
         },
         {
           color: 'amber',
@@ -211,8 +211,8 @@ export default class Arrows extends Vue {
             x: -220,
           },
           scale: 2,
-          animationDuration: 20,
-          opacity: .1,
+          animationDuration: 10,
+          opacity: .07,
         },
       ],}
   }

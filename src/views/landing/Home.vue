@@ -44,8 +44,9 @@
         v-row.jumbo.carousel-content.flex-column.flex-md-row.jumbo.d-flex.align-center.justify-center(:class="feature.reverse ? 'flex-md-row-reverse' : ''")
           v-col.flex-grow-1
             .px-15.pt-15.pt-md-0.pb-md-10.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start
-              v-icon.text-h2.mb-6 {{ feature.icon }}
-              p.text-h4.font-weight-bold {{ feature.title }}
+              .d-flex
+                v-icon.text-h2.mb-6 {{ feature.icon }}
+                p.text-h4.font-weight-black.ml-4.mt-2 {{ feature.title }}
               p {{ feature.description }}
 
           v-col.flex-grow-1(style='width: 30')
@@ -63,7 +64,7 @@
     v-container.py-16.px-10
       v-row
         v-col.d-flex.flex-column.justify-center(cols='12', md='6')
-          h4.text-h4.font-weight-bold.mb-4 Calculate savings with Worxstr
+          h4.text-h4.font-weight-black.mb-4 Calculate savings with Worxstr
           p With features aimed at saving your workforce time and money, we’ve created this easy to use savings calculator that can give you an estimate of the time and value provided to your organization.
         v-col(cols="12", md="6")
           p.text-h6.mb-4.pl-2 My company has:

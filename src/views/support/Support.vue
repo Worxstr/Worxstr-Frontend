@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  v-sheet.gradient.overlap
+  v-sheet.gradient-primary.overlap
     v-container.py-16
       h3.text-h3.font-weight-bold.mb-8 Support
       

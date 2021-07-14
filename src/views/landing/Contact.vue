@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  v-sheet.gradient.overlap
+  v-sheet.gradient-secondary.overlap
     v-container.py-16
       h3.text-h3.font-weight-black Contact us
 
@@ -12,7 +12,7 @@ div
         :md="chosenOption == option.name ? 9 : 6",
         v-if="chosenOption == option.name || chosenOption == null"
       )
-        v-card(elevation="15" :class="chosenOption ? '' : 'hover-effect'")
+        v-card.soft-shadow(outlined :class="chosenOption ? '' : 'hover-effect'")
           v-card-title {{ option.title }}
 
           v-expand-transition(appear)
@@ -22,6 +22,7 @@ div
 
               v-card-actions.pb-5.justify-center
                 v-btn(
+                  elevation='0'
                   v-bind="attrs",
                   v-on="on",
                   :color="option.button.color",
@@ -31,16 +32,16 @@ div
           v-expand-transition(appear)
             v-card-text.py-0(v-if="chosenOption == option.name")
               contact-form(color="primary")
-                v-btn(text, @click="chosenOption = null") Cancel
+                v-btn(elevation='0' text, @click="chosenOption = null") Cancel
 
-    .mt-12
-      h4.text-h4.font-weight-black.mb-3 Need help now?
-      p
-        | Visit our
-        router-link(to="/support") &nbsp;support page&nbsp;
-        | for common questions and answers.
+    //- .mt-12
+    //-   h4.text-h4.font-weight-black.mb-3 Need help now?
+    //-   p
+    //-     | Visit our
+    //-     router-link(to="/support") &nbsp;support page&nbsp;
+    //-     | for common questions and answers.
 
-  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0')
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0' v-if='$vuetify.breakpoint.smAndUp')
 </template>
 
 <script lang='ts'>

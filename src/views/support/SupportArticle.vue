@@ -1,6 +1,8 @@
 <template lang="pug">
   v-container.pt-8
-    router-link(:to="{name: 'support'}") < Support home
+    router-link(:to="{name: 'support'}")
+      v-icon.mb-1.mr-1(small) mdi-chevron-left
+      span Support home
     h4.mt-3.mb-6.text-h4.font-weight-bold {{ article.title }}
     
     v-row
