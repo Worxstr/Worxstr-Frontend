@@ -13,12 +13,12 @@
           div(v-if='authenticatedUser')
             v-btn.mr-3.black--text(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
             v-btn.mr-3(outlined, color='accent', @click='signOut')
-              span.black--text Sign out
+              span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") Sign out
 
           div(v-else)
             v-btn.mr-3.black--text(elevation='0' color="accent", :to="{ name: `signUp` }") Start now
             v-btn.mr-3(outlined, color="accent", :to="{ name: `signIn` }")
-              span.black--text Sign in
+              span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") Sign in
 
           v-spacer(style='height: 70px')
 

@@ -39,15 +39,15 @@ div(v-else)
 
     .mb-5(v-if="approvedTimecards.length")
       v-toolbar.no-padding(flat, color="transparent")
-        v-toolbar-title.text-h6
+        v-toolbar-title.px-4.text-h6
           span Pending
-          v-chip.mx-3.pa-2.font-weight-black(small) {{ approvedTimecards.length }}
+          v-chip.mx-3.pa-2.font-weight-bold(small) {{ approvedTimecards.length }}
         v-spacer
         v-btn(text, @click="openPaymentDialog(approvedTimecards)")
           v-icon(left) mdi-bank-check
           span Complete payments
 
-      v-expansion-panels(flat).soft-shadow
+      v-expansion-panels(accordion flat).soft-shadow
         v-expansion-panel(
           v-for="timecard in approvedTimecards",
           :key="timecard.id"
@@ -76,12 +76,13 @@ div(v-else)
                 | }}
               p {{ timecard.time_break }} minute break
               p ${{ timecard.total_payment }} earned
+          v-divider
 
     .mb-5(v-if="unapprovedTimecards.length")
       v-toolbar.no-padding(flat, color="transparent")
-        v-toolbar-title.text-h6
+        v-toolbar-title.px-4.text-h6
           span Unapproved
-          v-chip.mx-3.pa-2.font-weight-black(small) {{ unapprovedTimecards.length }}
+          v-chip.mx-3.pa-2.font-weight-bold(small) {{ unapprovedTimecards.length }}
 
         v-spacer
         v-btn(
@@ -92,7 +93,7 @@ div(v-else)
           v-icon(left) mdi-check-all
           span Approve all
 
-      v-expansion-panels(flat).soft-shadow
+      v-expansion-panels(accordion flat).soft-shadow
         v-expansion-panel(
           v-for="timecard in unapprovedTimecards",
           :key="timecard.id"
@@ -137,6 +138,7 @@ div(v-else)
               v-btn(text, color="red", @click="openDenyDialog(timecard)")
                 v-icon(left) mdi-close
                 span Deny
+          v-divider
 </template>
 
 <script>

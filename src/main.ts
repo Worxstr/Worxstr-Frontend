@@ -5,8 +5,6 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import VueChatScroll from 'vue-chat-scroll'
-import PortalVue from 'portal-vue'
 import { io } from "socket.io-client"
 
 import './styles/style.scss'
@@ -14,6 +12,7 @@ import './plugins/filters'
 
 import VueMask from 'v-mask'
 import PortalVue from 'portal-vue'
+import VueChatScroll from 'vue-chat-scroll'
 import VueSocketIO from 'vue-socket.io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'

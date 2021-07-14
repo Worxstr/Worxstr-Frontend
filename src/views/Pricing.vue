@@ -7,7 +7,7 @@ div
   v-container.shift-down.mb-3
     v-row.mb-12
       v-col(cols="12", sm="4", v-for="tier in pricingTiers")
-        v-card.hover-effect(elevation="15")
+        v-card.hover-effect.dark-color(elevation="15")
           v-card-title {{ tier.name | capitalize }}
 
           v-card-text.pb-0
@@ -30,7 +30,7 @@ div
 
           v-card-actions.justify-center
             v-btn.mb-3(
-              :color="$vuetify.theme.dark ? 'secondary' : 'primary'",
+              color='primary',
               :to="{ name: tier.to }"
             ) {{ tier.buttonText }}
 
