@@ -212,7 +212,7 @@ export default class Arrows extends Vue {
           },
           scale: 2,
           animationDuration: 10,
-          opacity: .07,
+          opacity: .07s,
         },
       ],}
   }
@@ -225,7 +225,7 @@ export default class Arrows extends Vue {
 
 <style lang="scss">
 // Angle ratio: -2.75
-@keyframes example {
+@keyframes bobble {
   0% {
     transform: translate(0px, 0px);
   }
@@ -238,6 +238,6 @@ export default class Arrows extends Vue {
 }
 .arrow {
   position: relative;
-  animation: example 10s infinite ease-in-out;
+  animation: bobble 10s infinite ease-in-out;
 }
 </style>
