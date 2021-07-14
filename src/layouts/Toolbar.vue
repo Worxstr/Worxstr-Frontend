@@ -5,7 +5,7 @@
       app
       outlined
       :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
-      :elevate-on-scroll='$vuetify.breakpoint.mdAndUp'
+      elevate-on-scroll
       :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
     )
       v-btn(
@@ -35,7 +35,7 @@
         div(v-else)
           v-btn(v-for="link in links", text, :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
           
-    v-navigation-drawer(v-model='menu' app right)
+    v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
       v-list(nav)
         v-list-item(v-for="link in links", text, :to="link.to" link)
           v-list-item-content

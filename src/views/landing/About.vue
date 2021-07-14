@@ -153,7 +153,6 @@ export default {
         name: 'Andrew Thorp',
         title: "Lead Backend Developer / DevOps engineer",
         photo: 'andrew.jpg',
-        description: "Andrew is a genius",
         socials: [
           {
             link: 'https://github.com/aThorp96',

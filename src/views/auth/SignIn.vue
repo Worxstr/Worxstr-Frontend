@@ -4,8 +4,8 @@ div
     v-card.soft-shadow(width="500")
       v-form(@submit.prevent="signIn", v-model="isValid")
         v-card-title.text-h5 Sign in
-        v-card-text
-          v-window(v-model='step')
+        v-card-text.pb-0
+          v-window.pt-2(v-model='step')
             v-window-item(:value='0')
               v-text-field(
                 autofocus
@@ -14,6 +14,8 @@ div
                 required="",
                 v-model="form.email",
                 :rules="emailRules"
+                outlined
+                dense
               )
             v-window-item(:value='1')
               v-text-field(
@@ -22,6 +24,8 @@ div
                 required="",
                 v-model="form.password",
                 :rules="passwordRules"
+                outlined
+                dense
               )
         v-card-actions
           v-btn(v-if='step == 1' text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?

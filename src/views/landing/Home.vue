@@ -8,7 +8,7 @@
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
-            h3.text-h3.font-weight-black.mb-2 The adaptive solution to widescale temp labor management
+            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to widescale temp labor management
 
           div(v-if='authenticatedUser')
             v-btn.mr-3.black--text(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
@@ -30,30 +30,29 @@
   v-carousel(
     v-model="carouselIndex",
     cycle,
-    interval='8000',
+    interval='800000',
     height='700',
     hide-delimiter-background,
     show-arrows-on-hover,
     delimiter-icon="mdi-circle-medium",
-    :dark="carousel[carouselIndex].dark",
-    :light="!carousel[carouselIndex].dark"
+    :dark="true",
   )
     v-carousel-item(v-for='feature in carousel')
       v-sheet(:dark='feature.dark', height='100%' :class='`gradient-${feature.gradient}`')
 
         v-row.jumbo.carousel-content.flex-column.flex-md-row.jumbo.d-flex.align-center.justify-center(:class="feature.reverse ? 'flex-md-row-reverse' : ''")
           v-col.flex-grow-1
-            .px-15.pt-15.pt-md-0.pb-md-10.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start
-              .d-flex
-                v-icon.text-h2.mb-6 {{ feature.icon }}
-                h3.text-h3.font-weight-black.ml-4.mt-1 {{ feature.title }}
+            .px-12.pt-15.pt-md-0.pb-md-10.d-flex.flex-column.justify-center.align-md-start.text-center.text-md-start
+              .d-flex.flex-column.flex-sm-row.justify-center
+                v-icon.text-h2 {{ feature.icon }}
+                h3.text-h3.font-weight-black.ma-4 {{ feature.title }}
               p {{ feature.description }}
 
-          v-col.flex-grow-1(style='width: 30')
+          v-col.flex-grow-1(style='width: 30%')
             v-img(
               :src='require(`@/assets/images/landing/${feature.image}`)',
               :alt='feature.title'
-              :style='$vuetify.breakpoint.mdAndUp ? feature.style.large : feature.style.small'
+              :style='$vuetify.breakpoint.mdAndUp ? feature.style.md : feature.style.xs'
             )
 
   //- Calculator
@@ -172,7 +171,6 @@ export default {
     carouselIndex: 0,
     carousel: [
       {
-        dark: true,
         gradient: 'primary',
         icon: 'mdi-clock-fast',
         title: 'Scheduling',
@@ -180,8 +178,8 @@ export default {
           'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
         image: 'schedule.svg',
         style: {
-          large: 'transform: rotate(-2.5deg) scale(1.5) translate(20%,15%)',
-          small: 'transform: rotate(-2.5deg) scale(1) translate(-100%, 200px)',
+          md: 'transform: rotate(-2.5deg) scale(1.5) translate(20%,15%)',
+          xs: 'transform: rotate(-2.5deg) scale(3.5) translateY(50px)',
         },
       },
       {
@@ -193,12 +191,11 @@ export default {
           'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
         image: 'approvals.svg',
         style: {
-          large: 'transform: scale(1) translate(0px,100px)',
-          small: 'transform: scale(3.5) translateY(30%)',
+          md: 'transform: scale(1) translate(0px,100px)',
+          xs: 'transform: scale(3.5) translateY(30%)',
         },
       },
       {
-        dark: true,
         gradient: 'tertiary',
         icon: 'mdi-badge-account',
         title: 'Onboarding',
@@ -206,12 +203,11 @@ export default {
           'Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.',
         image: 'onboarding.svg',
         style: {
-          large: 'transform: scale(1.7) translatex(20%)',
-          small: 'transform: scale(6) translate(20px, 10%)',
+          md: 'transform: scale(1.7) translatex(20%)',
+          xs: 'transform: scale(6) translate(20px, 10%)',
         },
       },
       {
-        dark: true,
         gradient: 'secondary',
         icon: 'mdi-cash-lock',
         title: 'Payments',
@@ -219,8 +215,8 @@ export default {
           'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
         image: 'approvals.svg',
         style: {
-          large: 'transform: scale(1) translate(0px,100px)',
-          small: 'transform: scale(3.5) translateY(30%)',
+          md: 'transform: scale(1) translate(0px,100px)',
+          xs: 'transform: scale(3.5) translateY(30%)',
         },
       },
     ],

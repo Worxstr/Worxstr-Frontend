@@ -4,8 +4,8 @@ div
     v-card.soft-shadow(width='500')
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5 Sign up
-        v-card-text
-          v-window(v-model='step')
+        v-card-text.pb-0
+          v-window.pt-2(v-model='step')
             v-window-item(:value='0')
               v-text-field(
                 autofocus,
@@ -13,12 +13,16 @@ div
                 v-model='form.first_name'
                 :rules='rules.firstName'
                 required
+                outlined
+                dense
               )
               v-text-field(
                 label='Last name'
                 v-model='form.last_name'
                 :rules='rules.lastName' 
                 required
+                outlined
+                dense
               )
             v-window-item(:value='1')
               v-text-field(
@@ -27,6 +31,8 @@ div
                 :rules='rules.email'
                 v-model='form.email'
                 required
+                outlined
+                dense
               )
               v-text-field(
                 v-model="form.phone",
@@ -35,12 +41,16 @@ div
                 v-mask="'(###) ###-####'"
                 label="Phone number",
                 required,
+                outlined
+                dense
               )
             v-window-item(:value='2')
               v-text-field(
                 label='Manager ID'
                 v-model='form.manager_id'
                 :rules='rules.managerId'
+                outlined
+                dense
               )
             v-window-item(:value='3')
               v-text-field(
@@ -49,6 +59,8 @@ div
                 v-model='form.password'
                 :rules='rules.password'
                 required
+                outlined
+                dense
               )
               v-text-field(
                 label='Confirm password'
@@ -56,6 +68,8 @@ div
                 v-model='form.confirm_password'
                 :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
                 required
+                outlined
+                dense
               )
               v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
                 template(v-slot:label)

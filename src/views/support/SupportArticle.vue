@@ -7,9 +7,8 @@
     
     v-row
       v-col(cols='12' md='9')
-        v-card
-          .pa-8
-            vue-markdown(:source='article.body')
+        v-card.soft-shadow
+          vue-markdown.pa-8.mb-10(:source='article.body')
       v-col(cols='12' md='3')
         aside(style='position: sticky; top: 100px')
           .mb-3
