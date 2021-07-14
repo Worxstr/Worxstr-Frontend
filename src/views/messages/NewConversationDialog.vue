@@ -12,7 +12,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title New conversation
+        v-toolbar-title.text-h6 New conversation
 
       v-divider
 

@@ -31,7 +31,7 @@ div
 
           v-expand-transition(appear)
             v-card-text.py-0(v-if="chosenOption == option.name")
-              contact-form(color="primary")
+              contact-form.py-4(color="primary")
                 v-btn(elevation='0' text, @click="chosenOption = null") Cancel
 
     //- .mt-12
@@ -61,19 +61,25 @@ import Arrows from '@/components/Arrows.vue'
 })
 export default class Contact extends Vue {
 
-  chosenOption: 'support' | 'sales' | null = null
+  mounted() {
+    if (this.$route.params.option) {
+      this.chosenOption = this.$route.params.option
+    }
+  }
+
+  chosenOption: 'support' | 'sales' | string | null = null
 
   helpOptions = [
-    {
-      name: 'support',
-      title: "Help and support",
-      text: "Having technical trouble? Contact our support team and we will get back to you soon.",
-      button: {
-        text: "Contact support",
-        color: "primary",
-      },
-      dialog: false,
-    },
+    // {
+    //   name: 'support',
+    //   title: "Help and support",
+    //   text: "Having technical trouble? Contact our support team and we will get back to you soon.",
+    //   button: {
+    //     text: "Contact support",
+    //     color: "primary",
+    //   },
+    //   dialog: false,
+    // },
     {
       name: 'sales',
       title: "Sales and pricing",

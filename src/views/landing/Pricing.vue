@@ -7,19 +7,18 @@ div
   v-container.shift-down.mb-3
     v-row
       v-col(cols="12", sm="4", v-for="tier in pricingTiers")
-        v-card.hover-effect.soft-shadow(outlined :class='highlight(tier) ? "gradient-tertiary" : "light-color"')
+        v-card.hover-effect.soft-shadow(outlined :class='highlight(tier) ? "gradient-tertiary" : ($vuetify.theme.dark ? "dark-color" : "light-color")')
           v-card-title.text-h5 {{ tier.name | capitalize }}
 
           v-card-text.pb-0
             p(v-if="tier.description") {{ tier.description }}
             p(v-else)
               span.mr-1.text-h4.font-weight-black(
-                :class="`${highlight(tier) ? 'accent' : ($vuetify.theme.dark ? 'secondary' : 'primary')}--text`"
-              )
-                span ${{ tier.price }}
+                class='accent--text'
+              ) ${{ tier.price }}
               span / month
 
-          div(:style="`background: rgba(255,255,255,${highlight(tier) ? '.1' : '.8'})`")
+          div(:style="`background: rgba(255,255,255,${(highlight(tier) || $vuetify.theme.dark) ? '.1' : '.8'})`")
             v-card-text
               ul
                 li.mb-3.text-subtitle-1.font-weight-medium {{ tier.support }}
@@ -31,9 +30,9 @@ div
               v-btn(
                 elevation='0'
                 :color="highlight(tier) ? 'accent' : ($vuetify.theme.dark ? 'secondary' : 'primary')",
-                :to="{ name: 'signUp' }"
+                :to="tier.to"
               )
-                | {{ tier.price == null ? 'Contact sales' : 'Get started' }}
+                | {{ tier.buttonText }}
 
     .mt-12
       h4.text-h4.font-weight-black.mb-3 Need help deciding?
@@ -65,12 +64,16 @@ export default class Pricing extends Vue {
       description: 'Free forever',
       contractors: 10,
       support: 'Free tier chat assistance',
+      buttonText: 'Get free',
+      to: {name: 'signUp'}
     },
     {
       price: 100,
       name: 'premium',
       contractors: 100,
       support: 'Standard support',
+      buttonText: 'Get premium',
+      to: {name: 'signUp'}
     },
     {
       price: null,
@@ -78,6 +81,8 @@ export default class Pricing extends Vue {
       description: 'Speak with sales',
       contractors: Infinity,
       support: '24/7 support',
+      buttonText: 'Contact sales',
+      to: {name: 'contact', params: { option: 'sales' }}
     }
   ]
 

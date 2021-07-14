@@ -16,7 +16,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title Register your Social Security number
+        v-toolbar-title.text-h6 Register your Social Security number
 
       v-divider
 

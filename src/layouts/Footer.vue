@@ -1,6 +1,7 @@
 <template lang="pug">
 v-footer.worxstr-footer(padless)
   v-card.text-center(flat, tile, width="100%" :class="`${$vuetify.theme.dark ? 'dark' : 'light'}-color`")
+
     .my-2
       v-btn.my-2(v-for='link in links', :key='link.to', text, :to='link.to') {{ link.text }}
 

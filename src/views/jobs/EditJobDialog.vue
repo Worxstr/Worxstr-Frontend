@@ -17,7 +17,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
+        v-toolbar-title.text-h6 {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
       
       v-divider
 

@@ -1,5 +1,6 @@
 <template lang="pug">
-  v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
+div
+  v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
     v-card.soft-shadow(width='500')
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5 Sign up
@@ -68,6 +69,7 @@
       v-fade-transition
         v-overlay(absolute opacity='0.2' v-if='loading')
           v-progress-circular(indeterminate)
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>
 
 <script>
@@ -75,11 +77,15 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { exists, emailRules, phoneRules, passwordRules, passwordMatches } from '@/plugins/inputValidation'
+import Arrows from '@/components/Arrows.vue'
 
 @Component({
   metaInfo: {
     title: 'Sign up'
-  }
+  },
+  components: {
+    Arrows,
+  },
 })
 export default class SignUp extends Vue {
   loading = false
