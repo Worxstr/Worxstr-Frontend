@@ -182,7 +182,7 @@ export default {
       },
       {
         name: 'Victoria DiMarco',
-        title: "Lead UI/UX designer",
+        title: "Lead UI/UX Designer",
         photo: 'victoria.jpg',
         socials: [
           {
