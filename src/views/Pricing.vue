@@ -50,7 +50,7 @@ import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
   metaInfo: {
-    title: "Pricing",
+    title: 'Pricing',
   },
 })
 export default class Pricing extends Vue {
