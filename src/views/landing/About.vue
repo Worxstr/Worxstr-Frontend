@@ -181,6 +181,25 @@ export default {
           },
         ]
       },
+      {
+        name: 'Victoria DiMarco',
+        title: "Lead UI/UX designer",
+        photo: 'victoria.jpg',
+        socials: [
+          {
+            link: 'mailto:victoriadimarco99@gmail.com',
+            icon: 'mdi-at',
+          },
+          {
+            link: 'https://www.linkedin.com/in/victoriadimarco',
+            icon: 'mdi-linkedin'
+          },
+          {
+            link: 'https://www.instagram.com/designdimarco',
+            icon: 'mdi-instagram'
+          },
+        ]
+      },
     ],
   }),
 };
