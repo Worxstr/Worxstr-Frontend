@@ -20,7 +20,7 @@ div
     )
 
     v-card.mt-2.soft-shadow
-      v-card-title Browse support topics
+      v-card-title.text-h6 Browse support topics
 
       v-expansion-panels(accordion flat)
         v-expansion-panel(v-for='(category, i) in categories' :index='i')
