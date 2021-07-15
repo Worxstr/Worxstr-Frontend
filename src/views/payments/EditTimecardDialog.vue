@@ -8,7 +8,7 @@ v-dialog(
   v-card.d-flex.flex-column
     v-form.flex-grow-1.d-flex.flex-column(@submit.prevent="updateTimecard", v-model="form.isValid" v-if="timecard")
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title Editing timecard for {{ timecard | fullName }}
+        v-toolbar-title.text-h6 {{ timecard | fullName }}'s timecard
 
       v-divider
           

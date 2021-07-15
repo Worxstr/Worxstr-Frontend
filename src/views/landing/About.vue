@@ -2,48 +2,50 @@
 .d-flex.flex-column
 
   //- What is Worxstr?
-  v-container.d-flex.flex-column.justify-center.align-center.pa-16
-    p.text-h4.font-weight-bold.mb-15 What is Worxstr?
+  v-sheet
+    v-container.d-flex.flex-column.justify-center.align-center.pa-16
+      h3.text-h3.font-weight-black.mb-15 What is Worxstr?
 
-    p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
-    p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33 percent increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
+      p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
+      p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33 percent increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
 
 
   //- Our mission/vision
-  v-container.justify-center.align-center.pa-16.gradient.text-center(fluid)
+  v-container.justify-center.align-center.pa-16.gradient-primary.text-center(fluid)
     v-row
       v-col(cols="12", md="6")
         v-icon.white--text.text-h2.mb-6 mdi-rocket-launch
-        p.text-h4.font-weight-bold.white--text Our mission
+        p.text-h4.font-weight-black.white--text Our mission
         p.white--text At Worxstr our mission is to drive efficiency, consistency, and respect into the management systems for gig labor.
 
       v-col(cols="12", md="6")
         v-icon.white--text.text-h2.mb-6 mdi-eye-outline
-        p.text-h4.font-weight-bold.white--text Our vision
+        p.text-h4.font-weight-black.white--text Our vision
         p.white--text At Worxstr we aspire to transform the gig labor industry by providing financial stability, transparency, and accountability through a management platform that will drive tomorrow's economy. At Worxstr we believe that every working American deserves the freedom that comes from opportunity and possibility.
 
   //- Team
-  v-container.d-flex.flex-column.justify-center.align-stretch.px-16.py-16.text-center(fluid)
-    p.text-h4.font-weight-bold.mb-10 Our team
+  v-sheet
+    v-container.d-flex.flex-column.justify-center.align-stretch.px-16.py-16.text-center(fluid style='position: relative; z-index: 1')
+      h3.text-h3.font-weight-black.mb-10 Our team
 
-    v-row
-      v-col(
-        cols="12",
-        sm="6",
-        md="4",
-        lg="3"
-        xl='2'
-        v-for="member in team"
-      )
-        v-card(rounded='lg' outlined @click='viewMember(member)')
-          v-card-text.pa-4.d-flex.flex-column.justify-start.align-center
-            v-avatar.mb-7(size="120", elevation="15")
-              img(
-                :src="require(`@/assets/images/team/${member.photo}`)",
-                :alt="member.name"
-              )
-            span.text-center.mb-1.text-h5.font-weight-bold {{ member.name }}
-            span.text-center.text-subtitle-2.font-weight-medium {{ member.title }}
+      v-row
+        v-col(
+          cols="12",
+          sm="6",
+          md="4",
+          lg="3"
+          xl='2'
+          v-for="member in team"
+        )
+          v-card.soft-shadow(rounded='lg' outlined @click='viewMember(member)')
+            v-card-text.pa-4.d-flex.flex-column.justify-start.align-center
+              v-avatar.mb-7(size="120", elevation="15")
+                img(
+                  :src="require(`@/assets/images/team/${member.photo}`)",
+                  :alt="member.name"
+                )
+              span.text-center.mb-1.text-h5.font-weight-bold {{ member.name }}
+              span.text-center.font-weight-medium {{ member.title }}
 
   //- Member dialog
   v-dialog(v-model='memberDialog' max-width='500')
@@ -65,10 +67,13 @@
         .mb-3
           v-btn(v-for='social in selectedMember.socials', icon :href='social.link' target="_blank" rel="noreferrer")
             v-icon(size='24px') {{ social.icon }}
+  
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0')
 
 </template>
 
 <script>
+import Arrows from '@/components/Arrows.vue'
 
 export default {
   name: "about",
@@ -80,6 +85,9 @@ export default {
       this.memberDialog = true
       this.selectedMember = member;
     }
+  },
+  components: {
+    Arrows
   },
   data: () => ({
     memberDialog: false,
@@ -145,7 +153,6 @@ export default {
         name: 'Andrew Thorp',
         title: "Lead Backend Developer / DevOps engineer",
         photo: 'andrew.jpg',
-        description: "Andrew is a genius",
         socials: [
           {
             link: 'https://github.com/aThorp96',
@@ -170,6 +177,25 @@ export default {
           {
             link: 'https://www.linkedin.com/in/coleylipp',
             icon: 'mdi-linkedin'
+          },
+        ]
+      },
+      {
+        name: 'Victoria DiMarco',
+        title: "Lead UI/UX Designer",
+        photo: 'victoria.jpg',
+        socials: [
+          {
+            link: 'mailto:victoriadimarco99@gmail.com',
+            icon: 'mdi-at',
+          },
+          {
+            link: 'https://www.linkedin.com/in/victoriadimarco',
+            icon: 'mdi-linkedin'
+          },
+          {
+            link: 'https://www.instagram.com/designdimarco',
+            icon: 'mdi-instagram'
           },
         ]
       },

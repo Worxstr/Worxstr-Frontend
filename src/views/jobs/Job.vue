@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(v-if="loading")
+v-container(v-if="loading" fluid)
   v-card.pa-4
     v-skeleton-loader.py-2(type="image, image")
     v-skeleton-loader.py-2(type="sentences, sentences")
@@ -10,7 +10,7 @@ v-container(v-if="loading")
   )
 
 div(v-else)
-  v-container.approvals.mb-50(v-if="job")
+  v-container.approvals.mb-50(v-if="job" fluid)
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
     edit-shift-dialog(
@@ -44,7 +44,7 @@ div(v-else)
         @click="closeJobDialog = true"
       ) Close
 
-    v-card.mb-3.d-flex.flex-column
+    v-card.mb-3.d-flex.flex-column.soft-shadow
       GmapMap(
         v-if="job.latitude && job.longitude",
         :center="location",

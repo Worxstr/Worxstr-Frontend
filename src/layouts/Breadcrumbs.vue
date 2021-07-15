@@ -5,7 +5,7 @@ v-breadcrumbs.pl-1(
   v-if="!$route.meta.landing"
 )
   template(v-slot:item="{ item }")
-    v-breadcrumbs-item.font-weight-medium(
+    v-breadcrumbs-item.subtitle-1.font-weight-medium(
       :to="item.to",
       exact,
       :class="$vuetify.theme.dark ? 'white-text' : ''"

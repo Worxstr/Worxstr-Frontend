@@ -1,8 +1,8 @@
 <template lang="pug">
 div
-  v-sheet.gradient.overlap
+  v-sheet.gradient-secondary.overlap
     v-container.py-16
-      h3.text-h3.font-weight-bold.mb-8 Support
+      h3.text-h3.font-weight-black.mb-8 Support
       
 
   v-container.shift-down
@@ -19,7 +19,7 @@ div
       @change='openArticle'
     )
 
-    v-card.mt-2
+    v-card.mt-2.soft-shadow
       v-card-title Browse support topics
 
       v-expansion-panels(accordion flat)

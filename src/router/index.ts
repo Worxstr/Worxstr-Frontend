@@ -223,6 +223,7 @@ const routes = [
     meta: {
       icon: 'mdi-message-text-outline',
       restrict: [UserRole.Contractor, ...Manager],
+      fullHeight: true,
     },
     children: [
       {

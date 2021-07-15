@@ -18,13 +18,18 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
     v-fade-transition
       v-overlay(absolute, opacity="0.2", v-if="loading")
         v-progress-circular(indeterminate)
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>
 
 <script>
 import { emailRules } from '@/plugins/inputValidation'
+import Arrows from '@/components/Arrows.vue'
 
 export default {
   name: "resetPassword",
+  components: {
+    Arrows,
+  },
   mounted() {
     if (this.$route.params.email) {
       this.form.email = this.$route.params.email

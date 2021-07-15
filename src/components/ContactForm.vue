@@ -30,8 +30,6 @@ v-form.flex-grow-1.d-flex.flex-column(
     v-text-field.ml-2(
       v-model="form.contact_title",
       label="Job title",
-      required,
-      :rules='rules.contactTitle'
       outlined,
       dense,
       :color="color",
@@ -69,8 +67,6 @@ v-form.flex-grow-1.d-flex.flex-column(
   v-text-field(
     v-model="form.website",
     label="Business website",
-    required,
-    :rules='rules.website'
     outlined,
     dense,
     :color="color",
@@ -83,9 +79,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       label="Number of managers",
       type="number",
       min="1",
-      required,
       :items='employeeCountOptions'
-      :rules='rules.numManagers'
       outlined,
       dense,
       :color="color",
@@ -96,9 +90,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       label="Number of contractors",
       type="number",
       min="1",
-      required,
       :items='employeeCountOptions'
-      :rules='rules.numContractors'
       outlined,
       dense,
       :color="color",
@@ -110,7 +102,7 @@ v-form.flex-grow-1.d-flex.flex-column(
   v-card-actions.pt-0
     v-spacer
     slot
-    v-btn(text, :text="text", :color="color" :disabled='!isValid' type='submit') Send message
+    v-btn(text, elevation='0' :text="text", :color="color" :disabled='!isValid' type='submit') Send message
 </template>
 
 <script lang="ts">
@@ -140,12 +132,8 @@ export default class ContactForm extends Vue {
   rules = {
     businessName: [exists('Business name required')],
     contactName: [exists('Name required')],
-    contactTitle: [exists('Title required')],
     phone: phoneRules,
     email: emailRules,
-    website: [exists('Business website required')],
-    numManagers: [exists('Number of managers required')],
-    numContractors: [exists('Number of contractors required')],
   }
 
   employeeCountOptions = [{

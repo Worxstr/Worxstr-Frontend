@@ -16,7 +16,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title Add {{ type }}
+        v-toolbar-title.text-h6 Add {{ type }}
 
       v-card-text
         v-text-field(

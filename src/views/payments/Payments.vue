@@ -1,5 +1,6 @@
 <template lang="pug">
 v-container(
+  fluid
   v-if="loading && !(approvedTimecards.length || unapprovedTimecards.length)"
 )
   v-skeleton-loader.my-4(type="heading")
@@ -14,13 +15,14 @@ v-container(
 
 div(v-else)
   v-container.d-flex.flex-column.justify-center(
+    fluid
     fill-height,
     v-if="!approvedTimecards.length && !unapprovedTimecards.length"
   )
     v-icon.text-h2.ma-5 mdi-clock-check-outline
     p.text-body-1 No timecard approvals left!
 
-  v-container.approvals(v-else)
+  v-container.approvals.pt-0(fluid v-else)
     edit-timecard-dialog(
       :opened.sync="editTimecardDialog",
       :timecard="selectedTimecards[0]"
@@ -37,21 +39,21 @@ div(v-else)
 
     .mb-5(v-if="approvedTimecards.length")
       v-toolbar.no-padding(flat, color="transparent")
-        v-toolbar-title.text-h6
+        v-toolbar-title.px-4.text-h6
           span Pending
-          v-chip.mx-3.pa-2.font-weight-black(small) {{ approvedTimecards.length }}
+          v-chip.mx-3.pa-2.font-weight-bold(small) {{ approvedTimecards.length }}
         v-spacer
         v-btn(text, @click="openPaymentDialog(approvedTimecards)")
           v-icon(left) mdi-bank-check
           span Complete payments
 
-      v-expansion-panels
+      v-expansion-panels(accordion flat).soft-shadow
         v-expansion-panel(
           v-for="timecard in approvedTimecards",
           :key="timecard.id"
         )
           v-expansion-panel-header.d-flex
-            span.text-subtitle-1.flex-grow-0
+            span.py-1.font-weight-medium.flex-grow-0
               | {{ timecard | fullName }}
             v-spacer
             span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
@@ -74,12 +76,13 @@ div(v-else)
                 | }}
               p {{ timecard.time_break }} minute break
               p ${{ timecard.total_payment }} earned
+          v-divider
 
     .mb-5(v-if="unapprovedTimecards.length")
       v-toolbar.no-padding(flat, color="transparent")
-        v-toolbar-title.text-h6
+        v-toolbar-title.px-4.text-h6
           span Unapproved
-          v-chip.mx-3.pa-2.font-weight-black(small) {{ unapprovedTimecards.length }}
+          v-chip.mx-3.pa-2.font-weight-bold(small) {{ unapprovedTimecards.length }}
 
         v-spacer
         v-btn(
@@ -90,13 +93,13 @@ div(v-else)
           v-icon(left) mdi-check-all
           span Approve all
 
-      v-expansion-panels
+      v-expansion-panels(accordion flat).soft-shadow
         v-expansion-panel(
           v-for="timecard in unapprovedTimecards",
           :key="timecard.id"
         )
           v-expansion-panel-header
-            span.text-subtitle-1.flex-grow-0 {{ timecard | fullName }}
+            span.py-1.font-weight-medium.flex-grow-0 {{ timecard | fullName }}
             v-spacer
             span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
             span.flex-grow-0.px-2(
@@ -135,31 +138,31 @@ div(v-else)
               v-btn(text, color="red", @click="openDenyDialog(timecard)")
                 v-icon(left) mdi-close
                 span Deny
+          v-divider
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from "vuex";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
+import { mapState, mapGetters, mapActions } from 'vuex'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 
-import EditTimecardDialog from "./EditTimecardDialog";
-import ApproveDialog from "./ApproveDialog";
-import DenyDialog from "./DenyDialog.vue";
-import PaymentDialog from "./PaymentDialog.vue";
+import EditTimecardDialog from './EditTimecardDialog'
+import ApproveDialog from './ApproveDialog'
+import DenyDialog from './DenyDialog.vue'
+import PaymentDialog from './PaymentDialog.vue'
 
-dayjs.extend(duration);
+dayjs.extend(duration)
 
 export default {
-  name: "approvals",
+  name: 'approvals',
   metaInfo: {
-    title: 'Approvals'
+    title: 'Approvals',
   },
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch("loadApprovals")
-    }
-    finally {
+      await this.$store.dispatch('loadApprovals')
+    } finally {
       this.loading = false
     }
   },
@@ -179,41 +182,41 @@ export default {
     breaks: [{}],
   }),
   computed: {
-    ...mapState(["authenticatedUser"]),
-    ...mapGetters(["approvedTimecards", "unapprovedTimecards"]),
+    ...mapState(['authenticatedUser']),
+    ...mapGetters(['approvedTimecards', 'unapprovedTimecards']),
   },
   methods: {
-    ...mapActions(["signOut"]),
+    ...mapActions(['signOut']),
     timeDiff(timeIn, timeOut) {
-      timeIn = dayjs(timeIn);
-      timeOut = dayjs(timeOut);
+      timeIn = dayjs(timeIn)
+      timeOut = dayjs(timeOut)
 
       const duration = dayjs.duration(timeOut.diff(timeIn)),
-        hours = duration.format("H"),
-        minutes = duration.format("m");
+        hours = duration.format('H'),
+        minutes = duration.format('m')
 
-      return `${hours} hour${hours == 1 ? "" : "s"}, ${minutes} minute${
-        minutes == 1 ? "" : "s"
-      }`;
+      return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${
+        minutes == 1 ? '' : 's'
+      }`
     },
     openEditTimecardDialog(timecard) {
-      this.selectedTimecards = [timecard];
-      this.editTimecardDialog = true;
+      this.selectedTimecards = [timecard]
+      this.editTimecardDialog = true
     },
     openApproveDialog(timecards) {
-      this.selectedTimecards = timecards;
-      this.approveDialog = true;
+      this.selectedTimecards = timecards
+      this.approveDialog = true
     },
     openDenyDialog(timecard) {
-      this.selectedTimecards = [timecard];
-      this.denyDialog = true;
+      this.selectedTimecards = [timecard]
+      this.denyDialog = true
     },
     openPaymentDialog(timecards) {
-      this.selectedTimecards = timecards;
-      this.paymentDialog = true;
+      this.selectedTimecards = timecards
+      this.paymentDialog = true
     },
   },
-};
+}
 </script>
 
 <style lang="scss">

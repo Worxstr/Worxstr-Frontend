@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container
+v-container(fluid)
   add-workforce-member-dialog(
     :opened.sync="addContractorDialog",
     type="contractor"
@@ -30,7 +30,7 @@ v-container
         v-list-item(@click="addManagerDialog = true")
           v-list-item-title Add manager
 
-  v-card
+  v-card.soft-shadow
     v-data-table(
       :headers="headers",
       :items="workforce",

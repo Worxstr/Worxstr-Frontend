@@ -6,9 +6,7 @@ v-dialog(
   persistent
 )
   v-card.d-flex.flex-column
-    v-card-title.headline
-      | Approve
-      | {{ timecards.length == 1 ? 'this timecard' : 'these timecards' }}?
+    v-card-title.headline Approve {{ timecards.length == 1 ? 'this timecard' : 'these timecards' }}?
     v-card-text
       span
         span(v-if="timecards.length == 1")
