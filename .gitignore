@@ -1,9 +1,13 @@
 .DS_Store
 node_modules
-/dist
+/directories
+
+!src/types.d.ts
+dist/
 
 
-# local env files
+# local env 
+.vscode
 .env.local
 .env.*.local
 

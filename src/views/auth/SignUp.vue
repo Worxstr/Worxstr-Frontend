@@ -1,60 +1,88 @@
 <template lang="pug">
-  v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
-    v-card(width='500')
+div
+  v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
+    v-card.soft-shadow(width='500')
       v-form(@submit.prevent='signUp' v-model='isValid')
-        v-card-title Sign up
-        v-card-text
-          v-text-field(
-            label='First name'
-            v-model='form.first_name'
-            :rules='rules.firstName'
-            required
-          )
-          v-text-field(
-            label='Last name'
-            v-model='form.last_name'
-            :rules='rules.lastName' 
-            required
-          )
-          v-text-field(
-            label='Email'
-            type='email'
-            :rules='rules.email'
-            v-model='form.email'
-            required
-          )
-          v-text-field(
-            label='Phone'
-            type='phone' 
-            v-model='form.phone'
-            :rules='rules.phone'
-            required
-          )
-          v-text-field(
-            label='Manager ID'
-            v-model='form.manager_id'
-            :rules='rules.managerId'
-          )
-          v-text-field(
-            label='Password'
-            type='password'
-            v-model='form.password'
-            :rules='rules.password'
-            required
-          )
-          v-text-field(
-            label='Confirm password'
-            type='password'
-            v-model='form.confirm_password'
-            :rules="[\
-              ...rules.confirmPassword,\
-              (value) => value == form.password || 'Passwords must match',\
-            ]"
-            required
-          )
+        v-card-title.text-h5 Sign up
+        v-card-text.pb-0
+          v-window.pt-2(v-model='step')
+            v-window-item(:value='0')
+              v-text-field(
+                autofocus,
+                label='First name'
+                v-model='form.first_name'
+                :rules='rules.firstName'
+                required
+                outlined
+                dense
+              )
+              v-text-field(
+                label='Last name'
+                v-model='form.last_name'
+                :rules='rules.lastName' 
+                required
+                outlined
+                dense
+              )
+            v-window-item(:value='1')
+              v-text-field(
+                label='Email'
+                type='email'
+                :rules='rules.email'
+                v-model='form.email'
+                required
+                outlined
+                dense
+              )
+              v-text-field(
+                v-model="form.phone",
+                :rules='rules.phone'
+                type="tel",
+                v-mask="'(###) ###-####'"
+                label="Phone number",
+                required,
+                outlined
+                dense
+              )
+            v-window-item(:value='2')
+              v-text-field(
+                label='Manager ID'
+                v-model='form.manager_id'
+                :rules='rules.managerId'
+                outlined
+                dense
+              )
+            v-window-item(:value='3')
+              v-text-field(
+                label='Password'
+                type='password'
+                v-model='form.password'
+                :rules='rules.password'
+                required
+                outlined
+                dense
+              )
+              v-text-field(
+                label='Confirm password'
+                type='password'
+                v-model='form.confirm_password'
+                :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
+                required
+                outlined
+                dense
+              )
+              v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
+                template(v-slot:label)
+                  div
+                    span I agree to the
+                    a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
+
         v-card-actions
           v-spacer
+          v-btn(v-if='step != 0' text @click='step--') Back
+          v-btn(v-if='step != 3' text @click='step++') Next
           v-btn(
+            v-if='step == 3'
             text
             color='primary'
             type='submit'
@@ -63,62 +91,58 @@
       v-fade-transition
         v-overlay(absolute opacity='0.2' v-if='loading')
           v-progress-circular(indeterminate)
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 
-export default {
-  name: "signUp",
-  metaInfo: {
-    title: 'Sign up',
-  },
-  data: () => ({
-    form: {
-      first_name: "",
-      last_name: "",
-      phone: "",
-      email: "",
-      manager_id: "",
-      password: "",
-      confirm_password: "",
-    },
-    isValid: false,
-    rules: {
-      firstName: [(value) => !!value || "First name required"],
-      lastName: [(value) => !!value || "Last name required"],
-      phone: [
-        (value) => !!value || "Phone required",
-        (value) => {
-          // https://stackoverflow.com/questions/4338267/validate-phone-number-with-javascript
-          // TODO: Use a library for these rules
+import { Component, Vue } from 'vue-property-decorator'
+import { exists, emailRules, phoneRules, passwordRules, passwordMatches } from '@/plugins/inputValidation'
+import Arrows from '@/components/Arrows.vue'
 
-          const pattern = /^(()?\d{3}())?(-|\s)?\d{3}(-|\s)?\d{4}$/;
-          return pattern.test(value) || "Invalid phone";
-        },
-      ],
-      email: [
-        (value) => !!value || "Email required",
-        (value) => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || "Invalid email";
-        },
-      ],
-      managerId: [(value) => !!value || "Manager ID required"],
-      password: [
-        (value) => !!value || "Password required",
-        (value) => value.length >= 8 || "Password must be 8 characters",
-      ],
-      confirmPassword: [(value) => !!value || "Password confirmation required"],
-    },
-    loading: false,
-  }),
-  methods: {
-    async signUp() {
-      this.loading = true;
-      await this.$store.dispatch("signUp", this.form);
-      this.loading = false;
-    },
+@Component({
+  metaInfo: {
+    title: 'Sign up'
   },
-};
+  components: {
+    Arrows,
+  },
+})
+export default class SignUp extends Vue {
+  loading = false
+  isValid = false
+
+  step = 0
+
+  form = {
+    first_name: "",
+    last_name: "",
+    phone: "",
+    email: "",
+    manager_id: "",
+    password: "",
+    confirm_password: "", 
+    agreeToTerms: false,
+  }
+  rules = {
+    firstName: [exists('First name required')],
+    lastName: [exists('Last name required')],
+    phone: phoneRules,
+    email: emailRules,
+    managerId: [exists('Manager ID required')],
+    password: passwordRules,
+    confirmPassword: [exists('Password confirmation required')],
+    passwordMatches,
+  }
+
+  async signUp() {
+    this.loading = true
+    try {
+      await this.$store.dispatch("signUp", this.form)
+    } finally {
+      this.loading = false
+    }
+  }
+}
 </script>

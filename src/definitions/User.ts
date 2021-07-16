@@ -1,3 +1,5 @@
+import store from "@/store"
+
 export type User = {
 	id: number;
 	first_name: string;
@@ -13,17 +15,32 @@ export type Role = {
 }
 
 export enum UserRole {
-	Employee = 1,
-	EmployeeManager = 2,
+	Contractor = 1,
+	ContractorManager = 2,
 	OrganizationManager = 3,
 }
 
 export const Manager = [
-	UserRole.EmployeeManager,
+	UserRole.ContractorManager,
 	UserRole.OrganizationManager,
 ]
 
 // Take a role and a user and determine if the user has that role
 export function userIs(role: UserRole, user: User) {
 	return user.roles.map((r) => r.id).includes(role)
+}
+
+export function defaultRoute() {
+	const user = store.state.authenticatedUser
+	if (!user || !user.roles) return 'schedule'
+
+	switch (user?.roles[0]?.id) {
+		case UserRole.Contractor:
+			return 'clock'
+		case UserRole.ContractorManager:
+		case UserRole.OrganizationManager:
+			return 'jobs'
+		default:
+			return 'schedule'
+	}
 }

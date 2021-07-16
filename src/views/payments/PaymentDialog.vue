@@ -11,7 +11,9 @@ v-dialog(
     v-toolbar.flex-grow-0(flat)
       v-btn(icon, @click="closeDialog")
         v-icon mdi-close
-      v-toolbar-title Complete payment
+      v-toolbar-title.text-h6.pl-0 Complete payment
+  
+    v-divider
 
     v-card-text.mt-5
       p.text-subtitle-1

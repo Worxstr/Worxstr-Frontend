@@ -5,6 +5,7 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
       v-card-title Reset your password
       v-card-text
         v-text-field(
+          autofocus
           label="Email",
           type="email",
           required="",
@@ -17,11 +18,18 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
     v-fade-transition
       v-overlay(absolute, opacity="0.2", v-if="loading")
         v-progress-circular(indeterminate)
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>
 
 <script>
+import { emailRules } from '@/plugins/inputValidation'
+import Arrows from '@/components/Arrows.vue'
+
 export default {
   name: "resetPassword",
+  components: {
+    Arrows,
+  },
   mounted() {
     if (this.$route.params.email) {
       this.form.email = this.$route.params.email
@@ -32,21 +40,19 @@ export default {
       email: "",
     },
     isValid: false,
-    emailRules: [
-      (value) => !!value || "Email required",
-      (value) => {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || "Invalid email";
-      },
-    ],
+    emailRules,
     loading: false,
   }),
   methods: {
     async sendResetEmail() {
       this.loading = true;
-      await this.$store.dispatch("resetPassword", this.form.email);
-      this.$store.dispatch("showSnackbar", {text: 'Reset link sent'})
-      this.loading = false;
+      try {
+        await this.$store.dispatch("resetPassword", this.form.email);
+        this.$store.dispatch("showSnackbar", {text: 'Reset link sent'})
+      }
+      finally {
+        this.loading = false;
+      }
     },
   },
 };

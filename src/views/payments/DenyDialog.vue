@@ -7,9 +7,7 @@ v-dialog(
 )
   v-card.d-flex.flex-column
     v-card-title.headline Deny timecard?
-    v-card-text(v-if="timecard")
-      | {{ timecard | fullName }} will not be paid for
-      | this shift.
+    v-card-text(v-if="timecard") {{ timecard | fullName }} will not be paid for this shift.
 
     v-spacer
     

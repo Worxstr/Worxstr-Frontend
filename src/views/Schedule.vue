@@ -22,7 +22,7 @@ v-container.home.d-flex.flex-column.align-stretch(
       label="View"
     )
 
-  v-card.flex-grow-1
+  v-card.soft-shadow.flex-grow-1
     v-fade-transition
       v-overlay(v-if="loading && !calendarEvents.length" absolute :color='$vuetify.theme.dark ? "black" : "white"')
         v-progress-circular(indeterminate :color='$vuetify.theme.dark ? "white" : "black"')
@@ -61,11 +61,15 @@ export default {
   methods: {
     async getEvents({ start, end }) {
       this.loading = true
-      await this.$store.dispatch("loadCalendarEvents", {
-        start: new Date(`${start.date}T00:00:00`).toISOString(),
-        end: new Date(`${end.date}T23:59:59`).toISOString(),
-      });
-      this.loading = false
+      try {
+        await this.$store.dispatch("loadCalendarEvents", {
+          start: new Date(`${start.date}T00:00:00`).toISOString(),
+          end: new Date(`${end.date}T23:59:59`).toISOString(),
+        });
+      }
+      finally {
+        this.loading = false
+      }
     },
     getEventColor(event) {
       return event.color;

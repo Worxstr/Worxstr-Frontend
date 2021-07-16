@@ -8,8 +8,9 @@ v-dialog(
   v-card.d-flex.flex-column
     v-form.flex-grow-1.d-flex.flex-column(@submit.prevent="updateTimecard", v-model="form.isValid" v-if="timecard")
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title
-          | Editing timecard for {{ timecard | fullName }}
+        v-toolbar-title.text-h6 {{ timecard | fullName }}'s timecard
+
+      v-divider
           
       v-card-text
         time-input(v-model="form.data.timeIn.time", label="Time in")
@@ -17,6 +18,7 @@ v-dialog(
         .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
           v-row
             v-col
+              //- TODO: Use datetime-local instead
               time-input(
                 required,
                 hide-details,
@@ -128,14 +130,16 @@ export default {
       newTimeclockEvents.push(this.form.data.timeOut);
 
       this.loading = true
-
-      await this.$store.dispatch("updateTimecard", {
-        timecardId: this.timecard.id,
-        events: newTimeclockEvents,
-      });
-
-      this.loading = false
-      this.closeDialog();
+      try {
+        await this.$store.dispatch("updateTimecard", {
+          timecardId: this.timecard.id,
+          events: newTimeclockEvents,
+        })
+        this.closeDialog()
+      }
+      finally {
+        this.loading = false
+      }
     },
   },
 };

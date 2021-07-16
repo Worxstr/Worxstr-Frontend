@@ -1,20 +1,25 @@
 <template lang="pug">
-v-container(v-if="loading && !(directJobs.length || indirectJobs.length)")
+v-container(fluid v-if="loading && !(directJobs.length || indirectJobs.length)")
   v-skeleton-loader.my-4(type="heading")
   v-skeleton-loader(
     type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
   )
 
-v-container.approvals(v-else)
-  edit-job-dialog(:opened.sync="createJobDialog", create)
+v-container.approvals(fluid v-else)
+  edit-job-dialog(:opened.sync="createJobDialog", :create="true")
+
+  portal(to="toolbarActions")
+    v-btn(
+      text,
+      color="primary",
+      @click="openCreateJobDialog",
+      v-if="userIsOrgManager"
+    )
+      v-icon(left) mdi-plus
+      span Add job
 
   .mb-5
-    v-toolbar(flat, color="transparent")
-      v-toolbar-title.text-h6 Jobs
-      v-spacer
-      v-btn(text, @click="openCreateJobDialog", v-if="userIsOrgManager") Add new job
-
-    v-card(v-if="directJobs.length")
+    v-card.soft-shadow(v-if="directJobs.length")
       v-list
         v-list-item(
           v-for="job in directJobs",
@@ -26,7 +31,7 @@ v-container.approvals(v-else)
             v-list-item-title(v-text="job.name")
               v-list-item-subtitle(v-text="job.address")
 
-    div.d-flex.flex-column.justify-center(v-else)
+    .d-flex.flex-column.justify-center(v-else)
       v-icon.text-h2.ma-5 mdi-calendar-check
       p.text-center.text-body-1 No jobs yet.
 
@@ -57,9 +62,10 @@ import { Vue, Component } from 'vue-property-decorator'
   components: { EditJobDialog },
 })
 export default class JobsView extends Vue {
-  
+
   loading = false
   createJobDialog = false
+  editJobDialog = false
 
   metaInfo() {
     return { title: 'Jobs' }
@@ -67,8 +73,12 @@ export default class JobsView extends Vue {
 
   async mounted() {
     this.loading = true
-    await this.$store.dispatch("loadJobs")
-    this.loading = false
+    try {
+      await this.$store.dispatch("loadJobs")
+    }
+    finally {
+      this.loading = false
+    }
   }
 
   get directJobs(): Job[] {
@@ -78,11 +88,11 @@ export default class JobsView extends Vue {
   get indirectJobs(): Job[] {
     return this.$store.getters.indirectJobs
   }
-  
+
   get userIsOrgManager() {
     return this.$store.state.authenticatedUser ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser) : false
   }
-  
+
   openCreateJobDialog() {
     this.createJobDialog = true
   }

@@ -1,6 +1,5 @@
 <template lang="pug">
-v-container(v-if="loading && !job.shifts")
-  v-skeleton-loader.py-4(type="heading")
+v-container(v-if="loading" fluid)
   v-card.pa-4
     v-skeleton-loader.py-2(type="image, image")
     v-skeleton-loader.py-2(type="sentences, sentences")
@@ -11,31 +10,33 @@ v-container(v-if="loading && !job.shifts")
   )
 
 div(v-else)
-  v-container.approvals.mb-50(v-if="job")
+  v-container.approvals.mb-50(v-if="job" fluid)
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
     edit-shift-dialog(
-      create,
+      :create="true",
       :opened.sync="addShiftDialog",
-      :employees="job.employees"
+      :contractors="job.employees"
     )
     edit-shift-dialog(
       :opened.sync="editShiftDialog",
       :shift.sync="selectedShift",
-      :employees="job.employees"
+      :contractors="job.employees"
     )
     delete-shift-dialog(
       v-if="selectedShift",
       :opened.sync="deleteShiftDialog",
       :shift.sync="selectedShift",
-      :employeeName="employeeName(selectedShift.employee_id)"
+      :contractorName="contractorName(selectedShift.contractor_id)"
     )
 
-    v-toolbar(flat, color="transparent")
-      v-toolbar-title.text-h5.font-weight-medium
-        | {{ job.name }}
-      v-spacer
-      v-btn(v-if="userIsOrgManager", text, @click="editJobDialog = true") Edit
+    portal(to="toolbarActions")
+      v-btn(
+        v-if="userIsOrgManager",
+        text,
+        color="primary",
+        @click="editJobDialog = true"
+      ) Edit
       v-btn(
         v-if="userIsOrgManager",
         text,
@@ -43,7 +44,7 @@ div(v-else)
         @click="closeJobDialog = true"
       ) Close
 
-    v-card.mb-3.d-flex.flex-column
+    v-card.mb-3.d-flex.flex-column.soft-shadow
       GmapMap(
         v-if="job.latitude && job.longitude",
         :center="location",
@@ -59,13 +60,13 @@ div(v-else)
           | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
         div
 
-      v-layout.justify-space-between
+      v-layout.flex-column.flex-sm-row.justify-space-between
         .flex-grow-1.px-5
-          p.text-subtitle-2.mb-1 Organizational manager
+          p.text-subtitle-2.mb-1 Organization manager
           p {{ job.organization_manager | fullName }}
 
         .flex-grow-1.px-5
-          p.text-subtitle-2.mb-1 Employee manager
+          p.text-subtitle-2.mb-1 Contractor manager
           p {{ job.employee_manager | fullName }}
 
         .flex-grow-1.px-5
@@ -77,9 +78,11 @@ div(v-else)
           p {{ job.consultant_code }}
 
     v-toolbar(flat, color="transparent")
-      v-toolbar-title.text-h6 Shifts
+      v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text, @click="addShiftDialog = true") Add new shift
+      v-btn(text, @click="addShiftDialog = true")
+        v-icon(left) mdi-plus
+        span Add shift
 
     p.text-body-2.text-center.mt-3(v-if="!job.shifts || !job.shifts.length")
       | There aren't any shifts for this job.
@@ -89,7 +92,7 @@ div(v-else)
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0
           p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-            span.my-1.font-weight-medium(v-if="shift.employee_id") {{ shift.employee | fullName }}
+            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ shift.contractor | fullName }}
             span.my-1 {{ shift.site_location }}
 
           v-chip.mx-4.px-2.flex-grow-0(
@@ -107,9 +110,9 @@ div(v-else)
             span.my-1 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
         v-expansion-panel-content
-          v-card-content(v-if="shift.active")
+          div(v-if="shift.active")
             clock-events(
-              v-if="shift.timeclock_actions.length",
+              v-if="shift.timeclock_actions && shift.timeclock_actions.length",
               :events="shift.timeclock_actions"
             )
 
@@ -150,7 +153,7 @@ export default class JobView extends Vue {
   addShiftDialog = false
   editShiftDialog = false
   deleteShiftDialog = false
-  selectedShift?: Shift
+  selectedShift: Shift | {} = {}
   shifts = []
 
   metaInfo() {
@@ -158,41 +161,46 @@ export default class JobView extends Vue {
       title: this.job?.name || 'Job'
     }
   }
-  
+
   async mounted() {
-    this.loading = true;
-    await this.$store.dispatch("loadJob", this.$route.params.jobId);
-    this.loading = false;
+    this.loading = true
+    try {
+      await this.$store.dispatch("loadJob", this.$route.params.jobId)
+    }
+    finally {
+      this.loading = false
+    }
   }
 
   get job(): Job {
     return this.$store.getters.job(this.$route.params.jobId)
   }
-  
+
   get location() {
-    return { lat: this.job.latitude, lng: this.job.longitude };
+    return { lat: this.job.latitude, lng: this.job.longitude }
   }
 
   get userIsOrgManager() {
     return this.$store.state.authenticatedUser
       ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser)
-      : false;
+      : false
   }
 
   openEditShiftDialog(shift: Shift) {
-    this.selectedShift = shift;
-    this.editShiftDialog = true;
+    this.selectedShift = shift
+    this.editShiftDialog = true
   }
 
   openDeleteShiftDialog(shift: Shift) {
-    this.selectedShift = shift;
-    this.deleteShiftDialog = true;
+    this.selectedShift = shift
+    this.deleteShiftDialog = true
   }
 
-  employeeName(employeeId: number) {
-    const employee = this.job.employees.find((e) => e.id == employeeId)
-    if (!employee) return 'Unknown employee'
-    return `${employee.first_name} ${employee.last_name}`
+  contractorName(contractorId: number) {
+    if (!this.job.employees) return ''
+    const contractor = this.job.employees.find((e) => e.id == contractorId)
+    if (!contractor) return 'Unknown contractor'
+    return `${contractor.first_name} ${contractor.last_name}`
   }
 }
 </script>

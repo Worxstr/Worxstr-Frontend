@@ -1,0 +1,93 @@
+<template lang="pug">
+  div
+
+    v-app-bar(
+      app
+      outlined
+      :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
+      elevate-on-scroll
+      :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
+    )
+      v-btn(
+        icon
+        @click="$emit('toggleDrawer')"
+        v-if='$vuetify.breakpoint.smAndDown && !$route.meta.landing'
+      )
+        v-icon mdi-menu
+
+      router-link.mb-2.mr-2(
+        to="/",
+        style="text-decoration: none",
+        v-if="$route.meta.landing"
+      )
+        v-avatar(tile, size="130")
+          img(src="@/assets/logos/logotype.svg", alt="Worxstr logo")
+
+      breadcrumbs
+
+      v-spacer
+
+      portal-target(name="toolbarActions")
+
+      div(v-if="$route.meta.landing")
+        v-btn(v-if='$vuetify.breakpoint.xs' icon @click='menu = true')
+          v-icon mdi-menu
+        div(v-else)
+          v-btn(v-for="link in links", text, :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
+          
+    v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
+      v-list(nav)
+        v-list-item(v-for="link in links", text, :to="link.to" link)
+          v-list-item-content
+            v-list-item-title {{ link.text }}
+</template>
+
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
+
+@Component({
+  components: {
+    Breadcrumbs,
+  },
+})
+export default class Toolbar extends Vue {
+  @Prop({ default: false }) drawer!: boolean
+
+  menu = false
+
+  links = [
+    {
+      text: 'Home',
+      to: '/',
+      mobileOnly: true,
+    },
+    {
+      text: 'About',
+      to: 'about',
+    },
+    {
+      text: 'Contact us',
+      to: 'contact',
+    },
+    // {
+    //   text: "Support",
+    //   to: "support",
+    // },
+    {
+      text: 'Pricing',
+      to: 'pricing',
+    },
+    {
+      text: 'Sign in',
+      to: 'sign-in',
+      mobileOnly: true,
+    },
+    {
+      text: 'Sign up',
+      to: 'sign-up',
+      mobileOnly: true,
+    },
+  ]
+}
+</script>

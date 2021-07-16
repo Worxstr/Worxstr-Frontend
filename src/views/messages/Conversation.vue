@@ -1,20 +1,13 @@
 <template lang="pug">
-v-card.messages.d-flex.flex-column(v-if="conversation")
-  v-toolbar(flat, rounded="lg")
-    v-btn(
-      icon,
-      v-if="$vuetify.breakpoint.smAndDown",
-      @click="$router.push({ name: 'messages' })"
-    )
-      v-icon mdi-arrow-left
-
-    v-toolbar-title {{ conversation | groupNameList(authenticatedUser) }}
-
-  //- transition-group.message-container.px-4.d-flex.flex-column-reverse.align-start(
-  //-   name="scroll-y-reverse-transition",
-  //-   tag="div"
-  //- )
-  .message-container.px-4.d-flex.flex-column-reverse.align-start
+.messages.d-flex.flex-column(v-if="conversation")
+  
+  
+  transition-group.message-container.px-4.pt-4.d-flex.flex-column.align-stretch(
+    name="scroll-y-reverse-transition",
+    tag="div"
+    v-chat-scroll
+  )
+    v-spacer(key='spacer')
     .message.d-flex.flex-column(
       v-for="(message, i) in conversation.messages"
       :key="message.id"
@@ -48,41 +41,41 @@ v-card.messages.d-flex.flex-column(v-if="conversation")
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
-import { mapState } from "vuex";
+import { mapState } from 'vuex'
 
 export default {
-  name: "Messages",
+  name: 'Messages',
   metaInfo() {
     return {
       title: this.conversation
-        ? this.$options.filters.groupNameList(this.conversation, this.authenticatedUser)
-        : 'Conversation'
+        ? this.$options.filters.groupNameList(
+            this.conversation,
+            this.authenticatedUser
+          )
+        : 'Conversation',
     }
   },
   mounted() {
     // TODO: get the text input to focus
-    console.log(this.$refs.message); //.$el.focus();
+    console.log(this.$refs.message) //.$el.focus();
 
-    this.$store.dispatch("loadConversation", this.$route.params.conversationId);
+    this.$store.dispatch('loadConversation', this.$route.params.conversationId)
   },
   watch: {
-    "$route.params.conversationId"() {
-      this.messages = [];
+    '$route.params.conversationId'() {
+      this.messages = []
     },
   },
   data: () => ({
-    message: "",
+    message: '',
   }),
   computed: {
-    ...mapState(["authenticatedUser"]),
+    ...mapState(['authenticatedUser']),
     conversation() {
       const conversation = this.$store.getters.conversation(
         this.$route.params.conversationId
-      );
-      // conversation.messages = conversation.messages.sort()
-      if (conversation && conversation.messages)
-        conversation.messages = conversation.messages.reverse();
-      return conversation;
+      )
+      return conversation
     },
   },
   methods: {
@@ -96,14 +89,18 @@ export default {
         if (current.sender_id != next.sender_id) return true
 
         // The messages were sent more than a minute apart
-        return ((new Date(next.timestamp)).getTime()) - (new Date(current.timestamp)).getTime() > (60 * 1000)
+        return (
+          new Date(next.timestamp).getTime() -
+            new Date(current.timestamp).getTime() >
+          60 * 1000
+        )
       }
-      return true;
+      return true
     },
     // Check if the message was sent today
     isToday(timestamp) {
-      const now = (new Date())
-      const then = (new Date(timestamp))
+      const now = new Date()
+      const then = new Date(timestamp)
       return !(
         now.getUTCDay() == then.getUTCDay() &&
         now.getUTCMonth() == then.getUTCMonth() &&
@@ -111,32 +108,32 @@ export default {
       )
     },
     sendMessage() {
-      this.$socket.emit("test", { test: 1 });
-      this.$store.dispatch("sendMessage", {
+      this.$socket.emit('test', { test: 1 })
+      this.$store.dispatch('sendMessage', {
         message: {
           body: this.message,
         },
         conversationId: this.$route.params.conversationId,
-      });
-      this.message = "";
+      })
+      this.message = ''
     },
     participant(participantId) {
       const participant = this.conversation.participants.find(
         (p) => p.id == participantId
-      );
+      )
       return participant
     },
   },
   sockets: {
-    connect: function () {
-      console.log("Socket connected");
+    connect: function() {
+      console.log('Socket connected')
     },
-    "message:create": function ({ message, conversation_id }) {
+    'message:create': function({ message, conversation_id }) {
       if (conversation_id == this.$route.params.conversationId)
-        this.messages.unshift(message);
+        this.messages.unshift(message)
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -150,8 +147,11 @@ export default {
 }
 
 .message {
-  transition: all 0.2s;
+  &.scroll-y-reverse-transition-leave-active {
+    transition: none !important;
+  }
 }
+
 .message.left {
   align-self: flex-start;
   align-items: flex-start;

@@ -2,7 +2,7 @@
 
 v-skeleton-loader(v-if="loading && !conversations.length" type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
 
-v-card.conversations(v-else)
+.conversations(v-else)
   v-list(color="transparent")
     v-list-item(
       v-for="conversation in conversations",
@@ -22,8 +22,12 @@ export default {
   name: "Conversations",
   async mounted() {
     this.loading = true
-    await this.$store.dispatch("loadConversations");
-    this.loading = false
+    try {
+      await this.$store.dispatch("loadConversations")
+    }
+    finally {
+      this.loading = false
+    }
   },
   data: () => ({
     loading: false,
