@@ -32,7 +32,7 @@ export default class CloseJobDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop(Object) readonly job: Job | undefined
-  @Prop(String) readonly employeeName: string | undefined
+  @Prop(String) readonly contractorName: string | undefined
 
   closeDialog() {
     this.$emit('update:opened', false);

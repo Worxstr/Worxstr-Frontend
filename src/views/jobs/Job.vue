@@ -16,12 +16,12 @@ div(v-else)
     edit-shift-dialog(
       :create="true",
       :opened.sync="addShiftDialog",
-      :contractors="job.employees"
+      :contractors="job.contractors"
     )
     edit-shift-dialog(
       :opened.sync="editShiftDialog",
       :shift.sync="selectedShift",
-      :contractors="job.employees"
+      :contractors="job.contractors"
     )
     delete-shift-dialog(
       v-if="selectedShift",
@@ -67,7 +67,7 @@ div(v-else)
 
         .flex-grow-1.px-5
           p.text-subtitle-2.mb-1 Contractor manager
-          p {{ job.employee_manager | fullName }}
+          p {{ job.contractor_manager | fullName }}
 
         .flex-grow-1.px-5
           p.text-subtitle-2.mb-1 Consultant
@@ -197,8 +197,8 @@ export default class JobView extends Vue {
   }
 
   contractorName(contractorId: number) {
-    if (!this.job.employees) return ''
-    const contractor = this.job.employees.find((e) => e.id == contractorId)
+    if (!this.job.contractors) return ''
+    const contractor = this.job.contractors.find((e) => e.id == contractorId)
     if (!contractor) return 'Unknown contractor'
     return `${contractor.first_name} ${contractor.last_name}`
   }

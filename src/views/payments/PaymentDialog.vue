@@ -18,7 +18,7 @@ v-dialog(
     v-card-text.mt-5
       p.text-subtitle-1
         | {{ timecards.length }}
-        | employee{{ timecards.length == 1 ? '' : 's' }} will be paid ${{
+        | contractor{{ timecards.length == 1 ? '' : 's' }} will be paid ${{
         | wagePayment
         | }}
         | in total. A ${{ feesPayment }} fee will be applied.
