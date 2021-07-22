@@ -79,7 +79,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       label="Number of managers",
       type="number",
       min="1",
-      :items='employeeCountOptions'
+      :items='contractorCountOptions'
       outlined,
       dense,
       :color="color",
@@ -90,7 +90,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       label="Number of contractors",
       type="number",
       min="1",
-      :items='employeeCountOptions'
+      :items='contractorCountOptions'
       outlined,
       dense,
       :color="color",
@@ -136,7 +136,7 @@ export default class ContactForm extends Vue {
     email: emailRules,
   }
 
-  employeeCountOptions = [{
+  contractorCountOptions = [{
     text: '0-25',
     value: 0
   },{

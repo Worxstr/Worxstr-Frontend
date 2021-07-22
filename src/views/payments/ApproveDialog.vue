@@ -13,7 +13,7 @@ v-dialog(
           | You are approving {{ timecards[0] | fullName }} for ${{ timecards[0].total_payment }}
           | for this shift.
         span(v-else)
-          | You are approving {{ timecards.length }} employees for ${{
+          | You are approving {{ timecards.length }} contractors for ${{
           | totalPayment
           | }}
           | in total.

@@ -19,10 +19,10 @@
 						v-list-item-subtitle.mb-2 Organization
 						v-list-item-title {{ authenticatedUser.organization_info.name }}
 								
-				v-list-item(two-line v-if="authenticatedUser.employee_info")
+				v-list-item(two-line v-if="authenticatedUser.contractor_info")
 					v-list-item-content
 						v-list-item-subtitle.mb-2 Address
-						v-list-item-title {{ authenticatedUser.employee_info.address }}
+						v-list-item-title {{ authenticatedUser.contractor_info.address }}
 				
 				v-list-item(two-line)
 					v-list-item-content
@@ -32,7 +32,7 @@
 								v-chip.mr-2(label v-for="role in authenticatedUser.roles")
 									| {{role.name | snakeToSpace | capitalize }}
 						
-				v-list-item(two-line v-if="authenticatedUser.employee_info && !authenticatedUser.employee_info.need_info")
+				v-list-item(two-line v-if="authenticatedUser.contractor_info && !authenticatedUser.contractor_info.need_info")
 					v-list-item-content
 						v-list-item-title SSN
 					v-list-item-action
