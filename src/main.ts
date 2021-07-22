@@ -74,7 +74,7 @@ function initDarkMode() {
 function promptSSN() {
   // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
   const user = store.state.authenticatedUser
-  if (user && user.employee_info?.need_info) {
+  if (user && user.contractor_info?.need_info) {
     store.dispatch("showSnackbar", {
       text: `You haven't set your Social Security number.`,
       action: () => {

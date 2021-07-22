@@ -18,16 +18,16 @@ export type Job = {
 	longitude: number;
 	organization_id: number;
 	organization_manager: number;
-	employee_manager_id: number;
+	contractor_manager_id: number;
 	shifts: Shift[];
-	employees: User[];
+	contractors: User[];
 	managers: User[];
 }
 
 export type Shift = {
 	id: number;
-	employee: User;
-	employee_id: number;
+	contractor: User;
+	contractor_id: number;
 	site_location: string;
 	time_begin: string;
 	time_end: string;
