@@ -9,5 +9,8 @@
 		}
 	},
 	"cordova": {},
-	"server": {}
+	"server": {
+		"url": "http://192.168.86.21:8080",
+		"cleartext": true
+	}
 }
