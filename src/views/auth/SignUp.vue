@@ -1,14 +1,14 @@
 <template lang="pug">
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
-    v-card.soft-shadow(width='500')
+    v-card.soft-shadow(width='800')
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5 Sign up
         v-card-text.pb-0
           v-window.pt-2(v-model='step')
 
             v-window-item(:value='0')
-              dwolla-customer-create(
+              dwolla-personal-vcr(
                 terms='https://www.yourterms.com'
                 privacy='https://www.yourprivacy.com'
               )
@@ -153,7 +153,7 @@ export default class SignUp extends Vue {
     window.dwolla.configure({
       environment: 'sandbox',
       // styles: '/main.css',
-      token: () => Promise.resolve('aWcskwSufDwVmBuQgE48Er01evgOthedZePVq9eBPfe08zLxiz'),
+      tokenUrl: `${process.env.VUE_APP_API_BASE_URL}/payments/access`,
       success: (res) => {
         console.log(res)
       },
