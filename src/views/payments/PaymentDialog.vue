@@ -26,11 +26,11 @@ v-dialog(
         |
         | Your total is ${{ totalPayment }}.
     
-      paypal-buttons(
-        :createOrder="createOrder",
-        :onApprove="onApprove",
-        v-if="renderPaypal && !transaction"
-      )
+      //- paypal-buttons(
+      //-   :createOrder="createOrder",
+      //-   :onApprove="onApprove",
+      //-   v-if="renderPaypal && !transaction"
+      //- )
       div(v-if="transaction")
         p.text-subtitle-2.green--text.d-flex.align-center.my-2
           | Payment successful. Your PayPal order ID is:
@@ -47,12 +47,12 @@ v-dialog(
 <script>
 import Vue from "vue";
 // eslint-disable-next-line no-undef
-const PayPalButton = paypal.Buttons.driver("vue", Vue);
+// const PayPalButton = paypal.Buttons.driver("vue", Vue);
 
 export default {
   name: "paymentDialog",
   components: {
-    "paypal-buttons": PayPalButton,
+    // "paypal-buttons": PayPalButton,
   },
   props: {
     opened: Boolean,

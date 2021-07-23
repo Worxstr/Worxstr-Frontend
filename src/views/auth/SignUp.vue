@@ -6,7 +6,14 @@ div
         v-card-title.text-h5 Sign up
         v-card-text.pb-0
           v-window.pt-2(v-model='step')
+
             v-window-item(:value='0')
+              dwolla-customer-create(
+                terms='https://www.yourterms.com'
+                privacy='https://www.yourprivacy.com'
+              )
+
+            //- v-window-item(:value='0')
               v-text-field(
                 autofocus,
                 label='First name'
@@ -98,12 +105,18 @@ div
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Component, Vue } from 'vue-property-decorator'
-import { exists, emailRules, phoneRules, passwordRules, passwordMatches } from '@/plugins/inputValidation'
+import {
+  exists,
+  emailRules,
+  phoneRules,
+  passwordRules,
+  passwordMatches,
+} from '@/plugins/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 
 @Component({
   metaInfo: {
-    title: 'Sign up'
+    title: 'Sign up',
   },
   components: {
     Arrows,
@@ -116,13 +129,13 @@ export default class SignUp extends Vue {
   step = 0
 
   form = {
-    first_name: "",
-    last_name: "",
-    phone: "",
-    email: "",
-    manager_id: "",
-    password: "",
-    confirm_password: "", 
+    first_name: '',
+    last_name: '',
+    phone: '',
+    email: '',
+    manager_id: '',
+    password: '',
+    confirm_password: '',
     agreeToTerms: false,
   }
   rules = {
@@ -136,10 +149,24 @@ export default class SignUp extends Vue {
     passwordMatches,
   }
 
+  mounted() {
+    window.dwolla.configure({
+      environment: 'sandbox',
+      // styles: '/main.css',
+      token: () => Promise.resolve('aWcskwSufDwVmBuQgE48Er01evgOthedZePVq9eBPfe08zLxiz'),
+      success: (res) => {
+        console.log(res)
+      },
+      error: (err) => {
+        console.log(err)
+      },
+    })
+  }
+
   async signUp() {
     this.loading = true
     try {
-      await this.$store.dispatch("signUp", this.form)
+      await this.$store.dispatch('signUp', this.form)
     } finally {
       this.loading = false
     }
