@@ -8,12 +8,15 @@ div
           v-window.pt-2(v-model='step')
 
             v-window-item(:value='0')
-              dwolla-personal-vcr(
-                terms='https://www.yourterms.com'
-                privacy='https://www.yourprivacy.com'
-              )
+              .pa-1.d-flex.justify-center
+                v-btn.pa-10(text @click="accountType = 'contractor'; step++")
+                  v-icon mdi-account
+                  span.ml-3.text-h6 I'm a contractor
+                v-btn.pa-10(text @click="accountType = 'business'; step++")
+                  v-icon mdi-domain
+                  span.ml-3.text-h6 I have a business
 
-            //- v-window-item(:value='0')
+            v-window-item(:value='1')
               v-text-field(
                 autofocus,
                 label='First name'
@@ -31,7 +34,6 @@ div
                 outlined
                 dense
               )
-            v-window-item(:value='1')
               v-text-field(
                 label='Email'
                 type='email'
@@ -51,15 +53,14 @@ div
                 outlined
                 dense
               )
-            v-window-item(:value='2')
               v-text-field(
                 label='Manager ID'
                 v-model='form.manager_id'
                 :rules='rules.managerId'
                 outlined
                 dense
+                v-if="accountType == 'contractor'"
               )
-            v-window-item(:value='3')
               v-text-field(
                 label='Password'
                 type='password'
@@ -84,10 +85,23 @@ div
                     span I agree to the
                     a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
 
+                  
+            v-window-item(:value='2')
+              dwolla-personal-vcr(
+                v-if="accountType == 'contractor'"
+                terms='https://www.yourterms.com'
+                privacy='https://www.yourprivacy.com'
+              )
+              dwolla-business-vcr(
+                v-if="accountType == 'business'"
+                terms='https://www.yourterms.com'
+                privacy='https://www.yourprivacy.com'
+              )
+
         v-card-actions
           v-spacer
           v-btn(v-if='step != 0' text @click='step--') Back
-          v-btn(v-if='step != 3' text @click='step++') Next
+          v-btn(v-if='step != 3 && step != 0' text @click='step++') Next
           v-btn(
             v-if='step == 3'
             text
@@ -123,10 +137,10 @@ import Arrows from '@/components/Arrows.vue'
   },
 })
 export default class SignUp extends Vue {
+  step = 0
+  accountType = ''
   loading = false
   isValid = false
-
-  step = 0
 
   form = {
     first_name: '',
