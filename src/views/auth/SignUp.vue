@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
-    v-card.soft-shadow(width='800')
+    v-card.soft-shadow(width='600')
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5 Sign up
         v-card-text.pb-0
@@ -9,57 +9,33 @@ div
 
             v-window-item(:value='0')
               .pa-1.d-flex.justify-center
-                v-btn.pa-10(text @click="accountType = 'contractor'; step++")
+                v-btn.pa-10(text @click="form.accountType = 'contractor'; step++")
                   v-icon mdi-account
                   span.ml-3.text-h6 I'm a contractor
-                v-btn.pa-10(text @click="accountType = 'business'; step++")
+                v-btn.pa-10(text @click="form.accountType = 'business'; step++")
                   v-icon mdi-domain
                   span.ml-3.text-h6 I have a business
 
             v-window-item(:value='1')
-              v-text-field(
-                autofocus,
-                label='First name'
-                v-model='form.first_name'
-                :rules='rules.firstName'
-                required
-                outlined
-                dense
+              dwolla-personal-vcr(
+                v-if="form.accountType == 'contractor'"
+                terms='/terms'
+                privacy='/privacy'
               )
-              v-text-field(
-                label='Last name'
-                v-model='form.last_name'
-                :rules='rules.lastName' 
-                required
-                outlined
-                dense
+              dwolla-business-vcr(
+                v-if="form.accountType == 'business'"
+                terms='/terms'
+                privacy='/privacy'
               )
+
+            v-window-item(:value='2')
               v-text-field(
-                label='Email'
-                type='email'
-                :rules='rules.email'
-                v-model='form.email'
-                required
+                label='Manager reference'
+                v-model='form.manager_reference'
+                :rules='rules.managerReference'
                 outlined
                 dense
-              )
-              v-text-field(
-                v-model="form.phone",
-                :rules='rules.phone'
-                type="tel",
-                v-mask="'(###) ###-####'"
-                label="Phone number",
-                required,
-                outlined
-                dense
-              )
-              v-text-field(
-                label='Manager ID'
-                v-model='form.manager_id'
-                :rules='rules.managerId'
-                outlined
-                dense
-                v-if="accountType == 'contractor'"
+                v-if="form.accountType == 'contractor'"
               )
               v-text-field(
                 label='Password'
@@ -79,39 +55,31 @@ div
                 outlined
                 dense
               )
-              v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
-                template(v-slot:label)
-                  div
-                    span I agree to the
-                    a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
+
+              //- v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
+              //-   template(v-slot:label)
+              //-     div
+              //-       span I agree to the
+              //-       a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
 
                   
-            v-window-item(:value='2')
-              dwolla-personal-vcr(
-                v-if="accountType == 'contractor'"
-                terms='https://www.yourterms.com'
-                privacy='https://www.yourprivacy.com'
-              )
-              dwolla-business-vcr(
-                v-if="accountType == 'business'"
-                terms='https://www.yourterms.com'
-                privacy='https://www.yourprivacy.com'
-              )
 
-        v-card-actions
+        v-card-actions(v-if='step != 1')
           v-spacer
-          v-btn(v-if='step != 0' text @click='step--') Back
-          v-btn(v-if='step != 3 && step != 0' text @click='step++') Next
+          v-btn(v-if='step != 0 && step != 2' text @click='step--') Back
+          v-btn(v-if='step != 0 && step != 2' text @click='step++') Next
           v-btn(
-            v-if='step == 3'
+            v-if='step == 2'
             text
             color='primary'
             type='submit'
             :disabled='!isValid'
           ) Sign up
+
       v-fade-transition
         v-overlay(absolute opacity='0.2' v-if='loading')
           v-progress-circular(indeterminate)
+
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>
 
@@ -121,8 +89,6 @@ div
 import { Component, Vue } from 'vue-property-decorator'
 import {
   exists,
-  emailRules,
-  phoneRules,
   passwordRules,
   passwordMatches,
 } from '@/plugins/inputValidation'
@@ -138,26 +104,19 @@ import Arrows from '@/components/Arrows.vue'
 })
 export default class SignUp extends Vue {
   step = 0
-  accountType = ''
   loading = false
   isValid = false
 
   form = {
-    first_name: '',
-    last_name: '',
-    phone: '',
-    email: '',
-    manager_id: '',
+    accountType: '',
+    manager_reference: '',
     password: '',
     confirm_password: '',
-    agreeToTerms: false,
+    // agreeToTerms: false,
+    customer_url: '',
   }
   rules = {
-    firstName: [exists('First name required')],
-    lastName: [exists('Last name required')],
-    phone: phoneRules,
-    email: emailRules,
-    managerId: [exists('Manager ID required')],
+    managerReference: [exists('Manager reference required')],
     password: passwordRules,
     confirmPassword: [exists('Password confirmation required')],
     passwordMatches,
@@ -168,8 +127,9 @@ export default class SignUp extends Vue {
       environment: 'sandbox',
       // styles: '/main.css',
       tokenUrl: `${process.env.VUE_APP_API_BASE_URL}/payments/access`,
-      success: (res) => {
-        console.log(res)
+      success: async (res) => {
+        this.form.customer_url = res.location
+        this.step = 2
       },
       error: (err) => {
         console.log(err)

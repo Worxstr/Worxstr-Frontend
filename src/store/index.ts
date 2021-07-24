@@ -285,12 +285,29 @@ const storeConfig: StoreOptions<RootState> = {
       }
     },
 
-    async signUp({ dispatch }, userData) {
+    /*
+      accountType: 'contractor' | 'manager'
+      dwollaCustomerUrl: Customer url returned after Dwolla account registration
+      dwollaAuthToken: Auth token used for Dwolla account registration
+    */
+    async signUp({ dispatch }, {
+      accountType,
+      customer_url,
+      password,
+      manager_reference,
+  }) {
       try {
         const { data } = await axios({
           method: 'POST',
-          url: `${baseUrl}/auth/register`,
-          data: userData
+          url: `${baseUrl}/auth/sign-up/${accountType}`,
+          // headers: {
+          //   'Authorization': `Bearer ${dwollaAuthToken}`
+          // },
+          data: {
+            customer_url,
+            password,
+            manager_reference,
+          },
         })
         router.push({ name: 'home' })
         dispatch('showSnackbar', { text: "Check your email to verify your account!" })
