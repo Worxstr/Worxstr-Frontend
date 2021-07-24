@@ -286,7 +286,7 @@ const storeConfig: StoreOptions<RootState> = {
     },
 
     /*
-      accountType: 'contractor' | 'manager'
+      accountType: 'contractor' | 'org'
       dwollaCustomerUrl: Customer url returned after Dwolla account registration
       dwollaAuthToken: Auth token used for Dwolla account registration
     */

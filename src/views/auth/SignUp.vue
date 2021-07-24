@@ -12,7 +12,7 @@ div
                 v-btn.pa-10(text @click="form.accountType = 'contractor'; step++")
                   v-icon mdi-account
                   span.ml-3.text-h6 I'm a contractor
-                v-btn.pa-10(text @click="form.accountType = 'business'; step++")
+                v-btn.pa-10(text @click="form.accountType = 'org'; step++")
                   v-icon mdi-domain
                   span.ml-3.text-h6 I have a business
 
@@ -23,7 +23,7 @@ div
                 privacy='/privacy'
               )
               dwolla-business-vcr(
-                v-if="form.accountType == 'business'"
+                v-if="form.accountType == 'org'"
                 terms='/terms'
                 privacy='/privacy'
               )
