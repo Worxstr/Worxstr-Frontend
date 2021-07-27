@@ -9,6 +9,7 @@ import * as MessagesTypes from '@/definitions/Messages'
 import { fullName, groupNameList } from '@/plugins/filters'
 
 import Home from '@/views/landing/Home.vue'
+import NativeHome from '@/views/landing/NativeHome.vue'
 import About from '@/views/landing/About.vue'
 import Pricing from '@/views/landing/Pricing.vue'
 import Contact from '@/views/landing/Contact.vue'
@@ -52,6 +53,14 @@ const routes = [
       }
       else next()
     },
+  },
+  {
+    path: '/native-home',
+    name: 'nativeHome',
+    component: NativeHome,
+    meta: {
+      noSkeleton: true,
+    }
   },
   {
     path: '/about',

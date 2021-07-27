@@ -2,7 +2,7 @@
 v-app
   nav-drawer(v-if="showNavDrawer", v-model="drawer")
 
-  toolbar(@toggleDrawer="drawer = !drawer")
+  toolbar(@toggleDrawer="drawer = !drawer" v-if='showHeader')
 
   v-main(
     :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
@@ -57,7 +57,11 @@ export default class App extends Vue {
   }
 
   get showNavDrawer() {
-    return !this.$route.meta.landing
+    return !this.$route.meta.landing && !this.$route.meta.noSkeleton
+  }
+
+  get showHeader() {
+    return !this.$route.meta.noSkeleton
   }
 
   get showFooter() {
