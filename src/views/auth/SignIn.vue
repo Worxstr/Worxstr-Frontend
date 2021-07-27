@@ -1,42 +1,61 @@
 <template lang="pug">
-v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
-  v-card(width="500")
-    v-form(@submit.prevent="signIn", v-model="isValid")
-      v-card-title Sign in
-      v-card-text
-        v-text-field(
-          autofocus
-          label="Email",
-          type="email",
-          required="",
-          v-model="form.email",
-          :rules="emailRules"
-        )
-        v-text-field(
-          label="Password",
-          type="password",
-          required="",
-          v-model="form.password",
-          :rules="passwordRules"
-        )
-      v-card-actions
-        v-btn(text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
-        v-spacer
-        v-btn(text, color="primary", type="submit", :disabled="!isValid") Sign in
-    v-fade-transition
-      v-overlay(absolute, opacity="0.2", v-if="loading")
-        v-progress-circular(indeterminate)
+div
+  v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
+    v-card.soft-shadow(width="500")
+      v-form(@submit.prevent="signIn", v-model="isValid")
+        v-card-title.text-h5 Sign in
+        v-card-text.pb-0
+          v-window.pt-2(v-model='step')
+            v-window-item(:value='0')
+              v-text-field(
+                autofocus
+                label="Email",
+                type="email",
+                required="",
+                v-model="form.email",
+                :rules="emailRules"
+                outlined
+                dense
+              )
+            v-window-item(:value='1')
+              v-text-field(
+                label="Password",
+                type="password",
+                required="",
+                v-model="form.password",
+                :rules="passwordRules"
+                outlined
+                dense
+              )
+        v-card-actions
+          v-btn(v-if='step == 1' text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
+          
+          v-spacer
+
+          v-btn(v-if='step != 0' text @click='step--') Back
+          v-btn(v-if='step != 1' text @click='step++') Next
+          v-btn(v-if='step == 1' text color="primary" type="submit" :disabled="!isValid") Sign in
+      v-fade-transition
+        v-overlay(absolute, opacity="0.2", v-if="loading")
+          v-progress-circular(indeterminate)
+      
+  arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>
 
 <script>
 import { emailRules, passwordRules } from '@/plugins/inputValidation'
+import Arrows from '@/components/Arrows.vue'
 
 export default {
   name: "signIn",
   metaInfo: {
     title: 'Sign in',
   },
+  components: {
+    Arrows,
+  },
   data: () => ({
+    step: 0,
     form: {
       email: "",
       password: "",

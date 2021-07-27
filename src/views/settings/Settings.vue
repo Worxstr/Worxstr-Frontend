@@ -1,9 +1,9 @@
 <template lang="pug">
-	v-container.pb-16
+	v-container.pb-16(fluid)
 		ChangePasswordDialog(:opened.sync="changePasswordDialog")
 		SSNDialog(:opened.sync="ssnDialog")
 
-		v-card
+		v-card.soft-shadow
 			v-list.pa-0(rounded subheader)
 				v-subheader.text-subtitle-1.font-weight-medium Profile
 				

@@ -16,7 +16,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title Update your password
+        v-toolbar-title.text-h6 Update your password
       
       v-divider
 

@@ -2,7 +2,7 @@
 
 v-skeleton-loader(v-if="loading && !conversations.length" type='list-item, list-item, list-item, list-item, list-item, list-item, list-item')
 
-v-card.conversations(v-else)
+.conversations(v-else)
   v-list(color="transparent")
     v-list-item(
       v-for="conversation in conversations",

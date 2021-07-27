@@ -12,7 +12,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title New conversation
+        v-toolbar-title.text-h6 New conversation
 
       v-divider
 
@@ -36,31 +36,26 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
-        v-btn(
-          text,
-          color="primary",
-          @click="createConversation",
-          :disabled="!isValid"
-        ) Send message
-
+        v-btn(text, color="primary", @click="createConversation" :disabled="!isValid") Create conversation
+        
       v-fade-transition
         v-overlay(v-if="loading", absolute, opacity=".2")
           v-progress-circular(indeterminate)
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState } from 'vuex'
 
 export default {
-  name: "newConversationDialog",
+  name: 'newConversationDialog',
   props: {
     opened: Boolean,
   },
   mounted() {
-    this.$store.dispatch("loadContacts");
+    this.$store.dispatch('loadContacts')
   },
   computed: {
-    ...mapState(["contacts"]),
+    ...mapState(['contacts']),
   },
   data: () => ({
     isValid: false,
@@ -69,25 +64,25 @@ export default {
   }),
   methods: {
     closeDialog() {
-      this.$emit("update:opened", false);
-      this.$refs.form.reset();
+      this.$emit('update:opened', false)
+      this.$refs.form.reset()
     },
     async createConversation() {
-      this.loading = true;
+      this.loading = true
       try {
         const conversation = await this.$store.dispatch(
-          "createConversation",
+          'createConversation',
           this.selectedUsers
-        );
+        )
         this.$router.push({
-          name: "conversation",
+          name: 'conversation',
           params: { conversationId: conversation.id },
-        });
-        this.closeDialog();
+        })
+        this.closeDialog()
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
   },
-};
+}
 </script>

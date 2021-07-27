@@ -5,7 +5,7 @@ v-app
   toolbar(@toggleDrawer="drawer = !drawer" v-if='showHeader')
 
   v-main(
-    :class="{ grey: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
+    :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
   )
     v-container.pa-0.align-start(fluid)
       transition(

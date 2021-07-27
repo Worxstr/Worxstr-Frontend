@@ -90,9 +90,9 @@
       div(v-else)
         h6.text-h6 You have no upcoming shifts
 
-    v-card.align-self-center(width='100%' max-width='500px' rounded='lg' style="margin-bottom: 60px")
+    v-card.soft-shadow.align-self-center(width='100%' max-width='500px' rounded='lg' style="margin-bottom: 60px")
 
-      v-card-title.ma-1 Your history
+      v-card-title.text-h5.ma-1 Your history
 
       div(v-if='clockHistory.length')
         clock-events(:events='clockHistory')

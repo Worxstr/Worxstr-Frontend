@@ -29,7 +29,6 @@ v-form.flex-grow-1.d-flex.flex-column(
     v-text-field.ml-2(
       v-model="form.contact_title",
       label="Job title",
-      required,
       outlined,
       dense,
       :color="color",
