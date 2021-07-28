@@ -48,8 +48,11 @@ const routes = [
       landing: true,
     },
     beforeEnter(to: Route, from: Route, next: Function) {
-      if (Capacitor.isNativePlatform() && store.state.authenticatedUser) {
-        next({ name: defaultRoute() })
+      if (Capacitor.isNativePlatform()) {
+        if (store.state.authenticatedUser)
+          next({ name: defaultRoute() })
+        else
+          next({ name: 'nativeHome' })
       }
       else next()
     },
@@ -60,6 +63,7 @@ const routes = [
     component: NativeHome,
     meta: {
       noSkeleton: true,
+      fullHeight: true,
     }
   },
   {

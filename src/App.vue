@@ -7,7 +7,7 @@ v-app
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
   )
-    v-container.pa-0.align-start(fluid)
+    v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
         appear,
         name="fade-transition",
@@ -75,7 +75,7 @@ export default class App extends Vue {
 
   get pageHeight() {
     // Normal view
-    if (!this.$route.meta.fullHeight) return "100%";
+    if (!this.$route.meta.fullHeight || this.$route.meta.noSkeleton) return "100%";
     // Full height, bottom nav hidden
     else return `calc(100vh - ${this.headerHeight}px)`;
   }
