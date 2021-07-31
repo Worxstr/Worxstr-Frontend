@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import { io } from "socket.io-client"
+import { App as CapacitorApp } from '@capacitor/app'
 
 import './styles/style.scss'
 import './plugins/filters'
@@ -53,6 +54,22 @@ Vue.use(VueGtag, {
 
 Vue.config.productionTip = false
 
+async function getUserData() {
+  // Get local user data
+  const storedUser = localStorage.getItem('authenticatedUser')
+  if (storedUser) {
+    store.commit('SET_AUTHENTICATED_USER', JSON.parse(storedUser))
+  }
+
+  try {
+    // Load new user data
+    await store.dispatch('getAuthenticatedUser')
+  }
+  catch (e) {
+    console.error(e)
+  }
+}
+
 function initDarkMode() {
   const userPrefDarkMode = window.localStorage.getItem("darkMode")
   const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
@@ -90,21 +107,15 @@ function promptSSN() {
   }
 }
 
+function configureBackButtonPress() {
+  CapacitorApp.addListener('backButton', () => {
+    window.history.back()
+  })
+}
+
 async function init() {
-
-  // Get local user data
-  const storedUser = localStorage.getItem('authenticatedUser')
-  if (storedUser) {
-    store.commit('SET_AUTHENTICATED_USER', JSON.parse(storedUser))
-  }
-
-  try {
-    // Load new user data
-    await store.dispatch('getAuthenticatedUser')
-  }
-  catch (e) {
-    console.error(e)
-  }
+  
+  await getUserData()
 
   new Vue({
     router,
@@ -115,6 +126,7 @@ async function init() {
 
   initDarkMode()
   promptSSN()
+  configureBackButtonPress()
 }
 
 init()

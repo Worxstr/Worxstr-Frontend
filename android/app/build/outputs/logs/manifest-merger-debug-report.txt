@@ -15,6 +15,7 @@ ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\
 INJECTED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-63:12
 INJECTED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-63:12
 INJECTED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-63:12
+MERGED from [:capacitor-app] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\app\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-11:12
 MERGED from [:capacitor-dialog] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\dialog\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-11:12
 MERGED from [:capacitor-geolocation] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\geolocation\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-11:12
 MERGED from [:capacitor-android] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\android\capacitor\build\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-11:12
@@ -98,6 +99,8 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\al
 		ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:6:9-35
 	android:theme
 		ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:11:9-40
+	android:usesCleartextTraffic
+		ADDED from [:capacitor-cordova-android-plugins] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\capacitor-cordova-android-plugins\build\intermediates\library_manifest\debug\AndroidManifest.xml:12:18-53
 activity#com.worxstr.worxstr.MainActivity
 ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:13:9-32:20
 	android:label
@@ -174,6 +177,8 @@ uses-sdk
 INJECTED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml
 INJECTED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml
+MERGED from [:capacitor-app] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\app\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:7:5-9:41
+MERGED from [:capacitor-app] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\app\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [:capacitor-dialog] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\dialog\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [:capacitor-dialog] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\dialog\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:7:5-9:41
 MERGED from [:capacitor-geolocation] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\geolocation\android\build\intermediates\library_manifest\debug\AndroidManifest.xml:7:5-9:41
