@@ -2,7 +2,7 @@
 div
   v-sheet.gradient-secondary.overlap
     v-container.py-16
-      h3.text-h3.font-weight-black Pricing
+      h3.text-h3.font-weight-black Business pricing
 
   v-container.shift-down.mb-3
     v-row
@@ -37,8 +37,12 @@ div
     .mt-12
       h4.text-h4.font-weight-black.mb-3 Need help deciding?
       p
-        | Contact us
-        router-link(to="/contact") &nbsp;here&nbsp;
+        | Are you a contractor? Click
+        router-link(:to="{ name: 'signUp' }") &nbsp;here&nbsp;
+        | to create your account.
+        br
+        | Or, contact us
+        router-link(:to="{ name: 'contact' }") &nbsp;here&nbsp;
         | for support.
       
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0' v-if='$vuetify.breakpoint.smAndUp')

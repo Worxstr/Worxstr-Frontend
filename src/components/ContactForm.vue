@@ -97,6 +97,15 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
 
+  v-textarea(
+      v-model="form.message",
+      label="Message",
+      outlined,
+      dense,
+      :color="color",
+      :filled="filled"
+  )
+
   v-spacer
 
   v-card-actions.pt-0
@@ -126,7 +135,7 @@ export default class ContactForm extends Vue {
     website: '',
     num_managers: null,
     num_contractors: null,
-    notes: '',
+    message: '',
   }
 
   rules = {

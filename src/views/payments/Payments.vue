@@ -14,6 +14,11 @@ v-container(
   )
 
 div(v-else)
+  v-container.d-flex.flex-column.justify-center.text-center
+    .text-h6 Available balance
+    .text-h2.ma-5 $825.24
+
+
   v-container.d-flex.flex-column.justify-center(
     fluid
     fill-height,
@@ -56,7 +61,7 @@ div(v-else)
             span.py-1.font-weight-medium.flex-grow-0
               | {{ timecard | fullName }}
             v-spacer
-            span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
+            span.flex-grow-0.px-2.font-weight-bold {{ timecard.total_payment | currency }}
             span.flex-grow-0.px-2(
               v-if="timecard.time_clocks && timecard.time_clocks.length"
             )
@@ -75,7 +80,7 @@ div(v-else)
                 | )
                 | }}
               p {{ timecard.time_break }} minute break
-              p ${{ timecard.total_payment }} earned
+              p {{ timecard.total_payment | currency }} earned
           v-divider
 
     .mb-5(v-if="unapprovedTimecards.length")
@@ -101,7 +106,7 @@ div(v-else)
           v-expansion-panel-header
             span.py-1.font-weight-medium.flex-grow-0 {{ timecard | fullName }}
             v-spacer
-            span.flex-grow-0.px-2.font-weight-bold ${{ timecard.total_payment }}
+            span.flex-grow-0.px-2.font-weight-bold {{ timecard.total_payment | currency }}
             span.flex-grow-0.px-2(
               v-if="timecard.time_clocks && timecard.time_clocks.length"
             )
@@ -123,7 +128,7 @@ div(v-else)
                 | )
                 | }}
               p {{ timecard.time_break }} minute break
-              p ${{ timecard.total_payment }} earned
+              p {{ timecard.total_payment | currency }} earned
 
             v-card-actions
               v-spacer

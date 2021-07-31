@@ -16,15 +16,13 @@ v-dialog(
     v-divider
 
     v-card-text.mt-5
-      p.text-subtitle-1
+      p
         | {{ timecards.length }}
-        | contractor{{ timecards.length == 1 ? '' : 's' }} will be paid ${{
-        | wagePayment
-        | }}
-        | in total. A ${{ feesPayment }} fee will be applied.
+        | contractor{{ timecards.length == 1 ? '' : 's' }}
+        | will be paid {{ wagePayment  | currency }} in total.
+        | A {{ feesPayment | currency }} fee will be applied.
         br
-        |
-        | Your total is ${{ totalPayment }}.
+        | Your total is {{ totalPayment | currency }}.
     
       //- paypal-buttons(
       //-   :createOrder="createOrder",

@@ -23,6 +23,10 @@ Vue.filter('time', (value: (string|number|Date), format: string) => {
 	return dayjs(value).format(format || 'h:mm a')
 })
 
+Vue.filter('currency', (value: string) => {
+	return '$' + parseFloat(value).toFixed(2)
+})
+
 // 1234567890 -> (123) 456-7890
 Vue.filter('phone', (value: string) => {
 	return `(${value.substring(0,3)}) ${value.substring(3,6)}-${value.substring(6,10)}`

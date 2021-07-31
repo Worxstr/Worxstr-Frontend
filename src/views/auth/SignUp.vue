@@ -12,7 +12,7 @@ div
                 v-btn.pa-10(text @click="form.accountType = 'contractor'; step++")
                   v-icon mdi-account
                   span.ml-3.text-h6 I'm a contractor
-                v-btn.pa-10(text @click="form.accountType = 'org'; step++")
+                v-btn.pa-10(text :to="{ name: 'pricing' }")
                   v-icon mdi-domain
                   span.ml-3.text-h6 I have a business
 
