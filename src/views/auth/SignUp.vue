@@ -3,7 +3,9 @@ div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
     v-card.soft-shadow(width='600')
       v-form(@submit.prevent='signUp' v-model='isValid')
-        v-card-title.text-h5 Sign up
+        v-card-title.text-h5
+          span(v-if='!accountType') Sign up
+          span(v-else) Sign up as {{ accountType == 'org' ? 'business' : 'contractor' }}
         v-card-text.pb-0
           v-window.pt-2(v-model='step')
 
@@ -28,7 +30,7 @@ div
                 privacy='/privacy'
               )
               p(v-if="accountType == 'org'")
-                | Are you a contracotr? Click
+                | Are you a contractor? Click
                 a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
                 | to create your account.
 
@@ -110,7 +112,7 @@ export default class SignUp extends Vue {
   step = 0
   loading = false
   isValid = false
-  accountType = '' // 'contractor' | 'org'
+  accountType = null // 'contractor' | 'org'
 
   form = {
     manager_reference: '',
@@ -142,7 +144,6 @@ export default class SignUp extends Vue {
     })
 
     if (this.$route.params.subscriptionTier) {
-      console.log(this.$route.params.subscriptionTier)
       this.accountType = 'org'
       this.step++
       this.form.subscription_tier = this.$route.params.subscriptionTier
