@@ -10,7 +10,7 @@ div
           v-window.pt-2(v-model='step')
 
             v-window-item(:value='0')
-              .pa-1.d-flex.justify-center
+              .pa-1.d-flex.flex-column.flex-sm-row.justify-center
                 v-btn.pa-10(text @click="accountType = 'contractor'; step++")
                   v-icon mdi-account
                   span.ml-3.text-h6 I'm a contractor
