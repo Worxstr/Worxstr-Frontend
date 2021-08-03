@@ -9,7 +9,7 @@ div
 
             v-window-item(:value='0')
               .pa-1.d-flex.justify-center
-                v-btn.pa-10(text @click="form.accountType = 'contractor'; step++")
+                v-btn.pa-10(text @click="accountType = 'contractor'; step++")
                   v-icon mdi-account
                   span.ml-3.text-h6 I'm a contractor
                 v-btn.pa-10(text :to="{ name: 'pricing' }")
@@ -18,15 +18,19 @@ div
 
             v-window-item(:value='1')
               dwolla-personal-vcr(
-                v-if="form.accountType == 'contractor'"
+                v-if="accountType == 'contractor'"
                 terms='/terms'
                 privacy='/privacy'
               )
               dwolla-business-vcr(
-                v-if="form.accountType == 'org'"
+                v-if="accountType == 'org'"
                 terms='/terms'
                 privacy='/privacy'
               )
+              p(v-if="accountType == 'org'")
+                | Are you a contracotr? Click
+                a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
+                | to create your account.
 
             v-window-item(:value='2')
               v-text-field(
@@ -35,7 +39,7 @@ div
                 :rules='rules.managerReference'
                 outlined
                 dense
-                v-if="form.accountType == 'contractor'"
+                v-if="accountType == 'contractor'"
               )
               v-text-field(
                 label='Password'
@@ -106,14 +110,15 @@ export default class SignUp extends Vue {
   step = 0
   loading = false
   isValid = false
+  accountType = '' // 'contractor' | 'org'
 
   form = {
-    accountType: '',
     manager_reference: '',
     password: '',
     confirm_password: '',
     // agreeToTerms: false,
     customer_url: '',
+    subscription_tier: null,
   }
   rules = {
     managerReference: [exists('Manager reference required')],
@@ -135,6 +140,13 @@ export default class SignUp extends Vue {
         console.log(err)
       },
     })
+
+    if (this.$route.params.subscriptionTier) {
+      console.log(this.$route.params.subscriptionTier)
+      this.accountType = 'org'
+      this.step++
+      this.form.subscription_tier = this.$route.params.subscriptionTier
+    }
   }
 
   async signUp() {

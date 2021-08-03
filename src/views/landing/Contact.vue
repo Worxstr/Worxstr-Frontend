@@ -21,7 +21,7 @@ div
                 p {{ option.text }}
 
               v-card-actions.pb-5.justify-center
-                v-btn(
+                v-btn.black--text(
                   elevation='0'
                   v-bind="attrs",
                   v-on="on",

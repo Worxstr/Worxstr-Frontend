@@ -11,9 +11,7 @@ v-footer.worxstr-footer(padless)
 
     //- v-card-text.pt-0 Some additional info can go here
 
-    v-divider
-
-    v-card-text
+    v-card-text.white-transparent
       span &copy;&nbsp;
       strong Worxstr L.L.C.&nbsp;
       span {{ new Date().getFullYear() }} — All rights reserved

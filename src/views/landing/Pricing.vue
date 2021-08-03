@@ -69,7 +69,7 @@ export default class Pricing extends Vue {
       contractors: 10,
       support: 'Free tier chat assistance',
       buttonText: 'Get free',
-      to: {name: 'signUp'}
+      to: {name: 'signUp', params: { subscriptionTier: 'free' }}
     },
     {
       price: 100,
@@ -77,7 +77,7 @@ export default class Pricing extends Vue {
       contractors: 100,
       support: 'Standard support',
       buttonText: 'Get premium',
-      to: {name: 'signUp'}
+      to: {name: 'signUp', params: { subscriptionTier: 'premium' }}
     },
     {
       price: null,
