@@ -50,8 +50,10 @@ div(v-else)
         :zoom="zoomLevel",
         style="height: 40vh"
       )
+        GmapCircle(:center='jobLocation' :radius='500' :options="{fillColor: '#4285f4', fillOpacity: .15, strokeColor: 'TRANSPARENT'}")
         GmapMarker(:position="jobLocation")
         GmapMarker(v-if='userLocation' :position="userLocation" :icon="{ url: require('@/assets/icons/current-location-marker.svg')}")
+
 
       v-card-text
         p
