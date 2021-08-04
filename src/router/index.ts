@@ -151,17 +151,6 @@ const routes = [
     }
   },
   {
-    path: '/users/:userId',
-    name: 'user',
-    component: User,
-    meta: {
-      paramMap: {
-        userId: 'users',
-        propBuilder: fullName
-      },
-    }
-  },
-  {
     path: '/clock',
     name: 'clock',
     component: Clock,
@@ -227,6 +216,17 @@ const routes = [
     meta: {
       icon: 'mdi-account-group',
       restrict: Manager
+    }
+  },
+  {
+    path: '/workforce/:userId',
+    name: 'user',
+    component: User,
+    meta: {
+      paramMap: {
+        userId: 'users',
+        propBuilder: fullName
+      },
     }
   },
   {

@@ -10,7 +10,7 @@ v-container(v-if="loading" fluid)
   )
 
 div(v-else)
-  v-container.approvals.mb-50(v-if="job" fluid)
+  v-container.approvals.mb-16(v-if="job" fluid)
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
     create-shift-dialog(
@@ -50,18 +50,30 @@ div(v-else)
         :zoom="zoomLevel",
         style="height: 40vh"
       )
-        GmapCircle(:center='jobLocation' :radius='500' :options="{fillColor: '#4285f4', fillOpacity: .15, strokeColor: 'TRANSPARENT'}")
-        GmapMarker(:position="jobLocation")
-        GmapMarker(v-if='userLocation' :position="userLocation" :icon="{ url: require('@/assets/icons/current-location-marker.svg')}")
-
+        GmapCircle(
+          v-if='userLocation'
+          :center='userLocation'
+          :radius='locationAccuracy'
+          :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'white'}"
+        )
+        GmapMarker(
+          v-if='userLocation'
+          :position="userLocation"
+          :icon="{ url: require('@/assets/icons/current-location-marker.svg')}"
+        )
+        GmapCircle(
+          :center='jobLocation'
+          :radius='500'
+          :options="{fillColor: '#ea4335', fillOpacity: .15, strokeColor: 'white'}"
+        )
+        GmapMarker(
+          :position="jobLocation"
+        )
 
       v-card-text
-        p
-          | {{zoomLevel}}
-          | {{ job.address }}
+        p {{ job.address }}
           br
           | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
-        div
 
       v-layout.flex-column.flex-sm-row.justify-space-between
         .flex-grow-1.px-5
@@ -161,6 +173,7 @@ export default class JobView extends Vue {
   selectedShift: Shift | {} = {}
   shifts = []
   userLocation: any = null
+  locationAccuracy: null | number = null
 
   metaInfo() {
     return {
@@ -207,7 +220,23 @@ export default class JobView extends Vue {
   }
 
   async getUserLocation() {
-    const { coords /* , timestamp */ } = await Geolocation.getCurrentPosition()
+    const { coords /* , timestamp */ } = await Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+    })
+
+    // Watch position changes
+    /* Geolocation.watchPosition({
+      enableHighAccuracy: true,
+    }, ({coords}) => {
+      this.updatePosition(coords)
+    }) */
+
+    this.updatePosition(coords)
+  }
+
+  updatePosition(coords: any) {
+    console.log({coords})
+    this.locationAccuracy = coords.accuracy
     this.userLocation = {
       lat: coords.latitude,
       lng: coords.longitude,
