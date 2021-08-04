@@ -46,14 +46,16 @@ div(v-else)
     v-card.mb-3.d-flex.flex-column.soft-shadow
       GmapMap(
         v-if="job.latitude && job.longitude",
-        :center="location",
-        :zoom="17",
+        :center="centerLocation",
+        :zoom="zoomLevel",
         style="height: 40vh"
       )
-        GmapMarker(:position="location")
+        GmapMarker(:position="jobLocation")
+        GmapMarker(v-if='userLocation' :position="userLocation")
 
       v-card-text
         p
+          | {{zoomLevel}}
           | {{ job.address }}
           br
           | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
@@ -123,18 +125,19 @@ div(v-else)
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import { Vue, Component } from "vue-property-decorator"
+import { Vue, Component } from 'vue-property-decorator'
+import { Geolocation } from '@capacitor/geolocation'
 
-import EditJobDialog from "./EditJobDialog.vue"
-import CloseJobDialog from "./CloseJobDialog.vue"
-import CreateShiftDialog from "./CreateShiftDialog.vue"
-import EditShiftDialog from "./EditShiftDialog.vue"
-import DeleteShiftDialog from "./DeleteShiftDialog.vue"
+import EditJobDialog from './EditJobDialog.vue'
+import CloseJobDialog from './CloseJobDialog.vue'
+import CreateShiftDialog from './CreateShiftDialog.vue'
+import EditShiftDialog from './EditShiftDialog.vue'
+import DeleteShiftDialog from './DeleteShiftDialog.vue'
 
-import ClockEvents from "@/components/ClockEvents.vue"
+import ClockEvents from '@/components/ClockEvents.vue'
 
-import { userIs, UserRole } from "@/definitions/User"
-import { Job, Shift } from "@/definitions/Job"
+import { userIs, UserRole } from '@/definitions/User'
+import { Job, Shift } from '@/definitions/Job'
 
 @Component({
   components: {
@@ -144,10 +147,9 @@ import { Job, Shift } from "@/definitions/Job"
     EditShiftDialog,
     DeleteShiftDialog,
     ClockEvents,
-  }
+  },
 })
 export default class JobView extends Vue {
-
   loading = false
   editJobDialog = false
   closeJobDialog = false
@@ -156,19 +158,20 @@ export default class JobView extends Vue {
   deleteShiftDialog = false
   selectedShift: Shift | {} = {}
   shifts = []
+  userLocation: any = {}
 
   metaInfo() {
     return {
-      title: this.job?.name || 'Job'
+      title: this.job?.name || 'Job',
     }
   }
 
   async mounted() {
     this.loading = true
+    this.getUserLocation()
     try {
-      await this.$store.dispatch("loadJob", this.$route.params.jobId)
-    }
-    finally {
+      await this.$store.dispatch('loadJob', this.$route.params.jobId)
+    } finally {
       this.loading = false
     }
   }
@@ -177,13 +180,43 @@ export default class JobView extends Vue {
     return this.$store.getters.job(this.$route.params.jobId)
   }
 
-  get location() {
+  get jobLocation() {
     return { lat: this.job.latitude, lng: this.job.longitude }
+  }
+
+  get centerLocation() {
+    if (!this.userLocation) return this.jobLocation
+    return {
+      lat: (this.jobLocation.lat + this.userLocation.lat) / 2,
+      lng: (this.jobLocation.lng + this.userLocation.lng) / 2,
+    }
+  }
+
+  // Calculate appropriate zoom level to display user location and job location
+  get zoomLevel() {
+    if (!this.userLocation) return 17
+
+    const a = this.jobLocation.lat - this.userLocation.lat
+    const b = this.jobLocation.lng - this.userLocation.lng
+    const distance = Math.sqrt(a**2 + b**2)
+    return Math.abs(Math.ceil(Math.log2(distance / 360)))
+  }
+
+  async getUserLocation() {
+    const { coords /* , timestamp */ } = await Geolocation.getCurrentPosition()
+    this.userLocation = {
+      lat: coords.latitude,
+      lng: coords.longitude,
+    }
+    console.log(this.userLocation)
   }
 
   get userIsOrgManager() {
     return this.$store.state.authenticatedUser
-      ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser)
+      ? userIs(
+          UserRole.OrganizationManager,
+          this.$store.state.authenticatedUser
+        )
       : false
   }
 
