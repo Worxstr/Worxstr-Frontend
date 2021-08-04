@@ -51,7 +51,7 @@ div(v-else)
         style="height: 40vh"
       )
         GmapMarker(:position="jobLocation")
-        GmapMarker(v-if='userLocation' :position="userLocation")
+        GmapMarker(v-if='userLocation' :position="userLocation" :icon="{ url: require('@/assets/icons/current-location-marker.svg')}")
 
       v-card-text
         p
@@ -158,7 +158,7 @@ export default class JobView extends Vue {
   deleteShiftDialog = false
   selectedShift: Shift | {} = {}
   shifts = []
-  userLocation: any = {}
+  userLocation: any = null
 
   metaInfo() {
     return {
@@ -186,10 +186,12 @@ export default class JobView extends Vue {
 
   get centerLocation() {
     if (!this.userLocation) return this.jobLocation
+
     return {
       lat: (this.jobLocation.lat + this.userLocation.lat) / 2,
       lng: (this.jobLocation.lng + this.userLocation.lng) / 2,
     }
+
   }
 
   // Calculate appropriate zoom level to display user location and job location
@@ -208,7 +210,6 @@ export default class JobView extends Vue {
       lat: coords.latitude,
       lng: coords.longitude,
     }
-    console.log(this.userLocation)
   }
 
   get userIsOrgManager() {
