@@ -61,7 +61,7 @@ div(v-else)
           v-if='userLocation'
           :center='userLocation'
           :radius='locationAccuracy'
-          :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'white'}"
+          :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
         )
         GmapMarker(
           v-if='userLocation'
