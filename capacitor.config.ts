@@ -12,9 +12,9 @@ const config: CapacitorConfig = {
   },
   cordova: {},
   server: {
-    // hostname: "worxstr.com",
-    "url": "http://192.168.86.42:8080",
-    "cleartext": true
+    hostname: "worxstr.com",
+    // "url": "http://192.168.86.42:8080",
+    // "cleartext": true
   }
 };
 
