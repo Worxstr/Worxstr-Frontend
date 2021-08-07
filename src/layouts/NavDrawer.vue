@@ -50,7 +50,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
   //- Secondary items
   template(v-slot:append)
-    v-list.pb-8(dense)
+    v-list.secondary-nav-items(dense)
       v-divider
 
       v-tooltip(
@@ -145,8 +145,12 @@ export default class NavDrawer extends Vue {
 </script>
 
 <style lang="scss">
-  #nav.v-navigation-drawer--bottom{
-    height: auto !important;
-    max-height: 100%;
-  }
+#nav.v-navigation-drawer--bottom{
+  height: auto !important;
+  max-height: 100%;
+}
+
+.secondary-nav-items {
+  padding-bottom: env(safe-area-inset-bottom) !important;
+}
 </style>

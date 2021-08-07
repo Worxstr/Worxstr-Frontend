@@ -1,6 +1,6 @@
 <template lang="pug">
 v-app
-  v-system-bar(app :height='safeAreaTop' color='rgba(0,0,0,.35)')
+  v-system-bar(app v-if='safeAreaTop' :height='safeAreaTop' color='rgba(0,0,0,.35)')
 
   toolbar(@toggleDrawer="drawer = !drawer" v-if='showHeader')
   
@@ -9,6 +9,7 @@ v-app
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
   )
+    //- p pageHeight: {{pageHeight}} safeAreaTop: {{safeAreaTop}} safeAreaBottom: {{safeAreaBottom}}
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
         appear,
@@ -16,7 +17,7 @@ v-app
         mode="out-in",
         :duration="{ enter: 150, leave: 50 }"
       )
-        router-view#router-view(:style="`height: ${pageHeight}`")
+        router-view#router-view(:style="`height: ${pageHeight}; padding-bottom: ${bottomPadding}px`")
 
   worxstr-footer(v-if="showFooter")
 
@@ -79,11 +80,27 @@ export default class App extends Vue {
     // Normal view
     if (!this.$route.meta.fullHeight || this.$route.meta.noSkeleton) return "100%";
     // Full height, bottom nav hidden
-    else return `calc(100vh - ${this.headerHeight}px)`;
+    else return `calc(100vh - ${this.headerHeight + this.safeAreaTop + this.safeAreaBottom}px)`;
   }
 
+  // Get safe area values from css definitions
   get safeAreaTop() {
-    return getComputedStyle(document.documentElement).getPropertyValue("--sat")
+    return parseInt(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--sat")
+        .replace('px', '')
+    )
+  }
+  get safeAreaBottom() {
+    return parseInt(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--sab")
+        .replace('px', '')
+    )
+  }
+
+  get bottomPadding() {
+    return this.safeAreaBottom + this.headerHeight
   }
 }
 </script>

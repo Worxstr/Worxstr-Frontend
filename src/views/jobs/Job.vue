@@ -33,15 +33,22 @@ div(v-else)
       v-btn(
         v-if="userIsOrgManager",
         text,
+        :icon='$vuetify.breakpoint.xs'
         color="primary",
         @click="editJobDialog = true"
-      ) Edit
+      )
+        v-icon(left) mdi-pencil
+        span(v-if='!$vuetify.breakpoint.xs') Edit
+
       v-btn(
         v-if="userIsOrgManager",
         text,
+        :icon='$vuetify.breakpoint.xs'
         color="red",
         @click="closeJobDialog = true"
-      ) Close
+      ) 
+        v-icon(left) mdi-close
+        span(v-if='!$vuetify.breakpoint.xs') Close
 
     v-card.mb-3.d-flex.flex-column.soft-shadow
       GmapMap(
@@ -216,7 +223,8 @@ export default class JobView extends Vue {
     const a = this.jobLocation.lat - this.userLocation.lat
     const b = this.jobLocation.lng - this.userLocation.lng
     const distance = Math.sqrt(a**2 + b**2)
-    return Math.abs(Math.ceil(Math.log2(distance / 360)))
+    const zoom = Math.abs(Math.ceil(Math.log2(distance / 360)))
+    return Math.min(zoom, 19)
   }
 
   async getUserLocation() {

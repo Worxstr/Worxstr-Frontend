@@ -10,13 +10,14 @@ v-container.approvals(fluid v-else)
 
   portal(to="toolbarActions")
     v-btn(
-      text,
       color="primary",
+      text
+      :icon='$vuetify.breakpoint.xs'
       @click="openCreateJobDialog",
       v-if="userIsOrgManager"
     )
       v-icon(left) mdi-plus
-      span Add job
+      span(v-if='!$vuetify.breakpoint.xs') Add job
 
   .mb-5
     v-card.soft-shadow(v-if="directJobs.length")

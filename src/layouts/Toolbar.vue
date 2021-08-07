@@ -6,6 +6,7 @@
       elevate-on-scroll
       :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
       :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-5'"
+      :class="$route.meta.landing ? 'landing' : 'app'"
     )
       v-btn(
         icon
@@ -35,7 +36,7 @@
           v-btn(v-for="link in links", text, :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
 
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
-      v-list(nav)
+      v-list.mobile-nav-items(nav)
         v-list-item(v-for="link in links", text, :to="link.to" link)
           v-list-item-content
             v-list-item-title {{ link.text }}
@@ -94,6 +95,11 @@ export default class Toolbar extends Vue {
 <style lang='scss'>
 .toolbar {
   height: auto !important;
-  padding-bottom: env(safe-area-inset-bottom);
+  &.app {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+.mobile-nav-items {
+  padding-top: env(safe-area-inset-top) !important;
 }
 </style>
