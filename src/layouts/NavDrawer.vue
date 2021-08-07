@@ -50,7 +50,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
   //- Secondary items
   template(v-slot:append)
-    v-list(dense)
+    v-list.pb-8(dense)
       v-divider
 
       v-tooltip(

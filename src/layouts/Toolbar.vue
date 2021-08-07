@@ -1,12 +1,11 @@
 <template lang="pug">
   div
-
-    v-app-bar(
+    v-app-bar.toolbar(
       app
       outlined
-      :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
       elevate-on-scroll
       :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
+      :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-5'"
     )
       v-btn(
         icon
@@ -34,7 +33,7 @@
           v-icon mdi-menu
         div(v-else)
           v-btn(v-for="link in links", text, :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
-          
+
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
       v-list(nav)
         v-list-item(v-for="link in links", text, :to="link.to" link)
@@ -91,3 +90,10 @@ export default class Toolbar extends Vue {
   ]
 }
 </script>
+
+<style lang='scss'>
+.toolbar {
+  height: auto !important;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+</style>

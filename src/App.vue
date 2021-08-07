@@ -1,8 +1,10 @@
 <template lang="pug">
 v-app
-  nav-drawer(v-if="showNavDrawer", v-model="drawer")
+  v-system-bar(app :height='safeAreaTop' color='rgba(0,0,0,.35)')
 
   toolbar(@toggleDrawer="drawer = !drawer" v-if='showHeader')
+  
+  nav-drawer(v-if="showNavDrawer", v-model="drawer")
 
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
@@ -78,6 +80,10 @@ export default class App extends Vue {
     if (!this.$route.meta.fullHeight || this.$route.meta.noSkeleton) return "100%";
     // Full height, bottom nav hidden
     else return `calc(100vh - ${this.headerHeight}px)`;
+  }
+
+  get safeAreaTop() {
+    return getComputedStyle(document.documentElement).getPropertyValue("--sat")
   }
 }
 </script>
