@@ -19,47 +19,25 @@ v-container.approvals(fluid v-else)
       span Add job
 
   .mb-5
-    v-card.soft-shadow(v-if="directJobs.length")
-      v-list
-        v-list-item(
-          v-for="job in directJobs",
-          :key="job.id",
-          link,
-          :to="{ name: 'job', params: { jobId: job.id } }"
-        )
-          v-list-item-content
-            v-list-item-title(v-text="job.name")
-              v-list-item-subtitle(v-text="job.address")
-
-    .d-flex.flex-column.justify-center(v-else)
-      v-icon.text-h2.ma-5 mdi-calendar-check
-      p.text-center.text-body-1 No jobs yet.
+    jobs-list(:jobs='directJobs')
+    
 
   .mb-5(v-if="indirectJobs.length")
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Subordinate jobs
 
-    v-card
-      v-list
-        v-list-item(
-          v-for="job in indirectJobs",
-          :key="job.id",
-          link,
-          :to="{ name: 'job', params: { jobId: job.id } }"
-        )
-          v-list-item-content
-            v-list-item-title(v-text="job.name")
-              v-list-item-subtitle(v-text="job.address")
+    jobs-list(:jobs='indirectJobs')
 </template>
 
 <script lang="ts">
 import EditJobDialog from './EditJobDialog.vue'
+import JobsList from '@/components/JobsList.vue'
 import { userIs, UserRole } from '@/definitions/User'
 import { Job } from '@/definitions/Job'
 import { Vue, Component } from 'vue-property-decorator'
 
 @Component({
-  components: { EditJobDialog },
+  components: { EditJobDialog, JobsList },
 })
 export default class JobsView extends Vue {
 
