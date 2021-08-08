@@ -1,6 +1,7 @@
 <template lang="pug">
 .jobs-list
 
+  edit-job-dialog(:opened.sync="editJobDialog", :job.sync="selectedJob")
   close-job-dialog(:opened.sync="closeJobDialog", :job.sync="selectedJob")
 
   v-card.soft-shadow(v-if="jobs.length")
@@ -20,10 +21,14 @@
               v-btn(icon v-bind='attrs' v-on='on' @click.native.stop)
                 v-icon mdi-dots-vertical
             v-list
+              v-list-item(@click='openEditJobDialog(job)')
+                v-list-item-icon.mr-3
+                  v-icon mdi-pencil
+                v-list-item-title Edit
               v-list-item(@click='openCloseJobDialog(job)')
                 v-list-item-icon.mr-3
                   v-icon(color='error') mdi-close
-                v-list-item-title Close job
+                v-list-item-title Close
 
   .d-flex.flex-column.justify-center(v-else)
     v-icon.text-h2.ma-5 mdi-calendar-check
@@ -34,10 +39,12 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Job } from '@/definitions/Job.ts'
+import EditJobDialog from "@/views/jobs/EditJobDialog.vue"
 import CloseJobDialog from "@/views/jobs/CloseJobDialog.vue"
 
 @Component({
   components: {
+    EditJobDialog,
     CloseJobDialog
   }
 })
@@ -45,8 +52,14 @@ export default class JobsList extends Vue {
   
   @Prop(Array) readonly jobs: Array<Job>
 
+  editJobDialog = false
   closeJobDialog = false
   selectedJob: Job | null = null
+
+  openEditJobDialog(job: Job) {
+    this.selectedJob = job
+    this.editJobDialog = true
+  }
 
   openCloseJobDialog(job: Job) {
     this.selectedJob = job
