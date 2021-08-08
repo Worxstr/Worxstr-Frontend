@@ -136,6 +136,10 @@ export default {
         description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He loves cats, and he is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
         socials: [
           {
+            link: 'https://alex.wohlbruck.com',
+            icon: 'mdi-web'
+          },
+          {
             link: 'mailto:alexwohlbruck@gmail.com',
             icon: 'mdi-at'
           },
@@ -154,6 +158,10 @@ export default {
         title: "Lead Backend Developer / DevOps engineer",
         photo: 'andrew.jpg',
         socials: [
+          {
+            link: 'https://thorp.dev/',
+            icon: 'mdi-web'
+          },
           {
             link: 'https://github.com/aThorp96',
             icon: 'mdi-github',

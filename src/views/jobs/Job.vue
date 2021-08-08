@@ -10,13 +10,12 @@ v-container(v-if="loading" fluid)
   )
 
 div(v-else)
-  v-container.approvals.mb-50(v-if="job" fluid)
+  v-container.approvals.mb-16(v-if="job" fluid)
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
-    edit-shift-dialog(
-      :create="true",
-      :opened.sync="addShiftDialog",
-      :contractors="job.contractors"
+    create-shift-dialog(
+      :opened.sync='createShiftDialog',
+      :contractors='job.contractors'
     )
     edit-shift-dialog(
       :opened.sync="editShiftDialog",
@@ -34,31 +33,54 @@ div(v-else)
       v-btn(
         v-if="userIsOrgManager",
         text,
+        :icon='$vuetify.breakpoint.xs'
         color="primary",
         @click="editJobDialog = true"
-      ) Edit
+      )
+        v-icon(left) mdi-pencil
+        span(v-if='!$vuetify.breakpoint.xs') Edit
+
       v-btn(
         v-if="userIsOrgManager",
         text,
+        :icon='$vuetify.breakpoint.xs'
         color="red",
         @click="closeJobDialog = true"
-      ) Close
+      ) 
+        v-icon(left) mdi-close
+        span(v-if='!$vuetify.breakpoint.xs') Close
 
     v-card.mb-3.d-flex.flex-column.soft-shadow
       GmapMap(
         v-if="job.latitude && job.longitude",
-        :center="location",
-        :zoom="17",
+        :center="centerLocation",
+        :zoom="zoomLevel",
         style="height: 40vh"
       )
-        GmapMarker(:position="location")
+        GmapCircle(
+          v-if='userLocation'
+          :center='userLocation'
+          :radius='locationAccuracy'
+          :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
+        )
+        GmapMarker(
+          v-if='userLocation'
+          :position="userLocation"
+          :icon="{ url: require('@/assets/icons/current-location-marker.svg')}"
+        )
+        GmapCircle(
+          :center='jobLocation'
+          :radius='500'
+          :options="{fillColor: '#ea4335', fillOpacity: .15, strokeColor: 'white'}"
+        )
+        GmapMarker(
+          :position="jobLocation"
+        )
 
       v-card-text
-        p
-          | {{ job.address }}
+        p {{ job.address }}
           br
           | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
-        div
 
       v-layout.flex-column.flex-sm-row.justify-space-between
         .flex-grow-1.px-5
@@ -80,7 +102,7 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text, @click="addShiftDialog = true")
+      v-btn(text, @click="createShiftDialog = true")
         v-icon(left) mdi-plus
         span Add shift
 
@@ -92,7 +114,7 @@ div(v-else)
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0
           p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ shift.contractor | fullName }}
+            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ (shift.contractor ? shift.contractor : getContractor(shift.contractor_id)) | fullName }}
             span.my-1 {{ shift.site_location }}
 
           v-chip.mx-4.px-2.flex-grow-0(
@@ -119,55 +141,59 @@ div(v-else)
           v-card-actions
             v-spacer
             v-btn(text, @click="openEditShiftDialog(shift)") Edit
-            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Remove
+            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Delete
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import { Vue, Component } from "vue-property-decorator"
+import { Vue, Component } from 'vue-property-decorator'
+import { Geolocation } from '@capacitor/geolocation'
 
-import EditJobDialog from "./EditJobDialog.vue"
-import CloseJobDialog from "./CloseJobDialog.vue"
-import EditShiftDialog from "./EditShiftDialog.vue"
-import DeleteShiftDialog from "./DeleteShiftDialog.vue"
+import EditJobDialog from './EditJobDialog.vue'
+import CloseJobDialog from './CloseJobDialog.vue'
+import CreateShiftDialog from './CreateShiftDialog.vue'
+import EditShiftDialog from './EditShiftDialog.vue'
+import DeleteShiftDialog from './DeleteShiftDialog.vue'
 
-import ClockEvents from "@/components/ClockEvents.vue"
+import ClockEvents from '@/components/ClockEvents.vue'
 
-import { userIs, UserRole } from "@/definitions/User"
-import { Job, Shift } from "@/definitions/Job"
+import { userIs, UserRole } from '@/definitions/User'
+import { Job, Shift } from '@/definitions/Job'
 
 @Component({
   components: {
     EditJobDialog,
     CloseJobDialog,
+    CreateShiftDialog,
     EditShiftDialog,
     DeleteShiftDialog,
     ClockEvents,
-  }
+  },
 })
 export default class JobView extends Vue {
-
   loading = false
   editJobDialog = false
   closeJobDialog = false
-  addShiftDialog = false
+  createShiftDialog = false
   editShiftDialog = false
   deleteShiftDialog = false
   selectedShift: Shift | {} = {}
   shifts = []
+  userLocation: any = null
+  locationAccuracy: null | number = null
 
   metaInfo() {
     return {
-      title: this.job?.name || 'Job'
+      title: this.job?.name || 'Job',
     }
   }
 
   async mounted() {
     this.loading = true
+    this.getUserLocation()
     try {
-      await this.$store.dispatch("loadJob", this.$route.params.jobId)
-    }
-    finally {
+      await this.$store.dispatch('loadJob', this.$route.params.jobId)
+    } finally {
       this.loading = false
     }
   }
@@ -176,14 +202,66 @@ export default class JobView extends Vue {
     return this.$store.getters.job(this.$route.params.jobId)
   }
 
-  get location() {
+  get jobLocation() {
     return { lat: this.job.latitude, lng: this.job.longitude }
+  }
+
+  get centerLocation() {
+    if (!this.userLocation) return this.jobLocation
+
+    return {
+      lat: (this.jobLocation.lat + this.userLocation.lat) / 2,
+      lng: (this.jobLocation.lng + this.userLocation.lng) / 2,
+    }
+
+  }
+
+  // Calculate appropriate zoom level to display user location and job location
+  get zoomLevel() {
+    if (!this.userLocation) return 17
+
+    const a = this.jobLocation.lat - this.userLocation.lat
+    const b = this.jobLocation.lng - this.userLocation.lng
+    const distance = Math.sqrt(a**2 + b**2)
+    const zoom = Math.abs(Math.ceil(Math.log2(distance / 360)))
+    return Math.min(zoom, 19)
+  }
+
+  async getUserLocation() {
+    const { coords /* , timestamp */ } = await Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+    })
+
+    // Watch position changes
+    /* Geolocation.watchPosition({
+      enableHighAccuracy: true,
+    }, ({coords}) => {
+      this.updatePosition(coords)
+    }) */
+
+    this.updatePosition(coords)
+  }
+
+  updatePosition(coords: any) {
+    console.log({coords})
+    this.locationAccuracy = coords.accuracy
+    this.userLocation = {
+      lat: coords.latitude,
+      lng: coords.longitude,
+    }
   }
 
   get userIsOrgManager() {
     return this.$store.state.authenticatedUser
-      ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser)
+      ? userIs(
+          UserRole.OrganizationManager,
+          this.$store.state.authenticatedUser
+        )
       : false
+  }
+
+  getContractor(contractorId: number) {
+    return this.$store.getters.user(contractorId)
   }
 
   openEditShiftDialog(shift: Shift) {

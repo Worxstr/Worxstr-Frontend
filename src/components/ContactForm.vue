@@ -9,7 +9,6 @@ v-form.flex-grow-1.d-flex.flex-column(
     v-model="form.business_name",
     label="Business name",
     required,
-    :rules='rules.businessName'
     outlined,
     dense,
     :color="color",
@@ -37,13 +36,10 @@ v-form.flex-grow-1.d-flex.flex-column(
     )
 
   .d-flex
-    v-text-field(
+    phone-input(
       v-if="usePhone",
       v-model="form.phone",
       :rules='rules.phone'
-      type="tel",
-      v-mask="'(###) ###-####'",
-      label="Phone number",
       required,
       outlined,
       dense,
@@ -67,30 +63,34 @@ v-form.flex-grow-1.d-flex.flex-column(
   v-text-field(
     v-model="form.website",
     label="Business website",
+    type='url'
+    :rules='rules.url'
+    placeholder='https://example.com'
+    required,
     outlined,
     dense,
     :color="color",
     :filled="filled"
   )
 
-  .d-flex.flex-column.flex-md-row
-    v-select.mr-2(
-      v-model="form.num_managers",
+  .d-flex.flex-column.flex-md-row(v-if='showManagerContractorFields')
+    v-text-field.mr-2(
+      v-model.number="form.num_managers",
       label="Number of managers",
       type="number",
       min="1",
-      :items='contractorCountOptions'
+      required,
       outlined,
       dense,
       :color="color",
       :filled="filled"
     )
-    v-select.ml-2(
-      v-model="form.num_contractors",
+    v-text-field.ml-2(
+      v-model.number="form.num_contractors",
       label="Number of contractors",
       type="number",
       min="1",
-      :items='contractorCountOptions'
+      required,
       outlined,
       dense,
       :color="color",
@@ -102,16 +102,28 @@ v-form.flex-grow-1.d-flex.flex-column(
   v-card-actions.pt-0
     v-spacer
     slot
-    v-btn(text, elevation='0' :text="text", :color="color" :disabled='!isValid' type='submit') Send message
+    v-btn(
+      type='submit'
+      text
+      :text="text"
+      :color="color"
+      :disabled='!isValid'
+      :loading="loading"
+    ) Request information
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { emailRules, exists, phoneRules } from '@/plugins/inputValidation'
+import { emailRules, exists, url } from '@/plugins/inputValidation'
+import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
-@Component
+@Component({
+  components: {
+    PhoneInput
+  }
+})
 export default class ContactForm extends Vue {
   
   isValid = false
@@ -130,30 +142,49 @@ export default class ContactForm extends Vue {
   }
 
   rules = {
-    businessName: [exists('Business name required')],
     contactName: [exists('Name required')],
-    phone: phoneRules,
     email: emailRules,
+    url: [url],
   }
-
-  contractorCountOptions = [{
-    text: '0-25',
-    value: 0
-  },{
-    text: '26-100',
-    value: 1
-  },{
-    text: '101+',
-    value: 2
-  }]
 
   @Prop(String) readonly color: string | undefined
   @Prop({ default: false }) readonly text!: boolean
   @Prop({ default: false }) readonly filled!: boolean
+  @Prop({ default: true }) readonly showManagerContractorFields!: boolean
+  @Prop(Object) readonly dataSupplement: object | undefined
 
-  async submitForm() {
-    console.log('dummy submit')
+  loading = false
+
+  mounted() {
+    if (this.dataSupplement) {
+      this.form = {
+        ...this.form,
+        ...this.dataSupplement
+      }
+    }
   }
 
+  async submitForm() {
+    this.loading = true 
+
+    const request: any = {...this.form}
+
+    if (this.form.phone) {
+      request.phone = {
+        country_code: '1',
+        area_code: this.form.phone.substring(1,4),
+        phone_number: this.form.phone.substring(6,9) + this.form.phone.substring(10,14)
+      }
+      delete request.email
+    }
+    else {
+      delete request.phone
+    }
+    
+    await this.$store.dispatch('contactSales', request)
+
+    this.loading = false
+    this.$emit('submitted')
+  }
 }
 </script>

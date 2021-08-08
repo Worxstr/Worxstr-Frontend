@@ -31,8 +31,8 @@ div
 
           v-expand-transition(appear)
             v-card-text.py-0(v-if="chosenOption == option.name")
-              contact-form.py-4(color="primary")
-                v-btn(elevation='0' text, @click="chosenOption = null") Cancel
+              contact-form(color="primary" @submitted='chosenOption = null')
+                v-btn(text, @click="chosenOption = null") Cancel
 
     //- .mt-12
     //-   h4.text-h4.font-weight-black.mb-3 Need help now?
