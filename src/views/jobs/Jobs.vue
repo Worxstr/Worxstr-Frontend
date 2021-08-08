@@ -19,6 +19,10 @@ v-container.approvals(fluid v-else)
       v-icon(left) mdi-plus
       span(v-if='!$vuetify.breakpoint.xs') Add job
 
+      
+  v-card.mb-3.d-flex.flex-column.soft-shadow
+    jobs-map(:jobs='allJobs')
+
   .mb-5
     jobs-list(:jobs='directJobs')
     
@@ -31,14 +35,17 @@ v-container.approvals(fluid v-else)
 </template>
 
 <script lang="ts">
-import EditJobDialog from './EditJobDialog.vue'
-import JobsList from '@/components/JobsList.vue'
-import { userIs, UserRole } from '@/definitions/User'
-import { Job } from '@/definitions/Job'
 import { Vue, Component } from 'vue-property-decorator'
 
+import { userIs, UserRole } from '@/definitions/User'
+import { Job } from '@/definitions/Job'
+
+import EditJobDialog from './EditJobDialog.vue'
+import JobsMap from '@/components/JobsMap.vue'
+import JobsList from '@/components/JobsList.vue'
+
 @Component({
-  components: { EditJobDialog, JobsList },
+  components: { EditJobDialog, JobsList, JobsMap },
 })
 export default class JobsView extends Vue {
 
@@ -66,6 +73,10 @@ export default class JobsView extends Vue {
 
   get indirectJobs(): Job[] {
     return this.$store.getters.indirectJobs
+  }
+
+  get allJobs(): Job[] {
+    return [...this.directJobs, ...this.indirectJobs]
   }
 
   get userIsOrgManager() {
