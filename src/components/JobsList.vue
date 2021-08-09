@@ -50,7 +50,7 @@ import CloseJobDialog from "@/views/jobs/CloseJobDialog.vue"
 })
 export default class JobsList extends Vue {
   
-  @Prop(Array) readonly jobs: Array<Job>
+  @Prop(Array) readonly jobs!: Array<Job>
 
   editJobDialog = false
   closeJobDialog = false

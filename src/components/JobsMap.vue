@@ -18,14 +18,14 @@
     
     GmapCircle(
       v-for='job in jobs'
-      :index='job.id'
+      :key='job.id'
       :center='jobLocation(job)'
       :radius='500'
       :options="{fillColor: '#ea4335', fillOpacity: .15, strokeColor: 'white'}"
     )
     GmapMarker(
       v-for='job in jobs'
-      :index='job.id'
+      :key='job.id'
       :position="jobLocation(job)"
     )
 </template>
@@ -41,7 +41,7 @@ export default class JobsMap extends Vue {
   userLocation: any = null
   locationAccuracy: null | number = null
   
-  @Prop(Array) readonly jobs: Array<Job>
+  @Prop(Array) readonly jobs!: Array<Job>
 
   async mounted() {
     this.getUserLocation()
@@ -105,7 +105,7 @@ export default class JobsMap extends Vue {
     return max
   }
 
-  distanceBetweenPoints(a: Job, b: Job) {
+  distanceBetweenPoints(a: any, b: any) {
     const deltaA = a.latitude - b.latitude
     const deltaB = a.longitude - b.longitude
 

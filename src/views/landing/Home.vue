@@ -44,7 +44,7 @@
     delimiter-icon="mdi-circle-medium",
     :dark="true",
   )
-    v-carousel-item(v-for='feature in carousel')
+    v-carousel-item(v-for='(feature, i) in carousel' :key='i')
       v-sheet(:dark='feature.dark', height='100%' :class='`gradient-${feature.gradient}`')
 
         v-row.jumbo.carousel-content.flex-column.flex-md-row.jumbo.d-flex.align-center.justify-center(:class="feature.reverse ? 'flex-md-row-reverse' : ''")

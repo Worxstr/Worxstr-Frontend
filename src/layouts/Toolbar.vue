@@ -33,11 +33,11 @@
         v-btn(v-if='$vuetify.breakpoint.xs' icon @click='menu = true')
           v-icon mdi-menu
         div(v-else)
-          v-btn(v-for="link in links", text, :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
+          v-btn(v-for="(link, i) in links" :key='i' text :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
 
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
       v-list.mobile-nav-items(nav)
-        v-list-item(v-for="link in links", text, :to="link.to" link)
+        v-list-item(v-for="(link, i) in links" :key='i' text :to="link.to" link)
           v-list-item-content
             v-list-item-title {{ link.text }}
 </template>

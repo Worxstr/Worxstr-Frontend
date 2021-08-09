@@ -7,7 +7,7 @@ div
   v-container.shift-down(style='position: relative; z-index: 1')
     v-row.justify-center
       v-col(
-        v-for="(option, i) in helpOptions", :index="i"
+        v-for="(option, i) in helpOptions" :key="i"
         cols="12",
         :md="chosenOption == option.name ? 9 : 6",
         v-if="chosenOption == option.name || chosenOption == null"

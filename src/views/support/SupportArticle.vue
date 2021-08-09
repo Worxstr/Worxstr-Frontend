@@ -15,7 +15,8 @@
             h6.text-h6.mb-4 Related articles
             .d-flex.flex-column
               router-link.mb-2(
-                v-for='related in article.category.related'
+                v-for='(related, i) in article.category.related'
+                :key='i'
                 :to="{ title: 'supportArticle', params: {articleId: related.id}}"
               ) {{ related.title }}
 
