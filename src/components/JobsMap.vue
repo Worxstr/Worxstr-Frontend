@@ -18,14 +18,14 @@
     
     GmapCircle(
       v-for='job in jobs'
-      :key='job.id'
+      :key='`circle-${job.id}`'
       :center='jobLocation(job)'
       :radius='500'
       :options="{fillColor: '#ea4335', fillOpacity: .15, strokeColor: 'white'}"
     )
     GmapMarker(
       v-for='job in jobs'
-      :key='job.id'
+      :key='`marker-${job.id}`'
       :position="jobLocation(job)"
     )
 </template>
@@ -33,7 +33,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Geolocation } from '@capacitor/geolocation'
-import { Job } from '@/definitions/Job.ts'
+import { Job } from '@/definitions/Job'
 
 @Component
 export default class JobsMap extends Vue {
@@ -76,7 +76,7 @@ export default class JobsMap extends Vue {
 
   // Calculate appropriate zoom level to display user location and job location
   get zoomLevel() {
-    if (!this.userLocation || !this.jobs) return 17
+    if (!this.jobs) return 17
 
     const distance = this.maxDistanceBetweenAllJobs(this.jobs)
     const zoom = Math.abs(Math.ceil(Math.log2(distance / 360)))
@@ -95,11 +95,13 @@ export default class JobsMap extends Vue {
         max = Math.max(max, this.distanceBetweenPoints(jobs[i], jobs[j]))
       }
 
-      // Compare each job to user location
-      max = Math.max(max, this.distanceBetweenPoints(jobs[i], {
-        latitude: this.userLocation.lat,
-        longitude: this.userLocation.lng,
-      }))
+      if (this.userLocation) {
+        // Compare each job to user location
+        max = Math.max(max, this.distanceBetweenPoints(jobs[i], {
+          latitude: this.userLocation.lat,
+          longitude: this.userLocation.lng,
+        }))
+      }
     }
 
     return max
