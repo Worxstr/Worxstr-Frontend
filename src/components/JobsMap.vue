@@ -20,13 +20,14 @@
       v-for='job in jobs'
       :key='`circle-${job.id}`'
       :center='jobLocation(job)'
-      :radius='500'
-      :options="{fillColor: '#ea4335', fillOpacity: .15, strokeColor: 'white'}"
+      :radius='job.radius || 75'
+      :options="{fillColor: job.color || '#ea4335', fillOpacity: .15, strokeColor: 'white'}"
     )
     GmapMarker(
       v-for='job in jobs'
       :key='`marker-${job.id}`'
       :position="jobLocation(job)"
+      :options="{fillColor: job.color || '#ea4335'}"
     )
 </template>
 
@@ -79,7 +80,7 @@ export default class JobsMap extends Vue {
     if (!this.jobs) return 17
 
     const distance = this.maxDistanceBetweenAllJobs(this.jobs)
-    const zoom = Math.abs(Math.ceil(Math.log2(distance / 360)))
+    const zoom = Math.abs(Math.log2(distance / 360))
 
     return Math.min(zoom, 19)
   }

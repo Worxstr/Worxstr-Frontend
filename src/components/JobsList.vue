@@ -11,6 +11,9 @@
         :key="job.id",
         @click="$router.push({ name: 'job', params: { jobId: job.id } })"
       )
+        v-list-item-avatar
+          v-badge(:color='job.color' dot)
+
         v-list-item-content
           v-list-item-title(v-text="job.name")
           v-list-item-subtitle(v-text="job.address")

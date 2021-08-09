@@ -2,7 +2,7 @@
 v-dialog(
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  max-width="700",
   persistent
 )
   v-card.d-flex.flex-column(v-if="editedJob")
@@ -41,6 +41,20 @@ v-dialog(
           :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''",
           :rules="rules.address"
         )
+
+        div(v-if='showMap')
+          .d-flex.align-center
+            v-slider(
+              v-model='editedJob.radius'
+              label='Radius'
+              min='75'
+              max='1000'
+            )
+            p {{ editedJob.radius | distance }}
+
+          v-color-picker(v-model='editedJob.color' show-swatches)
+
+          jobs-map(:jobs='[editedJob]')
 
         v-subheader Managers
         v-select(
@@ -105,10 +119,12 @@ import { User } from '@/definitions/User'
 import { Job } from '@/definitions/Job';
 import { exists, phoneRules, emailRules } from '@/plugins/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
+import JobsMap from '@/components/JobsMap.vue'
 
 @Component({
   components: {
-    PhoneInput
+    PhoneInput,
+    JobsMap,
   }
 })
 export default class EditJobDialog extends Vue {
@@ -117,8 +133,11 @@ export default class EditJobDialog extends Vue {
   @Prop({ default: false }) readonly create!: boolean
   @Prop(Object) readonly job: Job | undefined
 
+  editedJob: any = {
+    color: '#ffffff'
+  } // TODO: add type
   isValid = false
-  editedJob: any = {} // TODO: add type
+  showMap = false
   loading = false
   place: any
 
@@ -155,6 +174,7 @@ export default class EditJobDialog extends Vue {
       this.editedJob.latitude = address.latitude
       this.editedJob.longitude = address.longitude
     }
+    this.showMap = true
     this.place = place
   }
   async updateJob() {

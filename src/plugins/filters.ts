@@ -28,6 +28,13 @@ Vue.filter('phone', (value: string) => {
 	return `(${value.substring(0,3)}) ${value.substring(3,6)}-${value.substring(6,10)}`
 })
 
+Vue.filter('distance', (value: number) => {
+	if (value < 1000) {
+		return value + ' m'
+	}
+	return (value / 1000).toFixed(1) + ' km'
+})
+
 Vue.filter('snakeToSpace', (value: string) => {
 	return value.replaceAll('_', ' ')
 })
