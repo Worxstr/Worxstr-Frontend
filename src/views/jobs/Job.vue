@@ -50,7 +50,7 @@ div(v-else)
         v-icon(left) mdi-close
         span(v-if='!$vuetify.breakpoint.xs') Close
 
-    v-card.mb-3.d-flex.flex-column.soft-shadow
+    v-card.mb-3.d-flex.flex-column.soft-shadow(:style='`border-top: 3px solid ${job.color}`')
       
       jobs-map(:jobs='[job]')
 

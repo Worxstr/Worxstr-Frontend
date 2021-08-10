@@ -132,6 +132,7 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
+import colors from 'vuetify/lib/util/colors'
 import { User } from '@/definitions/User'
 import { Job } from '@/definitions/Job';
 import { exists, phoneRules, emailRules } from '@/plugins/inputValidation'
@@ -151,7 +152,7 @@ export default class EditJobDialog extends Vue {
   @Prop(Object) readonly job: Job | undefined
 
   editedJob: any = {
-    color: 'red',
+    color: colors.red.base,
     address: null,
   } // TODO: add type
   isValid = false
@@ -186,7 +187,6 @@ export default class EditJobDialog extends Vue {
     if (this.create) (this.$refs.form as HTMLFormElement).reset();
   }
   setPlace(address: any, place: string, id: string) {
-
     if (this.editedJob) {
       this.editedJob.address = address.name
       this.editedJob.city = address.locality

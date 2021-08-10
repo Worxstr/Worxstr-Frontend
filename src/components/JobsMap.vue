@@ -27,7 +27,7 @@
       v-for='job in jobs'
       :key='`marker-${job.id}`'
       :position="jobLocation(job)"
-      :options="{fillColor: job.color || '#ea4335'}"
+      :options="{icon: marker(job.color)}"
     )
 </template>
 
@@ -35,6 +35,8 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Geolocation } from '@capacitor/geolocation'
 import { Job } from '@/definitions/Job'
+
+
 
 @Component
 export default class JobsMap extends Vue {
@@ -81,12 +83,12 @@ export default class JobsMap extends Vue {
 
   // Calculate appropriate zoom level to display user location and job location
   get zoomLevel() {
-    if (!this.jobs) return 17
+    if (!this.jobs) return 16
 
     const distance = this.maxDistanceBetweenAllJobs(this.jobs)
     const zoom = Math.abs(Math.log2(distance / 360))
 
-    return Math.min(zoom, 19)
+    return Math.min(zoom, 16)
   }
 
   maxDistanceBetweenAllJobs(jobs: Array<Job>) {
@@ -133,6 +135,22 @@ export default class JobsMap extends Vue {
 
   jobLocation(job: Job) {
     return { lat: job.latitude, lng: job.longitude }
+  }
+
+  darkenColor(color: string, amount: number) {
+    const c = /^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/.exec(color)
+    return `#${c[1] + (~~(Math.min(Math.max(parseInt(c[2], 16) + amount, 0), 255))).toString(16)}${c[3]}`
+  }
+
+  marker(color: string) {
+    return {
+      path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
+      fillColor: color,
+      fillOpacity: 1,
+      strokeColor: this.darkenColor(color, -50),
+      strokeWeight: 2,
+      scale: 1
+    }
   }
 }
 </script>
