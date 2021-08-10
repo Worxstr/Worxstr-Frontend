@@ -2,7 +2,7 @@
   GmapMap(
     :center="centerLocation",
     :zoom="zoomLevel",
-    style="height: 40vh"
+    :style='`height: ${height}`'
   )
     GmapCircle(
       v-if='userLocation'
@@ -43,12 +43,16 @@ export default class JobsMap extends Vue {
   locationAccuracy: null | number = null
   
   @Prop(Array) readonly jobs!: Array<Job>
+  @Prop({ default: '40vh' }) height!: string
+  @Prop({ default: false }) hideUserLocation!: boolean
 
   async mounted() {
     this.getUserLocation()
   }
 
   async getUserLocation() {
+
+    if (this.hideUserLocation) return
 
     // TODO: Keep track of user location in global app state
 

@@ -44,17 +44,34 @@ v-dialog(
 
         div(v-if='showMap')
           .d-flex.align-center
-            v-slider(
+            .d-flex.align-center
+              p.mr-4.mb-3 Job color
+              v-menu(offset-y content-class='color-picker')
+                template(v-slot:activator='{ on, attrs }')
+                  .mb-3(v-bind='attrs' v-on='on')
+                    v-badge.soft-shadow(:color="editedJob.color || '#4285f4'" bordered)
+                    
+                v-color-picker(
+                  v-model='editedJob.color'
+                  show-swatches
+                  hide-canvas
+                  hide-sliders
+                  hide-inputs
+                  swatches-max-height='350'
+                )
+
+            .mx-4
+            
+            v-slider.mt-3(
               v-model='editedJob.radius'
               label='Radius'
               min='75'
               max='1000'
             )
-            p {{ editedJob.radius | distance }}
+            p.mt-1 {{ editedJob.radius | distance }}
 
-          v-color-picker(v-model='editedJob.color' show-swatches)
-
-          jobs-map(:jobs='[editedJob]')
+          v-card.soft-shadow
+            jobs-map(:jobs='[editedJob]' :hide-user-location='true')
 
         v-subheader Managers
         v-select(
@@ -134,10 +151,10 @@ export default class EditJobDialog extends Vue {
   @Prop(Object) readonly job: Job | undefined
 
   editedJob: any = {
-    color: '#ffffff'
+    color: 'red',
+    address: null,
   } // TODO: add type
   isValid = false
-  showMap = false
   loading = false
   place: any
 
@@ -156,6 +173,10 @@ export default class EditJobDialog extends Vue {
       this.editedJob = Object.assign({}, this.job);
   }
 
+  get showMap() {
+    return !!this.editedJob?.address
+  }
+
   get managers(): User[] {
     return this.$store.state.managers
   }
@@ -165,6 +186,7 @@ export default class EditJobDialog extends Vue {
     if (this.create) (this.$refs.form as HTMLFormElement).reset();
   }
   setPlace(address: any, place: string, id: string) {
+
     if (this.editedJob) {
       this.editedJob.address = address.name
       this.editedJob.city = address.locality
@@ -174,7 +196,6 @@ export default class EditJobDialog extends Vue {
       this.editedJob.latitude = address.latitude
       this.editedJob.longitude = address.longitude
     }
-    this.showMap = true
     this.place = place
   }
   async updateJob() {
@@ -190,3 +211,11 @@ export default class EditJobDialog extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.color-picker {
+  &.v-menu__content {
+    min-width: unset !important;
+  }
+}
+</style>
