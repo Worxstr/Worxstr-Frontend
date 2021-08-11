@@ -71,7 +71,7 @@ v-dialog(
             p.mt-1 {{ editedJob.radius | distance }}
 
           v-card.soft-shadow
-            jobs-map(:jobs='[editedJob]' :hide-user-location='true')
+            jobs-map(:jobs='[editedJob]')
 
         v-subheader Managers
         v-select(

@@ -52,7 +52,7 @@ div(v-else)
 
     v-card.mb-3.d-flex.flex-column.soft-shadow(:style='`border-top: 3px solid ${job.color}`')
       
-      jobs-map(:jobs='[job]')
+      jobs-map(:jobs='[job]' :show-user-location='true')
 
       v-card-text
         p {{ job.address }}
