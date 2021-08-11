@@ -36,7 +36,10 @@
     )
       .info_window.container(v-if='infoContent')
         h3 {{ infoContent.name }}
-        p {{ infoContent.address }}
+        p
+          | {{ infoContent.address }}
+          br
+          | {{ infoContent.city }}, {{ infoContent.state }} {{ infoContent.zip_code }}
         router-link(:to="{name: 'job', params: {jobId: infoContent.id}}") View job
 </template>
 
@@ -60,7 +63,6 @@ export default class JobsMap extends Vue {
   currentMidx = null
   infoContent: Job | null = null
   infoOptions = {
-    // content: '',
     pixelOffset: {
       width: 0,
       height: -30,

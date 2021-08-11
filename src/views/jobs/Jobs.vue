@@ -22,8 +22,6 @@ v-container.approvals(fluid v-else)
       
   v-card.mb-3.d-flex.flex-column.soft-shadow
     jobs-map(:jobs='allJobs')
-
-  .mb-5
     jobs-list(:jobs='directJobs')
     
 
