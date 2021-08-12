@@ -10,56 +10,40 @@ v-container.approvals(fluid v-else)
 
   portal(to="toolbarActions")
     v-btn(
-      text,
       color="primary",
+      text
+      :icon='$vuetify.breakpoint.xs'
       @click="openCreateJobDialog",
       v-if="userIsOrgManager"
     )
       v-icon(left) mdi-plus
-      span Add job
+      span(v-if='!$vuetify.breakpoint.xs') Add job
 
-  .mb-5
-    v-card.soft-shadow(v-if="directJobs.length")
-      v-list
-        v-list-item(
-          v-for="job in directJobs",
-          :key="job.id",
-          link,
-          :to="{ name: 'job', params: { jobId: job.id } }"
-        )
-          v-list-item-content
-            v-list-item-title(v-text="job.name")
-              v-list-item-subtitle(v-text="job.address")
-
-    .d-flex.flex-column.justify-center(v-else)
-      v-icon.text-h2.ma-5 mdi-calendar-check
-      p.text-center.text-body-1 No jobs yet.
+      
+  v-card.mb-3.d-flex.flex-column.soft-shadow
+    jobs-map(:jobs='allJobs')
+    jobs-list(:jobs='directJobs')
+    
 
   .mb-5(v-if="indirectJobs.length")
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Subordinate jobs
 
-    v-card
-      v-list
-        v-list-item(
-          v-for="job in indirectJobs",
-          :key="job.id",
-          link,
-          :to="{ name: 'job', params: { jobId: job.id } }"
-        )
-          v-list-item-content
-            v-list-item-title(v-text="job.name")
-              v-list-item-subtitle(v-text="job.address")
+    jobs-list(:jobs='indirectJobs')
 </template>
 
 <script lang="ts">
-import EditJobDialog from './EditJobDialog.vue'
-import { userIs, UserRole } from '@/definitions/User'
-import { Job } from '@/definitions/Job'
 import { Vue, Component } from 'vue-property-decorator'
 
+import { userIs, UserRole } from '@/definitions/User'
+import { Job } from '@/definitions/Job'
+
+import EditJobDialog from './EditJobDialog.vue'
+import JobsMap from '@/components/JobsMap.vue'
+import JobsList from '@/components/JobsList.vue'
+
 @Component({
-  components: { EditJobDialog },
+  components: { EditJobDialog, JobsList, JobsMap },
 })
 export default class JobsView extends Vue {
 
@@ -87,6 +71,10 @@ export default class JobsView extends Vue {
 
   get indirectJobs(): Job[] {
     return this.$store.getters.indirectJobs
+  }
+
+  get allJobs(): Job[] {
+    return [...this.directJobs, ...this.indirectJobs]
   }
 
   get userIsOrgManager() {

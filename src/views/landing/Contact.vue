@@ -7,7 +7,7 @@ div
   v-container.shift-down(style='position: relative; z-index: 1')
     v-row.justify-center
       v-col(
-        v-for="(option, i) in helpOptions", :index="i"
+        v-for="(option, i) in helpOptions" :key="i"
         cols="12",
         :md="chosenOption == option.name ? 9 : 6",
         v-if="chosenOption == option.name || chosenOption == null"
@@ -31,8 +31,8 @@ div
 
           v-expand-transition(appear)
             v-card-text.py-0(v-if="chosenOption == option.name")
-              contact-form.py-4(color="primary")
-                v-btn(elevation='0' text, @click="chosenOption = null") Cancel
+              contact-form(color="primary" @submitted='chosenOption = null')
+                v-btn(text, @click="chosenOption = null") Cancel
 
     //- .mt-12
     //-   h4.text-h4.font-weight-black.mb-3 Need help now?

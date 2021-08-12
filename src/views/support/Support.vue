@@ -23,13 +23,14 @@ div
       v-card-title Browse support topics
 
       v-expansion-panels(accordion flat)
-        v-expansion-panel(v-for='(category, i) in categories' :index='i')
+        v-expansion-panel(v-for='(category, i) in categories' :key='i')
           v-divider
           v-expansion-panel-header {{ category.title }}
           v-expansion-panel-content
             .d-flex.flex-column
               router-link.mb-2(
-                v-for='article in category.articles'
+                v-for='(article, i) in category.articles'
+                :key='i'
                 :index='article.id'
                 :to="{name: 'supportArticle', params: {articleId: article.id}}"
               ) {{ article.title }} 

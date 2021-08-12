@@ -1,6 +1,6 @@
 {
   "name": "worxstr",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,7 +9,8 @@
     "deploy": "aws s3 sync ./dist s3://worxstr-secure-app-client"
   },
   "dependencies": {
-    "@capacitor/android": "^3.0.0",
+    "@capacitor/android": "^3.1.2",
+    "@capacitor/app": "^1.0.2",
     "@capacitor/cli": "^3.0.0",
     "@capacitor/core": "^3.0.0",
     "@capacitor/dialog": "^1.0.0",

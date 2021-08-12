@@ -9,6 +9,7 @@ import * as MessagesTypes from '@/definitions/Messages'
 import { fullName, groupNameList } from '@/plugins/filters'
 
 import Home from '@/views/landing/Home.vue'
+import NativeHome from '@/views/landing/NativeHome.vue'
 import About from '@/views/landing/About.vue'
 import Pricing from '@/views/landing/Pricing.vue'
 import Contact from '@/views/landing/Contact.vue'
@@ -47,11 +48,23 @@ const routes = [
       landing: true,
     },
     beforeEnter(to: Route, from: Route, next: Function) {
-      if (Capacitor.isNativePlatform() && store.state.authenticatedUser) {
-        next({ name: defaultRoute() })
+      if (Capacitor.isNativePlatform()) {
+        if (store.state.authenticatedUser)
+          next({ name: defaultRoute() })
+        else
+          next({ name: 'nativeHome' })
       }
       else next()
     },
+  },
+  {
+    path: '/native-home',
+    name: 'nativeHome',
+    component: NativeHome,
+    meta: {
+      noSkeleton: true,
+      fullHeight: true,
+    }
   },
   {
     path: '/about',
@@ -138,17 +151,6 @@ const routes = [
     }
   },
   {
-    path: '/users/:userId',
-    name: 'user',
-    component: User,
-    meta: {
-      paramMap: {
-        userId: 'users',
-        propBuilder: fullName
-      },
-    }
-  },
-  {
     path: '/clock',
     name: 'clock',
     component: Clock,
@@ -214,6 +216,17 @@ const routes = [
     meta: {
       icon: 'mdi-account-group',
       restrict: Manager
+    }
+  },
+  {
+    path: '/workforce/:userId',
+    name: 'user',
+    component: User,
+    meta: {
+      paramMap: {
+        userId: 'users',
+        propBuilder: fullName
+      },
     }
   },
   {

@@ -6,7 +6,7 @@ div
 
   v-container.shift-down.mb-3
     v-row
-      v-col(cols="12", sm="4", v-for="tier in pricingTiers")
+      v-col(cols="12", sm="4", v-for="(tier, i) in pricingTiers" :key='i')
         v-card.hover-effect.soft-shadow(outlined :class='highlight(tier) ? "gradient-tertiary" : ($vuetify.theme.dark ? "dark-color" : "light-color")')
           v-card-title.text-h5 {{ tier.name | capitalize }}
 

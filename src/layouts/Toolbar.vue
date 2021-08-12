@@ -1,12 +1,12 @@
 <template lang="pug">
   div
-
-    v-app-bar(
+    v-app-bar.toolbar(
       app
       outlined
-      :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
       elevate-on-scroll
       :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
+      :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-5'"
+      :class="$route.meta.landing ? 'landing' : 'app'"
     )
       v-btn(
         icon
@@ -33,11 +33,11 @@
         v-btn(v-if='$vuetify.breakpoint.xs' icon @click='menu = true')
           v-icon mdi-menu
         div(v-else)
-          v-btn(v-for="link in links", text, :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
-          
+          v-btn(v-for="(link, i) in links" :key='i' text :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
+
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
-      v-list(nav)
-        v-list-item(v-for="link in links", text, :to="link.to" link)
+      v-list.mobile-nav-items(nav)
+        v-list-item(v-for="(link, i) in links" :key='i' text :to="link.to" link)
           v-list-item-content
             v-list-item-title {{ link.text }}
 </template>
@@ -91,3 +91,15 @@ export default class Toolbar extends Vue {
   ]
 }
 </script>
+
+<style lang='scss'>
+.toolbar {
+  height: auto !important;
+  &.app {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+.mobile-nav-items {
+  padding-top: env(safe-area-inset-top) !important;
+}
+</style>
