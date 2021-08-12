@@ -187,7 +187,7 @@ export default class JobsMap extends Vue {
     }
   }
 
-  toggleInfoWindow(job: Job, idx) {
+  toggleInfoWindow(job: Job, idx: any) {
     this.infoWindowPos = this.jobLocation(job)
     // this.infoOptions.content = job.name
     this.infoContent = job
