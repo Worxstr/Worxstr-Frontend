@@ -5,36 +5,30 @@ div
       v-form(@submit.prevent="signIn", v-model="isValid")
         v-card-title.text-h5 Sign in
         v-card-text.pb-0
-          v-window.pt-2(v-model='step')
-            v-window-item(:value='0')
-              v-text-field(
-                autofocus
-                label="Email",
-                type="email",
-                required="",
-                v-model="form.email",
-                :rules="emailRules"
-                outlined
-                dense
-              )
-            v-window-item(:value='1')
-              v-text-field(
-                label="Password",
-                type="password",
-                required="",
-                v-model="form.password",
-                :rules="passwordRules"
-                outlined
-                dense
-              )
+          v-text-field(
+            autofocus
+            label="Email",
+            type="email",
+            required="",
+            v-model="form.email",
+            :rules="emailRules"
+            outlined
+            dense
+          )
+          v-text-field(
+            label="Password",
+            type="password",
+            required="",
+            v-model="form.password",
+            :rules="passwordRules"
+            outlined
+            dense
+          )
         v-card-actions
-          v-btn(v-if='step == 1' text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
-          
+          v-btn(text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
           v-spacer
-
-          v-btn(v-if='step != 0' text @click='step--') Back
-          v-btn(v-if='step != 1' text @click='step++') Next
-          v-btn(v-if='step == 1' text color="primary" type="submit" :disabled="!isValid") Sign in
+          v-btn(text color="primary" type="submit" :disabled="!isValid") Sign in
+          
       v-fade-transition
         v-overlay(absolute, opacity="0.2", v-if="loading")
           v-progress-circular(indeterminate)
@@ -55,7 +49,6 @@ export default {
     Arrows,
   },
   data: () => ({
-    step: 0,
     form: {
       email: "",
       password: "",
