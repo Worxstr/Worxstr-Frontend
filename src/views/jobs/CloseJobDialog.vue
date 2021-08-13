@@ -1,5 +1,6 @@
 <template lang="pug">
 v-dialog(
+  v-if='job'
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
   max-width="500",

@@ -18,6 +18,8 @@ div(v-else)
     .text-h6 Available balance
     .text-h2.ma-5 $825.24
 
+    dwolla-balance-display(customerId="a85a2da8-3bab-42f5-a909-9aca55c0fc15")
+
 
   v-container.d-flex.flex-column.justify-center(
     fluid

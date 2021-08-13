@@ -254,6 +254,20 @@ const storeConfig: StoreOptions<RootState> = {
     showSnackbar({ commit }, snackbar) {
       commit('SHOW_SNACKBAR', snackbar)
     },
+    async contactSales({ dispatch }, request) {
+      try {
+        const { data } = await axios({
+          method: 'POST',
+          url: `${baseUrl}/contact/sales`,
+          data: request
+        })
+        dispatch('showSnackbar', { text: "Thanks! We will get back to you shortly." })
+        return data
+      }
+      catch (err) {
+        return err
+      }
+    },
     async signIn({ commit, dispatch }, credentials) {
       try {
         const { data } = await axios({
@@ -489,7 +503,7 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/jobs/managers`,
         params: {
-          manager_id: state.authenticatedUser?.manager_id
+          manager_id: state.authenticatedUser?.manager_id || state.authenticatedUser?.id
         }
       })
       data.contractor_managers.forEach((m: User) => {
@@ -522,6 +536,10 @@ const storeConfig: StoreOptions<RootState> = {
       //   commit('ADD_SHIFT', shift)
       //   return shift.id
       // })
+
+      data.job.contractors.forEach((c: User) => {
+        commit('ADD_USER', c)
+      })
 
       commit('ADD_JOB', data.job)
     },
@@ -556,10 +574,12 @@ const storeConfig: StoreOptions<RootState> = {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/shifts`,
-        data: { shift },
+        data: shift,
         params: { job_id: jobId }
       })
-      commit('ADD_SHIFT', { shift: data.shift, jobId })
+      data.shifts.forEach((shift: Shift) => {
+        commit('ADD_SHIFT', { shift, jobId })
+      })
     },
 
     async updateShift({ commit }, shift) {
@@ -597,6 +617,8 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/users/add-manager`,
         data: manager
       })
+      commit('ADD_USER', data)
+      commit('ADD_WORKFORCE_MEMBER', data.id)
     },
 
     async addContractor({ commit }, contractor) {
@@ -605,6 +627,8 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/users/add-contractor`,
         data: contractor
       })
+      commit('ADD_USER', data)
+      commit('ADD_WORKFORCE_MEMBER', data.id)
     },
 
     async loadCalendarEvents({ commit }, { start, end }) {

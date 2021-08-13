@@ -7,7 +7,7 @@ div.pa-2
       template(v-slot:activator="{ on, attrs }")
         v-btn(text, color="primary", v-bind="attrs", v-on="on")
           v-icon(@click="newConversationDialog = true") mdi-plus
-          span New
+          span(v-if='$vuetify.breakpoint.smAndUp') New
       
   v-card.messages.pa-0.d-flex.flex-row.fill-height.align-start.soft-shadow(fluid)
     div(

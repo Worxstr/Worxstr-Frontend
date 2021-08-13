@@ -99,6 +99,7 @@ import {
   passwordMatches,
 } from '@/plugins/inputValidation'
 import Arrows from '@/components/Arrows.vue'
+import dwolla from '@/plugins/dwolla'
 
 @Component({
   metaInfo: {
@@ -130,18 +131,15 @@ export default class SignUp extends Vue {
   }
 
   mounted() {
-    window.dwolla.configure({
-      environment: 'sandbox',
-      // styles: '/main.css',
-      tokenUrl: `${process.env.VUE_APP_API_BASE_URL}/payments/access`,
-      success: async (res) => {
-        this.form.customer_url = res.location
-        this.step = 2
-      },
-      error: (err) => {
-        console.log(err)
-      },
+    dwolla.on('success', (res) => {
+      this.form.customer_url = res.location
+      this.step = 2
     })
+    dwolla.on('error', (err) => {
+      console.error(err)
+    })
+
+    
 
     if (this.$route.params.subscriptionTier) {
       this.accountType = 'org'

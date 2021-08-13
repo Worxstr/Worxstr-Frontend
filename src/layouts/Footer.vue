@@ -3,10 +3,10 @@ v-footer.worxstr-footer(padless)
   v-card.text-center(flat, tile, width="100%" :class="`${$vuetify.theme.dark ? 'dark' : 'light'}-color`")
 
     .my-2
-      v-btn.my-2(v-for='link in links', :key='link.to', text, :to='link.to') {{ link.text }}
+      v-btn.my-2(v-for='(link, i) in links', :key='i', text, :to='link.to') {{ link.text }}
 
     .mb-3
-      v-btn(v-for='social in socials', icon :href="social.link" target="_blank" rel="noreferrer")
+      v-btn(v-for='(social, i) in socials' :key='i' icon :href="social.link" target="_blank" rel="noreferrer")
         v-icon(size='24px') {{ social.icon }}
 
     //- v-card-text.pt-0 Some additional info can go here
