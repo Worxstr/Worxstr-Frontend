@@ -860,10 +860,25 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@capacitor/android@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-3.0.0.tgz#0d8ce965fa19d9f1412a468476525af2b92a151e"
-  integrity sha512-qyvI3LzfGvVnSK7Dw3dXXLSJjfj816EfWHiyGzV4Rg5r2XkvPa8IqjHT3lmyxwNJjGdHl3TTn9Q6YvM6XD70cQ==
+"@capacitor-community/http@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@capacitor-community/http/-/http-1.2.0.tgz#f88372cdf263b34639ae284d08caab9bc5819f8e"
+  integrity sha512-Ayn55bgICRQ7yftVgiWiUejyEeMZ0M3nZrRepJN37Llv01SHeEg0o7zrKKFbB4AjZFCrmJieaz0a/8bXMwDv1g==
+  dependencies:
+    "@capacitor/android" "^3.0.0"
+    "@capacitor/core" "^3.0.0"
+    "@capacitor/filesystem" "^1.0.0"
+    "@capacitor/ios" "^3.0.0"
+
+"@capacitor/android@^3.0.0", "@capacitor/android@^3.1.2":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-3.1.2.tgz#b9f42fcbfb31639575cd90b63754e9ec526d434d"
+  integrity sha512-WF2E2jWxO3EBl8Y3aTAa8PHwMZGiAl9pdqvJaEUUhbbovXe0UxAuG4n0mfci4ZI6dD8gannQ2peoZ74vJ0Gr3Q==
+
+"@capacitor/app@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@capacitor/app/-/app-1.0.2.tgz#920dbf7055aa8ba060932d6e8dcac6f8bbc821af"
+  integrity sha512-P9PInUnUdkiqYk+7wzd51Oe6AzJ4KyKDRFVebDMGo7UgHFuK2ogDTDLabrv9XQUV1Zk2tXvpEoGmw46dd+2Img==
 
 "@capacitor/cli@^3.0.0":
   version "3.0.0"
@@ -899,10 +914,20 @@
   resolved "https://registry.yarnpkg.com/@capacitor/dialog/-/dialog-1.0.0.tgz#2af3151086099e89983f6274db9eef525ecff7ac"
   integrity sha512-MsSS4mUx2BIfsQMe6XM4jVVeRpl2OuTsktdSm9dfKXM1PysTqXt+mfDvt8kmS1ahHvWb0+5cO9MuLkAcFWGOCA==
 
+"@capacitor/filesystem@^1.0.0":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@capacitor/filesystem/-/filesystem-1.0.2.tgz#5327454addf354de0ad89e9a970443dc5563c646"
+  integrity sha512-cDxNUubS/l1WLt94pviB657l/pA17jIZQ2wQBDyTvXPflOBL0sFC4QR9TT6nuOBX2oVWsgG3HogEdmgwXeGeHA==
+
 "@capacitor/geolocation@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@capacitor/geolocation/-/geolocation-1.0.0.tgz#672b7ce0ef359aefaba07cf5aa8df67f42dd8a16"
   integrity sha512-ojhwwJuEq00yKesZDK1SZKQslVXqGmzgxDQymvTMSKJs5WJprgsbHEyNES8fT5FeistRjybr/es0dfv8Q/g1rg==
+
+"@capacitor/ios@^3.0.0":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-3.1.2.tgz#a4323f7903d7b944b80a20c0ba7b458db5c8ea3a"
+  integrity sha512-y6wnTLK0I/ckTuofzeRkXK0OPw6vAKOj0I6QXwg2DxDdtiHmed6qP/G8cvwNBiFhZE9xfXAulxRYP8D76TPtNQ==
 
 "@hapi/address@2.x.x":
   version "2.1.4"

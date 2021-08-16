@@ -5,7 +5,12 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+<<<<<<< Updated upstream
 import { io } from "socket.io-client"
+=======
+import socket from './plugins/socket-io'
+import { App as CapacitorApp } from '@capacitor/app'
+>>>>>>> Stashed changes
 
 import './styles/style.scss'
 import './plugins/filters'
@@ -37,9 +42,7 @@ Vue.use(VuetifyGoogleAutocomplete, {
 
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: io(process.env.VUE_APP_API_BASE_URL, {
-    path: '/socket.io'
-  }),
+  connection: socket,
   vuex: {
     store,
     actionPrefix: 'SOCKET_',

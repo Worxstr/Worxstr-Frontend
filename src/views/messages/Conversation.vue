@@ -128,9 +128,14 @@ export default {
     connect: function() {
       console.log('Socket connected')
     },
-    'message:create': function({ message, conversation_id }) {
-      if (conversation_id == this.$route.params.conversationId)
-        this.messages.unshift(message)
+    'conversations/messages:create': function(message) {
+
+      console.log("recieved message:", message)
+
+      this.$store.commit('ADD_MESSAGE', {
+        message: message,
+        conversationId: message.conversation_id
+      })
     },
   },
 }
