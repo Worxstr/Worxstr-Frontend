@@ -154,9 +154,9 @@ v-container.d-flex.flex-column.justify-center.align-center.pt-8
       br 
       span Worxstr L.L.C.
       br
-      span 1138 Highway 105 South
+      span 2207 E 7th St
       br
-      span Boone, North Carolina 28607
+      span Charlotte, North Carolina 28204
 
     p 
       span Email Address:

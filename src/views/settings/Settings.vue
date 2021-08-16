@@ -29,7 +29,7 @@
 						v-list-item-subtitle.mb-2 Roles
 						v-list-item-title
 							div
-								v-chip.mr-2(label v-for="role in authenticatedUser.roles")
+								v-chip.mr-2(label v-for="(role, i) in authenticatedUser.roles" :key='i')
 									| {{role.name | snakeToSpace | capitalize }}
 						
 				v-list-item(two-line v-if="authenticatedUser.contractor_info && !authenticatedUser.contractor_info.need_info")

@@ -5,6 +5,7 @@
   close-job-dialog(:opened.sync="closeJobDialog", :job.sync="selectedJob")
 
   v-list(v-if="jobs.length")
+<<<<<<< HEAD
     div(
       v-for="(job, i) in jobs"
       :key="job.id"
@@ -35,6 +36,34 @@
                 v-list-item-title Close
 
       v-divider(v-if='i != jobs.length - 1')
+=======
+    v-list-item(
+      v-for="job in jobs",
+      :key="job.id",
+      @click="$router.push({ name: 'job', params: { jobId: job.id } })"
+    )
+      v-list-item-avatar
+        v-badge(:color='job.color' dot)
+
+      v-list-item-content
+        v-list-item-title(v-text="job.name")
+        v-list-item-subtitle(v-text="job.address")
+      
+      v-list-item-action
+        v-menu(bottom left)
+          template(v-slot:activator='{ on, attrs }')
+            v-btn(icon v-bind='attrs' v-on='on' @click.native.stop)
+              v-icon mdi-dots-vertical
+          v-list
+            v-list-item(@click='openEditJobDialog(job)')
+              v-list-item-icon.mr-3
+                v-icon mdi-pencil
+              v-list-item-title Edit
+            v-list-item(@click='openCloseJobDialog(job)')
+              v-list-item-icon.mr-3
+                v-icon(color='error') mdi-close
+              v-list-item-title Close
+>>>>>>> 42fc546476c664f4b2a447234e8eee5228f98df8
 
   .d-flex.flex-column.justify-center(v-else)
     v-icon.text-h2.ma-5 mdi-calendar-check

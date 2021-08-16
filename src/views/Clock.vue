@@ -9,6 +9,8 @@
           | {{ nextShift.shiftActive ? "ends" : "begins" }}
           | at
           | {{ nextShift.site_location }}
+          //- router-link(:to="{ name: 'job', params: { jobId: nextShift.job_id }}")
+            | &nbsp;{{ nextShift.site_location }}&nbsp;
           | at
 
         h3.text-h3.py-2.font-weight-bold.text-center.text-md-left

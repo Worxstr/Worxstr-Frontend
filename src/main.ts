@@ -1,16 +1,17 @@
 import './class-component-hooks'
 import Vue from 'vue'
 import App from './App.vue'
-import './registerServiceWorker'
+// import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import socket from './plugins/socket-io'
+import { App as CapacitorApp } from '@capacitor/app'
 
 import './styles/style.scss'
 import './plugins/filters'
 
-import VueMask from 'v-mask'
+import VueMask  from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
 import VueSocketIO from 'vue-socket.io'
@@ -20,8 +21,8 @@ import VueGtag from "vue-gtag"
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
-Vue.use(PortalVue)
 Vue.use(VueMask)
+Vue.use(PortalVue)
 Vue.use(VueChatScroll)
 
 Vue.use(VueGoogleMaps, {
@@ -50,6 +51,22 @@ Vue.use(VueGtag, {
 });
 
 Vue.config.productionTip = false
+
+async function getUserData() {
+  // Get local user data
+  const storedUser = localStorage.getItem('authenticatedUser')
+  if (storedUser) {
+    store.commit('SET_AUTHENTICATED_USER', JSON.parse(storedUser))
+  }
+
+  try {
+    // Load new user data
+    await store.dispatch('getAuthenticatedUser')
+  }
+  catch (e) {
+    console.error(e)
+  }
+}
 
 function initDarkMode() {
   const userPrefDarkMode = window.localStorage.getItem("darkMode")
@@ -88,21 +105,15 @@ function promptSSN() {
   }
 }
 
+function configureBackButtonPress() {
+  CapacitorApp.addListener('backButton', () => {
+    window.history.back()
+  })
+}
+
 async function init() {
-
-  // Get local user data
-  const storedUser = localStorage.getItem('authenticatedUser')
-  if (storedUser) {
-    store.commit('SET_AUTHENTICATED_USER', JSON.parse(storedUser))
-  }
-
-  try {
-    // Load new user data
-    await store.dispatch('getAuthenticatedUser')
-  }
-  catch (e) {
-    console.error(e)
-  }
+  
+  await getUserData()
 
   new Vue({
     router,
@@ -113,6 +124,7 @@ async function init() {
 
   initDarkMode()
   promptSSN()
+  configureBackButtonPress()
 }
 
 init()

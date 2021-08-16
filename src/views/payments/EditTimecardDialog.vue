@@ -77,10 +77,10 @@ export default {
     timecard: Object,
   },
   watch: {
-    timecard: function (newVal, oldVal) {
+    timecard: function() {
       this.calculateFormValues();
     },
-    opened(newVal, oldVal) {
+    opened(newVal) {
       if (newVal == true) this.calculateFormValues();
     },
   },

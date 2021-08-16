@@ -1,6 +1,16 @@
 {
 	"appId": "com.worxstr.app",
-	"appName": "worxstr",
+	"appName": "Worxstr",
 	"webDir": "dist",
-	"bundledWebRuntime": false
+	"bundledWebRuntime": false,
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 0
+		}
+	},
+	"cordova": {},
+	"server": {
+		"url": "http://192.168.86.24:8080",
+		"cleartext": true
+	}
 }

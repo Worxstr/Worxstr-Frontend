@@ -10,13 +10,12 @@ v-container(v-if="loading" fluid)
   )
 
 div(v-else)
-  v-container.approvals.mb-50(v-if="job" fluid)
+  v-container.approvals.mb-16(v-if="job" fluid)
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
-    edit-shift-dialog(
-      :create="true",
-      :opened.sync="addShiftDialog",
-      :contractors="job.contractors"
+    create-shift-dialog(
+      :opened.sync='createShiftDialog',
+      :contractors='job.contractors'
     )
     edit-shift-dialog(
       :opened.sync="editShiftDialog",
@@ -34,31 +33,31 @@ div(v-else)
       v-btn(
         v-if="userIsOrgManager",
         text,
+        :icon='$vuetify.breakpoint.xs'
         color="primary",
         @click="editJobDialog = true"
-      ) Edit
+      )
+        v-icon(left) mdi-pencil
+        span(v-if='!$vuetify.breakpoint.xs') Edit
+
       v-btn(
         v-if="userIsOrgManager",
         text,
+        :icon='$vuetify.breakpoint.xs'
         color="red",
         @click="closeJobDialog = true"
-      ) Close
+      ) 
+        v-icon(left) mdi-close
+        span(v-if='!$vuetify.breakpoint.xs') Close
 
-    v-card.mb-3.d-flex.flex-column.soft-shadow
-      GmapMap(
-        v-if="job.latitude && job.longitude",
-        :center="location",
-        :zoom="17",
-        style="height: 40vh"
-      )
-        GmapMarker(:position="location")
+    v-card.mb-3.d-flex.flex-column.soft-shadow(:style='`border-top: 3px solid ${job.color}`')
+      
+      jobs-map(:jobs='[job]' :show-user-location='true')
 
       v-card-text
-        p
-          | {{ job.address }}
+        p {{ job.address }}
           br
           | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
-        div
 
       v-layout.flex-column.flex-sm-row.justify-space-between
         .flex-grow-1.px-5
@@ -80,7 +79,7 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text, @click="addShiftDialog = true")
+      v-btn(text, @click="createShiftDialog = true")
         v-icon(left) mdi-plus
         span Add shift
 
@@ -92,7 +91,7 @@ div(v-else)
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0
           p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ shift.contractor | fullName }}
+            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ (shift.contractor ? shift.contractor : getContractor(shift.contractor_id)) | fullName }}
             span.my-1 {{ shift.site_location }}
 
           v-chip.mx-4.px-2.flex-grow-0(
@@ -119,38 +118,41 @@ div(v-else)
           v-card-actions
             v-spacer
             v-btn(text, @click="openEditShiftDialog(shift)") Edit
-            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Remove
+            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Delete
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import { Vue, Component } from "vue-property-decorator"
+import { Vue, Component } from 'vue-property-decorator'
 
-import EditJobDialog from "./EditJobDialog.vue"
-import CloseJobDialog from "./CloseJobDialog.vue"
-import EditShiftDialog from "./EditShiftDialog.vue"
-import DeleteShiftDialog from "./DeleteShiftDialog.vue"
+import EditJobDialog from './EditJobDialog.vue'
+import CloseJobDialog from './CloseJobDialog.vue'
+import CreateShiftDialog from './CreateShiftDialog.vue'
+import EditShiftDialog from './EditShiftDialog.vue'
+import DeleteShiftDialog from './DeleteShiftDialog.vue'
 
-import ClockEvents from "@/components/ClockEvents.vue"
+import JobsMap from '@/components/JobsMap.vue'
+import ClockEvents from '@/components/ClockEvents.vue'
 
-import { userIs, UserRole } from "@/definitions/User"
-import { Job, Shift } from "@/definitions/Job"
+import { userIs, UserRole } from '@/definitions/User'
+import { Job, Shift } from '@/definitions/Job'
 
 @Component({
   components: {
     EditJobDialog,
     CloseJobDialog,
+    CreateShiftDialog,
     EditShiftDialog,
     DeleteShiftDialog,
+    JobsMap,
     ClockEvents,
-  }
+  },
 })
 export default class JobView extends Vue {
-
   loading = false
   editJobDialog = false
   closeJobDialog = false
-  addShiftDialog = false
+  createShiftDialog = false
   editShiftDialog = false
   deleteShiftDialog = false
   selectedShift: Shift | {} = {}
@@ -158,16 +160,15 @@ export default class JobView extends Vue {
 
   metaInfo() {
     return {
-      title: this.job?.name || 'Job'
+      title: this.job?.name || 'Job',
     }
   }
 
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch("loadJob", this.$route.params.jobId)
-    }
-    finally {
+      await this.$store.dispatch('loadJob', this.$route.params.jobId)
+    } finally {
       this.loading = false
     }
   }
@@ -176,14 +177,17 @@ export default class JobView extends Vue {
     return this.$store.getters.job(this.$route.params.jobId)
   }
 
-  get location() {
-    return { lat: this.job.latitude, lng: this.job.longitude }
-  }
-
   get userIsOrgManager() {
     return this.$store.state.authenticatedUser
-      ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser)
+      ? userIs(
+          UserRole.OrganizationManager,
+          this.$store.state.authenticatedUser
+        )
       : false
+  }
+
+  getContractor(contractorId: number) {
+    return this.$store.getters.user(contractorId)
   }
 
   openEditShiftDialog(shift: Shift) {

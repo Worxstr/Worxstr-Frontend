@@ -35,7 +35,8 @@
           md="4",
           lg="3"
           xl='2'
-          v-for="member in team"
+          v-for="(member, i) in team"
+          :key='i'
         )
           v-card.soft-shadow(rounded='lg' outlined @click='viewMember(member)')
             v-card-text.pa-4.d-flex.flex-column.justify-start.align-center
@@ -65,7 +66,7 @@
         span.text-center.mb-3.text-subtitle-1.font-weight-medium {{ selectedMember.title }}
         span.text-center.mb-3 {{ selectedMember.description }}
         .mb-3
-          v-btn(v-for='social in selectedMember.socials', icon :href='social.link' target="_blank" rel="noreferrer")
+          v-btn(v-for='(social, i) in selectedMember.socials' :key='i' icon :href='social.link' target="_blank" rel="noreferrer")
             v-icon(size='24px') {{ social.icon }}
   
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0')
@@ -136,6 +137,10 @@ export default {
         description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He loves cats, and he is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
         socials: [
           {
+            link: 'https://alex.wohlbruck.com',
+            icon: 'mdi-web'
+          },
+          {
             link: 'mailto:alexwohlbruck@gmail.com',
             icon: 'mdi-at'
           },
@@ -154,6 +159,10 @@ export default {
         title: "Lead Backend Developer / DevOps engineer",
         photo: 'andrew.jpg',
         socials: [
+          {
+            link: 'https://thorp.dev/',
+            icon: 'mdi-web'
+          },
           {
             link: 'https://github.com/aThorp96',
             icon: 'mdi-github',
