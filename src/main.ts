@@ -5,12 +5,7 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-<<<<<<< Updated upstream
-import { io } from "socket.io-client"
-=======
 import socket from './plugins/socket-io'
-import { App as CapacitorApp } from '@capacitor/app'
->>>>>>> Stashed changes
 
 import './styles/style.scss'
 import './plugins/filters'
