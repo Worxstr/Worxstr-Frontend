@@ -39,6 +39,14 @@
 						v-btn(text color='primary' @click="ssnDialog = true") Set SSN
 
 				v-divider
+				v-subheader.text-subtitle-1.font-weight-medium Payments
+
+				v-list-item(two-line)
+					v-list-item-content
+						v-list-item-subtitle.mb-2 Funding source 1
+						v-list-item-title XXXXXXXXXXX
+				
+				v-divider
 				v-subheader.text-subtitle-1.font-weight-medium Security
 				
 				v-list-item(two-line)
