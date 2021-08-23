@@ -2,6 +2,7 @@
 	v-container.pb-16(fluid)
 		ChangePasswordDialog(:opened.sync="changePasswordDialog")
 		SSNDialog(:opened.sync="ssnDialog")
+		AddPaymentMethodDialog(:opened.sync="addPaymentMethodDialog")
 
 		v-card.soft-shadow
 			v-list.pa-0(rounded subheader)
@@ -47,11 +48,11 @@
 						v-list-item-title XXXXXXXXXXX
 					v-list-item-action
 						v-btn(text color='primary') Edit
-					v-list-item-action
+					v-list-item-action.ml-0
 						v-btn(text color='error') Remove
 				
 				v-list-item
-					v-btn(text color='primary')
+					v-btn(text color='primary' @click='addPaymentMethodDialog = true')
 						v-icon(left) mdi-plus
 						span Add payment method
 				
@@ -82,16 +83,18 @@
 </template>
 
 <script>
+
 import { mapState } from 'vuex'
 import ChangePasswordDialog from './ChangePasswordDialog'
 import SSNDialog from './SSNDialog'
+import AddPaymentMethodDialog from './AddPaymentMethodDialog'
 
 export default {
 	name: "settings",
 	metaInfo: {
 		title: 'Settings',
 	},
-	components: { SSNDialog, ChangePasswordDialog },
+	components: { SSNDialog, ChangePasswordDialog, AddPaymentMethodDialog },
 	computed: {
 		...mapState(['authenticatedUser']),
 	},
@@ -103,6 +106,7 @@ export default {
 	data: () => ({
 		changePasswordDialog: false,
 		ssnDialog: false,
+		addPaymentMethodDialog: false,
 		preferences: {
 			darkMode: window.localStorage.getItem('darkMode') || 'System default',
 		},
@@ -127,6 +131,9 @@ export default {
 		signOut() {
 			this.$store.dispatch('signOut')
 		},
+		async addPaymentMethod() {
+			await this.$store.dispatch('addPaymentMethod', 'Test account')
+		}
 	}
 };
 </script>

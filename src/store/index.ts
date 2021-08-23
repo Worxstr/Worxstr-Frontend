@@ -4,7 +4,8 @@ import Vuex, { StoreOptions } from 'vuex'
 import axios from 'axios'
 import router from '../router'
 
-import { Capacitor } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core'
+import * as Plaid from '@/plugins/plaid'
 
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
@@ -12,6 +13,7 @@ import { User, defaultRoute } from '@/definitions/User'
 import { ClockEvent, Timecard } from '@/definitions/Clock'
 import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
+
 
 Vue.use(Vuex)
 
@@ -498,6 +500,31 @@ const storeConfig: StoreOptions<RootState> = {
       })
     },
 
+    async addPaymentMethod({ commit }, name) {
+      return await Plaid.openPlaidLink(name)
+    },
+
+    async getPlaidLinkToken() {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/payments/plaid/link-token`
+      })
+      return data.token
+    },
+
+    async addPlaidFundingSource({ commit }, { name, publicToken, accountId }) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/payments/plaid/add-account`,
+        data: {
+          name,
+          public_token: publicToken,
+          account_id: accountId
+        }
+      })
+      return data
+    },
+
     async loadManagers({ commit, state }) {
       const { data } = await axios({
         method: 'GET',
@@ -711,7 +738,7 @@ const storeConfig: StoreOptions<RootState> = {
         }
       })
       commit('SET_SSN_REGISTERED')
-    }
+    },
   },
   getters: {
     // TODO: Transform this and add labels, separated by day of week
