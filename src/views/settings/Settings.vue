@@ -45,6 +45,15 @@
 					v-list-item-content
 						v-list-item-subtitle.mb-2 Funding source 1
 						v-list-item-title XXXXXXXXXXX
+					v-list-item-action
+						v-btn(text color='primary') Edit
+					v-list-item-action
+						v-btn(text color='error') Remove
+				
+				v-list-item
+					v-btn(text color='primary')
+						v-icon(left) mdi-plus
+						span Add payment method
 				
 				v-divider
 				v-subheader.text-subtitle-1.font-weight-medium Security
