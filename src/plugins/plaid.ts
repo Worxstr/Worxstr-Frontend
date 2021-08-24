@@ -16,28 +16,31 @@ function onSuccess(name: string) {
   }
 }
 
-// async function onLoad() {
+async function onLoad() {
+  console.log('loaded')
+}
 
-// }
+async function onExit(err: any, metadata: any) {
+  console.log('exited', err, metadata)
+}
 
-// async function onExit(err: any, metadata: any) {
-
-// }
-
-// async function onEvent(eventName: string, metadata: any) {
-
-// }
+async function onEvent(eventName: string, metadata: any) {
+  console.log('event', eventName, metadata)
+}
 
 
 export async function openPlaidLink(name) {
   const linkToken = await store.dispatch('getPlaidLinkToken')
-  
+  console.log(linkToken)
+
   const handler = window.Plaid.create({
     token: linkToken,
     onSuccess: onSuccess(name),
-    // onLoad,
-    // onEvent,
-    // onExit,
+    onLoad,
+    onEvent,
+    onExit,
     receivedRedirectUri: null,
   })
+
+  handler.open()
 }

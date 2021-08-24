@@ -512,7 +512,7 @@ const storeConfig: StoreOptions<RootState> = {
       return data.token
     },
 
-    async addPlaidFundingSource({ commit }, { name, publicToken, accountId }) {
+    async addPlaidFundingSource(_context, { name, publicToken, accountId }) {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/payments/plaid/add-account`,
@@ -552,7 +552,7 @@ const storeConfig: StoreOptions<RootState> = {
       })
     },
 
-    async loadJob({ commit, getters }, jobId) {
+    async loadJob({ commit }, jobId) {
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/jobs/${jobId}`,
@@ -590,7 +590,7 @@ const storeConfig: StoreOptions<RootState> = {
     },
 
     async closeJob({ commit }, jobId) {
-      const { data } = await axios({
+      await axios({
         method: 'PUT',
         url: `${baseUrl}/jobs/${jobId}/close`
       })
@@ -620,7 +620,7 @@ const storeConfig: StoreOptions<RootState> = {
     },
 
     async deleteShift({ commit }, { shiftId, jobId }) {
-      const { data } = await axios({
+      await axios({
         method: 'DELETE',
         url: `${baseUrl}/shifts/${shiftId}`,
       })
@@ -730,7 +730,7 @@ const storeConfig: StoreOptions<RootState> = {
       })
     },
     async setSSN({ commit }, ssn) {
-      const { data } = await axios({
+      await axios({
         method: 'PUT',
         url: `${baseUrl}/users/me/ssn`,
         data: {
@@ -778,10 +778,10 @@ const storeConfig: StoreOptions<RootState> = {
     timecards: (state, getters) => {
       return state.approvals.timecards.all.map(id => getters.timecard(id))
     },
-    approvedTimecards: (state, getters) => {
+    approvedTimecards: (_state, getters) => {
       return getters.timecards.filter((timecard: Timecard) => timecard.approved && !timecard.paid);
     },
-    unapprovedTimecards: (state, getters) => {
+    unapprovedTimecards: (_state, getters) => {
       return getters.timecards.filter((timecard: Timecard) => !timecard.approved);
     },
     job: (state) => (id: number) => {
@@ -797,10 +797,10 @@ const storeConfig: StoreOptions<RootState> = {
     jobs: (state, getters) => {
       return state.jobs.all.map(id => getters.job(id))
     },
-    directJobs: (state, getters) => {
+    directJobs: (_state, getters) => {
       return getters.jobs.filter((job: Job) => job.direct);
     },
-    indirectJobs: (state, getters) => {
+    indirectJobs: (_state, getters) => {
       return getters.jobs.filter((job: Job) => !job.direct);
     },
     shift: (state) => (id: number) => {
@@ -809,7 +809,7 @@ const storeConfig: StoreOptions<RootState> = {
     shifts: (state, getters) => {
       return state.shifts.all.map((id: number) => getters.shift(id))
     },
-    workforce: (state, getters) => {
+    workforce: (state) => {
       return state.workforce.map((userId: number) => state.users.byId[userId])
     },
     calendarEvent: state => (id: number) => {
@@ -862,7 +862,7 @@ const storeConfig: StoreOptions<RootState> = {
         }
       })
     },
-    conversation: (state, _, __, rootGetters) => (id: number) => {
+    conversation: (state, _, __, _rootGetters) => (id: number) => {
       return state.conversations.byId[id]
       // return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
     },
