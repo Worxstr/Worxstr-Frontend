@@ -14,7 +14,6 @@ import { ClockEvent, Timecard } from '@/definitions/Clock'
 import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
 
-
 Vue.use(Vuex)
 
 axios.defaults.withCredentials = true
@@ -22,7 +21,7 @@ axios.defaults.withCredentials = true
 const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
   : process.env.VUE_APP_API_BASE_URL
-  
+
 interface RootState {
   snackbar: {
     show: boolean;
@@ -47,7 +46,10 @@ interface RootState {
       };
     };
   };
-  approvals: {
+  payments: {
+    wallet: {
+      balance: number | null;
+    };
     timecards: {
       all: number[];
       byId: {
@@ -92,12 +94,12 @@ const storeConfig: StoreOptions<RootState> = {
     snackbar: {
       show: false,
       text: 'Test',
-      timeout: 5000
+      timeout: 5000,
     },
     authenticatedUser: null,
     users: {
       all: [],
-      byId: {}
+      byId: {},
     },
     clock: {
       clocked: false,
@@ -105,14 +107,17 @@ const storeConfig: StoreOptions<RootState> = {
       history: {
         lastLoadedOffset: 0,
         all: [],
-        byId: {}
+        byId: {},
       },
     },
-    approvals: {
+    payments: {
+      wallet: {
+        balance: null
+      },
       timecards: {
         all: [],
-        byId: {}
-      }
+        byId: {},
+      },
     },
     shifts: {
       next: null,
@@ -122,20 +127,20 @@ const storeConfig: StoreOptions<RootState> = {
     },
     jobs: {
       all: [],
-      byId: {}
+      byId: {},
     },
     workforce: [],
     managers: {
       contractor: [],
-      organization: []
+      organization: [],
     },
     events: {
       all: [],
-      byId: {}
+      byId: {},
     },
     conversations: {
       all: [],
-      byId: []
+      byId: [],
     },
     contacts: [],
   },
@@ -158,10 +163,9 @@ const storeConfig: StoreOptions<RootState> = {
     ADD_USER(state, user) {
       Vue.set(state.users.byId, user.id, {
         ...state.users.byId[user.id],
-        ...user
+        ...user,
       })
-      if (!state.users.all.includes(user.id))
-        state.users.all.push(user.id)
+      if (!state.users.all.includes(user.id)) state.users.all.push(user.id)
     },
     SET_SSN_REGISTERED(state) {
       if (state.authenticatedUser?.contractor_info)
@@ -187,26 +191,34 @@ const storeConfig: StoreOptions<RootState> = {
     END_BREAK(state) {
       state.clock.break = false
     },
+    SET_WALLET(state, wallet) {
+      state.payments.wallet = wallet
+    },
     ADD_TIMECARD(state, timecard) {
-      Vue.set(state.approvals.timecards.byId, timecard.id, timecard)
-      if (!state.approvals.timecards.all.includes(timecard.id))
-        state.approvals.timecards.all.push(timecard.id)
+      Vue.set(state.payments.timecards.byId, timecard.id, timecard)
+      if (!state.payments.timecards.all.includes(timecard.id))
+        state.payments.timecards.all.push(timecard.id)
     },
     REMOVE_TIMECARD(state, timecardId) {
-      Vue.delete(state.approvals.timecards.byId, timecardId)
-      Vue.delete(state.approvals.timecards.all, state.approvals.timecards.all.indexOf(timecardId))
+      Vue.delete(state.payments.timecards.byId, timecardId)
+      Vue.delete(
+        state.payments.timecards.all,
+        state.payments.timecards.all.indexOf(timecardId)
+      )
     },
     ADD_JOB(state, job) {
       Vue.set(state.jobs.byId, job.id, {
         ...state.jobs.byId[job.id],
-        ...job
+        ...job,
       })
-      if (!state.jobs.all.includes(job.id))
-        state.jobs.all.push(job.id)
+      if (!state.jobs.all.includes(job.id)) state.jobs.all.push(job.id)
     },
     REMOVE_JOB(state, jobId) {
-      Vue.delete(state.jobs.byId, jobId);
-      Vue.delete(state.jobs.all, state.jobs.all.findIndex(id => id == jobId))
+      Vue.delete(state.jobs.byId, jobId)
+      Vue.delete(
+        state.jobs.all,
+        state.jobs.all.findIndex((id) => id == jobId)
+      )
     },
     ADD_WORKFORCE_MEMBER(state, userId) {
       if (!state.workforce.includes(userId)) {
@@ -231,22 +243,23 @@ const storeConfig: StoreOptions<RootState> = {
     },
     REMOVE_SHIFT(state, { jobId, shiftId }) {
       console.log(shiftId, jobId)
-      state.jobs.byId[jobId].shifts = state.jobs.byId[jobId].shifts.filter(shift => shift.id != shiftId)
+      state.jobs.byId[jobId].shifts = state.jobs.byId[jobId].shifts.filter(
+        (shift) => shift.id != shiftId
+      )
     },
     ADD_EVENT(state, event) {
       Vue.set(state.events.byId, event.id, event)
-      if (!state.events.all.includes(event.id))
-        state.events.all.push(event.id)
+      if (!state.events.all.includes(event.id)) state.events.all.push(event.id)
     },
     ADD_CONVERSATION(state, { conversation, prepend }) {
       Vue.set(state.conversations.byId, conversation.id, conversation)
       if (!state.conversations.all.includes(conversation.id))
-        prepend ?
-          state.conversations.all.unshift(conversation.id) :
-          state.conversations.all.push(conversation.id)
+        prepend
+          ? state.conversations.all.unshift(conversation.id)
+          : state.conversations.all.push(conversation.id)
     },
     UPDATE_CONTACTS(state, contacts) {
-      state.contacts = contacts;
+      state.contacts = contacts
     },
     ADD_MESSAGE(state, { conversationId, message }) {
       state.conversations.byId[conversationId].messages.push(message)
@@ -261,12 +274,13 @@ const storeConfig: StoreOptions<RootState> = {
         const { data } = await axios({
           method: 'POST',
           url: `${baseUrl}/contact/sales`,
-          data: request
+          data: request,
         })
-        dispatch('showSnackbar', { text: "Thanks! We will get back to you shortly." })
+        dispatch('showSnackbar', {
+          text: 'Thanks! We will get back to you shortly.',
+        })
         return data
-      }
-      catch (err) {
+      } catch (err) {
         return err
       }
     },
@@ -276,11 +290,11 @@ const storeConfig: StoreOptions<RootState> = {
           method: 'POST',
           url: `${baseUrl}/auth/login`,
           params: {
-            'include_auth_token': true
+            include_auth_token: true,
           },
           data: {
             ...credentials,
-            'remember_me': true
+            remember_me: true,
           },
         })
         // const authToken = data.response?.user?.authentication_token
@@ -294,8 +308,7 @@ const storeConfig: StoreOptions<RootState> = {
         await dispatch('getAuthenticatedUser')
         router.push({ name: defaultRoute() })
         return data
-      }
-      catch (err) {
+      } catch (err) {
         commit('UNSET_AUTHENTICATED_USER')
         return err
       }
@@ -306,12 +319,10 @@ const storeConfig: StoreOptions<RootState> = {
       dwollaCustomerUrl: Customer url returned after Dwolla account registration
       dwollaAuthToken: Auth token used for Dwolla account registration
     */
-    async signUp({ dispatch }, {
-      accountType,
-      customer_url,
-      password,
-      manager_reference,
-  }) {
+    async signUp(
+      { dispatch },
+      { accountType, customer_url, password, manager_reference }
+    ) {
       try {
         const { data } = await axios({
           method: 'POST',
@@ -326,10 +337,11 @@ const storeConfig: StoreOptions<RootState> = {
           },
         })
         router.push({ name: 'home' })
-        dispatch('showSnackbar', { text: "Check your email to verify your account!" })
+        dispatch('showSnackbar', {
+          text: 'Check your email to verify your account!',
+        })
         return data
-      }
-      catch (err) {
+      } catch (err) {
         return err
       }
     },
@@ -337,19 +349,19 @@ const storeConfig: StoreOptions<RootState> = {
     async signOut({ commit }) {
       await axios({
         method: 'POST',
-        url: `${baseUrl}/auth/logout`
+        url: `${baseUrl}/auth/logout`,
       })
       commit('UNSET_AUTHENTICATED_USER')
       router.push({ name: 'home' })
     },
 
-    async resetPassword({ commit }, email) {
+    async resetPassword(_context, email) {
       await axios({
         method: 'POST',
         url: `${baseUrl}/auth/reset`,
         data: {
-          email
-        }
+          email,
+        },
       })
     },
 
@@ -357,7 +369,6 @@ const storeConfig: StoreOptions<RootState> = {
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/users/me`,
-
       })
       commit('SET_AUTHENTICATED_USER', data.authenticated_user)
       return data.authenticated_user
@@ -366,7 +377,7 @@ const storeConfig: StoreOptions<RootState> = {
     async loadUser({ commit }, userId) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/users/${userId}`
+        url: `${baseUrl}/users/${userId}`,
       })
       commit('ADD_USER', data.user)
     },
@@ -374,12 +385,17 @@ const storeConfig: StoreOptions<RootState> = {
     async loadClockHistory({ state, commit }) {
       const { data } = await axios.get(`${baseUrl}/clock/history`, {
         params: {
-          'week_offset': state.clock.history.lastLoadedOffset
-        }
+          week_offset: state.clock.history.lastLoadedOffset,
+        },
       })
       data.history.forEach((event: ClockEvent) => {
         // TODO: Normalize nested data
-        commit('ADD_CLOCK_EVENT', normalizeRelations(event, [/*'user'*/]))
+        commit(
+          'ADD_CLOCK_EVENT',
+          normalizeRelations(event, [
+            /*'user'*/
+          ])
+        )
         /* commit('ADD_USER', event.user, {
           root: true
         }) */
@@ -398,17 +414,16 @@ const storeConfig: StoreOptions<RootState> = {
           method: 'POST',
           url: `${baseUrl}/clock/clock-in`,
           params: {
-            'shift_id': state.shifts.next?.id
+            shift_id: state.shifts.next?.id,
           },
           data: {
-            code
-          }
+            code,
+          },
         })
         commit('ADD_CLOCK_EVENT', data.event)
         commit('CLOCK_IN')
         return data
-      }
-      catch (err) {
+      } catch (err) {
         return err
       }
     },
@@ -418,22 +433,11 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'POST',
         url: `${baseUrl}/clock/clock-out`,
         params: {
-          'shift_id': state.shifts.next?.id
+          shift_id: state.shifts.next?.id,
         },
       })
       commit('ADD_CLOCK_EVENT', data.event)
       commit('CLOCK_OUT')
-    },
-
-    async loadApprovals({ commit }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/clock/timecards`
-      })
-      data.timecards.forEach((timecard: Timecard) => {
-        // TODO: Normalize nested data
-        commit('ADD_TIMECARD', timecard)
-      })
     },
 
     async toggleBreak({ commit }, breakState) {
@@ -447,12 +451,36 @@ const storeConfig: StoreOptions<RootState> = {
       commit(`${action.toUpperCase()}_BREAK`)
     },
 
+    async loadWallet({ commit }, _name) {
+      // const { data } = await axios({
+      //   method: 'GET',
+      //   url: `${baseUrl}/wallet`,
+      // })
+      const data = {
+        balance: 825.25,
+      }
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      commit('SET_WALLET', data)
+    },
+
+    async loadPayments({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/clock/timecards`,
+      })
+      data.timecards.forEach((timecard: Timecard) => {
+        // TODO: Normalize nested data
+        commit('ADD_TIMECARD', timecard)
+      })
+    },
+
     async updateTimecard({ commit }, { timecardId, events }) {
       const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/clock/timecards/${timecardId}`,
         data: {
-          changes: events
+          changes: events,
         },
       })
       commit('ADD_TIMECARD', data.timecard)
@@ -463,8 +491,8 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'PUT',
         url: `${baseUrl}/payments/approve`,
         data: {
-          timecards
-        }
+          timecards,
+        },
       })
       data.event.forEach((timecard: Timecard) => {
         // TODO: Normalize nested data
@@ -477,8 +505,8 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'PUT',
         url: `${baseUrl}/payments/deny`,
         data: {
-          timecards
-        }
+          timecards,
+        },
       })
       data.event.forEach((timecard: Timecard) => {
         // TODO: Normalize nested data
@@ -492,22 +520,22 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/payments/complete`,
         data: {
           timecards,
-          transaction
-        }
+          transaction,
+        },
       })
       timecards.forEach((timecard: Timecard) => {
         commit('REMOVE_TIMECARD', timecard.id)
       })
     },
 
-    async addPaymentMethod({ commit }, name) {
+    async addPaymentMethod(_context, name) {
       return await Plaid.openPlaidLink(name)
     },
 
     async getPlaidLinkToken() {
       const { data } = await axios({
         method: 'POST',
-        url: `${baseUrl}/payments/plaid/link-token`
+        url: `${baseUrl}/payments/plaid/link-token`,
       })
       return data.token
     },
@@ -519,8 +547,8 @@ const storeConfig: StoreOptions<RootState> = {
         data: {
           name,
           public_token: publicToken,
-          account_id: accountId
-        }
+          account_id: accountId,
+        },
       })
       return data
     },
@@ -530,8 +558,9 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/jobs/managers`,
         params: {
-          manager_id: state.authenticatedUser?.manager_id || state.authenticatedUser?.id
-        }
+          manager_id:
+            state.authenticatedUser?.manager_id || state.authenticatedUser?.id,
+        },
       })
       data.contractor_managers.forEach((m: User) => {
         commit('ADD_MANAGER', { type: 'contractor', manager: m })
@@ -575,7 +604,7 @@ const storeConfig: StoreOptions<RootState> = {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/jobs`,
-        data: job
+        data: job,
       })
       commit('ADD_JOB', data.job)
     },
@@ -584,7 +613,7 @@ const storeConfig: StoreOptions<RootState> = {
       const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/jobs/${job.id}`,
-        data: job
+        data: job,
       })
       commit('ADD_JOB', data.job)
     },
@@ -592,7 +621,7 @@ const storeConfig: StoreOptions<RootState> = {
     async closeJob({ commit }, jobId) {
       await axios({
         method: 'PUT',
-        url: `${baseUrl}/jobs/${jobId}/close`
+        url: `${baseUrl}/jobs/${jobId}/close`,
       })
       commit('REMOVE_JOB', jobId)
     },
@@ -602,7 +631,7 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'POST',
         url: `${baseUrl}/shifts`,
         data: shift,
-        params: { job_id: jobId }
+        params: { job_id: jobId },
       })
       data.shifts.forEach((shift: Shift) => {
         commit('ADD_SHIFT', { shift, jobId })
@@ -613,7 +642,7 @@ const storeConfig: StoreOptions<RootState> = {
       const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/shifts/${shift.id}`,
-        data: { shift }
+        data: { shift },
       })
       commit('REMOVE_SHIFT', { shiftId: shift.id, jobId: data.shift.job_id })
       commit('ADD_SHIFT', { shift: data.shift, jobId: data.shift.job_id })
@@ -630,7 +659,7 @@ const storeConfig: StoreOptions<RootState> = {
     async loadWorkforce({ commit }) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/users/contractors`
+        url: `${baseUrl}/users/contractors`,
       })
       data.users.forEach((u: User) => {
         commit('ADD_USER', u)
@@ -642,7 +671,7 @@ const storeConfig: StoreOptions<RootState> = {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/users/add-manager`,
-        data: manager
+        data: manager,
       })
       commit('ADD_USER', data)
       commit('ADD_WORKFORCE_MEMBER', data.id)
@@ -652,7 +681,7 @@ const storeConfig: StoreOptions<RootState> = {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/users/add-contractor`,
-        data: contractor
+        data: contractor,
       })
       commit('ADD_USER', data)
       commit('ADD_WORKFORCE_MEMBER', data.id)
@@ -664,8 +693,8 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/calendar`,
         params: {
           date_begin: start,
-          date_end: end
-        }
+          date_end: end,
+        },
       })
       console.log(data)
       data.events.forEach((event: CalendarEvent) => commit('ADD_EVENT', event))
@@ -674,7 +703,7 @@ const storeConfig: StoreOptions<RootState> = {
     async loadConversations({ commit }) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/conversations`
+        url: `${baseUrl}/conversations`,
       })
       data.conversations.forEach((conversation: Conversation) => {
         commit('ADD_CONVERSATION', { conversation })
@@ -684,7 +713,7 @@ const storeConfig: StoreOptions<RootState> = {
     async loadConversation({ commit }, conversationId) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/conversations/${conversationId}`
+        url: `${baseUrl}/conversations/${conversationId}`,
       })
       commit('ADD_CONVERSATION', { conversation: data.conversation })
     },
@@ -694,29 +723,31 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'POST',
         url: `${baseUrl}/conversations`,
         data: {
-          users: userIds
-        }
+          users: userIds,
+        },
       })
-      commit('ADD_CONVERSATION', { conversation: data.conversation, prepend: true })
+      commit('ADD_CONVERSATION', {
+        conversation: data.conversation,
+        prepend: true,
+      })
       return data.conversation
     },
 
     async loadContacts({ commit }) {
-
       // TODO: Flatten contacts data into users store
 
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/conversations/contacts`
+        url: `${baseUrl}/conversations/contacts`,
       })
-      commit('UPDATE_CONTACTS', data.contacts);
+      commit('UPDATE_CONTACTS', data.contacts)
     },
 
     async sendMessage({ commit }, { message, conversationId }) {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/conversations/${conversationId}/messages`,
-        data: message
+        data: message,
       })
       commit('ADD_MESSAGE', { message: data.message, conversationId })
     },
@@ -725,8 +756,8 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'PUT',
         url: `${baseUrl}/users/reset-password`,
         data: {
-          password: newPassword
-        }
+          password: newPassword,
+        },
       })
     },
     async setSSN({ commit }, ssn) {
@@ -734,8 +765,8 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'PUT',
         url: `${baseUrl}/users/me/ssn`,
         data: {
-          ssn
-        }
+          ssn,
+        },
       })
       commit('SET_SSN_REGISTERED')
     },
@@ -746,15 +777,23 @@ const storeConfig: StoreOptions<RootState> = {
       return state.users.byId[id]
     },
     clockEvent: (state, _, __, rootGetters) => (id: number) => {
-      return resolveRelations(state.clock.history.byId[id], [/*'user'*/], rootGetters)
+      return resolveRelations(
+        state.clock.history.byId[id],
+        [
+          /*'user'*/
+        ],
+        rootGetters
+      )
     },
     clockHistory: (state, getters) => {
-      let events = state.clock.history.all.map(eventId => getters.clockEvent(eventId))
+      let events = state.clock.history.all.map((eventId) =>
+        getters.clockEvent(eventId)
+      )
       events = events.sort((a, b) => {
-        return (new Date(b.time).getTime()) - (new Date(a.time).getTime())
+        return new Date(b.time).getTime() - new Date(a.time).getTime()
       })
 
-      return events;
+      return events
     },
     nextShift: (state) => {
       if (!state.shifts.next) return {}
@@ -763,7 +802,7 @@ const storeConfig: StoreOptions<RootState> = {
         end = new Date(state.shifts.next.time_end),
         now = new Date()
 
-      const shiftActive = (begin <= now && now <= end)
+      const shiftActive = begin <= now && now <= end
 
       return {
         ...state.shifts.next,
@@ -773,16 +812,20 @@ const storeConfig: StoreOptions<RootState> = {
       }
     },
     timecard: (state) => (id: number) => {
-      return state.approvals.timecards.byId[id]
+      return state.payments.timecards.byId[id]
     },
     timecards: (state, getters) => {
-      return state.approvals.timecards.all.map(id => getters.timecard(id))
+      return state.payments.timecards.all.map((id) => getters.timecard(id))
     },
     approvedTimecards: (_state, getters) => {
-      return getters.timecards.filter((timecard: Timecard) => timecard.approved && !timecard.paid);
+      return getters.timecards.filter(
+        (timecard: Timecard) => timecard.approved && !timecard.paid
+      )
     },
     unapprovedTimecards: (_state, getters) => {
-      return getters.timecards.filter((timecard: Timecard) => !timecard.approved);
+      return getters.timecards.filter(
+        (timecard: Timecard) => !timecard.approved
+      )
     },
     job: (state) => (id: number) => {
       const job = state.jobs.byId[id]
@@ -795,13 +838,13 @@ const storeConfig: StoreOptions<RootState> = {
       return job
     },
     jobs: (state, getters) => {
-      return state.jobs.all.map(id => getters.job(id))
+      return state.jobs.all.map((id) => getters.job(id))
     },
     directJobs: (_state, getters) => {
-      return getters.jobs.filter((job: Job) => job.direct);
+      return getters.jobs.filter((job: Job) => job.direct)
     },
     indirectJobs: (_state, getters) => {
-      return getters.jobs.filter((job: Job) => !job.direct);
+      return getters.jobs.filter((job: Job) => !job.direct)
     },
     shift: (state) => (id: number) => {
       return state.shifts.byId[id]
@@ -812,12 +855,11 @@ const storeConfig: StoreOptions<RootState> = {
     workforce: (state) => {
       return state.workforce.map((userId: number) => state.users.byId[userId])
     },
-    calendarEvent: state => (id: number) => {
+    calendarEvent: (state) => (id: number) => {
       return state.events.byId[id]
     },
     calendarEvents: (state, getters) => {
-
-      let colorCounter = 0;
+      let colorCounter = 0
       const eventColors = [
         'blue',
         'green',
@@ -833,20 +875,18 @@ const storeConfig: StoreOptions<RootState> = {
         'pink',
         'teal',
         'lime',
-      ];
+      ]
       const colorMap: {
         [key: number]: string;
-      } = {}; // Map job ID to color
+      } = {} // Map job ID to color
 
-      return state.events.all.map(eventId => {
-
+      return state.events.all.map((eventId) => {
         const event = getters.calendarEvent(eventId)
 
-        let color;
+        let color
         if (colorMap[event.job_id]) {
           color = colorMap[event.job_id]
-        }
-        else {
+        } else {
           color = eventColors[colorCounter % eventColors.length]
           colorMap[event.job_id] = color
           colorCounter++
@@ -858,7 +898,7 @@ const storeConfig: StoreOptions<RootState> = {
           end: new Date(event.time_end),
           color,
           timed: true,
-          ...event
+          ...event,
         }
       })
     },
@@ -867,36 +907,39 @@ const storeConfig: StoreOptions<RootState> = {
       // return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
     },
     conversations: (state, getters) => {
-      return state.conversations.all.map((id: number) => getters.conversation(id))
+      return state.conversations.all.map((id: number) =>
+        getters.conversation(id)
+      )
     },
   },
-  modules: {
-  }
+  modules: {},
 }
 
 const store = new Vuex.Store<RootState>(storeConfig)
 
-export default store;
+export default store
 
-axios.interceptors.response.use(response => {
-  return response
-}, error => {
+axios.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (error) => {
+    // if (error.config.hideErrorMessage) return
 
-  // if (error.config.hideErrorMessage) return
+    let message
+    const res = error.response.data
 
-  let message;
-  const res = error.response.data
+    // TODO: this is stupid, don't keep this. use custom axios config
+    if (error.request.responseURL.includes('/users/me')) return
 
-  // TODO: this is stupid, don't keep this. use custom axios config
-  if (error.request.responseURL.includes('/users/me')) return
+    if (res.message || res.response.error) {
+      message = res.message || res.response.error
+    } else {
+      const errorList = error.response.data.response.errors
+      message = errorList[Object.keys(errorList)[0]][0]
+    }
+    store.dispatch('showSnackbar', { text: message })
 
-  if (res.message || res.response.error) {
-    message = res.message || res.response.error
-  } else {
-    const errorList = error.response.data.response.errors
-    message = errorList[Object.keys(errorList)[0]][0]
+    return Promise.reject(error)
   }
-  store.dispatch('showSnackbar', { text: message })
-
-  return Promise.reject(error)
-})
+)
