@@ -29,7 +29,7 @@ async function onEvent(eventName: string, metadata: any) {
 }
 
 
-export async function openPlaidLink(name) {
+export async function openPlaidLink(name: string) {
   const linkToken = await store.dispatch('getPlaidLinkToken')
   console.log(linkToken)
 
