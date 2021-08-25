@@ -97,6 +97,15 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
 
+  v-textarea(
+      v-model="form.message",
+      label="Message",
+      outlined,
+      dense,
+      :color="color",
+      :filled="filled"
+  )
+
   v-spacer
 
   v-card-actions.pt-0
@@ -140,7 +149,7 @@ export default class ContactForm extends Vue {
     website: '',
     num_managers: null,
     num_contractors: null,
-    notes: '',
+    message: '',
   }
 
   rules = {
@@ -158,7 +167,6 @@ export default class ContactForm extends Vue {
   loading = false
 
   mounted() {
-    console.log(UAParser(navigator.userAgent))
     if (this.dataSupplement) {
       this.form = {
         ...this.form,
@@ -183,7 +191,6 @@ export default class ContactForm extends Vue {
     else {
       delete request.phone
     }
-
     await this.$store.dispatch('contactSales', {
       ...request,
       ...UAParser(navigator.userAgent) // Attach user agent info to request

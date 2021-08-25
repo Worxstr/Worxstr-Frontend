@@ -1,73 +1,91 @@
 <template lang="pug">
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
-    v-card.soft-shadow(width='500')
+    v-card.soft-shadow(width='600')
       v-form(@submit.prevent='signUp' v-model='isValid')
-        v-card-title Sign up
-        v-card-text
-          v-text-field(
-            autofocus,
-            label='First name'
-            v-model='form.first_name'
-            :rules='rules.firstName'
-            required
-          )
-          v-text-field(
-            label='Last name'
-            v-model='form.last_name'
-            :rules='rules.lastName' 
-            required
-          )
-          v-text-field(
-            label='Email'
-            type='email'
-            :rules='rules.email'
-            v-model='form.email'
-            required
-          )
-          phone-input(
-            v-model='form.phone'
-            required
-          )
-          v-text-field(
-            label='Manager ID'
-            v-model='form.manager_id'
-            :rules='rules.managerId'
-          )
-          v-text-field(
-            label='Password'
-            type='password'
-            v-model='form.password'
-            :rules='rules.password'
-            required
-          )
-          v-text-field(
-            label='Confirm password'
-            type='password'
-            v-model='form.confirm_password'
-            :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
-            required
-          )
-          v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
-            template(v-slot:label)
-              div
-                span I agree to the
-                a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
+        v-card-title.text-h5
+          span(v-if='!accountType') Sign up
+          span(v-else) Sign up as {{ accountType == 'org' ? 'business' : 'contractor' }}
+        v-card-text.pb-0
+          v-window.pt-2(v-model='step')
 
-        v-card-actions
+            v-window-item(:value='0')
+              .pa-1.d-flex.flex-column.flex-sm-row.justify-center
+                v-btn.pa-10(text @click="accountType = 'contractor'; step++")
+                  v-icon mdi-account
+                  span.ml-3.text-h6 I'm a contractor
+                v-btn.pa-10(text :to="{ name: 'pricing' }")
+                  v-icon mdi-domain
+                  span.ml-3.text-h6 I have a business
+
+            v-window-item(:value='1')
+              dwolla-personal-vcr(
+                v-if="accountType == 'contractor'"
+                terms='/terms'
+                privacy='/privacy'
+              )
+              dwolla-business-vcr(
+                v-if="accountType == 'org'"
+                terms='/terms'
+                privacy='/privacy'
+              )
+              p(v-if="accountType == 'org'")
+                | Are you a contractor? Click
+                a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
+                | to create your account.
+
+            v-window-item(:value='2')
+              v-text-field(
+                label='Manager reference'
+                v-model='form.manager_reference'
+                :rules='rules.managerReference'
+                outlined
+                dense
+                v-if="accountType == 'contractor'"
+              )
+              v-text-field(
+                label='Password'
+                type='password'
+                v-model='form.password'
+                :rules='rules.password'
+                required
+                outlined
+                dense
+              )
+              v-text-field(
+                label='Confirm password'
+                type='password'
+                v-model='form.confirm_password'
+                :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
+                required
+                outlined
+                dense
+              )
+
+              //- v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
+              //-   template(v-slot:label)
+              //-     div
+              //-       span I agree to the
+              //-       a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
+
+                  
+
+        v-card-actions(v-if='step != 1')
           v-spacer
-          v-btn(v-if='step != 0' text @click='step--') Back
-          v-btn(v-if='step != 3' text @click='step++') Next
+          v-btn(v-if='step != 0 && step != 2' text @click='step--') Back
+          v-btn(v-if='step != 0 && step != 2' text @click='step++') Next
           v-btn(
-            v-if='step == 3'
+            v-if='step == 2'
             text
             color='primary'
             type='submit'
             :disabled='!isValid'
           ) Sign up
+
       v-fade-transition
         v-overlay(absolute opacity='0.2' v-if='loading')
           v-progress-circular(indeterminate)
+
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>
 
@@ -75,48 +93,68 @@ div
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Component, Vue } from 'vue-property-decorator'
-import { exists, emailRules, phoneRules, passwordRules, passwordMatches } from '@/plugins/inputValidation'
+import {
+  exists,
+  passwordRules,
+  passwordMatches,
+} from '@/plugins/inputValidation'
 import Arrows from '@/components/Arrows.vue'
+import dwolla from '@/plugins/dwolla'
 
 @Component({
   metaInfo: {
-    title: 'Sign up'
+    title: 'Sign up',
   },
   components: {
     Arrows,
   },
 })
 export default class SignUp extends Vue {
+  step = 0
   loading = false
   isValid = false
-
-  step = 0
+  accountType = null // 'contractor' | 'org'
 
   form = {
-    first_name: "",
-    last_name: "",
-    phone: "",
-    email: "",
-    manager_id: "",
-    password: "",
-    confirm_password: "", 
-    agreeToTerms: false,
+    manager_reference: '',
+    password: '',
+    confirm_password: '',
+    // agreeToTerms: false,
+    customer_url: '',
+    subscription_tier: null,
   }
   rules = {
-    firstName: [exists('First name required')],
-    lastName: [exists('Last name required')],
-    phone: phoneRules,
-    email: emailRules,
-    managerId: [exists('Manager ID required')],
+    managerReference: [exists('Manager reference required')],
     password: passwordRules,
     confirmPassword: [exists('Password confirmation required')],
     passwordMatches,
   }
 
+  mounted() {
+    dwolla.on('success', (res) => {
+      this.form.customer_url = res.location
+      this.step = 2
+    })
+    dwolla.on('error', (err) => {
+      console.error(err)
+    })
+
+    
+
+    if (this.$route.params.subscriptionTier) {
+      this.accountType = 'org'
+      this.step++
+      this.form.subscription_tier = this.$route.params.subscriptionTier
+    }
+  }
+
   async signUp() {
     this.loading = true
     try {
-      await this.$store.dispatch("signUp", this.form)
+      await this.$store.dispatch('signUp', {
+        ...this.form,
+        accountType: this.accountType,
+      })
     } finally {
       this.loading = false
     }

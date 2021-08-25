@@ -16,21 +16,19 @@ v-dialog(
     v-divider
 
     v-card-text.mt-5
-      p.text-subtitle-1
+      p
         | {{ timecards.length }}
-        | contractor{{ timecards.length == 1 ? '' : 's' }} will be paid ${{
-        | wagePayment
-        | }}
-        | in total. A ${{ feesPayment }} fee will be applied.
+        | contractor{{ timecards.length == 1 ? '' : 's' }}
+        | will be paid {{ wagePayment  | currency }} in total.
+        | A {{ feesPayment | currency }} fee will be applied.
         br
-        |
-        | Your total is ${{ totalPayment }}.
+        | Your total is {{ totalPayment | currency }}.
     
-      paypal-buttons(
-        :createOrder="createOrder",
-        :onApprove="onApprove",
-        v-if="renderPaypal && !transaction"
-      )
+      //- paypal-buttons(
+      //-   :createOrder="createOrder",
+      //-   :onApprove="onApprove",
+      //-   v-if="renderPaypal && !transaction"
+      //- )
       div(v-if="transaction")
         p.text-subtitle-2.green--text.d-flex.align-center.my-2
           | Payment successful. Your PayPal order ID is:
@@ -47,12 +45,12 @@ v-dialog(
 <script>
 import Vue from "vue";
 // eslint-disable-next-line no-undef
-const PayPalButton = paypal.Buttons.driver("vue", Vue);
+// const PayPalButton = paypal.Buttons.driver("vue", Vue);
 
 export default {
   name: "paymentDialog",
   components: {
-    "paypal-buttons": PayPalButton,
+    // "paypal-buttons": PayPalButton,
   },
   props: {
     opened: Boolean,
