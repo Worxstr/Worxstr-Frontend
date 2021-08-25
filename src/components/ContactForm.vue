@@ -128,6 +128,8 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { emailRules, exists, url } from '@/plugins/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
+import * as UAParser from 'ua-parser-js'
+
 @Component({
   components: {
     PhoneInput
@@ -189,8 +191,10 @@ export default class ContactForm extends Vue {
     else {
       delete request.phone
     }
-    
-    await this.$store.dispatch('contactSales', request)
+    await this.$store.dispatch('contactSales', {
+      ...request,
+      ...UAParser(navigator.userAgent) // Attach user agent info to request
+    })
 
     this.loading = false
     this.$emit('submitted')

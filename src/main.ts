@@ -10,7 +10,7 @@ import { App as CapacitorApp } from '@capacitor/app'
 import './styles/style.scss'
 import './plugins/filters'
 
-import VueMask from 'v-mask'
+import VueMask  from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
 import VueSocketIO from 'vue-socket.io'
@@ -66,7 +66,8 @@ async function getUserData() {
   try {
     // Load new user data
     await store.dispatch('getAuthenticatedUser')
-  } catch (e) {
+  }
+  catch (e) {
     console.error(e)
   }
 }
@@ -114,29 +115,9 @@ function configureBackButtonPress() {
   })
 }
 
-declare global {
-  interface Window {
-    dwolla: any;
-    Plaid: any;
-  }
-}
-
-function configureDwolla() {
-  window.dwolla = window.dwolla || {}
-  window.dwolla.configure({
-    environment: 'sandbox',
-    // styles: '/main.css',
-    tokenUrl: `${process.env.VUE_APP_API_BASE_URL}/payments/access`,
-    success: async (res: any) => {
-      dwolla.emit('success', res)
-    },
-    error: (err: any) => {
-      dwolla.emit('error', err)
-    },
-  })
-}
 
 async function init() {
+  
   await getUserData()
 
   new Vue({
@@ -149,7 +130,6 @@ async function init() {
   initDarkMode()
   promptSSN()
   configureBackButtonPress()
-  configureDwolla()
 }
 
 init()

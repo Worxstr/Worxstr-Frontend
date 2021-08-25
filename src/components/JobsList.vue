@@ -35,7 +35,6 @@
                 v-list-item-title Close
                 
       v-divider(v-if='i != jobs.length - 1')
-      
 
   .d-flex.flex-column.justify-center(v-else)
     v-icon.text-h2.ma-5 mdi-calendar-check
@@ -52,10 +51,11 @@ import CloseJobDialog from '@/views/jobs/CloseJobDialog.vue'
 @Component({
   components: {
     EditJobDialog,
-    CloseJobDialog,
-  },
+    CloseJobDialog
+  }
 })
 export default class JobsList extends Vue {
+  
   @Prop(Array) readonly jobs!: Array<Job>
 
   editJobDialog = false
