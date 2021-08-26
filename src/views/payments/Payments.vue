@@ -26,9 +26,9 @@ div
     div(v-if="loadingWallet")
       v-skeleton-loader.my-4(type="heading")
 
-    div(v-else)
+    .my-5(v-else)
       .text-h6 Available balance
-      .text-h2.ma-5 {{ payments.wallet.balance | currency }}
+      .text-h2 {{ payments.wallet.balance | currency }}
 
   v-container(
     fluid
@@ -65,6 +65,13 @@ div
 
       .mb-5(v-if="timecards.length")
         v-toolbar.no-padding(flat, color="transparent")
+        
+          v-checkbox.ml-6(
+            hide-details
+            @change='toggleAll'
+            :indeterminate='partiallySelected'
+          )
+
           v-toolbar-title.px-4.text-h6
             span Pending payments
             v-chip.mx-3.pa-2.font-weight-bold(small) {{ timecards.length }}
@@ -76,16 +83,27 @@ div
             @click="openPaymentDialog(timecards)"
           )
             v-icon(left) mdi-check-all
-            span Complete all payments
+            span Complete&nbsp;
+              | {{ selectedTimecards.length != 0 && selectedTimecards.length != timecards.length ? selectedTimecards.length : 'all'}}
+              | payment{{selectedTimecards.length == 1 ? '' : 's'}}
 
         v-expansion-panels(accordion flat).soft-shadow
           v-expansion-panel(
-            v-for="timecard in timecards",
+            v-for="(timecard, i) in timecards",
             :key="timecard.id"
           )
             v-expansion-panel-header
+              v-checkbox.mt-0.mb-1.mr-3(
+                v-model='selectedTimecards'
+                :value="timecard.id"
+                hide-details
+                style='flex: none'
+              )
+              
               span.py-1.font-weight-medium.flex-grow-0 {{ timecard | fullName }}
+              
               v-spacer
+
               span.flex-grow-0.px-2.font-weight-bold {{ timecard.total_payment | currency }}
               span.flex-grow-0.px-2(
                 v-if="timecard.time_clocks && timecard.time_clocks.length"
@@ -162,6 +180,10 @@ export default {
   computed: {
     ...mapState(['authenticatedUser', 'payments']),
     ...mapGetters(['timecards']),
+    partiallySelected() {
+      return this.selectedTimecards.length != 0 &&
+             this.selectedTimecards.length != this.timecards.length
+    }
   },
   async mounted() {
     this.loadingWallet = true
@@ -190,6 +212,14 @@ export default {
       return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${
         minutes == 1 ? '' : 's'
       }`
+    },
+    toggleAll() {
+      if (this.selectedTimecards.length == this.timecards.length) {
+        this.selectedTimecards = []
+      }
+      else {
+        this.selectedTimecards = this.timecards.map(timecard => timecard.id)
+      }
     },
     openEditTimecardDialog(timecard) {
       this.selectedTimecards = [timecard]

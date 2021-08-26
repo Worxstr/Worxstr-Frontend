@@ -467,7 +467,7 @@ const storeConfig: StoreOptions<RootState> = {
     async loadPayments({ commit }) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/clock/timecards`,
+        url: `${baseUrl}/payments/timecards`,
       })
       data.timecards.forEach((timecard: Timecard) => {
         // TODO: Normalize nested data
@@ -478,7 +478,7 @@ const storeConfig: StoreOptions<RootState> = {
     async updateTimecard({ commit }, { timecardId, events }) {
       const { data } = await axios({
         method: 'PUT',
-        url: `${baseUrl}/clock/timecards/${timecardId}`,
+        url: `${baseUrl}/payments/timecards/${timecardId}`,
         data: {
           changes: events,
         },
