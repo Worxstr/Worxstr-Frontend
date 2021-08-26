@@ -816,16 +816,6 @@ const storeConfig: StoreOptions<RootState> = {
     timecards: (state, getters) => {
       return state.payments.timecards.all.map((id) => getters.timecard(id))
     },
-    approvedTimecards: (_state, getters) => {
-      return getters.timecards.filter(
-        (timecard: Timecard) => timecard.approved && !timecard.paid
-      )
-    },
-    unapprovedTimecards: (_state, getters) => {
-      return getters.timecards.filter(
-        (timecard: Timecard) => !timecard.approved
-      )
-    },
     job: (state) => (id: number) => {
       const job = state.jobs.byId[id]
 
