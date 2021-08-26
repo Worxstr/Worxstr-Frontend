@@ -1,13 +1,18 @@
 <template lang="pug">
 v-dialog(
+  id="payment-dialog"
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
   max-width="500",
   persistent
+  eager
 )
   v-card.d-flex.flex-column
-    v-card-title.headline Deny timecard?
-    v-card-text(v-if="timecard") {{ timecard | fullName }} will not be paid for this shift.
+    v-card-title.headline Deny payment{{timecards.length == 1 ? '' : 's'}}?
+
+    v-card-text(v-if="timecards")
+      | {{timecards.length == 1 ? `${timecards[0].first_name} ${timecards[0].last_name}` : 'These contractors' }}
+      | will not be paid for this shift.
 
     v-spacer
     
@@ -22,21 +27,17 @@ export default {
   name: "denyDialog",
   props: {
     opened: Boolean,
-    timecard: Object,
+    timecardIds: Array,
+  },
+  computed: {
+    timecards() {
+      return this.$store.getters.timecardsByIds(this.timecardIds)
+    },
   },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
     },
-    async denyTimecard() {
-      await this.$store.dispatch("denyTimecards", [
-        {
-          id: this.timecard.id,
-          denied: true,
-        },
-      ]);
-      this.closeDialog();
-    },
-  },
+  }
 };
 </script>

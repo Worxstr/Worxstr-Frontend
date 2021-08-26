@@ -24,16 +24,11 @@ v-dialog(
         br
         | Your total is {{ totalPayment | currency }}.
     
-      //- paypal-buttons(
-      //-   :createOrder="createOrder",
-      //-   :onApprove="onApprove",
-      //-   v-if="renderPaypal && !transaction"
-      //- )
-      div(v-if="transaction")
+      div
         p.text-subtitle-2.green--text.d-flex.align-center.my-2
           | Payment successful. Your PayPal order ID is:
         p.green--text.font-weight-black.mx-1
-          | {{ transaction.orderID }}
+          | XXXXXXXXXX
 
     v-spacer
 
@@ -43,28 +38,16 @@ v-dialog(
 </template>
 
 <script>
-import Vue from "vue";
-// eslint-disable-next-line no-undef
-// const PayPalButton = paypal.Buttons.driver("vue", Vue);
-
 export default {
   name: "paymentDialog",
-  components: {
-    // "paypal-buttons": PayPalButton,
-  },
   props: {
     opened: Boolean,
-    timecards: Array,
-    transaction: null,
-  },
-  data: () => ({
-    renderPaypal: false,
-  }),
-  mounted() {
-    // Wait to render paypal buttons so the DOM container is not removed
-    setTimeout(() => this.renderPaypal = true, 1)
+    timecardIds: Array,
   },
   computed: {
+    timecards() {
+      return this.$store.getters.timecardsByIds(this.timecardIds)
+    },
     totalPayment() {
       return this.wagePayment + this.feesPayment;
     },

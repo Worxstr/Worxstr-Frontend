@@ -451,13 +451,13 @@ const storeConfig: StoreOptions<RootState> = {
       commit(`${action.toUpperCase()}_BREAK`)
     },
 
-    async loadWallet({ commit }, _name) {
+    async loadWallet({ commit }) {
       // const { data } = await axios({
       //   method: 'GET',
       //   url: `${baseUrl}/wallet`,
       // })
       const data = {
-        balance: 825.25,
+        balance: 500,
       }
       // Simulate network delay
       await new Promise(resolve => setTimeout(resolve, 1200));
@@ -815,6 +815,9 @@ const storeConfig: StoreOptions<RootState> = {
     },
     timecards: (state, getters) => {
       return state.payments.timecards.all.map((id) => getters.timecard(id))
+    },
+    timecardsByIds: (state, getters) => (timecardIds: number[]) => {
+      return timecardIds.map((id) => getters.timecard(id))
     },
     job: (state) => (id: number) => {
       const job = state.jobs.byId[id]
