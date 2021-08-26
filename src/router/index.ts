@@ -194,7 +194,7 @@ const routes = [
     name: 'payments',
     component: Payments,
     meta: {
-      icon: 'mdi-clock-check-outline',
+      icon: 'mdi-cash-multiple',
       restrict: Manager
     }
   },
