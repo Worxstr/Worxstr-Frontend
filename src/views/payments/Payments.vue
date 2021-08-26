@@ -77,15 +77,25 @@ div
             v-chip.mx-3.pa-2.font-weight-bold(small) {{ timecards.length }}
 
           v-spacer
+
           v-btn(
             text,
-            color="green",
+            color="error",
+            @click="openPaymentDialog(timecards)"
+            v-if="selectedTimecards.length"
+          )
+            v-icon(:left='$vuetify.breakpoint.smAndUp') mdi-close
+            span(v-if='$vuetify.breakpoint.smAndUp') Deny&nbsp;
+              | {{ selectedTimecards.length != 0 && selectedTimecards.length != timecards.length ? selectedTimecards.length : 'all'}}
+
+          v-btn(
+            text,
+            color="success",
             @click="openPaymentDialog(timecards)"
           )
-            v-icon(left) mdi-check-all
-            span Complete&nbsp;
+            v-icon(:left='$vuetify.breakpoint.smAndUp') mdi-check-all
+            span(v-if='$vuetify.breakpoint.smAndUp') Complete&nbsp;
               | {{ selectedTimecards.length != 0 && selectedTimecards.length != timecards.length ? selectedTimecards.length : 'all'}}
-              | payment{{selectedTimecards.length == 1 ? '' : 's'}}
 
         v-expansion-panels(accordion flat).soft-shadow
           v-expansion-panel(
@@ -137,7 +147,7 @@ div
                   @click="openApproveDialog([timecard])"
                 )
                   v-icon(left) mdi-check
-                  span Complete payment
+                  span Complete
                 v-btn(text, color="red", @click="openDenyDialog(timecard)")
                   v-icon(left) mdi-close
                   span Deny
