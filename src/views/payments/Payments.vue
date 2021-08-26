@@ -70,6 +70,7 @@ div
             hide-details
             @change='toggleAll'
             :indeterminate='partiallySelected'
+            :value='selectedTimecards.length == timecards.length'
           )
 
           v-toolbar-title.px-4.text-h6
@@ -81,7 +82,7 @@ div
           v-btn(
             text,
             color="error",
-            @click="openPaymentDialog(timecards)"
+            @click="openDenyDialog(timecards)"
             v-if="selectedTimecards.length"
           )
             v-icon(:left='$vuetify.breakpoint.smAndUp') mdi-close
@@ -114,26 +115,25 @@ div
               
               v-spacer
 
-              span.flex-grow-0.px-2.font-weight-bold {{ timecard.total_payment | currency }}
               span.flex-grow-0.px-2(
                 v-if="timecard.time_clocks && timecard.time_clocks.length"
               )
-                | {{ timecard.time_clocks[0].time | time }}
-                | -
                 | {{
-                | timecard.time_clocks[timecard.time_clocks.length - 1].time
-                | | time
+                |   timeDiff(
+                |     timecard.time_clocks[0].time,
+                |     timecard.time_clocks[timecard.time_clocks.length - 1].time
+                |   )
                 | }}
+              span.flex-grow-0.px-2.font-weight-bold {{ timecard.total_payment | currency }}
 
             v-expansion-panel-content
               v-card-text.text-body-1
                 p(v-if="timecard.time_clocks && timecard.time_clocks.length")
-                  | Worked for
+                  | {{ timecard.time_clocks[0].time | time }}
+                  | -
                   | {{
-                  |   timeDiff(
-                  |     timecard.time_clocks[0].time,
-                  |     timecard.time_clocks[timecard.time_clocks.length - 1].time
-                  |   )
+                  | timecard.time_clocks[timecard.time_clocks.length - 1].time
+                  | | time
                   | }}
                 p {{ timecard.time_break }} minute break
                 p {{ timecard.total_payment | currency }} earned
@@ -151,20 +151,21 @@ div
                 v-btn(text, color="red", @click="openDenyDialog(timecard)")
                   v-icon(left) mdi-close
                   span Deny
-            v-divider
+
+            v-divider(v-if='i != timecards.length - 1')
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 import EditTimecardDialog from './EditTimecardDialog'
 import ApproveDialog from './ApproveDialog'
 import DenyDialog from './DenyDialog.vue'
 import PaymentDialog from './PaymentDialog.vue'
-
-dayjs.extend(duration)
 
 export default {
   name: 'payments',
@@ -215,13 +216,7 @@ export default {
       timeIn = dayjs(timeIn)
       timeOut = dayjs(timeOut)
 
-      const duration = dayjs.duration(timeOut.diff(timeIn)),
-        hours = duration.format('H'),
-        minutes = duration.format('m')
-
-      return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${
-        minutes == 1 ? '' : 's'
-      }`
+      return timeOut.from(timeIn, true)
     },
     toggleAll() {
       if (this.selectedTimecards.length == this.timecards.length) {
@@ -234,10 +229,6 @@ export default {
     openEditTimecardDialog(timecard) {
       this.selectedTimecards = [timecard]
       this.editTimecardDialog = true
-    },
-    openApproveDialog(timecards) {
-      this.selectedTimecards = timecards
-      this.approveDialog = true
     },
     openDenyDialog(timecard) {
       this.selectedTimecards = [timecard]
