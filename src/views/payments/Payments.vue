@@ -1,5 +1,25 @@
 <template lang="pug">
 div
+
+  portal(to="toolbarActions")
+    v-btn(
+      color="primary",
+      text
+      :icon='$vuetify.breakpoint.xs'
+      @click="openCreateJobDialog",
+    )
+      v-icon(left) mdi-cash-plus
+      span(v-if='!$vuetify.breakpoint.xs') Withdraw funds
+    
+    v-btn(
+      color="primary",
+      text
+      :icon='$vuetify.breakpoint.xs'
+      @click="openCreateJobDialog",
+    )
+      v-icon(left) mdi-bank-transfer-in
+      span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
+
   v-container.d-flex.flex-column.justify-center.text-center(
     fluid
   )
