@@ -8,7 +8,11 @@ v-dialog(
   eager
 )
   v-card.d-flex.flex-column
-    v-card-title.headline Deny payment{{timecards.length == 1 ? '' : 's'}}?
+    v-card-title.headline
+      span
+        | Deny
+        | {{timecards.length}}
+        | payment{{timecards.length == 1 ? '' : 's'}}?
 
     v-card-text(v-if="timecards")
       | {{timecards.length == 1 ? `${timecards[0].first_name} ${timecards[0].last_name}` : 'These contractors' }}
@@ -19,7 +23,7 @@ v-dialog(
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="red", @click="denyTimecard") Yes, Deny
+      v-btn(text, color="red", @click="denyTimecard") Deny
 </template>
 
 <script>

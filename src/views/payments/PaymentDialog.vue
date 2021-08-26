@@ -20,6 +20,7 @@ v-dialog(
         | {{ timecards.length }}
         | contractor{{ timecards.length == 1 ? '' : 's' }}
         | will be paid {{ wagePayment  | currency }} in total.
+        br
         | A {{ feesPayment | currency }} fee will be applied.
         br
         | Your total is {{ totalPayment | currency }}.
@@ -35,6 +36,7 @@ v-dialog(
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel
+      v-btn(text color='success') Complete
 </template>
 
 <script>

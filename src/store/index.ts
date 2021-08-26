@@ -457,7 +457,7 @@ const storeConfig: StoreOptions<RootState> = {
       //   url: `${baseUrl}/wallet`,
       // })
       const data = {
-        balance: 500,
+        balance: 100,
       }
       // Simulate network delay
       await new Promise(resolve => setTimeout(resolve, 1200));
