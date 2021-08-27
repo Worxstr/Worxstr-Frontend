@@ -20,12 +20,13 @@ div(v-if="loadingTransfers && !(transfers.length)")
     )
       v-expansion-panel-header
         
-        .flex-grow-0
-          v-chip.mr-3.font-weight-medium(small color='amber') {{ transfer.status }}
+        .flex-grow-0.font-weight-medium
+          v-chip.mr-3(small :color='`amber ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
+          | {{ transfer.status }}
 
-          span {{ transfer.achDetails.source.traceId }}
+          span.mt-1 {{ transfer.achDetails.source.traceId }}
           v-icon mdi-chevron-right
-          span {{ transfer.achDetails.destination.traceId }}
+          span.mt-1 {{ transfer.achDetails.destination.traceId }}
         
         v-spacer
 
