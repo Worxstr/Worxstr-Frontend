@@ -1,6 +1,7 @@
 <template lang="pug">
 div
 
+  //- Toolbar buttons
   portal(to="toolbarActions")
     v-btn(
       color="primary",
@@ -19,21 +20,23 @@ div
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
 
 
-
-
-  v-container.d-flex.flex-column.justify-center.text-center(
+  //- Balance display
+  v-container.d-flex.flex-column.justify-center(
     fluid
   )
     div(v-if="loadingWallet")
       v-skeleton-loader.my-4(type="heading")
 
-    .my-5(v-else)
+    .text-center.my-5(v-else)
       .text-h6 Available balance
       .text-h2 {{ payments.wallet.balance | currency }}
 
 
+    //- Timecards list
+    timecards
 
-  timecards
+    //- Dwolla transfers history
+    dwolla-transfers
 
       
 </template>
@@ -41,7 +44,7 @@ div
 <script>
 import { mapState, mapActions } from 'vuex'
 import Timecards from '@/components/Timecards.vue'
-
+import DwollaTransfers from '@/components/DwollaTransfers.vue'
 
 export default {
   name: 'payments',
@@ -53,7 +56,8 @@ export default {
     breaks: [{}],
   }),
   components: {
-    Timecards
+    Timecards,
+    DwollaTransfers,
   },
   computed: {
     ...mapState(['authenticatedUser', 'payments']),

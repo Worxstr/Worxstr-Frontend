@@ -16,7 +16,8 @@ v-dialog(
 
     v-card-text(v-if="timecards")
       | {{timecards.length == 1 ? `${timecards[0].first_name} ${timecards[0].last_name}` : 'These contractors' }}
-      | will not be paid for this shift.
+      | will not be paid for
+      | {{timecards.length == 1 ? 'this shift' : 'these shifts'}}.
 
     v-spacer
     

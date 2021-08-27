@@ -1,24 +1,18 @@
 <template lang="pug">
-  v-container(
-    fluid
-    v-if="loadingPayments && !(timecards.length)"
-  )
+  div(v-if="loadingPayments && !(timecards.length)")
     v-skeleton-loader.my-4(type="heading")
     v-skeleton-loader(
       type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
     )
 
-  div(v-else)
-    v-container.d-flex.flex-column.justify-center(
-      fluid
-      fill-height,
+  .d-flex.flex-column.justify-center(v-else)
+    div(
       v-if="!timecards || !timecards.length"
     )
       v-icon.text-h2.ma-5 mdi-clock-check-outline
       p.text-body-1 No timecard approvals left!
 
-    v-container.payments.pt-0(fluid v-else)
-
+    .payments.pt-0(v-else)
 
       edit-timecard-dialog(
         :opened.sync="editTimecardDialog",
@@ -149,7 +143,7 @@ dayjs.extend(relativeTime)
 export default class Timecards extends Vue {
   
     loadingPayments = false
-    selectedTimecardIds = []
+    selectedTimecardIds: number[] = []
     editTimecardDialog = false
     approveDialog = false
     denyDialog = false
@@ -180,12 +174,12 @@ export default class Timecards extends Vue {
       )
     }
 
-    hasSufficientBalance(timecardId) {
+    hasSufficientBalance(timecardId: number) {
 
       let timecardIds = []
 
       if (timecardId) timecardIds = [timecardId]   
-      else if (!this.selectedTimecardIds.length) timecardIds = this.timecards.map(t => t.id)
+      else if (!this.selectedTimecardIds.length) timecardIds = this.timecards.map((t: Timecard) => t.id)
       else timecardIds = this.selectedTimecardIds
 
       const timecards = this.$store.getters.timecardsByIds(timecardIds)
@@ -198,10 +192,10 @@ export default class Timecards extends Vue {
     }
 
     timeDiff(timeIn: string, timeOut: string) {
-      timeIn = dayjs(timeIn)
-      timeOut = dayjs(timeOut)
+      const _in = dayjs(timeIn)
+      const _out = dayjs(timeOut)
 
-      return timeOut.from(timeIn, true)
+      return _out.from(_in, true)
     }
 
     toggleAll() {
@@ -213,25 +207,25 @@ export default class Timecards extends Vue {
     }
 
     selectAll() {
-      this.selectedTimecardIds = this.timecards.map((timecard) => timecard.id)
+      this.selectedTimecardIds = this.timecards.map((t: Timecard) => t.id)
     }
 
     deselectAll() {
       this.selectedTimecardIds = []
     }
 
-    openEditTimecardDialog(timecardId) {
+    openEditTimecardDialog(timecardId: number) {
       this.selectedTimecardIds = [timecardId]
       this.editTimecardDialog = true
     }
 
-    openDenyDialog(timecardId) {
+    openDenyDialog(timecardId: number) {
       if (timecardId) this.selectedTimecardIds = [timecardId]
       else if (!this.selectedTimecardIds.length) this.selectAll()
       this.denyDialog = true
     }
 
-    openPaymentDialog(timecardId) {
+    openPaymentDialog(timecardId: number) {
       // this.selectTimecards()
       if (timecardId) this.selectedTimecardIds = [timecardId]
       else if (!this.selectedTimecardIds.length) this.selectAll()
