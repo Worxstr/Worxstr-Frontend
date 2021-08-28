@@ -153,7 +153,7 @@ export default class Timecards extends Vue {
     async mounted() {
       this.loadingPayments = true
       try {
-        await this.$store.dispatch('loadPayments')
+        await this.$store.dispatch('loadTimecards')
       } finally {
         this.loadingPayments = false
       }

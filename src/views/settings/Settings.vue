@@ -42,10 +42,10 @@
 				v-divider
 				v-subheader.text-subtitle-1.font-weight-medium Payments
 
-				v-list-item(two-line)
+				v-list-item(two-line v-for='paymentMethod in paymentMethods' :key='paymentMethod.id')
 					v-list-item-content
-						v-list-item-subtitle.mb-2 Funding source 1
-						v-list-item-title XXXXXXXXXXX
+						v-list-item-subtitle.mb-2 {{ paymentMethod.name }}
+						v-list-item-title {{ paymentMethod.id }}
 					v-list-item-action
 						v-btn(text color='primary') Edit
 					v-list-item-action.ml-0
@@ -96,12 +96,16 @@ export default {
 	},
 	components: { SSNDialog, ChangePasswordDialog, AddPaymentMethodDialog },
 	computed: {
-		...mapState(['authenticatedUser']),
+			...mapState({
+				authenticatedUser: state => state.authenticatedUser,
+				paymentMethods: state => state.payments.wallet.paymentMethods
+			}),
 	},
 	mounted() {
 		if (this.$route.params.openSSNDialog == "true") {
 			this.ssnDialog = true
 		}
+		this.loadPaymentMethods()
 	},
 	data: () => ({
 		changePasswordDialog: false,
@@ -112,6 +116,15 @@ export default {
 		},
 	}),
 	methods: {
+		async loadPaymentMethods() {
+			this.loadingPayments = true
+			try {
+				await this.$store.dispatch('loadPaymentMethods')
+			}
+			finally {
+				this.loadingPayments = false
+			}
+		},
 		updateDarkMode() {
 			let dark
 			switch (this.preferences.darkMode) {

@@ -22,6 +22,12 @@ const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
   : process.env.VUE_APP_API_BASE_URL
 
+
+type PaymentMethod = {
+  id: string;
+  name: string;
+}
+
 interface RootState {
   snackbar: {
     show: boolean;
@@ -49,6 +55,7 @@ interface RootState {
   payments: {
     wallet: {
       balance: number | null;
+      paymentMethods: any[];
     };
     timecards: {
       all: number[];
@@ -112,7 +119,8 @@ const storeConfig: StoreOptions<RootState> = {
     },
     payments: {
       wallet: {
-        balance: null
+        balance: null,
+        paymentMethods: [],
       },
       timecards: {
         all: [],
@@ -206,21 +214,30 @@ const storeConfig: StoreOptions<RootState> = {
         state.payments.timecards.all.indexOf(timecardId)
       )
     },
-    ADD_JOB(state, job) {
+    ADD_PAYMENT_METHOD(state, paymentMethod: PaymentMethod) {
+      // Remove old payment method if it exists
+      state.payments.wallet.paymentMethods.forEach((method, index) => {
+        if (method.id === paymentMethod.id) {
+          Vue.delete(state.payments.wallet.paymentMethods, index)
+        }
+      })
+      state.payments.wallet.paymentMethods.push(paymentMethod)
+    },
+    ADD_JOB(state, job: Job) {
       Vue.set(state.jobs.byId, job.id, {
         ...state.jobs.byId[job.id],
         ...job,
       })
       if (!state.jobs.all.includes(job.id)) state.jobs.all.push(job.id)
     },
-    REMOVE_JOB(state, jobId) {
+    REMOVE_JOB(state, jobId: number) {
       Vue.delete(state.jobs.byId, jobId)
       Vue.delete(
         state.jobs.all,
         state.jobs.all.findIndex((id) => id == jobId)
       )
     },
-    ADD_WORKFORCE_MEMBER(state, userId) {
+    ADD_WORKFORCE_MEMBER(state, userId: number) {
       if (!state.workforce.includes(userId)) {
         state.workforce.push(userId)
       }
@@ -230,7 +247,7 @@ const storeConfig: StoreOptions<RootState> = {
         state.managers[type].push(manager)
       }
     },
-    SET_NEXT_SHIFT(state, shift) {
+    SET_NEXT_SHIFT(state, shift: Shift) {
       state.shifts.next = shift
     },
     ADD_SHIFT(state, { shift, jobId }) {
@@ -464,7 +481,30 @@ const storeConfig: StoreOptions<RootState> = {
       commit('SET_WALLET', data)
     },
 
-    async loadPayments({ commit }) {
+    async loadPaymentMethods({ commit }) {
+      // const { data } = await axios({
+      //   method: 'GET',
+      //   url: `${baseUrl}/payments/payment-methods`,
+      // })
+      const data = {
+        payment_methods: [
+          {
+            id: '1234567890',
+            name: 'Checking',
+          },
+          {
+            id: '0987654321',
+            name: 'Savings',
+          },
+        ],
+      }
+      data.payment_methods.forEach((method: PaymentMethod) => {
+        commit('ADD_PAYMENT_METHOD', method)
+      })
+      return data
+    },
+
+    async loadTimecards({ commit }) {
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/payments/timecards`,
@@ -473,6 +513,7 @@ const storeConfig: StoreOptions<RootState> = {
         // TODO: Normalize nested data
         commit('ADD_TIMECARD', timecard)
       })
+      return data
     },
 
     async updateTimecard({ commit }, { timecardId, events }) {
@@ -484,6 +525,7 @@ const storeConfig: StoreOptions<RootState> = {
         },
       })
       commit('ADD_TIMECARD', data.timecard)
+      return data
     },
 
     async approveTimecards({ commit }, timecards) {
@@ -498,6 +540,7 @@ const storeConfig: StoreOptions<RootState> = {
         // TODO: Normalize nested data
         commit('ADD_TIMECARD', timecard)
       })
+      return data
     },
 
     async denyTimecards({ commit }, timecards) {
@@ -512,6 +555,7 @@ const storeConfig: StoreOptions<RootState> = {
         // TODO: Normalize nested data
         commit('REMOVE_TIMECARD', timecard.id)
       })
+      return data
     },
 
     async approvePayment({ commit }, { timecards, transaction }) {
@@ -567,6 +611,7 @@ const storeConfig: StoreOptions<RootState> = {
       data.organization_managers.forEach((m: User) => {
         commit('ADD_MANAGER', { type: 'organization', manager: m })
       })
+      return data
     },
 
     async loadJobs({ commit }) {
@@ -578,6 +623,7 @@ const storeConfig: StoreOptions<RootState> = {
         // TODO: Normalize nested data
         commit('ADD_JOB', job)
       })
+      return data
     },
 
     async loadJob({ commit }, jobId) {
@@ -597,6 +643,7 @@ const storeConfig: StoreOptions<RootState> = {
       })
 
       commit('ADD_JOB', data.job)
+      return data
     },
 
     async createJob({ commit }, job) {
@@ -606,6 +653,7 @@ const storeConfig: StoreOptions<RootState> = {
         data: job,
       })
       commit('ADD_JOB', data.job)
+      return data
     },
 
     async updateJob({ commit }, job) {
@@ -615,6 +663,7 @@ const storeConfig: StoreOptions<RootState> = {
         data: job,
       })
       commit('ADD_JOB', data.job)
+      return data
     },
 
     async closeJob({ commit }, jobId) {
@@ -635,6 +684,7 @@ const storeConfig: StoreOptions<RootState> = {
       data.shifts.forEach((shift: Shift) => {
         commit('ADD_SHIFT', { shift, jobId })
       })
+      return data
     },
 
     async updateShift({ commit }, shift) {
@@ -645,6 +695,7 @@ const storeConfig: StoreOptions<RootState> = {
       })
       commit('REMOVE_SHIFT', { shiftId: shift.id, jobId: data.shift.job_id })
       commit('ADD_SHIFT', { shift: data.shift, jobId: data.shift.job_id })
+      return data
     },
 
     async deleteShift({ commit }, { shiftId, jobId }) {
@@ -664,6 +715,7 @@ const storeConfig: StoreOptions<RootState> = {
         commit('ADD_USER', u)
         commit('ADD_WORKFORCE_MEMBER', u.id)
       })
+      return data
     },
 
     async addManager({ commit }, manager) {
@@ -674,6 +726,7 @@ const storeConfig: StoreOptions<RootState> = {
       })
       commit('ADD_USER', data)
       commit('ADD_WORKFORCE_MEMBER', data.id)
+      return data
     },
 
     async addContractor({ commit }, contractor) {
@@ -684,6 +737,7 @@ const storeConfig: StoreOptions<RootState> = {
       })
       commit('ADD_USER', data)
       commit('ADD_WORKFORCE_MEMBER', data.id)
+      return data
     },
 
     async loadCalendarEvents({ commit }, { start, end }) {
@@ -695,8 +749,8 @@ const storeConfig: StoreOptions<RootState> = {
           date_end: end,
         },
       })
-      console.log(data)
       data.events.forEach((event: CalendarEvent) => commit('ADD_EVENT', event))
+      return data
     },
 
     async loadConversations({ commit }) {
@@ -707,6 +761,7 @@ const storeConfig: StoreOptions<RootState> = {
       data.conversations.forEach((conversation: Conversation) => {
         commit('ADD_CONVERSATION', { conversation })
       })
+      return data
     },
 
     async loadConversation({ commit }, conversationId) {
@@ -715,6 +770,7 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/conversations/${conversationId}`,
       })
       commit('ADD_CONVERSATION', { conversation: data.conversation })
+      return data
     },
 
     async createConversation({ commit }, userIds) {
@@ -740,6 +796,7 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/conversations/contacts`,
       })
       commit('UPDATE_CONTACTS', data.contacts)
+      return data
     },
 
     async sendMessage({ commit }, { message, conversationId }) {
@@ -749,6 +806,7 @@ const storeConfig: StoreOptions<RootState> = {
         data: message,
       })
       commit('ADD_MESSAGE', { message: data.message, conversationId })
+      return data
     },
     async updatePassword({ commit }, newPassword) {
       const { data } = await axios({
@@ -758,6 +816,7 @@ const storeConfig: StoreOptions<RootState> = {
           password: newPassword,
         },
       })
+      return data
     },
     async setSSN({ commit }, ssn) {
       await axios({
