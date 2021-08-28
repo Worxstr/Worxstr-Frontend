@@ -51,13 +51,16 @@ export default class DwollaTransfers extends Vue {
 
   mounted() {
     for (let i = 0; i < 5; i++) {
+      // Get random dollar amount between 0 and 1000
+      const randomAmount = Math.floor(Math.random() * 100000) / 100
+
       this.transfers.push({
         _links: {},
         _embedded: {},
         id: '859237471483',
         status: 'Pending',
         amount: {
-          value: '142.32',
+          value: randomAmount.toString(),
           currency: 'USD',
         },
         created: '2021-08-24T10:30:208Z',

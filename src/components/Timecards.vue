@@ -6,13 +6,7 @@
     )
 
   .d-flex.flex-column.justify-center(v-else)
-    div(
-      v-if="!timecards || !timecards.length"
-    )
-      v-icon.text-h2.ma-5 mdi-clock-check-outline
-      p.text-body-1 No timecard approvals left!
-
-    .payments.pt-0(v-else)
+    .payments.pt-0(v-if='timecards && timecards.length')
 
       edit-timecard-dialog(
         :opened.sync="editTimecardDialog",
@@ -27,97 +21,99 @@
         :timecardIds="selectedTimecardIds"
       )
 
-      .mb-5(v-if="timecards.length")
-        v-toolbar.no-padding(flat, color="transparent")
-        
-          v-checkbox.ml-6(
-            hide-details
-            @change='toggleAll'
-            :indeterminate='partiallySelected'
-            :value='selectedTimecardIds.length == timecards.length'
-          )
+      v-toolbar.no-padding(flat, color="transparent")
+      
+        v-checkbox.ml-6(
+          hide-details
+          @change='toggleAll'
+          :indeterminate='partiallySelected'
+          :value='selectedTimecardIds.length == timecards.length'
+        )
 
-          v-toolbar-title.px-4.text-h6
-            span Pending payments
-            v-chip.mx-3.pa-2.font-weight-bold(small) {{ timecards.length }}
+        v-toolbar-title.px-4.text-h6
+          span Pending payments
+          v-chip.mx-3.pa-2.font-weight-bold(small) {{ timecards.length }}
 
-          v-spacer
+        v-spacer
 
-          v-btn(
-            text,
-            color="success",
-            @click="openPaymentDialog()"
-            :disabled='!hasSufficientBalance()'
-          )
-            v-icon(:left='$vuetify.breakpoint.smAndUp') mdi-check-all
-            span(v-if='$vuetify.breakpoint.smAndUp') Complete&nbsp;
-              | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
+        v-btn(
+          text,
+          color="success",
+          @click="openPaymentDialog()"
+          :disabled='!hasSufficientBalance()'
+          :icon='$vuetify.breakpoint.xs'
+        )
+          v-icon(:left='!$vuetify.breakpoint.xs') mdi-check-all
+          span(v-if='!$vuetify.breakpoint.xs') Complete&nbsp;
+            | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
 
-          v-btn(
-            text,
-            color="error",
-            @click="openDenyDialog()"
-          )
-            v-icon(:left='$vuetify.breakpoint.smAndUp') mdi-close
-            span(v-if='$vuetify.breakpoint.smAndUp') Deny&nbsp;
-              | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
+        v-btn(
+          text,
+          color="error",
+          @click="openDenyDialog()"
+          :icon='$vuetify.breakpoint.xs'
+        )
+          v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
+          span(v-if='!$vuetify.breakpoint.xs') Deny&nbsp;
+            | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
 
-        v-expansion-panels(accordion flat).soft-shadow
-          v-expansion-panel(
-            v-for="(timecard, i) in timecards",
-            :key="timecard.id"
-          )
-            v-expansion-panel-header.py-3
-              v-checkbox.mt-0.mb-1.mr-3(
-                v-model='selectedTimecardIds'
-                :value="timecard.id"
-                hide-details
-                style='flex: none'
-              )
-              
-              span.py-1.font-weight-medium.flex-grow-0 {{ timecard | fullName }}
-              
-              v-spacer
+      v-expansion-panels(accordion flat).soft-shadow
+        v-expansion-panel(
+          v-for="(timecard, i) in timecards",
+          :key="timecard.id"
+        )
+          v-expansion-panel-header.py-3
+            v-checkbox.mt-0.mb-1.mr-3(
+              v-model='selectedTimecardIds'
+              :value="timecard.id"
+              hide-details
+              style='flex: none'
+            )
+            
+            span.py-1.font-weight-medium.flex-grow-0 {{ timecard | fullName }}
+            
+            v-spacer
 
-              span.flex-grow-0.px-2(
-                v-if="timecard.time_clocks && timecard.time_clocks.length"
-              )
+            span.flex-grow-0.px-2(
+              v-if="timecard.time_clocks && timecard.time_clocks.length"
+            )
+              | {{
+              |   timeDiff(
+              |     timecard.time_clocks[0].time,
+              |     timecard.time_clocks[timecard.time_clocks.length - 1].time
+              |   )
+              | }}
+            span.flex-grow-0.px-2.font-weight-bold {{ timecard.total_payment | currency }}
+
+          v-expansion-panel-content
+            v-card-text.text-body-1
+              p(v-if="timecard.time_clocks && timecard.time_clocks.length")
+                | {{ timecard_time_clcoks[0].time | date }}
+                | {{ timecard.time_clocks[0].time | time }}
+                | -
                 | {{
-                |   timeDiff(
-                |     timecard.time_clocks[0].time,
-                |     timecard.time_clocks[timecard.time_clocks.length - 1].time
-                |   )
+                | timecard.time_clocks[timecard.time_clocks.length - 1].time
+                | | time
                 | }}
-              span.flex-grow-0.px-2.font-weight-bold {{ timecard.total_payment | currency }}
+              p {{ timecard.time_break }} minute break
+              p {{ timecard.total_payment | currency }} earned
 
-            v-expansion-panel-content
-              v-card-text.text-body-1
-                p(v-if="timecard.time_clocks && timecard.time_clocks.length")
-                  | {{ timecard.time_clocks[0].time | time }}
-                  | -
-                  | {{
-                  | timecard.time_clocks[timecard.time_clocks.length - 1].time
-                  | | time
-                  | }}
-                p {{ timecard.time_break }} minute break
-                p {{ timecard.total_payment | currency }} earned
+            v-card-actions
+              v-spacer
+              v-btn(text, @click="openEditTimecardDialog(timecard.id)") Edit
+              v-btn(
+                text,
+                color="green",
+                @click="openPaymentDialog(timecard.id)"
+                :disabled='!hasSufficientBalance(timecard.id)'
+              )
+                v-icon(left) mdi-check
+                span Complete
+              v-btn(text, color="red", @click="openDenyDialog(timecard.id)")
+                v-icon(left) mdi-close
+                span Deny
 
-              v-card-actions
-                v-spacer
-                v-btn(text, @click="openEditTimecardDialog(timecard.id)") Edit
-                v-btn(
-                  text,
-                  color="green",
-                  @click="openPaymentDialog(timecard.id)"
-                  :disabled='!hasSufficientBalance(timecard.id)'
-                )
-                  v-icon(left) mdi-check
-                  span Complete
-                v-btn(text, color="red", @click="openDenyDialog(timecard.id)")
-                  v-icon(left) mdi-close
-                  span Deny
-
-            v-divider(v-if='i != timecards.length - 1')
+          v-divider(v-if='i != timecards.length - 1')
 </template>
 
 <script lang="ts">

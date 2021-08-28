@@ -579,7 +579,7 @@ const storeConfig: StoreOptions<RootState> = {
     async getPlaidLinkToken() {
       const { data } = await axios({
         method: 'POST',
-        url: `${baseUrl}/payments/plaid/link-token`,
+        url: `${baseUrl}/payments/plaid-link-token`,
       })
       return data.token
     },
@@ -587,7 +587,7 @@ const storeConfig: StoreOptions<RootState> = {
     async addPlaidFundingSource(_context, { name, publicToken, accountId }) {
       const { data } = await axios({
         method: 'POST',
-        url: `${baseUrl}/payments/plaid/add-account`,
+        url: `${baseUrl}/payments/accounts`,
         data: {
           name,
           public_token: publicToken,

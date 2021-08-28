@@ -8,7 +8,7 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
     )
-      v-icon(left) mdi-cash-plus
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-cash-plus
       span(v-if='!$vuetify.breakpoint.xs') Withdraw funds
     
     v-btn(
@@ -16,7 +16,7 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
     )
-      v-icon(left) mdi-bank-transfer-in
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
 
 
@@ -33,7 +33,7 @@ div
 
 
     //- Timecards list
-    timecards
+    timecards.mb-5
 
     //- Dwolla transfers history
     dwolla-transfers

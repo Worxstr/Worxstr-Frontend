@@ -54,7 +54,7 @@
 				v-list-item
 					v-btn(text color='primary' @click='addPaymentMethodDialog = true')
 						v-icon(left) mdi-plus
-						span Add payment method
+						span Add payment account
 				
 				v-divider
 				v-subheader.text-subtitle-1.font-weight-medium Security
