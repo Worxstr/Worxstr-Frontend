@@ -45,7 +45,7 @@ v-dialog(
 import { exists } from '@/plugins/inputValidation'
 
 export default {
-  name: "addPaymentMethodDialog",
+  name: "addPaymentAccountDialog",
   props: {
     opened: Boolean,
   },
@@ -65,7 +65,7 @@ export default {
     async openPlaidAuth() {
       this.loading = true
       try {
-        await this.$store.dispatch("addPaymentMethod", this.accountName)
+        await this.$store.dispatch("addPaymentAccount", this.accountName)
         this.closeDialog()
       }
       finally {

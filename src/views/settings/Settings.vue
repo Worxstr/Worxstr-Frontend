@@ -2,7 +2,7 @@
 	v-container.pb-16(fluid)
 		ChangePasswordDialog(:opened.sync="changePasswordDialog")
 		SSNDialog(:opened.sync="ssnDialog")
-		AddPaymentMethodDialog(:opened.sync="addPaymentMethodDialog")
+		AddPaymentAccountDialog(:opened.sync="addPaymentAccountDialog")
 
 		v-card.soft-shadow
 			v-list.pa-0(rounded subheader)
@@ -52,7 +52,7 @@
 						v-btn(text color='error') Remove
 				
 				v-list-item
-					v-btn(text color='primary' @click='addPaymentMethodDialog = true')
+					v-btn(text color='primary' @click='addPaymentAccountDialog = true')
 						v-icon(left) mdi-plus
 						span Add payment account
 				
@@ -87,14 +87,14 @@
 import { mapState } from 'vuex'
 import ChangePasswordDialog from './ChangePasswordDialog'
 import SSNDialog from './SSNDialog'
-import AddPaymentMethodDialog from './AddPaymentMethodDialog'
+import AddPaymentAccountDialog from './AddPaymentAccountDialog'
 
 export default {
 	name: "settings",
 	metaInfo: {
 		title: 'Settings',
 	},
-	components: { SSNDialog, ChangePasswordDialog, AddPaymentMethodDialog },
+	components: { SSNDialog, ChangePasswordDialog, AddPaymentAccountDialog },
 	computed: {
 			...mapState({
 				authenticatedUser: state => state.authenticatedUser,
@@ -105,21 +105,21 @@ export default {
 		if (this.$route.params.openSSNDialog == "true") {
 			this.ssnDialog = true
 		}
-		this.loadPaymentMethods()
+		this.loadPaymentAccounts()
 	},
 	data: () => ({
 		changePasswordDialog: false,
 		ssnDialog: false,
-		addPaymentMethodDialog: false,
+		addPaymentAccountDialog: false,
 		preferences: {
 			darkMode: window.localStorage.getItem('darkMode') || 'System default',
 		},
 	}),
 	methods: {
-		async loadPaymentMethods() {
+		async loadPaymentAccounts() {
 			this.loadingPayments = true
 			try {
-				await this.$store.dispatch('loadPaymentMethods')
+				await this.$store.dispatch('loadPaymentAccounts')
 			}
 			finally {
 				this.loadingPayments = false
@@ -144,8 +144,8 @@ export default {
 		signOut() {
 			this.$store.dispatch('signOut')
 		},
-		async addPaymentMethod() {
-			await this.$store.dispatch('addPaymentMethod', 'Test account')
+		async addPaymentAccount() {
+			await this.$store.dispatch('addPaymentAccount', 'Test account')
 		}
 	}
 };

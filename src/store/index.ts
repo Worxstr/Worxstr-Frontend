@@ -468,42 +468,6 @@ const storeConfig: StoreOptions<RootState> = {
       commit(`${action.toUpperCase()}_BREAK`)
     },
 
-    async loadWallet({ commit }) {
-      // const { data } = await axios({
-      //   method: 'GET',
-      //   url: `${baseUrl}/wallet`,
-      // })
-      const data = {
-        balance: 100,
-      }
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      commit('SET_WALLET', data)
-    },
-
-    async loadPaymentMethods({ commit }) {
-      // const { data } = await axios({
-      //   method: 'GET',
-      //   url: `${baseUrl}/payments/payment-methods`,
-      // })
-      const data = {
-        payment_methods: [
-          {
-            id: '1234567890',
-            name: 'Checking',
-          },
-          {
-            id: '0987654321',
-            name: 'Savings',
-          },
-        ],
-      }
-      data.payment_methods.forEach((method: PaymentMethod) => {
-        commit('ADD_PAYMENT_METHOD', method)
-      })
-      return data
-    },
-
     async loadTimecards({ commit }) {
       const { data } = await axios({
         method: 'GET',
@@ -572,7 +536,31 @@ const storeConfig: StoreOptions<RootState> = {
       })
     },
 
-    async addPaymentMethod(_context, name) {
+    async loadWallet({ commit }) {
+      // const { data } = await axios({
+      //   method: 'GET',
+      //   url: `${baseUrl}/wallet`,
+      // })
+      const data = {
+        balance: 100,
+      }
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      commit('SET_WALLET', data)
+    },
+
+    async loadPaymentAccounts({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/payments/accounts`,
+      })
+      data.payment_methods.forEach((method: PaymentMethod) => {
+        commit('ADD_PAYMENT_METHOD', method)
+      })
+      return data
+    },
+
+    async addPaymentAccount(_context, name) {
       return await Plaid.openPlaidLink(name)
     },
 
