@@ -21,7 +21,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
       v-expansion-panel-header
         
         .flex-grow-0.font-weight-medium
-          v-chip.mr-3(small :color='`amber ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
+          v-chip.mr-3(small :color='`${transfer.status == "Pending" ? "amber" : "green"} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
             | {{ transfer.status }}
 
           span.mt-1 {{ transfer.achDetails.source.traceId }}
@@ -52,13 +52,13 @@ export default class TransferHistory extends Vue {
   mounted() {
     for (let i = 0; i < 5; i++) {
       // Get random dollar amount between 0 and 1000
-      const randomAmount = Math.floor(Math.random() * 100000) / 100
+      const randomAmount = Math.random() * 1000
 
       this.transfers.push({
         _links: {},
         _embedded: {},
         id: '859237471483',
-        status: 'Pending',
+        status: i == 0 ? 'Pending' : 'Completed',
         amount: {
           value: randomAmount.toString(),
           currency: 'USD',
