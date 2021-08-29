@@ -37,7 +37,7 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="green", :disabled="!isValid", type="submit") Update
+        v-btn(text, color="primary", :disabled="!isValid", type="submit") Update
 </template>
 
 <script lang="ts">

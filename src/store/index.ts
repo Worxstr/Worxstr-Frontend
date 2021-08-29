@@ -835,7 +835,7 @@ const storeConfig: StoreOptions<RootState> = {
       commit('ADD_MESSAGE', { message: data.message, conversationId })
       return data
     },
-    async updatePassword({ commit }, newPassword) {
+    async updatePassword(_context, newPassword) {
       const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/users/reset-password`,
@@ -986,7 +986,7 @@ const storeConfig: StoreOptions<RootState> = {
         }
       })
     },
-    conversation: (state, _, __, _rootGetters) => (id: number) => {
+    conversation: (state,/*  _, __, _rootGetters */) => (id: number) => {
       return state.conversations.byId[id]
       // return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
     },
