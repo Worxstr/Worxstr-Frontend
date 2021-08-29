@@ -3,7 +3,14 @@
 		change-password-dialog(:opened.sync="changePasswordDialog")
 		SSNDialog(:opened.sync="ssnDialog")
 		add-funding-source-dialog(:opened.sync="addFundingSourceDialog")
-		remove-funding-source-dialog(:opened.sync='removeFundingSourceDialog' :fundingSource='selectedFundingSource')
+		edit-funding-source-dialog(
+			:opened.sync='editFundingSourceDialog'
+			:fundingSource='selectedFundingSource'
+		)
+		remove-funding-source-dialog(
+			:opened.sync='removeFundingSourceDialog'
+			:fundingSource='selectedFundingSource'
+		)
 
 		v-card.soft-shadow
 			v-list.pa-0(rounded subheader)
@@ -43,14 +50,18 @@
 				v-divider
 				v-subheader.text-subtitle-1.font-weight-medium Funding sources
 
-				v-list-item(two-line v-for='fundingSource in fundingSources' :key='fundingSource.id')
-					v-list-item-content
-						v-list-item-title {{ fundingSource.name }}
-						v-list-item-subtitle {{ fundingSourceId(fundingSource.location) }}
-					v-list-item-action
-						v-btn(text color='primary') Edit
-					v-list-item-action.ml-0
-						v-btn(text color='error' @click='removeFundingSource(fundingSource)') Remove
+				v-list-item(v-if='loadingFundingSources && !fundingSources.length')
+					v-progress-linear(indeterminate)
+
+				div(v-else)
+					v-list-item(two-line v-for='fundingSource in fundingSources' :key='fundingSource.id')
+						v-list-item-content
+							v-list-item-title {{ fundingSource.name }}
+							v-list-item-subtitle {{ fundingSourceId(fundingSource.location) }}
+						v-list-item-action
+							v-btn(text color='primary' @click='editFundingSource(fundingSource)') Edit
+						v-list-item-action.ml-0
+							v-btn(text color='error' @click='removeFundingSource(fundingSource)') Remove
 				
 				v-list-item
 					v-btn(text color='primary' @click='addFundingSourceDialog = true')
@@ -84,10 +95,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import ChangePasswordDialog from './ChangePasswordDialog'
 import SSNDialog from './SSNDialog'
 import AddFundingSourceDialog from './AddFundingSourceDialog'
+import EditFundingSourceDialog from './EditFundingSourceDialog'
 import RemoveFundingSourceDialog from './RemoveFundingSourceDialog'
 
 export default {
@@ -99,13 +111,14 @@ export default {
     SSNDialog,
     ChangePasswordDialog,
     AddFundingSourceDialog,
+		EditFundingSourceDialog,
     RemoveFundingSourceDialog,
   },
   computed: {
     ...mapState({
       authenticatedUser: (state) => state.authenticatedUser,
-      fundingSources: (state) => state.payments.fundingSources,
     }),
+		...mapGetters(['fundingSources'])
   },
   mounted() {
     if (this.$route.params.openSSNDialog == 'true') {
@@ -116,7 +129,9 @@ export default {
   data: () => ({
     changePasswordDialog: false,
     ssnDialog: false,
+		loadingFundingSources: false,
     addFundingSourceDialog: false,
+		editFundingSourceDialog: false,
     removeFundingSourceDialog: false,
     selectedFundingSource: null,
     preferences: {
@@ -125,20 +140,27 @@ export default {
   }),
   methods: {
     async loadFundingSources() {
-      this.loadingPayments = true
+      this.loadingFundingSources = true
       try {
         await this.$store.dispatch('loadFundingSources')
       } finally {
-        this.loadingPayments = false
+        this.loadingFundingSources = false
       }
+    },
+    async editFundingSource(fundingSource) {
+      this.selectedFundingSource = fundingSource
+      this.editFundingSourceDialog = true
     },
     async removeFundingSource(fundingSource) {
       this.selectedFundingSource = fundingSource
       this.removeFundingSourceDialog = true
     },
-		fundingSourceId(fundingSourceLocation) {
-			return fundingSourceLocation.replace('https://api-sandbox.dwolla.com/funding-sources/', '')
-		},
+    fundingSourceId(fundingSourceLocation) {
+      return fundingSourceLocation.replace(
+        'https://api-sandbox.dwolla.com/funding-sources/',
+        ''
+      )
+    },
     updateDarkMode() {
       let dark
       switch (this.preferences.darkMode) {

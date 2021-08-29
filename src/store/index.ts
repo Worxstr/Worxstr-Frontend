@@ -23,8 +23,6 @@ const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
   : process.env.VUE_APP_API_BASE_URL
 
-
-
 interface RootState {
   snackbar: {
     show: boolean;
@@ -54,7 +52,12 @@ interface RootState {
       value: number | null;
       currency: string;
     };
-    fundingSources: FundingSource[];
+    fundingSources: {
+      all: string[];
+      byLocation: {
+        [key: string]: FundingSource[];
+      };
+    };
     timecards: {
       all: number[];
       byId: {
@@ -120,7 +123,10 @@ const storeConfig: StoreOptions<RootState> = {
         value: null,
         currency: 'USD',
       },
-      fundingSources: [],
+      fundingSources: {
+        all: [],
+        byLocation: {},
+      },
       timecards: {
         all: [],
         byId: {},
@@ -213,15 +219,29 @@ const storeConfig: StoreOptions<RootState> = {
         state.payments.timecards.all.indexOf(timecardId)
       )
     },
-    SET_FUNDING_SOURCES(state, fundingSources: FundingSource[]) {
-      state.payments.fundingSources = fundingSources
-    },
     ADD_FUNDING_SOURCE(state, fundingSource: FundingSource) {
-      state.payments.fundingSources.push(fundingSource)
+      Vue.set(
+        state.payments.fundingSources.byLocation,
+        fundingSource.location,
+        {
+          ...state.payments.fundingSources.byLocation[fundingSource.location],
+          ...fundingSource,
+        }
+      )
+      if (!state.payments.fundingSources.all.includes(fundingSource.location))
+        state.payments.fundingSources.all.push(fundingSource.location)
     },
     REMOVE_FUNDING_SOURCE(state, fundingSourceLocation: string) {
-      const i = state.payments.fundingSources.map(item => item.location).indexOf(fundingSourceLocation)
-      state.payments.fundingSources.splice(i, 1)
+      Vue.delete(
+        state.payments.fundingSources.byLocation,
+        fundingSourceLocation
+      )
+      Vue.delete(
+        state.payments.fundingSources.all,
+        state.payments.fundingSources.all.findIndex(
+          (location) => location == fundingSourceLocation
+        )
+      )
     },
     ADD_JOB(state, job: Job) {
       Vue.set(state.jobs.byId, job.id, {
@@ -561,7 +581,9 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/payments/accounts`,
       })
-      commit('SET_FUNDING_SOURCES', data.funding_sources)
+      data.funding_sources.forEach((source: FundingSource) => {
+        commit('ADD_FUNDING_SOURCE', source)
+      })
       return data
     },
 
@@ -579,13 +601,23 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async removeFundingSource({ commit }, fundingSourceLocation) {
+    async updateFundingSource({ commit }, fundingSource: FundingSource) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/payments/accounts`,
+        data: fundingSource,
+      })
+      commit('ADD_FUNDING_SOURCE', data)
+      return data
+    },
+
+    async removeFundingSource({ commit }, fundingSourceLocation: string) {
       const { data } = await axios({
         method: 'DELETE',
         url: `${baseUrl}/payments/accounts`,
         data: {
           location: fundingSourceLocation,
-        }
+        },
       })
       commit('REMOVE_FUNDING_SOURCE', fundingSourceLocation)
       return data
@@ -870,8 +902,14 @@ const storeConfig: StoreOptions<RootState> = {
     timecards: (state, getters) => {
       return state.payments.timecards.all.map((id) => getters.timecard(id))
     },
-    timecardsByIds: (state, getters) => (timecardIds: number[]) => {
+    timecardsByIds: (_state, getters) => (timecardIds: number[]) => {
       return timecardIds.map((id) => getters.timecard(id))
+    },
+    fundingSource: (state) => (location: string) => {
+      return state.payments.fundingSources.byLocation[location]
+    },
+    fundingSources: (state, getters) => {
+      return state.payments.fundingSources.all.map((location) => getters.fundingSource(location))
     },
     job: (state) => (id: number) => {
       const job = state.jobs.byId[id]
