@@ -5,7 +5,7 @@ v-container(fluid v-if="loading && !(directJobs.length || indirectJobs.length)")
     type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
   )
 
-v-container.approvals(fluid v-else)
+v-container.approvals(v-else)
   edit-job-dialog(:opened.sync="createJobDialog", :create="true")
 
   portal(to="toolbarActions")

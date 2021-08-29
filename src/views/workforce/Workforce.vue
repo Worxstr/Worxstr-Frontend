@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(fluid)
+v-container
   add-workforce-member-dialog(
     :opened.sync="addContractorDialog",
     type="contractor"

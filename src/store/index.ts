@@ -207,6 +207,9 @@ const storeConfig: StoreOptions<RootState> = {
     SET_BALANCE(state, balance) {
       state.payments.balance = balance
     },
+    ADD_TO_BALANCE(state, amount) {
+      state.payments.balance.value += amount
+    },
     ADD_TIMECARD(state, timecard) {
       Vue.set(state.payments.timecards.byId, timecard.id, timecard)
       if (!state.payments.timecards.all.includes(timecard.id))
@@ -620,6 +623,28 @@ const storeConfig: StoreOptions<RootState> = {
         },
       })
       commit('REMOVE_FUNDING_SOURCE', fundingSourceLocation)
+      return data
+    },
+
+    async addToBalance({ commit }, transfer) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/payments/balance/add`,
+        data: transfer,
+      })
+      commit('ADD_TO_BALANCE', transfer.amount)
+      // commit('ADD_TRANSFER', data)
+      return data
+    },
+
+    async removeFromBalance({ commit }, transfer) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/payments/balance/remove`,
+        data: transfer,
+      })
+      commit('ADD_TO_BALANCE', -transfer.amount)
+      // commit('ADD_TRANSFER', data)
       return data
     },
 

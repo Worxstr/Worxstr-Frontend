@@ -1,28 +1,31 @@
 <template lang="pug">
 div
 
+  transfer-funds-dialog(:opened.sync='transferFundsDialog' :action='transferFundsDialog')
+
   //- Toolbar buttons
   portal(to="toolbarActions")
     v-btn(
       color="primary",
       text
       :icon='$vuetify.breakpoint.xs'
+      @click='openAddFundsDialog'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-cash-plus
-      span(v-if='!$vuetify.breakpoint.xs') Withdraw funds
+      span(v-if='!$vuetify.breakpoint.xs') Add funds to wallet
     
     v-btn(
       color="primary",
       text
       :icon='$vuetify.breakpoint.xs'
+      @click='openTransferToBankDialog'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
 
 
-  v-container.d-flex.flex-column.justify-center(
-    fluid
-  )
+  v-container.d-flex.flex-column.justify-center
+  
     //- Balance display
     div(v-if="loadingBalance && !payments.balance.value")
       v-skeleton-loader.my-4(type="heading")
@@ -43,6 +46,7 @@ div
 import { mapState, mapActions } from 'vuex'
 import Timecards from '@/components/Timecards.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
+import TransferFundsDialog from './TransferFundsDialog.vue'
 
 export default {
   name: 'payments',
@@ -52,10 +56,12 @@ export default {
   data: () => ({
     loadingBalance: false,
     breaks: [{}],
+    transferFundsDialog: null,
   }),
   components: {
     Timecards,
     TransferHistory,
+    TransferFundsDialog,
   },
   computed: {
     ...mapState(['authenticatedUser', 'payments']),
@@ -70,6 +76,12 @@ export default {
   },
   methods: {
     ...mapActions(['signOut']),
+    openAddFundsDialog() {
+      this.transferFundsDialog = 'add'
+    },
+    openTransferToBankDialog() {
+      this.transferFundsDialog = 'remove'
+    },
   },
 }
 </script>
