@@ -10,13 +10,16 @@ div
           v-window.pt-2(v-model='step')
 
             v-window-item(:value='0')
-              .pa-1.d-flex.flex-column.flex-sm-row.justify-center
-                v-btn.pa-10(text @click="accountType = 'contractor'; step++")
-                  v-icon mdi-account
-                  span.ml-3.text-h6 I'm a contractor
-                v-btn.pa-10(text :to="{ name: 'pricing' }")
-                  v-icon mdi-domain
-                  span.ml-3.text-h6 I have a business
+              dwolla-beneficial-owners(customerId='6d2a834c-0189-4d04-88bc-c53df2961f85')
+
+            //- v-window-item(:value='0')
+            //-   .pa-1.d-flex.flex-column.flex-sm-row.justify-center
+            //-     v-btn.pa-10(text @click="accountType = 'contractor'; step++")
+            //-       v-icon mdi-account
+            //-       span.ml-3.text-h6 I'm a contractor
+            //-     v-btn.pa-10(text :to="{ name: 'pricing' }")
+            //-       v-icon mdi-domain
+            //-       span.ml-3.text-h6 I have a business
 
             v-window-item(:value='1')
               dwolla-personal-vcr(
