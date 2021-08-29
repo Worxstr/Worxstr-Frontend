@@ -572,21 +572,6 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async approveTimecards({ commit }, timecards) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/payments/approve`,
-        data: {
-          timecards,
-        },
-      })
-      data.event.forEach((timecard: Timecard) => {
-        // TODO: Normalize nested data
-        commit('ADD_TIMECARD', timecard)
-      })
-      return data
-    },
-
     async denyTimecards({ commit }, timecards) {
       const { data } = await axios({
         method: 'PUT',
@@ -602,17 +587,16 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async approvePayment({ commit }, { timecards, transaction }) {
+    async completePayments({ commit }, timecardIds) {
       await axios({
         method: 'PUT',
         url: `${baseUrl}/payments/complete`,
         data: {
-          timecards,
-          transaction,
+          timecard_ids: timecardIds
         },
       })
-      timecards.forEach((timecard: Timecard) => {
-        commit('REMOVE_TIMECARD', timecard.id)
+      timecardIds.forEach((timecardId: number) => {
+        commit('REMOVE_TIMECARD', timecardId)
       })
     },
 
@@ -705,7 +689,7 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async loadTransfers({ commit }, { limit=25, offset=0 } = {}) {
+    async loadTransfers({ commit }, { limit=15, offset=0 } = {}) {
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/payments/transfers`,

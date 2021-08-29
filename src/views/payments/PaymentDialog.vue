@@ -36,7 +36,7 @@ v-dialog(
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel
-      v-btn(text color='success') Complete
+      v-btn(text color='success' @click='completePayments') Complete
 </template>
 
 <script>
@@ -72,29 +72,9 @@ export default {
     closeDialog() {
       this.$emit("update:opened", false);
     },
-    createOrder(data, actions) {
-      console.log({ data, actions });
-      console.log(this.totalPayment)
-
-      return actions.order.create({
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        purchase_units: [
-          {
-            amount: {
-              value: this.totalPayment,
-            },
-          },
-        ],
-      });
-    },
-    async onApprove(data, actions) {
-      this.transaction = data;
+    async completePayments(data, actions) {
+      await this.$store.dispatch("completePayments", this.timecards.map(t => t.id))
       this.closeDialog();
-      this.$store.dispatch("approvePayment", {
-        timecards: this.timecards,
-        transaction: data,
-      });
-      return actions.order.capture();
     },
   },
 };
