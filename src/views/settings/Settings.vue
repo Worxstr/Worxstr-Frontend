@@ -50,8 +50,10 @@
 				v-divider
 				v-subheader.text-subtitle-1.font-weight-medium Funding sources
 
-				v-list-item(v-if='loadingFundingSources && !fundingSources.length')
-					v-progress-linear(indeterminate)
+				v-skeleton-loader(
+					v-if='loadingFundingSources && !fundingSources.length'
+					type='list-item-two-line'
+				)
 
 				div(v-else)
 					v-list-item(two-line v-for='fundingSource in fundingSources' :key='fundingSource.id')
