@@ -129,7 +129,7 @@ function configureDwolla() {
     // styles: '/main.css',
     tokenUrl: `${process.env.VUE_APP_API_BASE_URL}/payments/access`,
     success: async (res: any) => {
-      dwolla.emit('success', res)
+      // dwolla.emit('success', res)
     },
     error: (err: any) => {
       dwolla.emit('error', err)

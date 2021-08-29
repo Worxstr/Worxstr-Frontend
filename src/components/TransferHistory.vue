@@ -21,12 +21,12 @@ div(v-if="loadingTransfers && !(transfers.length)")
       v-expansion-panel-header
         
         .flex-grow-0.font-weight-medium
-          v-chip.mr-3(small :color='`${transfer.status == "Pending" ? "amber" : "green"} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
+          v-chip.mr-3(small :color='`${transfer.status == "pending" ? "amber" : "green"} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
             | {{ transfer.status }}
 
-          span.mt-1 {{ transfer.achDetails.source.traceId }}
+          span.mt-1 {{ transfer._links.source['resource-type'] }}
           v-icon mdi-chevron-right
-          span.mt-1 {{ transfer.achDetails.destination.traceId }}
+          span.mt-1 {{ transfer._links.destination['resource-type'] }}
         
         v-spacer
 
@@ -46,56 +46,14 @@ import { Component, Vue } from 'vue-property-decorator'
 
 @Component
 export default class TransferHistory extends Vue {
-  transfers: any = []
   loadingTransfers = false
 
   mounted() {
-    for (let i = 0; i < 5; i++) {
-      // Get random dollar amount between 0 and 1000
-      const randomAmount = Math.random() * 1000
+    this.$store.dispatch('loadTransfers')
+  }
 
-      this.transfers.push({
-        _links: {},
-        _embedded: {},
-        id: '859237471483',
-        status: i == 0 ? 'Pending' : 'Completed',
-        amount: {
-          value: randomAmount.toString(),
-          currency: 'USD',
-        },
-        created: '2021-08-24T10:30:208Z',
-        metadata: {
-          key: 'value',
-        },
-        clearing: {
-          source: 'standard',
-          destination: 'next-available',
-        },
-        achDetails: {
-          source: {
-            addenda: {
-              values: ['string'],
-            },
-            traceId: 'Dwolla balance',
-          },
-          destination: {
-            addenda: {
-              values: ['string'],
-            },
-            traceId: 'Wells Fargo Checking',
-          },
-        },
-        rtpDetails: {
-          destination: 'rtpDestination',
-          networkId: 'rtpNetworkId',
-        },
-        correlationId: 'coorelationId',
-        individualAchId: 'individualAchId',
-        processingChannel: {
-          destination: 'real-time-payments',
-        },
-      })
-    }
+  get transfers() {
+    return this.$store.getters.transfers
   }
 }
 </script>

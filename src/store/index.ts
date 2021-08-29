@@ -17,11 +17,49 @@ import { CalendarEvent } from '@/definitions/Schedule'
 
 Vue.use(Vuex)
 
+// axios.defaults.baseURL = ''
 axios.defaults.withCredentials = true
+
 
 const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
   : process.env.VUE_APP_API_BASE_URL
+
+type Transfer = {
+  _links: {
+    destination: {
+      href: string;
+      'resource-type': string;
+      type: string;
+    };
+    self: {
+      href: string;
+      'resource-type': string;
+      type: string;
+    };
+    source: {
+      href: string;
+      'resource-type': string;
+      type: string;
+    };
+    'source-funding-source': {
+      href: string;
+      'resource-type': string;
+      type: string;
+    };
+  };
+  amount: {
+    currecny: string;
+    value: string;
+  };
+  clearing: {
+    source: string;
+  };
+  created: string;
+  id: string;
+  individualAchId: string;
+  status: string;
+}
 
 interface RootState {
   snackbar: {
@@ -64,6 +102,12 @@ interface RootState {
         [key: number]: Timecard;
       };
     };
+    transfers: {
+      all: string[];
+      byId: {
+        [key: string]: Transfer;
+      };
+    };
   };
   shifts: {
     next: Shift | null;
@@ -97,6 +141,7 @@ interface RootState {
   contacts: User[];
 }
 
+
 const storeConfig: StoreOptions<RootState> = {
   state: {
     snackbar: {
@@ -128,6 +173,10 @@ const storeConfig: StoreOptions<RootState> = {
         byLocation: {},
       },
       timecards: {
+        all: [],
+        byId: {},
+      },
+      transfers: {
         all: [],
         byId: {},
       },
@@ -245,6 +294,14 @@ const storeConfig: StoreOptions<RootState> = {
           (location) => location == fundingSourceLocation
         )
       )
+    },
+    ADD_TRANSFER(state, transfer: Transfer) {
+      Vue.set(state.payments.transfers.byId, transfer.id, {
+        ...state.payments.transfers.byId[transfer.id],
+        ...transfer
+      })
+      if (!state.payments.transfers.all.includes(transfer.id))
+        state.payments.transfers.all.push(transfer.id)
     },
     ADD_JOB(state, job: Job) {
       Vue.set(state.jobs.byId, job.id, {
@@ -648,6 +705,21 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
+    async loadTransfers({ commit }, { limit=25, offset=0 } = {}) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/payments/transfers`,
+        params: {
+          limit,
+          offset,
+        }
+      })
+      data.transfers.forEach((transfer: Transfer) => {
+        commit('ADD_TRANSFER', transfer)
+      })
+      return data
+    },
+
     async loadManagers({ commit, state }) {
       const { data } = await axios({
         method: 'GET',
@@ -935,6 +1007,12 @@ const storeConfig: StoreOptions<RootState> = {
     },
     fundingSources: (state, getters) => {
       return state.payments.fundingSources.all.map((location) => getters.fundingSource(location))
+    },
+    transfer: (state) => (transferId: string) => {
+      return state.payments.transfers.byId[transferId]
+    },
+    transfers: (state, getters) => {
+      return state.payments.transfers.all.map((transferId) => getters.transfer(transferId))
     },
     job: (state) => (id: number) => {
       const job = state.jobs.byId[id]
