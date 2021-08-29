@@ -20,11 +20,11 @@ div
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
 
 
-  //- Balance display
   v-container.d-flex.flex-column.justify-center(
     fluid
   )
-    div(v-if="loadingWallet")
+    //- Balance display
+    div(v-if="loadingBalance && !payments.balance.value")
       v-skeleton-loader.my-4(type="heading")
 
     .text-center.my-5(v-else)
@@ -32,11 +32,9 @@ div
       .text-h2 {{ payments.balance.value | currency }}
 
 
-    //- Timecards list
     timecards.mb-5
 
-    //- Dwolla transfers history
-    dwolla-transfers
+    transfer-history
 
       
 </template>
@@ -44,7 +42,7 @@ div
 <script>
 import { mapState, mapActions } from 'vuex'
 import Timecards from '@/components/Timecards.vue'
-import DwollaTransfers from '@/components/DwollaTransfers.vue'
+import TransferHistory from '@/components/TransferHistory.vue'
 
 export default {
   name: 'payments',
@@ -52,22 +50,22 @@ export default {
     title: 'Payments',
   },
   data: () => ({
-    loadingWallet: false,
+    loadingBalance: false,
     breaks: [{}],
   }),
   components: {
     Timecards,
-    DwollaTransfers,
+    TransferHistory,
   },
   computed: {
     ...mapState(['authenticatedUser', 'payments']),
   },
   async mounted() {
-    this.loadingWallet = true
+    this.loadingBalance = true
     try {
       await this.$store.dispatch('loadBalance')
     } finally {
-      this.loadingWallet = false
+      this.loadingBalance = false
     }
   },
   methods: {

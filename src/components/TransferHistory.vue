@@ -45,7 +45,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class DwollaTransfers extends Vue {
+export default class TransferHistory extends Vue {
   transfers: any = []
   loadingTransfers = false
 

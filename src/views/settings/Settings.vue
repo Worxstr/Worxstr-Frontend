@@ -3,6 +3,7 @@
 		change-password-dialog(:opened.sync="changePasswordDialog")
 		SSNDialog(:opened.sync="ssnDialog")
 		add-funding-source-dialog(:opened.sync="addFundingSourceDialog")
+		remove-funding-source-dialog(:opened.sync='removeFundingSourceDialog' :fundingSource='selectedFundingSource')
 
 		v-card.soft-shadow
 			v-list.pa-0(rounded subheader)
@@ -40,15 +41,16 @@
 						v-btn(text color='primary' @click="ssnDialog = true") Set SSN
 
 				v-divider
-				v-subheader.text-subtitle-1.font-weight-medium Payments
+				v-subheader.text-subtitle-1.font-weight-medium Funding sources
 
 				v-list-item(two-line v-for='fundingSource in fundingSources' :key='fundingSource.id')
 					v-list-item-content
 						v-list-item-title {{ fundingSource.name }}
+						v-list-item-subtitle {{ fundingSourceId(fundingSource.location) }}
 					v-list-item-action
 						v-btn(text color='primary') Edit
 					v-list-item-action.ml-0
-						v-btn(text color='error') Remove
+						v-btn(text color='error' @click='removeFundingSource(fundingSource)') Remove
 				
 				v-list-item
 					v-btn(text color='primary' @click='addFundingSourceDialog = true')
@@ -82,67 +84,82 @@
 </template>
 
 <script>
-
 import { mapState } from 'vuex'
 import ChangePasswordDialog from './ChangePasswordDialog'
 import SSNDialog from './SSNDialog'
 import AddFundingSourceDialog from './AddFundingSourceDialog'
+import RemoveFundingSourceDialog from './RemoveFundingSourceDialog'
 
 export default {
-	name: "settings",
-	metaInfo: {
-		title: 'Settings',
-	},
-	components: { SSNDialog, ChangePasswordDialog, AddFundingSourceDialog },
-	computed: {
-			...mapState({
-				authenticatedUser: state => state.authenticatedUser,
-				fundingSources: state => state.payments.fundingSources
-			}),
-	},
-	mounted() {
-		if (this.$route.params.openSSNDialog == "true") {
-			this.ssnDialog = true
-		}
-		this.loadFundingSources()
-	},
-	data: () => ({
-		changePasswordDialog: false,
-		ssnDialog: false,
-		addFundingSourceDialog: false,
-		preferences: {
-			darkMode: window.localStorage.getItem('darkMode') || 'System default',
+  name: 'settings',
+  metaInfo: {
+    title: 'Settings',
+  },
+  components: {
+    SSNDialog,
+    ChangePasswordDialog,
+    AddFundingSourceDialog,
+    RemoveFundingSourceDialog,
+  },
+  computed: {
+    ...mapState({
+      authenticatedUser: (state) => state.authenticatedUser,
+      fundingSources: (state) => state.payments.fundingSources,
+    }),
+  },
+  mounted() {
+    if (this.$route.params.openSSNDialog == 'true') {
+      this.ssnDialog = true
+    }
+    this.loadFundingSources()
+  },
+  data: () => ({
+    changePasswordDialog: false,
+    ssnDialog: false,
+    addFundingSourceDialog: false,
+    removeFundingSourceDialog: false,
+    selectedFundingSource: null,
+    preferences: {
+      darkMode: window.localStorage.getItem('darkMode') || 'System default',
+    },
+  }),
+  methods: {
+    async loadFundingSources() {
+      this.loadingPayments = true
+      try {
+        await this.$store.dispatch('loadFundingSources')
+      } finally {
+        this.loadingPayments = false
+      }
+    },
+    async removeFundingSource(fundingSource) {
+      this.selectedFundingSource = fundingSource
+      this.removeFundingSourceDialog = true
+    },
+		fundingSourceId(fundingSourceLocation) {
+			return fundingSourceLocation.replace('https://api-sandbox.dwolla.com/funding-sources/', '')
 		},
-	}),
-	methods: {
-		async loadFundingSources() {
-			this.loadingPayments = true
-			try {
-				await this.$store.dispatch('loadFundingSources')
-			}
-			finally {
-				this.loadingPayments = false
-			}
-		},
-		updateDarkMode() {
-			let dark
-			switch (this.preferences.darkMode) {
-				case 'System default':
-					dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-					break 
-				case 'Light':
-					dark = false
-					break
-				case 'Dark':
-					dark = true
-					break
-			}
-			window.localStorage.setItem('darkMode', this.preferences.darkMode)
-			this.$vuetify.theme.dark = dark
-		},
-		signOut() {
-			this.$store.dispatch('signOut')
-		},
-	}
-};
+    updateDarkMode() {
+      let dark
+      switch (this.preferences.darkMode) {
+        case 'System default':
+          dark =
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+          break
+        case 'Light':
+          dark = false
+          break
+        case 'Dark':
+          dark = true
+          break
+      }
+      window.localStorage.setItem('darkMode', this.preferences.darkMode)
+      this.$vuetify.theme.dark = dark
+    },
+    signOut() {
+      this.$store.dispatch('signOut')
+    },
+  },
+}
 </script>

@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(v-if="loadingPayments && !(timecards.length)")
+  div(v-if="loadingTimecards && !(timecards.length)")
     v-skeleton-loader.my-4(type="heading")
     v-skeleton-loader(
       type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
@@ -88,12 +88,12 @@
           v-expansion-panel-content
             v-card-text.text-body-1
               p(v-if="timecard.time_clocks && timecard.time_clocks.length")
-                | {{ timecard_time_clcoks[0].time | date }}
-                | {{ timecard.time_clocks[0].time | time }}
+                | {{ timecard.time_clocks[0].time | date('MMMM DD, YYYY') }}
+                | {{ timecard.time_clocks[0].time | time('LT') }}
                 | -
                 | {{
                 | timecard.time_clocks[timecard.time_clocks.length - 1].time
-                | | time
+                | | time('LT')
                 | }}
               p {{ timecard.time_break }} minute break
               p {{ timecard.total_payment | currency }} earned
@@ -125,7 +125,7 @@ import EditTimecardDialog from '@/views/payments/EditTimecardDialog.vue'
 import DenyDialog from '@/views/payments/DenyDialog.vue'
 import PaymentDialog from '@/views/payments/PaymentDialog.vue'
 
-import { Timecard } from '@/definitions/Clock'
+import { Timecard } from '@/definitions/Payments'
 
 dayjs.extend(relativeTime)
 
@@ -138,20 +138,19 @@ dayjs.extend(relativeTime)
 })
 export default class Timecards extends Vue {
   
-    loadingPayments = false
+    loadingTimecards = false
     selectedTimecardIds: number[] = []
     editTimecardDialog = false
     approveDialog = false
     denyDialog = false
     paymentDialog = false
-
     
     async mounted() {
-      this.loadingPayments = true
+      this.loadingTimecards = true
       try {
         await this.$store.dispatch('loadTimecards')
       } finally {
-        this.loadingPayments = false
+        this.loadingTimecards = false
       }
     }
 
@@ -184,7 +183,7 @@ export default class Timecards extends Vue {
         return total + parseFloat(timecard.total_payment)
       }, 0)
 
-      return Math.round(totalPayment * 100) / 100 <= this.payments.wallet.balance
+      return Math.round(totalPayment * 100) / 100 <= parseFloat(this.payments.balance.value)
     }
 
     timeDiff(timeIn: string, timeOut: string) {

@@ -10,7 +10,8 @@ import * as Plaid from '@/plugins/plaid'
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
 import { User, defaultRoute } from '@/definitions/User'
-import { ClockEvent, Timecard } from '@/definitions/Clock'
+import { ClockEvent } from '@/definitions/Clock'
+import { Timecard, FundingSource } from '@/definitions/Payments'
 import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
 
@@ -22,10 +23,7 @@ const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
   : process.env.VUE_APP_API_BASE_URL
 
-type FundingSource = {
-  location: string;
-  name: string;
-}
+
 
 interface RootState {
   snackbar: {
@@ -200,8 +198,8 @@ const storeConfig: StoreOptions<RootState> = {
     END_BREAK(state) {
       state.clock.break = false
     },
-    SET_WALLET(state, wallet) {
-      // state.payments.balance = wallet
+    SET_BALANCE(state, balance) {
+      state.payments.balance = balance
     },
     ADD_TIMECARD(state, timecard) {
       Vue.set(state.payments.timecards.byId, timecard.id, timecard)
@@ -217,6 +215,13 @@ const storeConfig: StoreOptions<RootState> = {
     },
     SET_FUNDING_SOURCES(state, fundingSources: FundingSource[]) {
       state.payments.fundingSources = fundingSources
+    },
+    ADD_FUNDING_SOURCE(state, fundingSource: FundingSource) {
+      state.payments.fundingSources.push(fundingSource)
+    },
+    REMOVE_FUNDING_SOURCE(state, fundingSourceLocation: string) {
+      const i = state.payments.fundingSources.map(item => item.location).indexOf(fundingSourceLocation)
+      state.payments.fundingSources.splice(i, 1)
     },
     ADD_JOB(state, job: Job) {
       Vue.set(state.jobs.byId, job.id, {
@@ -532,30 +537,11 @@ const storeConfig: StoreOptions<RootState> = {
     },
 
     async loadBalance({ commit }) {
-      // const { data } = await axios({
-      //   method: 'GET',
-      //   url: `${baseUrl}/wallet`,
-      // })
-      const data = {
-        balance: {
-          currency: 'USD',
-          value: '1000.00',
-        },
-        location:
-          'https://api-sandbox.dwolla.com/funding-sources/3ef24e35-dae7-4214-9a7a-71ca19c92e39',
-      }
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1200))
-      commit('SET_WALLET', data)
-    },
-
-    async loadFundingSources({ commit }) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/payments/accounts`,
+        url: `${baseUrl}/payments/balance`,
       })
-      commit('SET_FUNDING_SOURCES', data.funding_sources)
-      return data
+      commit('SET_BALANCE', data.balance)
     },
 
     async openPlaidLink(_context, name) {
@@ -570,6 +556,15 @@ const storeConfig: StoreOptions<RootState> = {
       return data.token
     },
 
+    async loadFundingSources({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/payments/accounts`,
+      })
+      commit('SET_FUNDING_SOURCES', data.funding_sources)
+      return data
+    },
+
     async addPlaidFundingSource(_context, { name, publicToken, accountId }) {
       const { data } = await axios({
         method: 'POST',
@@ -580,6 +575,19 @@ const storeConfig: StoreOptions<RootState> = {
           account_id: accountId,
         },
       })
+      this.commit('ADD_FUNDING_SOURCE', data)
+      return data
+    },
+
+    async removeFundingSource({ commit }, fundingSourceLocation) {
+      const { data } = await axios({
+        method: 'DELETE',
+        url: `${baseUrl}/payments/accounts`,
+        data: {
+          location: fundingSourceLocation,
+        }
+      })
+      commit('REMOVE_FUNDING_SOURCE', fundingSourceLocation)
       return data
     },
 

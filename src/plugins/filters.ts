@@ -1,5 +1,9 @@
 import Vue from 'vue'
 import dayjs from 'dayjs'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+
+dayjs.extend(localizedFormat)
+
 import { User } from '@/definitions/User'
 import { Conversation } from '@/definitions/Messages'
 
