@@ -29,7 +29,7 @@ div
 
     .text-center.my-5(v-else)
       .text-h6 Available balance
-      .text-h2 {{ payments.wallet.balance | currency }}
+      .text-h2 {{ payments.balance.value | currency }}
 
 
     //- Timecards list
@@ -65,7 +65,7 @@ export default {
   async mounted() {
     this.loadingWallet = true
     try {
-      await this.$store.dispatch('loadWallet')
+      await this.$store.dispatch('loadBalance')
     } finally {
       this.loadingWallet = false
     }

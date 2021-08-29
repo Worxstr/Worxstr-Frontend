@@ -22,9 +22,8 @@ const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
   : process.env.VUE_APP_API_BASE_URL
 
-
-type PaymentMethod = {
-  id: string;
+type FundingSource = {
+  location: string;
   name: string;
 }
 
@@ -53,10 +52,11 @@ interface RootState {
     };
   };
   payments: {
-    wallet: {
-      balance: number | null;
-      paymentMethods: any[];
+    balance: {
+      value: number | null;
+      currency: string;
     };
+    fundingSources: FundingSource[];
     timecards: {
       all: number[];
       byId: {
@@ -118,10 +118,11 @@ const storeConfig: StoreOptions<RootState> = {
       },
     },
     payments: {
-      wallet: {
-        balance: null,
-        paymentMethods: [],
+      balance: {
+        value: null,
+        currency: 'USD',
       },
+      fundingSources: [],
       timecards: {
         all: [],
         byId: {},
@@ -200,7 +201,7 @@ const storeConfig: StoreOptions<RootState> = {
       state.clock.break = false
     },
     SET_WALLET(state, wallet) {
-      state.payments.wallet = wallet
+      // state.payments.balance = wallet
     },
     ADD_TIMECARD(state, timecard) {
       Vue.set(state.payments.timecards.byId, timecard.id, timecard)
@@ -214,14 +215,8 @@ const storeConfig: StoreOptions<RootState> = {
         state.payments.timecards.all.indexOf(timecardId)
       )
     },
-    ADD_PAYMENT_METHOD(state, paymentMethod: PaymentMethod) {
-      // Remove old payment method if it exists
-      state.payments.wallet.paymentMethods.forEach((method, index) => {
-        if (method.id === paymentMethod.id) {
-          Vue.delete(state.payments.wallet.paymentMethods, index)
-        }
-      })
-      state.payments.wallet.paymentMethods.push(paymentMethod)
+    SET_FUNDING_SOURCES(state, fundingSources: FundingSource[]) {
+      state.payments.fundingSources = fundingSources
     },
     ADD_JOB(state, job: Job) {
       Vue.set(state.jobs.byId, job.id, {
@@ -536,31 +531,34 @@ const storeConfig: StoreOptions<RootState> = {
       })
     },
 
-    async loadWallet({ commit }) {
+    async loadBalance({ commit }) {
       // const { data } = await axios({
       //   method: 'GET',
       //   url: `${baseUrl}/wallet`,
       // })
       const data = {
-        balance: 100,
+        balance: {
+          currency: 'USD',
+          value: '1000.00',
+        },
+        location:
+          'https://api-sandbox.dwolla.com/funding-sources/3ef24e35-dae7-4214-9a7a-71ca19c92e39',
       }
       // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      await new Promise((resolve) => setTimeout(resolve, 1200))
       commit('SET_WALLET', data)
     },
 
-    async loadPaymentAccounts({ commit }) {
+    async loadFundingSources({ commit }) {
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/payments/accounts`,
       })
-      data.payment_methods.forEach((method: PaymentMethod) => {
-        commit('ADD_PAYMENT_METHOD', method)
-      })
+      commit('SET_FUNDING_SOURCES', data.funding_sources)
       return data
     },
 
-    async addPaymentAccount(_context, name) {
+    async openPlaidLink(_context, name) {
       return await Plaid.openPlaidLink(name)
     },
 
@@ -590,8 +588,9 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/jobs/managers`,
         params: {
-          manager_id: state.authenticatedUser?.manager_id || state.authenticatedUser?.id
-        }
+          manager_id:
+            state.authenticatedUser?.manager_id || state.authenticatedUser?.id,
+        },
       })
       data.contractor_managers.forEach((m: User) => {
         commit('ADD_MANAGER', { type: 'contractor', manager: m })

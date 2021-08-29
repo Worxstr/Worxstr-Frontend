@@ -1,8 +1,8 @@
 <template lang="pug">
 	v-container.pb-16(fluid)
-		ChangePasswordDialog(:opened.sync="changePasswordDialog")
+		change-password-dialog(:opened.sync="changePasswordDialog")
 		SSNDialog(:opened.sync="ssnDialog")
-		AddPaymentAccountDialog(:opened.sync="addPaymentAccountDialog")
+		add-funding-source-dialog(:opened.sync="addFundingSourceDialog")
 
 		v-card.soft-shadow
 			v-list.pa-0(rounded subheader)
@@ -42,19 +42,18 @@
 				v-divider
 				v-subheader.text-subtitle-1.font-weight-medium Payments
 
-				v-list-item(two-line v-for='paymentMethod in paymentMethods' :key='paymentMethod.id')
+				v-list-item(two-line v-for='fundingSource in fundingSources' :key='fundingSource.id')
 					v-list-item-content
-						v-list-item-subtitle.mb-2 {{ paymentMethod.name }}
-						v-list-item-title {{ paymentMethod.id }}
+						v-list-item-title {{ fundingSource.name }}
 					v-list-item-action
 						v-btn(text color='primary') Edit
 					v-list-item-action.ml-0
 						v-btn(text color='error') Remove
 				
 				v-list-item
-					v-btn(text color='primary' @click='addPaymentAccountDialog = true')
+					v-btn(text color='primary' @click='addFundingSourceDialog = true')
 						v-icon(left) mdi-plus
-						span Add payment account
+						span Add funding source
 				
 				v-divider
 				v-subheader.text-subtitle-1.font-weight-medium Security
@@ -87,39 +86,39 @@
 import { mapState } from 'vuex'
 import ChangePasswordDialog from './ChangePasswordDialog'
 import SSNDialog from './SSNDialog'
-import AddPaymentAccountDialog from './AddPaymentAccountDialog'
+import AddFundingSourceDialog from './AddFundingSourceDialog'
 
 export default {
 	name: "settings",
 	metaInfo: {
 		title: 'Settings',
 	},
-	components: { SSNDialog, ChangePasswordDialog, AddPaymentAccountDialog },
+	components: { SSNDialog, ChangePasswordDialog, AddFundingSourceDialog },
 	computed: {
 			...mapState({
 				authenticatedUser: state => state.authenticatedUser,
-				paymentMethods: state => state.payments.wallet.paymentMethods
+				fundingSources: state => state.payments.fundingSources
 			}),
 	},
 	mounted() {
 		if (this.$route.params.openSSNDialog == "true") {
 			this.ssnDialog = true
 		}
-		this.loadPaymentAccounts()
+		this.loadFundingSources()
 	},
 	data: () => ({
 		changePasswordDialog: false,
 		ssnDialog: false,
-		addPaymentAccountDialog: false,
+		addFundingSourceDialog: false,
 		preferences: {
 			darkMode: window.localStorage.getItem('darkMode') || 'System default',
 		},
 	}),
 	methods: {
-		async loadPaymentAccounts() {
+		async loadFundingSources() {
 			this.loadingPayments = true
 			try {
-				await this.$store.dispatch('loadPaymentAccounts')
+				await this.$store.dispatch('loadFundingSources')
 			}
 			finally {
 				this.loadingPayments = false
@@ -144,9 +143,6 @@ export default {
 		signOut() {
 			this.$store.dispatch('signOut')
 		},
-		async addPaymentAccount() {
-			await this.$store.dispatch('addPaymentAccount', 'Test account')
-		}
 	}
 };
 </script>

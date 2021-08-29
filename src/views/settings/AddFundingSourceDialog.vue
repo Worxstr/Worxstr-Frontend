@@ -16,7 +16,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 Add bank account
+        v-toolbar-title.text-h6 Add funding source
 
       v-divider
 
@@ -25,7 +25,7 @@ v-dialog(
           autofocus
           outlined,
           dense,
-          label="Name for account",
+          label="Name for funding source",
           v-model="accountName",
           :rules="rules.accountName",
           required,
@@ -45,7 +45,7 @@ v-dialog(
 import { exists } from '@/plugins/inputValidation'
 
 export default {
-  name: "addPaymentAccountDialog",
+  name: "addFundingSourceDialog",
   props: {
     opened: Boolean,
   },
@@ -65,7 +65,7 @@ export default {
     async openPlaidAuth() {
       this.loading = true
       try {
-        await this.$store.dispatch("addPaymentAccount", this.accountName)
+        await this.$store.dispatch("openPlaidLink", this.accountName)
         this.closeDialog()
       }
       finally {
