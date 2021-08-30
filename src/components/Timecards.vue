@@ -86,18 +86,24 @@
             span.flex-grow-0.px-2.font-weight-bold {{ timecard.total_payment | currency }}
 
           v-expansion-panel-content
-            v-card-text.text-body-1
-              p {{ timecard.time_clocks[0].time | date }}
-              p(v-if="timecard.time_clocks && timecard.time_clocks.length")
-                | {{ timecard.time_clocks[0].time | time }}
-                | -
-                | {{
-                | timecard.time_clocks[timecard.time_clocks.length - 1].time
-                | | time
-                | }}
-              p {{ timecard.time_break }} minute break
-              p {{ timecard.wage_payment | currency }} earned
-              p {{ timecard.fees_payment | currency }} fee
+            //- .text-body-1
+            v-card-text.d-flex
+              .flex-grow-1
+                p {{ timecard.time_clocks[0].time | date }}
+                p(v-if="timecard.time_clocks && timecard.time_clocks.length")
+                  | {{ timecard.time_clocks[0].time | time }}
+                  | -
+                  | {{
+                  | timecard.time_clocks[timecard.time_clocks.length - 1].time
+                  | | time
+                  | }}
+              .flex-grow-1
+                p {{ parseFloat(timecard.time_break) }} minute break
+
+              .flex-grow-1
+                p {{ timecard.wage_payment | currency }} earned
+                p {{ timecard.fees_payment | currency }} fee
+
 
             v-card-actions
               v-spacer
@@ -158,7 +164,7 @@ export default class Timecards extends Vue {
     @Watch('paymentDialog')
     @Watch('approveDialog')
     @Watch('denyDialog')
-    dialogClosed(_oldVal, newVal) {
+    dialogClosed(_oldVal: boolean, newVal: boolean) {
       if (newVal) this.selectedTimecardIds = []
     }
 
