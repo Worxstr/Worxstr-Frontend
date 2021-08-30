@@ -72,7 +72,7 @@ export default {
     closeDialog() {
       this.$emit("update:opened", false);
     },
-    async completePayments(data, actions) {
+    async completePayments() {
       await this.$store.dispatch("completePayments", this.timecards.map(t => t.id))
       this.closeDialog();
     },

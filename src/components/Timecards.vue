@@ -87,16 +87,17 @@
 
           v-expansion-panel-content
             v-card-text.text-body-1
+              p {{ timecard.time_clocks[0].time | date }}
               p(v-if="timecard.time_clocks && timecard.time_clocks.length")
-                | {{ timecard.time_clocks[0].time | date('MMMM DD, YYYY') }}
-                | {{ timecard.time_clocks[0].time | time('LT') }}
+                | {{ timecard.time_clocks[0].time | time }}
                 | -
                 | {{
                 | timecard.time_clocks[timecard.time_clocks.length - 1].time
-                | | time('LT')
+                | | time
                 | }}
               p {{ timecard.time_break }} minute break
-              p {{ timecard.total_payment | currency }} earned
+              p {{ timecard.wage_payment | currency }} earned
+              p {{ timecard.fees_payment | currency }} fee
 
             v-card-actions
               v-spacer

@@ -21,24 +21,29 @@ div(v-if="loadingTransfers && !(transfers.length)")
       v-expansion-panel-header
         
         .flex-grow-0.font-weight-medium
-          v-chip.mr-3(small :color='`${transfer.status == "pending" ? "amber" : "green"} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
-            | {{ transfer.status }}
+          v-chip.mr-3(small :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
+            | {{ transfer.status | capitalize }}
 
-          span.mt-1 {{ transfer._links.source['resource-type'] }}
-          v-icon mdi-chevron-right
-          span.mt-1 {{ transfer._links.destination['resource-type'] }}
+          span {{ transfer.id }}
         
         v-spacer
 
-        span.flex-grow-0.px-2.font-weight-bold {{ transfer.amount.value | currency }}
+        span.flex-grow-0.px-2 {{ transfer.created | date }}
+        span.flex-grow-0.px-2.font-weight-bold(
+          :class="transfer._links.destination['resource-type'] == 'account' ? 'green--text' : 'red--text'"
+        )
+          | {{ transfer.amount.value | currency }}
 
       v-expansion-panel-content
         v-card-text.text-body-1
-          p Transfer details
+          p
+            span.mt-1 {{ transfer._links.source['resource-type'] }}
+            v-icon mdi-chevron-right
+            span.mt-1 {{ transfer._links.destination['resource-type'] }}
 
       v-divider(v-if='i != transfers.length - 1')
 
-  v-btn(text color='primary') Load more
+  v-btn(text color='primary' @click='loadPage' :loading='loadingMore') Load more
 </template>
 
 <script lang="ts">
@@ -47,13 +52,37 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component
 export default class TransferHistory extends Vue {
   loadingTransfers = false
+  pageOffset = 0
+  loadingMore = false
 
   mounted() {
-    this.$store.dispatch('loadTransfers')
+    this.loadPage()
+  }
+
+  statusColor(status: string) {
+    switch (status) {
+      case 'pending':
+        return 'amber'
+      case 'processed':
+        return 'green'
+      case 'cancelled':
+        return 'deep-orange'
+      case 'failed':
+        return 'red'
+    }
   }
 
   get transfers() {
     return this.$store.getters.transfers
+  }
+
+  async loadPage() {
+    this.loadingMore = true
+    await this.$store.dispatch('loadTransfers', {
+      offset: this.pageOffset
+    })
+    this.loadingMore = false
+    this.pageOffset++
   }
 }
 </script>
