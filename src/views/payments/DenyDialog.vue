@@ -24,7 +24,7 @@ v-dialog(
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="red", @click="denyTimecard") Deny
+      v-btn(text, color="red", @click="denyPayments" :loading='loading') Deny
 </template>
 
 <script>
@@ -39,10 +39,18 @@ export default {
       return this.$store.getters.timecardsByIds(this.timecardIds)
     },
   },
+  data: () => ({
+    loading: false,
+  }),
   methods: {
     closeDialog() {
       this.$emit("update:opened", false);
     },
+    async denyPayments() {
+      this.loading = true
+      await this.$store.dispatch('denyPayments', this.timecardIds)
+      this.loading = false
+    }
   }
 };
 </script>

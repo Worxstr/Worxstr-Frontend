@@ -11,7 +11,6 @@ div(v-if="loadingTransfers && !(transfers.length)")
   
     v-toolbar-title.px-4.text-h6
       span Transfer history
-      v-chip.mx-3.pa-2.font-weight-bold(small) 5
 
   v-expansion-panels.mb-6.soft-shadow(accordion flat)
     v-expansion-panel(
@@ -30,7 +29,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
 
         span.flex-grow-0.px-2 {{ transfer.created | date }}
         span.flex-grow-0.px-2.font-weight-bold(
-          :class="transfer._links.destination['resource-type'] == 'account' ? 'green--text' : 'red--text'"
+          :class="transfer._links.source['resource-type'] == 'customer' ? 'red--text' : 'green--text'"
         )
           | {{ transfer.amount.value | currency }}
 
@@ -43,7 +42,13 @@ div(v-if="loadingTransfers && !(transfers.length)")
 
       v-divider(v-if='i != transfers.length - 1')
 
-  v-btn(text color='primary' @click='loadPage' :loading='loadingMore') Load more
+  v-btn(
+    v-if='!noMore'
+    text
+    color='primary'
+    @click='loadPage'
+    :loading='loadingMore'
+  ) Load more
 </template>
 
 <script lang="ts">
@@ -54,6 +59,7 @@ export default class TransferHistory extends Vue {
   loadingTransfers = false
   pageOffset = 0
   loadingMore = false
+  noMore = false
 
   mounted() {
     this.loadPage()
@@ -77,10 +83,13 @@ export default class TransferHistory extends Vue {
   }
 
   async loadPage() {
+    // TODO: Move pagination to store. Current page offset is not persistent
+
     this.loadingMore = true
-    await this.$store.dispatch('loadTransfers', {
+    const data = await this.$store.dispatch('loadTransfers', {
       offset: this.pageOffset
     })
+    if (!data.transfers.length) this.noMore = true
     this.loadingMore = false
     this.pageOffset++
   }

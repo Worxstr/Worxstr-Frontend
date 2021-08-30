@@ -253,8 +253,11 @@ const storeConfig: StoreOptions<RootState> = {
     END_BREAK(state) {
       state.clock.break = false
     },
-    SET_BALANCE(state, balance) {
-      state.payments.balance = balance
+    SET_BALANCE(state, { value, currency }) {
+      state.payments.balance = {
+        value: parseFloat(value),
+        currency,
+      }
     },
     ADD_TO_BALANCE(state, amount) {
       state.payments.balance.value += amount
@@ -572,12 +575,12 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async denyTimecards({ commit }, timecards) {
+    async denyPayments({ commit }, timecardIds) {
       const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/payments/deny`,
         data: {
-          timecards,
+          timecard_ids: timecardIds,
         },
       })
       data.event.forEach((timecard: Timecard) => {
@@ -667,24 +670,25 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async addToBalance({ commit }, transfer) {
+    async addToBalance({ dispatch }, transfer) {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/payments/balance/add`,
         data: transfer,
       })
-      commit('ADD_TO_BALANCE', transfer.amount)
       // commit('ADD_TRANSFER', data)
+      dispatch('showSnackbar', { text: 'Hang tight, your transfer is being processed.' })
       return data
     },
 
-    async removeFromBalance({ commit }, transfer) {
+    async removeFromBalance({ commit, dispatch }, transfer) {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/payments/balance/remove`,
         data: transfer,
       })
       commit('ADD_TO_BALANCE', -transfer.amount)
+      dispatch('showSnackbar', { text: 'Your funds will be transferred shortly.' })
       // commit('ADD_TRANSFER', data)
       return data
     },

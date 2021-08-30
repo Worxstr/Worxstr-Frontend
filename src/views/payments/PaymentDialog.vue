@@ -19,24 +19,18 @@ v-dialog(
       p
         | {{ timecards.length }}
         | contractor{{ timecards.length == 1 ? '' : 's' }}
-        | will be paid {{ wagePayment  | currency }} in total.
+        | will be paid {{ wagePayment  | currency }}{{ timecards.length > 1 ? ' in total' : ''}}.
         br
         | A {{ feesPayment | currency }} fee will be applied.
         br
-        | Your total is {{ totalPayment | currency }}.
-    
-      div
-        p.text-subtitle-2.green--text.d-flex.align-center.my-2
-          | Payment successful. Your PayPal order ID is:
-        p.green--text.font-weight-black.mx-1
-          | XXXXXXXXXX
+        | The total cost for this transaction is {{ totalPayment | currency }}.
 
     v-spacer
 
     v-card-actions
       v-spacer
-      v-btn(text, @click="closeDialog") Cancel
-      v-btn(text color='success' @click='completePayments') Complete
+      v-btn(text @click='closeDialog') Cancel
+      v-btn(text color='success' @click='completePayments' :loading='loading') Complete
 </template>
 
 <script>
@@ -46,6 +40,9 @@ export default {
     opened: Boolean,
     timecardIds: Array,
   },
+  data: () => ({
+    loading: false,
+  }),
   computed: {
     timecards() {
       return this.$store.getters.timecardsByIds(this.timecardIds)
@@ -73,8 +70,10 @@ export default {
       this.$emit("update:opened", false);
     },
     async completePayments() {
+      this.loading = true
       await this.$store.dispatch("completePayments", this.timecards.map(t => t.id))
-      this.closeDialog();
+      this.loading = false
+      this.closeDialog()
     },
   },
 };

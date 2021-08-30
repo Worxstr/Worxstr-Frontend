@@ -26,8 +26,8 @@ v-dialog(
           outlined
           type='number'
           prefix='$'
-          step='0.01'
-          min='0.01'
+          step='1'
+          min='0.00'
           label="Amount to transfer"
           v-model.number="transfer.amount"
           :rules="rules.amount"
@@ -55,7 +55,7 @@ v-dialog(
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { exists } from '@/plugins/inputValidation'
 
 @Component
@@ -63,7 +63,13 @@ export default class TransferFundsDialog extends Vue {
   isValid = false
   loading = false
   rules = {
-    amount: [exists('You must enter a valid amount.')],
+    amount: [
+      (value: string) => {
+        // Check that number has no more than two decimal places
+        const pattern = /^\d+(\.\d{0,2})?$/
+        return pattern.test(value) && parseFloat(value) > 0 || 'You must enter a valid amount.'
+      }
+    ],
     location: [exists('You must choose a funding source.')],
   }
   transfer = {
@@ -73,6 +79,13 @@ export default class TransferFundsDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop(String) readonly action!: 'add' | 'remove' | null
+
+  @Watch('opened')
+  onOpened() {
+    if (this.action == 'remove')
+      this.transfer.amount = this.$store.state.payments.balance.value
+    else this.transfer.amount = 10
+  }
 
   closeDialog() {
     this.$emit('update:opened', null)
