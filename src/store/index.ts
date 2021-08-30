@@ -583,9 +583,9 @@ const storeConfig: StoreOptions<RootState> = {
           timecard_ids: timecardIds,
         },
       })
-      data.event.forEach((timecard: Timecard) => {
+      timecardIds.forEach((timecardId: number) => {
         // TODO: Normalize nested data
-        commit('REMOVE_TIMECARD', timecard.id)
+        commit('REMOVE_TIMECARD', timecardId)
       })
       return data
     },

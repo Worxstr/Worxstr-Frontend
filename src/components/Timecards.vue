@@ -118,7 +118,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
@@ -155,6 +155,13 @@ export default class Timecards extends Vue {
       }
     }
 
+    @Watch('paymentDialog')
+    @Watch('approveDialog')
+    @Watch('denyDialog')
+    dialogClosed(_oldVal, newVal) {
+      if (newVal) this.selectedTimecardIds = []
+    }
+
     get payments() {
       return this.$store.state.payments
     }
@@ -181,7 +188,7 @@ export default class Timecards extends Vue {
       const timecards = this.$store.getters.timecardsByIds(timecardIds)
 
       const totalPayment = timecards.reduce((total: number, timecard: Timecard) => {
-        return total + parseFloat(timecard.total_payment)
+        return total + (timecard ? parseFloat(timecard.total_payment) : 0)
       }, 0)
 
       return Math.round(totalPayment * 100) / 100 <= parseFloat(this.payments.balance.value)

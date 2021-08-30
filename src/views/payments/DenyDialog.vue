@@ -1,5 +1,6 @@
 <template lang="pug">
 v-dialog(
+  v-if='timecards && timecards.length'
   id="payment-dialog"
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
@@ -14,7 +15,7 @@ v-dialog(
         | {{timecards.length}}
         | payment{{timecards.length == 1 ? '' : 's'}}?
 
-    v-card-text(v-if="timecards")
+    v-card-text(v-if="timecards && timecards[0]")
       | {{timecards.length == 1 ? `${timecards[0].first_name} ${timecards[0].last_name}` : 'These contractors' }}
       | will not be paid for
       | {{timecards.length == 1 ? 'this shift' : 'these shifts'}}.
@@ -50,6 +51,7 @@ export default {
       this.loading = true
       await this.$store.dispatch('denyPayments', this.timecardIds)
       this.loading = false
+      this.closeDialog()
     }
   }
 };
