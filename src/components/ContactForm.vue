@@ -111,6 +111,11 @@ v-form.flex-grow-1.d-flex.flex-column(
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { emailRules, exists, phoneRules } from '@/plugins/inputValidation'
 
+// This is a temporary fix for the contact form. When merging dev, do not keep this code
+import axios from 'axios'
+import { Capacitor } from '@capacitor/core'
+// ----------------
+
 @Component
 export default class ContactForm extends Vue {
   
@@ -151,9 +156,28 @@ export default class ContactForm extends Vue {
   @Prop({ default: false }) readonly text!: boolean
   @Prop({ default: false }) readonly filled!: boolean
 
+  // This is a temporary fix for the contact form. When merging dev, do not keep this code
   async submitForm() {
-    console.log('dummy submit')
+    const baseUrl = process.env.VUE_APP_API_BASE_URL || 
+      (
+        Capacitor.isNativePlatform()
+          ? 'https://dev.worxstr.com'
+          : window.location.origin.replace('8080', '5000')
+      )
+    try {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/contact/sales`,
+        data: this.form,
+      })
+      this.$store.dispatch('showSnackbar', {
+        text: 'Thanks! We will get back to you shortly.',
+      })
+      return data
+    } catch (err) {
+      return err
+    }
   }
-
+  // ----------------
 }
 </script>
