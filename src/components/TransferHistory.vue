@@ -23,7 +23,22 @@ div(v-if="loadingTransfers && !(transfers.length)")
           v-chip.mr-3(small :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
             | {{ transfer.status | capitalize }}
 
-          span {{ transfer.id }}
+
+          span.mt-1
+            span(v-if="transfer._links.source['additional-information'].type == 'business'")
+              | {{ transfer._links.source['additional-information'].businessName }}
+
+            span(v-if="transfer._links.source['additional-information'].type == 'bank'")
+              | {{ transfer._links.source['additional-information'].bankName }}
+
+            span(v-if="transfer._links.source['additional-information'].type == 'Commercial'")
+              | {{ transfer._links.source['additional-information'].name }}
+              
+            span(v-if="transfer._links.source['additional-information'].type == 'personal'")
+              | {{ transfer._links.source['additional-information'].firstName }} {{ transfer._links.source['additional-information'].lastName }}
+
+          v-icon mdi-chevron-right
+          span.mt-1 {{ transfer._links.destination['additional-information'].name }}
         
         v-spacer
 
@@ -35,10 +50,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
 
       v-expansion-panel-content
         v-card-text.text-body-1
-          p
-            span.mt-1 {{ transfer._links.source['resource-type'] }}
-            v-icon mdi-chevron-right
-            span.mt-1 {{ transfer._links.destination['resource-type'] }}
+          p {{ transfer.id }}
 
       v-divider(v-if='i != transfers.length - 1')
 

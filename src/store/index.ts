@@ -11,7 +11,7 @@ import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
 import { User, defaultRoute } from '@/definitions/User'
 import { ClockEvent } from '@/definitions/Clock'
-import { Timecard, FundingSource } from '@/definitions/Payments'
+import { Timecard, FundingSource, Transfer } from '@/definitions/Payments'
 import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
 
@@ -24,42 +24,6 @@ axios.defaults.withCredentials = true
 const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
   : process.env.VUE_APP_API_BASE_URL
-
-type Transfer = {
-  _links: {
-    destination: {
-      href: string;
-      'resource-type': string;
-      type: string;
-    };
-    self: {
-      href: string;
-      'resource-type': string;
-      type: string;
-    };
-    source: {
-      href: string;
-      'resource-type': string;
-      type: string;
-    };
-    'source-funding-source': {
-      href: string;
-      'resource-type': string;
-      type: string;
-    };
-  };
-  amount: {
-    currecny: string;
-    value: string;
-  };
-  clearing: {
-    source: string;
-  };
-  created: string;
-  id: string;
-  individualAchId: string;
-  status: string;
-}
 
 interface RootState {
   snackbar: {

@@ -65,7 +65,7 @@ export default class TransferFundsDialog extends Vue {
   rules = {
     amount: [
       (value: string) => {
-        // Check that number has no more than two decimal places
+        // Check that number is positive non-zero and has no more than two decimal places
         const pattern = /^\d+(\.\d{0,2})?$/
         return pattern.test(value) && parseFloat(value) > 0 || 'You must enter a valid amount.'
       }
