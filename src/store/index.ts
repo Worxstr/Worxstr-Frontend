@@ -262,13 +262,14 @@ const storeConfig: StoreOptions<RootState> = {
         )
       )
     },
-    ADD_TRANSFER(state, transfer: Transfer) {
+    ADD_TRANSFER(state, { transfer, prepend }) {
       Vue.set(state.payments.transfers.byId, transfer.id, {
         ...state.payments.transfers.byId[transfer.id],
         ...transfer
       })
       if (!state.payments.transfers.all.includes(transfer.id))
-        state.payments.transfers.all.push(transfer.id)
+        if (prepend) state.payments.transfers.all.unshift(transfer.id)
+        else state.payments.transfers.all.push(transfer.id)
     },
     ADD_JOB(state, job: Job) {
       Vue.set(state.jobs.byId, job.id, {
@@ -634,13 +635,13 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async addToBalance({ dispatch }, transfer) {
+    async addToBalance({ commit, dispatch }, transfer) {
       const { data } = await axios({
         method: 'POST',
         url: `${baseUrl}/payments/balance/add`,
         data: transfer,
       })
-      // commit('ADD_TRANSFER', data)
+      commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
       dispatch('showSnackbar', { text: 'Hang tight, your transfer is being processed.' })
       return data
     },
@@ -651,9 +652,9 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/payments/balance/remove`,
         data: transfer,
       })
+      commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
       commit('ADD_TO_BALANCE', -transfer.amount)
       dispatch('showSnackbar', { text: 'Your funds will be transferred shortly.' })
-      // commit('ADD_TRANSFER', data)
       return data
     },
 
@@ -667,7 +668,7 @@ const storeConfig: StoreOptions<RootState> = {
         }
       })
       data.transfers.forEach((transfer: Transfer) => {
-        commit('ADD_TRANSFER', transfer)
+        commit('ADD_TRANSFER', { transfer })
       })
       return data
     },
