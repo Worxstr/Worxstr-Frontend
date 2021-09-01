@@ -59,7 +59,7 @@
 					v-list-item(two-line v-for='fundingSource in fundingSources' :key='fundingSource.id')
 						v-list-item-content
 							v-list-item-title {{ fundingSource.name }}
-							v-list-item-subtitle {{ fundingSourceId(fundingSource.location) }}
+							v-list-item-subtitle {{ fundingSourceId(fundingSource._links.self.href) }}
 						v-list-item-action
 							v-btn(text color='primary' @click='editFundingSource(fundingSource)') Edit
 						v-list-item-action.ml-0

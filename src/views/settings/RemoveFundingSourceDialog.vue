@@ -39,7 +39,7 @@ export default class RemoveFundingSourceDialog extends Vue {
 
   async removeFundingSource() {
     this.loading = true
-    await this.$store.dispatch('removeFundingSource', this.fundingSource.location)
+    await this.$store.dispatch('removeFundingSource', this.fundingSource._links.self.href)
     this.loading = false
     this.closeDialog()
   }

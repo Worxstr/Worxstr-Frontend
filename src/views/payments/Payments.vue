@@ -47,7 +47,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import Timecards from '@/components/Timecards.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
-import { userIs } from '@/definitions/User'
+import { userIs, UserRole } from '@/definitions/User'
 
 @Component({
   metaInfo: {
@@ -89,7 +89,7 @@ export default class Payments extends Vue {
     this.transferFundsDialog = 'remove'
   }
 
-  userIs(role) {
+  userIs(role: UserRole) {
     return userIs(role, this.authenticatedUser)
   }
 }
