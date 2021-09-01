@@ -35,37 +35,35 @@ div
       .text-h2 {{ payments.balance.value | currency }}
 
 
-    timecards.mb-5
+    timecards.mb-5(v-if='userIs(1)')
 
     transfer-history
 
-      
 </template>
 
-<script>
-import { mapState, mapActions } from 'vuex'
+<script lang="ts">
+
+import { Component, Vue } from 'vue-property-decorator'
 import Timecards from '@/components/Timecards.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
+import { userIs } from '@/definitions/User'
 
-export default {
-  name: 'payments',
+@Component({
   metaInfo: {
     title: 'Payments',
   },
-  data: () => ({
-    loadingBalance: false,
-    breaks: [{}],
-    transferFundsDialog: null,
-  }),
   components: {
     Timecards,
     TransferHistory,
     TransferFundsDialog,
-  },
-  computed: {
-    ...mapState(['authenticatedUser', 'payments']),
-  },
+  }
+})
+export default class Payments extends Vue {
+  loadingBalance = false
+  breaks = [{}]
+  transferFundsDialog: string | null = null
+
   async mounted() {
     this.loadingBalance = true
     try {
@@ -73,16 +71,27 @@ export default {
     } finally {
       this.loadingBalance = false
     }
-  },
-  methods: {
-    ...mapActions(['signOut']),
-    openAddFundsDialog() {
-      this.transferFundsDialog = 'add'
-    },
-    openTransferToBankDialog() {
-      this.transferFundsDialog = 'remove'
-    },
-  },
+  }
+
+  get authenticatedUser() {
+    return this.$store.state.authenticatedUser
+  }
+
+  get payments() {
+    return this.$store.state.payments
+  }
+  
+  openAddFundsDialog() {
+    this.transferFundsDialog = 'add'
+  }
+
+  openTransferToBankDialog() {
+    this.transferFundsDialog = 'remove'
+  }
+
+  userIs(role) {
+    return userIs(role, this.authenticatedUser)
+  }
 }
 </script>
 

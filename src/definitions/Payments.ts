@@ -19,11 +19,6 @@ export type Timecard = {
   wage_payment: string;
 }
 
-export type FundingSource = {
-  location: string;
-  name: string;
-}
-
 type Link = {
 	href: string;
 	type: string;
@@ -49,6 +44,28 @@ type Link = {
 		status: string;
 		type: string;
 	};
+}
+
+export type FundingSource = {
+  _links: {
+    customer: Link;
+    remove: Link;
+    self: Link;
+    'transfer-from-balance': Link;
+    'transfer-receive': Link;
+    'transfer-send': Link;
+    'transfer-to-balance': Link;
+  };
+  bankAccountType: string;
+  bankName: string;
+  channels: string[];
+  created: string;
+  fingerprint: string;
+  id: string;
+  name: string;
+  removed: boolean;
+  status: string;
+  type: string;
 }
 
 export type Transfer = {

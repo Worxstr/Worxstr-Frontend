@@ -38,12 +38,12 @@ v-dialog(
           outlined
           dense
           :label="`Funding source to ${action == 'add' ? 'draw from' : 'deposit to'}`"
-          v-model.number="transfer.location"
+          v-model="transfer.location"
           :rules="rules.location"
           required
           :items='fundingSources'
           item-text='name'
-          item-value='location'
+          item-value='_links.self.href'
         )
 
       v-spacer

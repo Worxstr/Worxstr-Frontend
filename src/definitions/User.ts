@@ -20,7 +20,7 @@ export enum UserRole {
 	OrganizationManager = 3,
 }
 
-export const Manager = [
+export const Managers = [
 	UserRole.ContractorManager,
 	UserRole.OrganizationManager,
 ]

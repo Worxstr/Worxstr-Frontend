@@ -241,14 +241,14 @@ const storeConfig: StoreOptions<RootState> = {
     ADD_FUNDING_SOURCE(state, fundingSource: FundingSource) {
       Vue.set(
         state.payments.fundingSources.byLocation,
-        fundingSource.location,
+        fundingSource._links.self.href,
         {
-          ...state.payments.fundingSources.byLocation[fundingSource.location],
+          ...state.payments.fundingSources.byLocation[fundingSource._links.self.href],
           ...fundingSource,
         }
       )
-      if (!state.payments.fundingSources.all.includes(fundingSource.location))
-        state.payments.fundingSources.all.push(fundingSource.location)
+      if (!state.payments.fundingSources.all.includes(fundingSource._links.self.href))
+        state.payments.fundingSources.all.push(fundingSource._links.self.href)
     },
     REMOVE_FUNDING_SOURCE(state, fundingSourceLocation: string) {
       Vue.delete(

@@ -36,7 +36,7 @@ import NotFound from '@/views/errors/NotFound.vue'
 Vue.use(VueRouter)
 Vue.use(Meta)
 
-import { UserRole, Manager, defaultRoute } from '@/definitions/User'
+import { UserRole, Managers, defaultRoute } from '@/definitions/User'
 
 
 const routes = [
@@ -174,7 +174,7 @@ const routes = [
     component: Jobs,
     meta: {
       icon: 'mdi-calendar-check',
-      restrict: Manager
+      restrict: Managers
     },
   },
   {
@@ -182,7 +182,7 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      restrict: Manager,
+      restrict: Managers,
       paramMap: {
         jobId: 'jobs',
         prop: 'name'
@@ -195,7 +195,6 @@ const routes = [
     component: Payments,
     meta: {
       icon: 'mdi-cash-multiple',
-      restrict: Manager
     }
   },
   {
@@ -204,7 +203,6 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      restrict: [UserRole.Contractor, ...Manager],
       fullHeight: true,
       hideNav: true,
     }
@@ -215,7 +213,7 @@ const routes = [
     component: Workforce,
     meta: {
       icon: 'mdi-account-group',
-      restrict: Manager
+      restrict: Managers
     }
   },
   {
@@ -235,7 +233,6 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      restrict: [UserRole.Contractor, ...Manager],
       fullHeight: true,
     },
     children: [
