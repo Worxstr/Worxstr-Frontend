@@ -10,7 +10,7 @@ div
           v-window.pt-2(v-model='step')
 
             v-window-item(:value='0')
-              dwolla-beneficial-owners(customerId='6d2a834c-0189-4d04-88bc-c53df2961f85')
+              dwolla-beneficial-owners(customerId='3b51b3c0-6520-4f2d-9a96-22249cd562e5')
 
             //- v-window-item(:value='0')
             //-   .pa-1.d-flex.flex-column.flex-sm-row.justify-center

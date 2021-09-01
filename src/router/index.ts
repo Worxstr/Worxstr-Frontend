@@ -20,6 +20,7 @@ import Terms from '@/views/landing/Terms.vue'
 import SignIn from '@/views/auth/SignIn.vue'
 import SignUp from '@/views/auth/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
+import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
 import User from '@/views/User.vue'
 import Clock from '@/views/Clock.vue'
 import Payments from '@/views/payments/Payments.vue'
@@ -145,6 +146,15 @@ const routes = [
     path: '/reset-password',
     name: 'resetPassword',
     component: ResetPassword,
+    meta: {
+      landing: true,
+      fullHeight: true,
+    }
+  },
+  {
+    path: '/confirm-email',
+    name: 'confirmEmail',
+    component: ConfirmEmail,
     meta: {
       landing: true,
       fullHeight: true,

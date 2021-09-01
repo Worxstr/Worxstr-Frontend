@@ -430,6 +430,30 @@ const storeConfig: StoreOptions<RootState> = {
       })
     },
 
+    async confirmEmail(_context, token) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/auth/confirm-email`,
+        data: {
+          token
+        }
+      })
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      return data
+    },
+    
+    async resendEmailConfirmation({ dispatch }, email) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/auth/resend-email`,
+        data: {
+          email
+        }
+      })
+      dispatch('showSnackbar', { text: 'Confirmation email resent.' })
+      return data
+    },
+
     async getAuthenticatedUser({ commit }) {
       const { data } = await axios({
         method: 'GET',
