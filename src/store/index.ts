@@ -654,11 +654,11 @@ const storeConfig: StoreOptions<RootState> = {
       })
       commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
       commit('ADD_TO_BALANCE', -transfer.amount)
-      dispatch('showSnackbar', { text: 'Your funds will be transferred shortly.' })
+      dispatch('showSnackbar', { text: 'Hang tight, your transfer is being processed.' })
       return data
     },
 
-    async loadTransfers({ commit }, { limit=15, offset=0 } = {}) {
+    async loadTransfers({ commit }, { limit=10, offset=0 } = {}) {
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/payments/transfers`,

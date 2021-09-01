@@ -96,13 +96,19 @@ export default class TransferHistory extends Vue {
 
   async loadPage() {
     // TODO: Move pagination to store. Current page offset is not persistent
+    if (this.pageOffset == 0)
+      this.loadingTransfers = true
+    else this.loadingMore = true
 
-    this.loadingMore = true
-    const data = await this.$store.dispatch('loadTransfers', {
+const data = await this.$store.dispatch('loadTransfers', {
       offset: this.pageOffset
     })
+    
+    if (this.pageOffset == 0)
+      this.loadingTransfers = false
+    else this.loadingMore = false
+
     if (!data.transfers.length) this.noMore = true
-    this.loadingMore = false
     this.pageOffset++
   }
 }
