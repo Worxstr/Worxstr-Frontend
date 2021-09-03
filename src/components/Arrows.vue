@@ -27,7 +27,7 @@
           stop(offset='100%' style='stop-color:#ffd45c;stop-opacity:1')
 
       g(v-for='arrow in groupType.arrows' :style='`opacity: ${arrow.opacity}; transform: scale(${arrow.scale}) translate(${arrow.offset.x}px, ${arrow.offset.y}px)`')
-        path.arrow(:fill='`url(#${arrow.color})`' :style='`animation-duration: ${arrow.animationDuration}s`' d='M712.3,266.5L519.4,405c-3,2.2-2.6,6.8,0.7,8.4l35.5,17c2.4,1.2,3.5,4.1,2.3,6.5L312.2,950.5c-1.2,2.4-0.1,5.4,2.3,6.5\
+        path.arrow(:class='{beginning}' :fill='`url(#${arrow.color})`' :style='`animation-duration: ${arrow.animationDuration}s`' d='M712.3,266.5L519.4,405c-3,2.2-2.6,6.8,0.7,8.4l35.5,17c2.4,1.2,3.5,4.1,2.3,6.5L312.2,950.5c-1.2,2.4-0.1,5.4,2.3,6.5\
           l117.5,56.2c2.4,1.2,5.4,0.1,6.5-2.3l245.8-513.7c1.2-2.4,4.1-3.5,6.5-2.3l35.5,17c3.4,1.6,7.2-1,7-4.7l-13.2-237.1\
           C719.9,266.4,715.5,264.3,712.3,266.5z')
 
@@ -38,6 +38,9 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
 export default class Arrows extends Vue {
+
+  beginning = true
+
   @Prop({ default: 'smallGroup' }) readonly type!:
     | 'largeGroup'
     | 'smallGroup'
@@ -220,6 +223,10 @@ export default class Arrows extends Vue {
   get groupType() {
     return this.types[this.type]
   }
+
+  mounted() {
+    this.beginning = false
+  }
 }
 </script>
 
@@ -227,17 +234,24 @@ export default class Arrows extends Vue {
 // Angle ratio: -2.75
 @keyframes bobble {
   0% {
-    transform: translate(0px, 0px);
-  }
-  50% {
     transform: translate(10px, -27.5px);
   }
-  100% {
+  50% {
     transform: translate(0px, 0px);
+  }
+  100% {
+    transform: translate(10px, -27.5px);
   }
 }
 .arrow {
   position: relative;
-  animation: bobble 10s infinite ease-in-out;
+  animation: bobble 10s infinite ease-out;
+  animation-delay: 2s;
+  transition: all 2s cubic-bezier(.1,.57,.4,1);
+  transform: translate(10px, -27.5px);
+
+  &.beginning {
+    transform: translate(-150px, 412.5px) !important;
+  }
 }
 </style>
