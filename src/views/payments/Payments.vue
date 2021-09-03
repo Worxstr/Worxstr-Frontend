@@ -19,6 +19,7 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
       @click='openTransferToBankDialog'
+      :disabled='payments.balance.value == 0'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
@@ -35,7 +36,7 @@ div
       .text-h2 {{ payments.balance.value | currency }}
 
 
-    timecards.mb-5(v-if='userIs(1)')
+    timecards.mb-5
 
     transfer-history
 

@@ -10,16 +10,13 @@ div
           v-window.pt-2(v-model='step')
 
             v-window-item(:value='0')
-              dwolla-beneficial-owners(customerId='3b51b3c0-6520-4f2d-9a96-22249cd562e5')
-
-            //- v-window-item(:value='0')
-            //-   .pa-1.d-flex.flex-column.flex-sm-row.justify-center
-            //-     v-btn.pa-10(text @click="accountType = 'contractor'; step++")
-            //-       v-icon mdi-account
-            //-       span.ml-3.text-h6 I'm a contractor
-            //-     v-btn.pa-10(text :to="{ name: 'pricing' }")
-            //-       v-icon mdi-domain
-            //-       span.ml-3.text-h6 I have a business
+              .pa-1.d-flex.flex-column.flex-sm-row.justify-center
+                v-btn.pa-10(text @click="accountType = 'contractor'; step++")
+                  v-icon mdi-account
+                  span.ml-3.text-h6 I'm a contractor
+                v-btn.pa-10(text :to="{ name: 'pricing' }")
+                  v-icon mdi-domain
+                  span.ml-3.text-h6 I have a business
 
             v-window-item(:value='1')
               dwolla-personal-vcr(
@@ -36,6 +33,9 @@ div
                 | Are you a contractor? Click
                 a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
                 | to create your account.
+                
+            //- v-window-item(:value='2')
+            //-   dwolla-beneficial-owners(customerId='3b51b3c0-6520-4f2d-9a96-22249cd562e5')
 
             v-window-item(:value='2')
               v-text-field(

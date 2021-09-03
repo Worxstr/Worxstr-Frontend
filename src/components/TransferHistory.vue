@@ -38,7 +38,21 @@ div(v-if="loadingTransfers && !(transfers.length)")
               | {{ transfer._links.source['additional-information'].firstName }} {{ transfer._links.source['additional-information'].lastName }}
 
           v-icon mdi-chevron-right
-          span.mt-1 {{ transfer._links.destination['additional-information'].name }}
+
+          span.mt-1
+            span.mt-1
+              span(v-if="transfer._links.destination['additional-information'].type == 'business'")
+                | {{ transfer._links.destination['additional-information'].businessName }}
+
+              span(v-if="transfer._links.destination['additional-information'].type == 'bank'")
+                | {{ transfer._links.destination['additional-information'].bankName }}
+
+              span(v-if="transfer._links.destination['additional-information'].type == 'Commercial'")
+                | {{ transfer._links.destination['additional-information'].name }}
+                
+              span(v-if="transfer._links.destination['additional-information'].type == 'personal'")
+                | {{ transfer._links.destination['additional-information'].firstName }} {{ transfer._links.destination['additional-information'].lastName }}
+
         
         v-spacer
 
