@@ -58,7 +58,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
 
         span.flex-grow-0.px-2 {{ transfer.created | date }}
         span.flex-grow-0.px-2.font-weight-bold(
-          :class="transfer._links.source['resource-type'] == 'customer' ? 'red--text' : 'green--text'"
+          :class="transferColor(transfer)"
         )
           | {{ transfer.amount.value | currency }}
 
@@ -78,6 +78,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
 </template>
 
 <script lang="ts">
+import { Transfer } from '@/definitions/Payments'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
@@ -91,7 +92,7 @@ export default class TransferHistory extends Vue {
     this.loadPage()
   }
 
-  statusColor(status: string) {
+  statusColor(status: string): string {
     switch (status) {
       case 'pending':
         return 'amber'
@@ -101,7 +102,24 @@ export default class TransferHistory extends Vue {
         return 'deep-orange'
       case 'failed':
         return 'red'
+      default:
+        return 'primary'
     }
+  }
+
+  transferColor(transfer: Transfer): string {
+    // TOOD: Get the Dwolla customer url in user object
+    const customerUrl = this.$store.state.authenticatedUser.username == 'managerone' ?
+      'https://api-sandbox.dwolla.com/customers/6d2a834c-0189-4d04-88bc-c53df2961f85'
+    : 'https://api-sandbox.dwolla.com/customers/3d0257f7-dc01-4426-80a8-bc03a6927718'
+    
+    if (transfer._links.source.href === customerUrl) {
+      return 'red--text'
+    }
+    else if (transfer._links.destination.href === customerUrl) {
+      return 'green--text'
+    }
+    return ''
   }
 
   get transfers() {
@@ -110,16 +128,14 @@ export default class TransferHistory extends Vue {
 
   async loadPage() {
     // TODO: Move pagination to store. Current page offset is not persistent
-    if (this.pageOffset == 0)
-      this.loadingTransfers = true
+    if (this.pageOffset == 0) this.loadingTransfers = true
     else this.loadingMore = true
 
-const data = await this.$store.dispatch('loadTransfers', {
-      offset: this.pageOffset
+    const data = await this.$store.dispatch('loadTransfers', {
+      offset: this.pageOffset,
     })
-    
-    if (this.pageOffset == 0)
-      this.loadingTransfers = false
+
+    if (this.pageOffset == 0) this.loadingTransfers = false
     else this.loadingMore = false
 
     if (!data.transfers.length) this.noMore = true
