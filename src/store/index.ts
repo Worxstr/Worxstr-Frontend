@@ -30,6 +30,11 @@ interface RootState {
     show: boolean;
     text: string;
     timeout: number;
+    action?: {
+      text: string;
+      action: Function;
+      color?: string;
+    };
   };
   authenticatedUser: User | null;
   users: {
@@ -109,7 +114,7 @@ interface RootState {
 const initialState = (): RootState => ({
   snackbar: {
     show: false,
-    text: 'Test',
+    text: '',
     timeout: 5000,
   },
   authenticatedUser: null,
@@ -1114,7 +1119,34 @@ axios.interceptors.response.use(
       const errorList = error.response.data.response.errors
       message = errorList[Object.keys(errorList)[0]][0]
     }
-    store.dispatch('showSnackbar', { text: message })
+    
+    let action
+
+    if (res.actions) {
+      action = {
+        text: res.actions[0].action_text,
+        color: 'primary',
+        action: () => {
+          switch (res.actions[0].name) {
+            case 'VERIFY_BENEFICIAL_OWNERS':
+              router.push({
+                name: 'settings',
+                params: {
+                  verifyBeneficialOwners: 'true',
+                }
+              })
+              break;
+          }
+        },
+      }
+    }
+
+    console.log({message, action})
+
+    store.dispatch('showSnackbar', {
+      text: message,
+      action
+    })
 
     return Promise.reject(error)
   }

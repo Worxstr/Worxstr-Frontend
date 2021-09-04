@@ -126,9 +126,9 @@ export default {
     RemoveFundingSourceDialog,
   },
   mounted() {
-    // if (this.$route.params.openSSNDialog == 'true') {
-      // this.ssnDialog = true
-    // }
+    if (this.$route.params.verifyBeneficialOwners == 'true') {
+      this.beneficialOwnersDialog = true
+    }
     this.loadFundingSources()
   },
   data: () => ({
