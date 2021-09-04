@@ -245,9 +245,9 @@ export default class Arrows extends Vue {
 }
 .arrow {
   position: relative;
-  animation: bobble 10s infinite ease-out;
-  animation-delay: 2s;
-  transition: all 2s cubic-bezier(.1,.57,.4,1);
+  animation: bobble 10s infinite cubic-bezier(0.645, 0.045, 0.355, 1.000);
+  animation-delay: 3s;
+  transition: all 3s cubic-bezier(.1,.57,.4,1);
   transform: translate(10px, -27.5px);
 
   &.beginning {

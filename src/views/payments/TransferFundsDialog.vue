@@ -97,9 +97,13 @@ export default class TransferFundsDialog extends Vue {
 
   async sendTransfer() {
     this.loading = true
-    await this.$store.dispatch(this.action == 'add' ? 'addToBalance' : 'removeFromBalance', this.transfer)
-    this.loading = false
-    this.closeDialog()
+    try {
+      await this.$store.dispatch(this.action == 'add' ? 'addToBalance' : 'removeFromBalance', this.transfer)
+    }
+    finally {
+      this.loading = false
+      this.closeDialog()
+    }
   }
 
   get fundingSources() {

@@ -1,7 +1,6 @@
 <template lang="pug">
 	v-container.pb-16(fluid)
 		change-password-dialog(:opened.sync="changePasswordDialog")
-		SSNDialog(:opened.sync="ssnDialog")
 		add-funding-source-dialog(:opened.sync="addFundingSourceDialog")
 		edit-funding-source-dialog(
 			:opened.sync='editFundingSourceDialog'
@@ -11,10 +10,11 @@
 			:opened.sync='removeFundingSourceDialog'
 			:fundingSource='selectedFundingSource'
 		)
+		beneficial-owners-dialog(:opened.sync="beneficialOwnersDialog")
 
 		v-card.soft-shadow
 			v-list.pa-0(rounded subheader)
-				v-subheader.text-subtitle-1.font-weight-medium Profile
+				v-subheader.text-subtitle-1 Profile
 				
 				v-list-item(two-line)
 					v-list-item-content
@@ -48,7 +48,16 @@
 						v-btn(text color='primary' @click="ssnDialog = true") Set SSN
 
 				v-divider
-				v-subheader.text-subtitle-1.font-weight-medium Funding sources
+				v-subheader.text-subtitle-1 Payments
+
+			
+				v-list-item(two-line v-if='showBeneficialOwnersForm')
+					v-list-item-content
+						v-list-item-title Verify beneficial owners
+					v-list-item-action
+						v-btn(text color='primary' @click='beneficialOwnersDialog = true') Verify
+				
+				v-subheader.text-subtitle-2 Funding sources
 
 				v-skeleton-loader(
 					v-if='loadingFundingSources && !fundingSources.length'
@@ -71,7 +80,7 @@
 						span Add funding source
 				
 				v-divider
-				v-subheader.text-subtitle-1.font-weight-medium Security
+				v-subheader.text-subtitle-1 Security
 				
 				v-list-item(two-line)
 					v-list-item-content
@@ -80,7 +89,7 @@
 						v-btn(text color='primary' @click="changePasswordDialog = true") Change
 
 				v-divider
-				v-subheader.text-subtitle-1.font-weight-medium Preferences
+				v-subheader.text-subtitle-1 Preferences
 
 				v-list-item(two-line)
 					v-list-item-content
@@ -99,7 +108,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import ChangePasswordDialog from './ChangePasswordDialog'
-import SSNDialog from './SSNDialog'
+import BeneficialOwnersDialog from './BeneficialOwnersDialog'
 import AddFundingSourceDialog from './AddFundingSourceDialog'
 import EditFundingSourceDialog from './EditFundingSourceDialog'
 import RemoveFundingSourceDialog from './RemoveFundingSourceDialog'
@@ -110,36 +119,45 @@ export default {
     title: 'Settings',
   },
   components: {
-    SSNDialog,
+    BeneficialOwnersDialog,
     ChangePasswordDialog,
     AddFundingSourceDialog,
-		EditFundingSourceDialog,
+    EditFundingSourceDialog,
     RemoveFundingSourceDialog,
   },
-  computed: {
-    ...mapState({
-      authenticatedUser: (state) => state.authenticatedUser,
-    }),
-		...mapGetters(['fundingSources'])
-  },
   mounted() {
-    if (this.$route.params.openSSNDialog == 'true') {
-      this.ssnDialog = true
-    }
+    // if (this.$route.params.openSSNDialog == 'true') {
+      // this.ssnDialog = true
+    // }
     this.loadFundingSources()
   },
   data: () => ({
     changePasswordDialog: false,
     ssnDialog: false,
-		loadingFundingSources: false,
+    loadingFundingSources: false,
     addFundingSourceDialog: false,
-		editFundingSourceDialog: false,
+    editFundingSourceDialog: false,
     removeFundingSourceDialog: false,
+		beneficialOwnersDialog: false,
     selectedFundingSource: null,
     preferences: {
       darkMode: window.localStorage.getItem('darkMode') || 'System default',
     },
   }),
+  computed: {
+    ...mapState({
+      authenticatedUser: (state) => state.authenticatedUser,
+    }),
+    ...mapGetters(['fundingSources']),
+
+		showBeneficialOwnersForm() {
+			// TODO: This is a hack to show the form for the first time
+			// If these two fields exist on the object returned at /payments/user in _links object, then return true
+			// certify-beneficial-ownership
+			// verify-beneficial-owners
+			return true
+		}
+  },
   methods: {
     async loadFundingSources() {
       this.loadingFundingSources = true
@@ -157,8 +175,8 @@ export default {
       this.selectedFundingSource = fundingSource
       this.removeFundingSourceDialog = true
     },
-    fundingSourceId(fundingSourceLocation) {
-      return fundingSourceLocation.replace(
+    fundingSourceId(fundingSourceUrl) {
+      return fundingSourceUrl.replace(
         'https://api-sandbox.dwolla.com/funding-sources/',
         ''
       )

@@ -33,11 +33,8 @@ div
                 | Are you a contractor? Click
                 a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
                 | to create your account.
-                
-            //- v-window-item(:value='2')
-            //-   dwolla-beneficial-owners(customerId='3b51b3c0-6520-4f2d-9a96-22249cd562e5')
 
-            v-window-item(:value='2')
+            v-window-item(:value="3")
               v-text-field(
                 label='Manager reference'
                 v-model='form.manager_reference'
@@ -71,14 +68,12 @@ div
               //-       span I agree to the
               //-       a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
 
-                  
-
         v-card-actions(v-if='step != 1')
           v-spacer
           v-btn(v-if='step != 0 && step != 2' text @click='step--') Back
           v-btn(v-if='step != 0 && step != 2' text @click='step++') Next
           v-btn(
-            v-if='step == 2'
+            v-if="step == 2"
             text
             color='primary'
             type='submit'
@@ -134,7 +129,7 @@ export default class SignUp extends Vue {
   }
 
   mounted() {
-    dwolla.on('success', (res) => {
+    dwolla.on('customerCreated', (res) => {
       this.form.customer_url = res.location
       this.step = 2
     })

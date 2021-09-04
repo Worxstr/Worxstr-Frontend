@@ -17,7 +17,7 @@ import VueSocketIO from 'vue-socket.io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
-import dwolla from './plugins/dwolla'
+import { configureDwolla } from './plugins/dwolla'
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
@@ -112,29 +112,6 @@ function promptSSN() {
 function configureBackButtonPress() {
   CapacitorApp.addListener('backButton', () => {
     window.history.back()
-  })
-}
-
-declare global {
-  interface Window {
-    dwolla: any;
-    Plaid: any;
-  }
-}
-
-function configureDwolla() {
-  window.dwolla = window.dwolla || {}
-  window.dwolla.configure({
-    environment: 'sandbox',
-    // styles: '/main.css',
-    tokenUrl: `${process.env.VUE_APP_API_BASE_URL}/payments/access`,
-    success: async (res: any) => {
-      console.log(res)
-      // dwolla.emit('success', res)
-    },
-    error: (err: any) => {
-      dwolla.emit('error', err)
-    },
   })
 }
 
