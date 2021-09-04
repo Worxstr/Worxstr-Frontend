@@ -58,13 +58,15 @@ div(v-if="loadingTransfers && !(transfers.length)")
 
         span.flex-grow-0.px-2 {{ transfer.created | date }}
         span.flex-grow-0.px-2.font-weight-bold(
-          :class="transferColor(transfer)"
+          :class="transferFundsAdded(transfer) ? 'green--text' : 'red--text'"
         )
           | {{ transfer.amount.value | currency }}
 
       v-expansion-panel-content
         v-card-text.text-body-1
           p {{ transfer.id }}
+          p(v-if='transfer._links["source-funding-source"]') {{transfer._links['source-funding-source'].href}}
+          p {{$store.state.payments.balance.location}}
 
       v-divider(v-if='i != transfers.length - 1')
 
@@ -107,19 +109,9 @@ export default class TransferHistory extends Vue {
     }
   }
 
-  transferColor(transfer: Transfer): string {
-    // TOOD: Get the Dwolla customer url in user object
-    const customerUrl = this.$store.state.authenticatedUser.username == 'managerone' ?
-      'https://api-sandbox.dwolla.com/customers/6d2a834c-0189-4d04-88bc-c53df2961f85'
-    : 'https://api-sandbox.dwolla.com/customers/3d0257f7-dc01-4426-80a8-bc03a6927718'
-    
-    if (transfer._links.source.href === customerUrl) {
-      return 'red--text'
-    }
-    else if (transfer._links.destination.href === customerUrl) {
-      return 'green--text'
-    }
-    return ''
+  transferFundsAdded(transfer: Transfer): boolean {
+    return transfer._links.destination.href ===
+      this.$store.state.authenticatedUser.dwolla_customer_url
   }
 
   get transfers() {

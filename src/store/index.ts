@@ -53,6 +53,7 @@ interface RootState {
     balance: {
       value: number | null;
       currency: string;
+      location: string | null;
     };
     fundingSources: {
       all: string[];
@@ -105,71 +106,74 @@ interface RootState {
   contacts: User[];
 }
 
+const initialState = (): RootState => ({
+  snackbar: {
+    show: false,
+    text: 'Test',
+    timeout: 5000,
+  },
+  authenticatedUser: null,
+  users: {
+    all: [],
+    byId: {},
+  },
+  clock: {
+    clocked: false,
+    break: false,
+    history: {
+      lastLoadedOffset: 0,
+      all: [],
+      byId: {},
+    },
+  },
+  payments: {
+    balance: {
+      value: null,
+      currency: 'USD',
+      location: null,
+    },
+    fundingSources: {
+      all: [],
+      byLocation: {},
+    },
+    timecards: {
+      all: [],
+      byId: {},
+    },
+    transfers: {
+      all: [],
+      byId: {},
+    },
+  },
+  shifts: {
+    next: null,
+    // TODO: Flatten shift data from jobs
+    all: [],
+    byId: {},
+  },
+  jobs: {
+    all: [],
+    byId: {},
+  },
+  workforce: [],
+  managers: {
+    contractor: [],
+    organization: [],
+  },
+  events: {
+    all: [],
+    byId: {},
+  },
+  conversations: {
+    all: [],
+    byId: [],
+  },
+  contacts: [],
+})
+
 
 const storeConfig: StoreOptions<RootState> = {
-  state: {
-    snackbar: {
-      show: false,
-      text: 'Test',
-      timeout: 5000,
-    },
-    authenticatedUser: null,
-    users: {
-      all: [],
-      byId: {},
-    },
-    clock: {
-      clocked: false,
-      break: false,
-      history: {
-        lastLoadedOffset: 0,
-        all: [],
-        byId: {},
-      },
-    },
-    payments: {
-      balance: {
-        value: null,
-        currency: 'USD',
-      },
-      fundingSources: {
-        all: [],
-        byLocation: {},
-      },
-      timecards: {
-        all: [],
-        byId: {},
-      },
-      transfers: {
-        all: [],
-        byId: {},
-      },
-    },
-    shifts: {
-      next: null,
-      // TODO: Flatten shift data from jobs
-      all: [],
-      byId: {},
-    },
-    jobs: {
-      all: [],
-      byId: {},
-    },
-    workforce: [],
-    managers: {
-      contractor: [],
-      organization: [],
-    },
-    events: {
-      all: [],
-      byId: {},
-    },
-    conversations: {
-      all: [],
-      byId: [],
-    },
-    contacts: [],
-  },
+  state: initialState(),
   mutations: {
     SHOW_SNACKBAR(state, snackbar) {
       state.snackbar = {
@@ -177,6 +181,9 @@ const storeConfig: StoreOptions<RootState> = {
         ...snackbar,
         show: true,
       }
+    },
+    RESET_STATE(state, payload) {
+      Object.assign(state, initialState())
     },
     SET_AUTHENTICATED_USER(state, user) {
       state.authenticatedUser = user
@@ -217,10 +224,11 @@ const storeConfig: StoreOptions<RootState> = {
     END_BREAK(state) {
       state.clock.break = false
     },
-    SET_BALANCE(state, { value, currency }) {
+    SET_BALANCE(state, { value, currency, location }) {
       state.payments.balance = {
         value: parseFloat(value),
         currency,
+        location,
       }
     },
     ADD_TO_BALANCE(state, amount) {
@@ -417,6 +425,7 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/auth/logout`,
       })
       commit('UNSET_AUTHENTICATED_USER')
+      commit('RESET_STATE')
       router.push({ name: 'home' })
     },
 
@@ -597,7 +606,10 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/payments/balance`,
       })
-      commit('SET_BALANCE', data.balance)
+      commit('SET_BALANCE', {
+        ...data.balance,
+        location: data.location,
+      })
     },
 
     async openPlaidLink(_context, name) {
