@@ -56,17 +56,16 @@ div(v-if="loadingTransfers && !(transfers.length)")
         
         v-spacer
 
-        span.flex-grow-0.px-2 {{ transfer.created | date }}
         span.flex-grow-0.px-2.font-weight-bold(
           :class="transferFundsAdded(transfer) ? 'green--text' : 'red--text'"
         )
-          | {{ transfer.amount.value | currency }}
+          | {{ transferFundsAdded(transfer) ? '+' : '-' }}{{ transfer.amount.value | currency }}
+        span.flex-grow-0.px-2 {{ transfer.created | date }}
 
       v-expansion-panel-content
         v-card-text.text-body-1
-          p {{ transfer.id }}
-          p(v-if='transfer._links["source-funding-source"]') {{transfer._links['source-funding-source'].href}}
-          p {{$store.state.payments.balance.location}}
+          p Transfer ID: {{ transfer.id }}
+          p {{ transfer._links.destination['additional-information'].type == 'Commercial' ? 'Fee' : ''}}
 
       v-divider(v-if='i != transfers.length - 1')
 
