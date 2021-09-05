@@ -8,8 +8,8 @@ v-container
 
   portal(to="toolbarActions")
     div(v-if="$vuetify.breakpoint.smAndUp")
-      v-btn(text, color="primary", @click="addContractorDialog = true")
-        span Add contractor
+      //- v-btn(text, color="primary", @click="addContractorDialog = true")
+      //-   span Add contractor
 
       v-btn(
         text,
@@ -97,7 +97,9 @@ export default {
   computed: {
     ...mapGetters(["workforce"]),
     userIsOrgManager() {
-      return this.$store.state.authenticatedUser
+      // TODO: Create universal user role check
+      
+      return this.$store.state.authenticatedUsuer
         ? userIs(
             UserRole.OrganizationManager,
             this.$store.state.authenticatedUser

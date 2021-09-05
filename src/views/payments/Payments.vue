@@ -83,7 +83,23 @@ export default class Payments extends Vue {
   }
   
   openAddFundsDialog() {
-    this.transferFundsDialog = 'add'
+    if (this.$store.getters.fundingSources.length === 0) {
+      this.$store.dispatch('showSnackbar', {
+        text: "You haven't added any funding sources.",
+        action: {
+          text: 'Add funding source',
+          action: () => this.$router.push({
+            name: 'settings',
+            params: {
+              addFundingSource: 'true'
+            }
+          }),
+        }
+      })
+    }
+    else {
+      this.transferFundsDialog = 'add'
+    }
   }
 
   openTransferToBankDialog() {

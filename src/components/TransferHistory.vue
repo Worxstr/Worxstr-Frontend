@@ -5,7 +5,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
     type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
   )
 
-.payments.d-flex.flex-column.justify-center.mb-5(v-else)
+.payments.d-flex.flex-column.justify-center.mb-5(v-else-if='transfers.length')
 
   v-toolbar.no-padding(flat, color="transparent")
   

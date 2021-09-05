@@ -129,6 +129,9 @@ export default {
     if (this.$route.params.verifyBeneficialOwners == 'true') {
       this.beneficialOwnersDialog = true
     }
+		if (this.$route.params.addFundingSource == 'true') {
+			this.addFundingSourceDialog = true
+		}
     this.loadFundingSources()
   },
   data: () => ({

@@ -34,7 +34,7 @@ div
                 a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
                 | to create your account.
 
-            v-window-item(:value="3")
+            v-window-item(:value="2")
               v-text-field(
                 label='Manager reference'
                 v-model='form.manager_reference'
