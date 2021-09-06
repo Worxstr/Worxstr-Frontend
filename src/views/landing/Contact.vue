@@ -21,11 +21,12 @@ div
                 p {{ option.text }}
 
               v-card-actions.pb-5.justify-center
-                v-btn.black--text(
+                v-btn(
                   elevation='0'
-                  v-bind="attrs",
-                  v-on="on",
-                  :color="option.button.color",
+                  v-bind="attrs"
+                  v-on="on"
+                  :class="{'black--text': option.button.color == 'accent'}"
+                  :color="option.button.color"
                   @click="chosenOption = option.name"
                 ) {{ option.button.text }}
 

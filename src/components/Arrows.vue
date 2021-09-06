@@ -251,7 +251,7 @@ export default class Arrows extends Vue {
   transform: translate(10px, -27.5px);
 
   &.beginning {
-    transform: translate(-150px, 412.5px) !important;
+    transform: translate(-200px, 550px) !important;
   }
 }
 </style>

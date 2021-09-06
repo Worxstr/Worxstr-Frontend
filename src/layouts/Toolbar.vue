@@ -5,7 +5,7 @@
       outlined
       elevate-on-scroll
       :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
-      :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-5'"
+      :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
       :class="$route.meta.landing ? 'landing' : 'app'"
     )
       v-btn(
