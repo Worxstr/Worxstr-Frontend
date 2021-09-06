@@ -25,9 +25,15 @@ export const Managers = [
 	UserRole.OrganizationManager,
 ]
 
-// Take a role and a user and determine if the user has that role
-export function userIs(role: UserRole, user: User) {
-	return user.roles.map((r) => r.id).includes(role)
+// Take a list of roles as parameters
+// and a user and determine if the user has one of those roles
+export function userIs(user: User, ...roles: UserRole[]) {
+	return roles.some((role) => user.roles.map((r) => r.id).includes(role))
+}
+
+export function currentUserIs(...roles: UserRole[]) {
+	if (!store.state.authenticatedUser) return false
+	return userIs(store.state.authenticatedUser, ...roles)
 }
 
 export function defaultRoute() {

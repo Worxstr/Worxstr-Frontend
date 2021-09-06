@@ -134,7 +134,7 @@ import DeleteShiftDialog from './DeleteShiftDialog.vue'
 import JobsMap from '@/components/JobsMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
 
-import { userIs, UserRole } from '@/definitions/User'
+import { currentUserIs, UserRole } from '@/definitions/User'
 import { Job, Shift } from '@/definitions/Job'
 
 @Component({
@@ -178,12 +178,7 @@ export default class JobView extends Vue {
   }
 
   get userIsOrgManager() {
-    return this.$store.state.authenticatedUser
-      ? userIs(
-          UserRole.OrganizationManager,
-          this.$store.state.authenticatedUser
-        )
-      : false
+    return currentUserIs(UserRole.OrganizationManager)
   }
 
   getContractor(contractorId: number) {

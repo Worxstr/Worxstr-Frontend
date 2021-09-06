@@ -6,6 +6,7 @@ div
   //- Toolbar buttons
   portal(to="toolbarActions")
     v-btn(
+      v-if='userIsManager'
       color="primary",
       text
       :icon='$vuetify.breakpoint.xs'
@@ -36,7 +37,7 @@ div
       .text-h2 {{ payments.balance.value | currency }}
 
 
-    timecards.mb-5
+    timecards.mb-5(v-if='userIsManager')
 
     transfer-history
 
@@ -48,7 +49,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import Timecards from '@/components/Timecards.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
-import { userIs, UserRole } from '@/definitions/User'
+import { currentUserIs, Managers } from '@/definitions/User'
 
 @Component({
   metaInfo: {
@@ -81,8 +82,12 @@ export default class Payments extends Vue {
   get payments() {
     return this.$store.state.payments
   }
-  
-  openAddFundsDialog() {
+
+  get userIsManager() {
+    return currentUserIs(...Managers)
+  }
+
+  userHasFundingSource() {
     if (this.$store.getters.fundingSources.length === 0) {
       this.$store.dispatch('showSnackbar', {
         text: "You haven't added any funding sources.",
@@ -93,21 +98,22 @@ export default class Payments extends Vue {
             params: {
               addFundingSource: 'true'
             }
-          }),
+          })
         }
       })
+      return false
     }
-    else {
+    return true
+  }
+  
+  openAddFundsDialog() {
+    if (this.userHasFundingSource())
       this.transferFundsDialog = 'add'
-    }
   }
 
   openTransferToBankDialog() {
-    this.transferFundsDialog = 'remove'
-  }
-
-  userIs(role: UserRole) {
-    return userIs(role, this.authenticatedUser)
+    if (this.userHasFundingSource())
+      this.transferFundsDialog = 'remove'
   }
 }
 </script>

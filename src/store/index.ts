@@ -181,6 +181,9 @@ const storeConfig: StoreOptions<RootState> = {
   state: initialState(),
   mutations: {
     SHOW_SNACKBAR(state, snackbar) {
+      if (snackbar.action)
+        snackbar.action.color = snackbar.action.color || 'accent'
+
       state.snackbar = {
         ...state.snackbar,
         ...snackbar,
@@ -1125,7 +1128,6 @@ axios.interceptors.response.use(
     if (res.actions) {
       action = {
         text: res.actions[0].action_text,
-        color: 'primary',
         action: () => {
           switch (res.actions[0].name) {
             case 'VERIFY_BENEFICIAL_OWNERS':

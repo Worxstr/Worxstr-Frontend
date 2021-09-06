@@ -35,7 +35,7 @@ v-container.approvals(v-else)
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 
-import { userIs, UserRole } from '@/definitions/User'
+import { currentUserIs, UserRole } from '@/definitions/User'
 import { Job } from '@/definitions/Job'
 
 import EditJobDialog from './EditJobDialog.vue'
@@ -78,7 +78,7 @@ export default class JobsView extends Vue {
   }
 
   get userIsOrgManager() {
-    return this.$store.state.authenticatedUser ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser) : false
+    return currentUserIs(UserRole.OrganizationManager)
   }
 
   openCreateJobDialog() {
