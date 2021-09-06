@@ -4,15 +4,19 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item, list-
 
 .conversations(v-else)
   v-list(color="transparent")
-    v-list-item(
-      v-for="conversation in conversations",
+    div(
+      v-for="(conversation, i) in conversations",
       :key="conversation.id",
-      link,
-      activeclass="primary--text",
-      :to="{ name: 'conversation', params: { conversationId: conversation.id } }"
     )
-      v-list-item-content
-        v-list-item-title {{ conversation | groupNameList(authenticatedUser) }}
+      v-list-item(
+        link,
+        activeclass="primary--text",
+        :to="{ name: 'conversation', params: { conversationId: conversation.id } }"
+      )
+        v-list-item-content
+          v-list-item-title {{ conversation | groupNameList(authenticatedUser) }}
+
+      v-divider(v-if='i != conversations.length - 1')
 </template>
 
 <script>

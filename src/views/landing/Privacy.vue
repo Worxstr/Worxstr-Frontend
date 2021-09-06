@@ -154,7 +154,7 @@ v-container.d-flex.flex-column.justify-center.align-center.pt-8
       br 
       span Worxstr L.L.C.
       br
-      span 2207 E 7th St
+      span 2207 E 7th St 
       br
       span Charlotte, North Carolina 28204
 

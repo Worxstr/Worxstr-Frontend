@@ -53,7 +53,7 @@
                     span Use geolocation
 
                 div
-                  qrcode-stream(@decode='submitCode' @init='qrInit')
+                  qrcode-stream(v-if='verifyDialog.opened' @decode='submitCode' @init='qrInit')
 
                 v-card-text
                   v-text-field(label='Or enter the code manually' v-model='verifyDialog.code' hide-details)
