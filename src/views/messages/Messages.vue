@@ -4,9 +4,10 @@ div.pa-2
 
   portal(to="toolbarActions")
     v-tooltip(bottom)
+      span New conversation
       template(v-slot:activator="{ on, attrs }")
-        v-btn(text, color="primary", v-bind="attrs", v-on="on")
-          v-icon(@click="newConversationDialog = true") mdi-plus
+        v-btn(text color="primary" @click="newConversationDialog = true" v-bind="attrs" v-on="on")
+          v-icon mdi-plus
           span(v-if='$vuetify.breakpoint.smAndUp') New
       
   v-card.messages.pa-0.d-flex.flex-row.fill-height.align-start.soft-shadow
