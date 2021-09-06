@@ -64,7 +64,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
           v-list-item.py-1(
             link,
             active-class="primary--text",
-            :to="link.to ? { name: link.to } : null",
+            :to="link.to ? link.to : null",
             @click="() => (link.click ? link.click() : '')"
           v-on="on",
           v-bind="attrs"
@@ -127,13 +127,20 @@ export default class NavDrawer extends Vue {
     {
       text: "Settings",
       icon: "mdi-cog",
-      to: "settings",
+      to: {
+        name: 'settings'
+      },
     },
-    // {
-    //   text: "Support",
-    //   icon: "mdi-help-circle-outline",
-    //   to: "support",
-    // },
+    {
+      text: "Support",
+      icon: "mdi-help-circle-outline",
+      to: {
+        name: 'contact',
+        params: {
+          option: 'support'
+        }
+      }
+    },
     {
       text: "Sign out",
       icon: "mdi-logout-variant",

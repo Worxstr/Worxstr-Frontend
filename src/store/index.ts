@@ -269,18 +269,17 @@ const storeConfig: StoreOptions<RootState> = {
     showSnackbar({ commit }, snackbar) {
       commit('SHOW_SNACKBAR', snackbar)
     },
-    async contactSales({ dispatch }, request) {
+    async contactSales({ dispatch }, { form, type }) {
       try {
         const { data } = await axios({
           method: 'POST',
-          url: `${baseUrl}/contact/sales`,
-          data: request,
+          url: `${baseUrl}/contact/${type}`,
+          data: form
         })
-        dispatch('showSnackbar', {
-          text: 'Thanks! We will get back to you shortly.',
-        })
+        dispatch('showSnackbar', { text: "Thanks! We will get back to you shortly." })
         return data
-      } catch (err) {
+      }
+      catch (err) {
         return err
       }
     },
