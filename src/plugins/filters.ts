@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import dayjs from 'dayjs'
+
 import { User } from '@/definitions/User'
 import { Conversation } from '@/definitions/Messages'
 
@@ -29,6 +30,7 @@ Vue.filter('currency', (value: string) => {
 
 // 1234567890 -> (123) 456-7890
 Vue.filter('phone', (value: string) => {
+	if (!value || !value.length) return ''
 	return `(${value.substring(0,3)}) ${value.substring(3,6)}-${value.substring(6,10)}`
 })
 

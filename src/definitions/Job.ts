@@ -5,6 +5,8 @@ export type Job = {
 	name: string;
 	active: boolean;
 	direct: boolean;
+	radius: number;
+	color: string;
 	city: string;
 	state: string;
 	address: string;

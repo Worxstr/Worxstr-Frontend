@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(fluid)
+v-container
   add-workforce-member-dialog(
     :opened.sync="addContractorDialog",
     type="contractor"
@@ -8,8 +8,8 @@ v-container(fluid)
 
   portal(to="toolbarActions")
     div(v-if="$vuetify.breakpoint.smAndUp")
-      v-btn(text, color="primary", @click="addContractorDialog = true")
-        span Add contractor
+      //- v-btn(text, color="primary", @click="addContractorDialog = true")
+      //-   span Add contractor
 
       v-btn(
         text,
@@ -49,22 +49,22 @@ v-container(fluid)
 </template>
 
 <script>
-import AddWorkforceMemberDialog from "./AddWorkforceMemberDialog";
-import { userIs, UserRole } from "@/definitions/User";
-import { mapGetters } from "vuex";
+import AddWorkforceMemberDialog from './AddWorkforceMemberDialog'
+import { currentUserIs, UserRole } from '@/definitions/User'
+import { mapGetters } from 'vuex'
 
 export default {
-  name: "workforce",
+  name: 'workforce',
   metaInfo: {
-    title: "Workforce",
+    title: 'Workforce',
   },
   components: { AddWorkforceMemberDialog },
   async mounted() {
-    this.loading = true;
+    this.loading = true
     try {
-      await this.$store.dispatch("loadWorkforce");
+      await this.$store.dispatch('loadWorkforce')
     } finally {
-      this.loading = false;
+      this.loading = false
     }
   },
   data: () => ({
@@ -73,42 +73,37 @@ export default {
     addManagerDialog: false,
     headers: [
       {
-        text: "ID",
-        value: "id",
+        text: 'ID',
+        value: 'id',
       },
       {
-        text: "Name",
-        value: "name",
+        text: 'Name',
+        value: 'name',
       },
       {
-        text: "Email",
-        value: "email",
+        text: 'Email',
+        value: 'email',
       },
       {
-        text: "Phone",
-        value: "phone",
+        text: 'Phone',
+        value: 'phone',
       },
       {
-        text: "Manager ID",
-        value: "manager_id",
+        text: 'Manager ID',
+        value: 'manager_id',
       },
     ],
   }),
   computed: {
-    ...mapGetters(["workforce"]),
+    ...mapGetters(['workforce']),
     userIsOrgManager() {
-      return this.$store.state.authenticatedUser
-        ? userIs(
-            UserRole.OrganizationManager,
-            this.$store.state.authenticatedUser
-          )
-        : false;
+      return currentUserIs(UserRole.OrganizationManager)
     },
   },
   methods: {
     openUser(user) {
-      this.$router.push({ name: "user", params: { userId: user.id } });
+      this.$router.push({ name: 'user', params: { userId: user.id } })
     },
   },
-};
+}
 </script>

@@ -52,6 +52,21 @@ div
 import { Component, Vue } from 'vue-property-decorator'
 import Arrows from '@/components/Arrows.vue'
 
+type Tier = {
+  name: string;
+  price: number | null;
+  description?: string;
+  contractors: number;
+  support: string;
+  buttonText: string;
+  to: {
+    name: string;
+    params: {
+      [key: string]: string;
+    };
+  };
+}
+
 @Component({
   metaInfo: {
     title: "Pricing",
@@ -61,7 +76,7 @@ import Arrows from '@/components/Arrows.vue'
   }
 })
 export default class Pricing extends Vue {
-  pricingTiers = [
+  pricingTiers: Tier[] = [
     {
       price: 0,
       name: 'free',
@@ -90,7 +105,7 @@ export default class Pricing extends Vue {
     }
   ]
 
-  highlight(tier: any) {
+  highlight(tier: Tier) {
     return tier.name == "premium"
   }
 }

@@ -3,6 +3,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
 import store from '@/store'
+declare global {
+  interface Window {
+    Plaid: any;
+  }
+}
 
 function onSuccess(name: string) {
   return async function(public_token: string, metadata: any) {

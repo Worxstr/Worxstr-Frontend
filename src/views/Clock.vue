@@ -5,10 +5,9 @@
     )
       div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
         h6.text-h6.text-center.text-md-left
-          | Your shift
-          | {{ nextShift.shiftActive ? "ends" : "begins" }}
-          | at
+          | Your shift at
           | {{ nextShift.site_location }}
+          | {{ nextShift.shiftActive ? "ends" : "begins" }}
           //- router-link(:to="{ name: 'job', params: { jobId: nextShift.job_id }}")
             | &nbsp;{{ nextShift.site_location }}&nbsp;
           | at

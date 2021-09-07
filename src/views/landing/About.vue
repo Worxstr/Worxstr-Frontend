@@ -173,41 +173,41 @@ export default {
           },
         ]
       },
-      {
-        name: 'Coley Lippard',
-        title: "Creative Marketing Director",
-        photo: 'coley.jpg',
-        description: "Coley Lippard has grown from a unique history of forward-thinking individuals that push the envelope of normalcy. As the son of a variety entertainer, his creativity has lead to a career in design and marketing with a fresh perspective and an eye on sustainable results. He is a recent Digital Marketing and Computer Information Service graduate at Appalachian State University and is currently guiding the creative direction of several businesses.",
-        socials: [
-          {
-            link: 'mailto:coleylipp237@gmail.com',
-            icon: 'mdi-at',
-          },
-          {
-            link: 'https://www.linkedin.com/in/coleylipp',
-            icon: 'mdi-linkedin'
-          },
-        ]
-      },
-      {
-        name: 'Victoria DiMarco',
-        title: "Lead UI/UX Designer",
-        photo: 'victoria.jpg',
-        socials: [
-          {
-            link: 'mailto:victoriadimarco99@gmail.com',
-            icon: 'mdi-at',
-          },
-          {
-            link: 'https://www.linkedin.com/in/victoriadimarco',
-            icon: 'mdi-linkedin'
-          },
-          {
-            link: 'https://www.instagram.com/designdimarco',
-            icon: 'mdi-instagram'
-          },
-        ]
-      },
+      // {
+      //   name: 'Coley Lippard',
+      //   title: "Creative Marketing Director",
+      //   photo: 'coley.jpg',
+      //   description: "Coley Lippard has grown from a unique history of forward-thinking individuals that push the envelope of normalcy. As the son of a variety entertainer, his creativity has lead to a career in design and marketing with a fresh perspective and an eye on sustainable results. He is a recent Digital Marketing and Computer Information Service graduate at Appalachian State University and is currently guiding the creative direction of several businesses.",
+      //   socials: [
+      //     {
+      //       link: 'mailto:coleylipp237@gmail.com',
+      //       icon: 'mdi-at',
+      //     },
+      //     {
+      //       link: 'https://www.linkedin.com/in/coleylipp',
+      //       icon: 'mdi-linkedin'
+      //     },
+      //   ]
+      // },
+      // {
+      //   name: 'Victoria DiMarco',
+      //   title: "Lead UI/UX Designer",
+      //   photo: 'victoria.jpg',
+      //   socials: [
+      //     {
+      //       link: 'mailto:victoriadimarco99@gmail.com',
+      //       icon: 'mdi-at',
+      //     },
+      //     {
+      //       link: 'https://www.linkedin.com/in/victoriadimarco',
+      //       icon: 'mdi-linkedin'
+      //     },
+      //     {
+      //       link: 'https://www.instagram.com/designdimarco',
+      //       icon: 'mdi-instagram'
+      //     },
+      //   ]
+      // },
     ],
   }),
 };

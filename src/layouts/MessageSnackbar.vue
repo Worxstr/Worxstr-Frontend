@@ -2,14 +2,14 @@
   v-snackbar(app, v-model="snackbar.show", :timeout="snackbar.timeout")
     | {{ snackbar.text }}
 
-    template(v-slot:action="{ attrs }", v-if="snackbar.action")
+    template(v-slot:action="{ attrs }" v-if="snackbar.action")
       v-btn(
-        color="blue",
+        :color="snackbar.action.color",
         text,
         v-bind="attrs",
-        @click="() => { snackbar.action(); snackbar.show = false; }"
+        @click="() => { snackbar.action.action(); snackbar.show = false; }"
       )
-        | {{ snackbar.actionText }}
+        | {{ snackbar.action.text }}
 </template>
 
 <script lang="ts">
