@@ -597,7 +597,7 @@ const storeConfig: StoreOptions<RootState> = {
     },
 
     async completePayments({ commit }, timecardIds) {
-      await axios({
+      const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/payments/complete`,
         data: {
@@ -606,6 +606,9 @@ const storeConfig: StoreOptions<RootState> = {
       })
       timecardIds.forEach((timecardId: number) => {
         commit('REMOVE_TIMECARD', timecardId)
+      })
+      data.transfers.forEach((obj: { transfer: Transfer }) => {
+        commit('ADD_TRANSFER', { transfer: obj.transfer, prepend: true })
       })
     },
 
