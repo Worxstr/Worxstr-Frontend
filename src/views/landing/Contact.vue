@@ -10,7 +10,7 @@ div
         v-for="(option, i) in helpOptions" :key="i"
         cols="12",
         :md="chosenOption == option.name ? 9 : 6",
-        v-if="chosenOption == option.name || chosenOption == null"
+        v-if="(chosenOption == option.name || chosenOption == null) && !(option.name == 'sales' && $store.state.authenticatedUser)"
       )
         v-card.soft-shadow(outlined :class="chosenOption ? '' : 'hover-effect'")
           v-card-title.text-h5 {{ option.title }}
@@ -32,7 +32,7 @@ div
 
           v-expand-transition(appear)
             v-card-text.py-0(v-if="chosenOption == option.name")
-              contact-form(color="primary" @submitted='chosenOption = null')
+              contact-form(:type='chosenOption' color="primary" @submitted='chosenOption = null')
                 v-btn(text, @click="chosenOption = null") Cancel
 
     //- .mt-12
