@@ -10,7 +10,11 @@
 	},
 	"cordova": {},
 	"server": {
+<<<<<<< Updated upstream
 		"url": "http://192.168.86.24:8080",
 		"cleartext": true
+=======
+		"hostname": "worxstr.com"
+>>>>>>> Stashed changes
 	}
 }
