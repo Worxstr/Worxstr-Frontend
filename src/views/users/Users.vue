@@ -1,34 +1,15 @@
 <template lang="pug">
 v-container
-  add-workforce-member-dialog(
-    :opened.sync="addContractorDialog",
-    type="contractor"
-  )
-  add-workforce-member-dialog(:opened.sync="addManagerDialog", type="manager")
+  edit-user-dialog(:opened.sync="editUserDialog" :user='user')
 
   portal(to="toolbarActions")
-    div(v-if="$vuetify.breakpoint.smAndUp")
-      //- v-btn(text, color="primary", @click="addContractorDialog = true")
-      //-   span Add contractor
+    v-btn(
+      text,
+      color="primary",
+      @click="editUserDialog = true",
+    )
+      span Add user
 
-      v-btn(
-        text,
-        color="primary",
-        @click="addManagerDialog = true",
-        v-if="userIsOrgManager"
-      )
-        span(v-if="$vuetify.breakpoint.smAndUp") Add manager
-
-    v-menu(v-else)
-      template(v-slot:activator="{ on, attrs }")
-        v-btn(text, v-bind="attrs", v-on="on")
-          v-icon(left) mdi-account-plus
-          span Add member
-      v-list
-        v-list-item(@click="addContractorDialog = true")
-          v-list-item-title Add contractor
-        v-list-item(@click="addManagerDialog = true")
-          v-list-item-title Add manager
 
   v-card.soft-shadow
     v-data-table(
@@ -50,19 +31,21 @@ v-container
 
 <script>
 import { Component, Vue } from 'vue-property-decorator'
-// import AddWorkforceMemberDialog from './AddWorkforceMemberDialog'
 import { currentUserIs, UserRole } from '@/definitions/User'
+import EditUserDialog from './EditUserDialog.vue'
 
 @Component({
   metaInfo: {
     title: 'Users',
+  },
+  components: {
+    EditUserDialog
   }
 })
 export default class User extends Vue {
 
   loading = false
-  addContractorDialog = false
-  addManagerDialog = false
+  editUserDialog = false
   headers = [
     {
       text: 'ID',

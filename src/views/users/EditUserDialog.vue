@@ -1,76 +1,191 @@
 <template lang="pug">
 v-dialog(
-  v-model="opened",
-  :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  v-model="opened"
+  :fullscreen="$vuetify.breakpoint.smAndDown"
+  max-width="500"
   persistent
 )
   v-card.d-flex.flex-column
     v-fade-transition
-      v-overlay(v-if="loading", absolute, opacity=".2")
+      v-overlay(v-if="loading" absolute opacity=".2")
         v-progress-circular(indeterminate)
 
     v-form.flex-grow-1.d-flex.flex-column(
-      @submit.prevent="openPlaidAuth",
-      ref="form",
+      @submit.prevent="addUser"
+      ref="form"
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 Editing {{ user | fullName}}
+        v-toolbar-title.text-h6 Add user
 
-      v-divider
+      v-card-text
+        v-text-field(
+          autofocus
+          label="First name"
+          dense
+          outlined
+          v-model="editedUser.first_name"
+          :rules="rules.firstName"
+          required
+        )
+        v-text-field(
+          label="Last name"
+          dense
+          outlined
+          v-model="editedUser.last_name"
+          :rules="rules.lastName"
+          required
+        )
+        v-text-field(
+          label="Email"
+          type="email"
+          dense
+          outlined
+          :rules="rules.email"
+          v-model="editedUser.email"
+          required
+        )
+        phone-input(
+          v-model="editedUser.phone"
+          outlined
+          required
+        )
 
-      div(v-if='editedUser.contractor_info')
+        v-subheader {{ type | capitalize }} info
 
-        v-subheader Contractor info
+        v-select(
+          v-if="type == 'manager'"
+          v-model="editedUser.roles"
+          :items="managerTypes"
+          multiple
+          outlined
+          dense
+          required
+          label="Manager type"
+        )
 
-        v-card-text.pb-0
-          v-text-field(
-            autofocus
-            outlined,
-            dense,
-            label="Wage",
-            v-model="editedUser.contractor_info.hourly_rate",
-            :rules="rules.wage",
-            required,
-          )
+        v-text-field(
+          v-if="type == 'contractor'"
+          prefix="$"
+          suffix="/ hour"
+          label="Hourly wage"
+          type="number"
+          min="0.01"
+          step="0.01"
+          dense
+          outlined
+          :rules="rules.currency"
+          v-model.number="editedUser.contractor_info.hourly_rate"
+          required
+        )
 
+        v-select(
+          v-if="managers.contractor.length"
+          v-model="editedUser.manager_id"
+          :items="managers.contractor"
+          :item-text="(m) => `${m.first_name} ${m.last_name}`"
+          :item-value="'id'"
+          outlined
+          dense
+          required
+          label="Direct manager"
+        )
       v-spacer
 
       v-card-actions
         v-spacer
         v-btn(text @click="closeDialog") Cancel
-        v-btn(text color="primary" :disabled="!isValid" type="submit") Save
+        v-btn(text color="green" :disabled="!isValid" type="submit") Add
 </template>
 
 <script lang="ts">
+
 /* eslint-disable @typescript-eslint/camelcase */
-
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import { User } from '@/definitions/User'
-import { exists } from '@/plugins/inputValidation'
+import { exists, emailRules, currency } from '@/plugins/inputValidation'
+import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
-@Component
+@Component({
+  components: {
+    PhoneInput,
+  }
+})
 export default class EditUserDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ type: Object }) user!: User
+  @Prop(String) type!: string
+  @Prop(Object) readonly user: User | undefined
 
-  editedUser: User | {} = {}
   isValid = false
   loading = false
+
+  editedUser: any = {
+    contractor_info: {
+      hourly_rate: 12.0,
+    }
+  }
+
+  managerTypes = [
+    {
+      text: 'Organization manager',
+      value: 'organization_manager',
+    },
+    {
+      text: 'Contractor manager',
+      value: 'contractor_manager',
+    },
+  ]
+
   rules = {
-    wage: [exists('You must enter a name for your account.')],
+    firstName: [exists('First name required')],
+    lastName: [exists('Last name required')],
+    email: emailRules,
+    currency: [(value: string) => !!value || 'Wage required', currency],
+    managerId: [(value: string) => !!value || 'Manager ID required'],
   }
 
   @Watch('opened')
   onOpened(opened: boolean) {
+    if (opened) this.$store.dispatch('loadManagers')
     if (opened && this.user)
       this.editedUser = Object.assign({}, this.user);
   }
 
+  mounted() {
+    this.editedUser.manager_id = this.$store.state.authenticatedUser?.id
+  }
+
+  get managers() {
+    return this.$store.state.managers
+  }
+
   closeDialog() {
     this.$emit('update:opened', false)
+    // if (this.create) this.$refs.form.reset()
+  }
+  
+  async addUser() {
+    this.loading = true
+    try {
+      if (this.type == 'manager') {
+        await this.$store.dispatch('addManager', {
+          ...this.editedUser,
+          password: 'test',
+        })
+      } else {
+        await this.$store.dispatch('addContractor', {
+          ...this.editedUser,
+          password: 'test',
+        })
+      }
+      this.$store.dispatch('showSnackbar', {
+        text: this.$options.filters?.capitalize(this.type + ' added'),
+      })
+      this.closeDialog()
+    } finally {
+      this.loading = false
+    }
   }
 }
 </script>
