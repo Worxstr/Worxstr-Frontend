@@ -16,7 +16,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 Add user
+        v-toolbar-title.text-h6 {{ editMode ? 'Edit' : 'Add' }} user
 
       v-card-text
         v-text-field(
@@ -51,45 +51,55 @@ v-dialog(
           required
         )
 
-        v-subheader {{ type | capitalize }} info
-
         v-select(
-          v-if="type == 'manager'"
-          v-model="editedUser.roles"
-          :items="managerTypes"
-          multiple
+          v-model="type"
+          :items="['contractor', 'manager']"
           outlined
           dense
           required
-          label="Manager type"
+          label="User type"
         )
 
-        v-text-field(
-          v-if="type == 'contractor'"
-          prefix="$"
-          suffix="/ hour"
-          label="Hourly wage"
-          type="number"
-          min="0.01"
-          step="0.01"
-          dense
-          outlined
-          :rules="rules.currency"
-          v-model.number="editedUser.contractor_info.hourly_rate"
-          required
-        )
+        div(v-if='type')
+          v-subheader {{ type | capitalize }} info
 
-        v-select(
-          v-if="managers.contractor.length"
-          v-model="editedUser.manager_id"
-          :items="managers.contractor"
-          :item-text="(m) => `${m.first_name} ${m.last_name}`"
-          :item-value="'id'"
-          outlined
-          dense
-          required
-          label="Direct manager"
-        )
+          v-select(
+            v-if="type == 'manager'"
+            v-model="editedUser.roles"
+            :items="managerTypes"
+            multiple
+            outlined
+            dense
+            required
+            label="Manager type"
+          )
+
+          v-text-field(
+            v-if="type == 'contractor'"
+            prefix="$"
+            suffix="/ hour"
+            label="Hourly wage"
+            type="number"
+            min="0.01"
+            step="0.01"
+            dense
+            outlined
+            :rules="rules.currency"
+            v-model.number="editedUser.contractor_info.hourly_rate"
+            required
+          )
+
+          v-select(
+            v-if="managers.contractor.length"
+            v-model="editedUser.manager_id"
+            :items="managers.contractor"
+            :item-text="(m) => `${m.first_name} ${m.last_name}`"
+            :item-value="'id'"
+            outlined
+            dense
+            required
+            label="Direct manager"
+          )
       v-spacer
 
       v-card-actions
@@ -114,11 +124,12 @@ import PhoneInput from '@/components/inputs/PhoneInput.vue'
 export default class EditUserDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop(String) type!: string
   @Prop(Object) readonly user: User | undefined
 
   isValid = false
   loading = false
+  type: 'manager' | 'contractor' | null = null
+  editMode = false
 
   editedUser: any = {
     contractor_info: {
@@ -148,8 +159,10 @@ export default class EditUserDialog extends Vue {
   @Watch('opened')
   onOpened(opened: boolean) {
     if (opened) this.$store.dispatch('loadManagers')
-    if (opened && this.user)
+    if (opened && this.user) {
+      this.editMode = true
       this.editedUser = Object.assign({}, this.user);
+    }
   }
 
   mounted() {
@@ -161,8 +174,8 @@ export default class EditUserDialog extends Vue {
   }
 
   closeDialog() {
+    (this.$refs.form as HTMLFormElement).reset()
     this.$emit('update:opened', false)
-    // if (this.create) this.$refs.form.reset()
   }
   
   async addUser() {
