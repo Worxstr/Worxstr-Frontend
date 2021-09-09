@@ -7,6 +7,9 @@ export type User = {
 	email: string;
 	roles: Role[];
 	[key: string]: any;
+	contractor_info?: {
+		[key: string]: any;
+	};
 }
 
 export type Role = {

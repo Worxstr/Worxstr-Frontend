@@ -56,7 +56,7 @@ v-dialog(
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { exists } from '@/plugins/inputValidation'
+import { exists, currency } from '@/plugins/inputValidation'
 
 @Component
 export default class TransferFundsDialog extends Vue {
@@ -64,11 +64,7 @@ export default class TransferFundsDialog extends Vue {
   loading = false
   rules = {
     amount: [
-      (value: string) => {
-        // Check that number is positive non-zero and has no more than two decimal places
-        const pattern = /^\d+(\.\d{0,2})?$/
-        return pattern.test(value) && parseFloat(value) > 0 || 'You must enter a valid amount.'
-      }
+      currency
     ],
     location: [exists('You must choose a funding source.')],
   }

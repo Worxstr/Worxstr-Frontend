@@ -49,16 +49,43 @@ v-container
 </template>
 
 <script>
-import AddWorkforceMemberDialog from './AddWorkforceMemberDialog'
+import { Component, Vue } from 'vue-property-decorator'
+// import AddWorkforceMemberDialog from './AddWorkforceMemberDialog'
 import { currentUserIs, UserRole } from '@/definitions/User'
-import { mapGetters } from 'vuex'
 
-export default {
-  name: 'workforce',
+@Component({
   metaInfo: {
-    title: 'Workforce',
-  },
-  components: { AddWorkforceMemberDialog },
+    title: 'Users',
+  }
+})
+export default class User extends Vue {
+
+  loading = false
+  addContractorDialog = false
+  addManagerDialog = false
+  headers = [
+    {
+      text: 'ID',
+      value: 'id',
+    },
+    {
+      text: 'Name',
+      value: 'name',
+    },
+    {
+      text: 'Email',
+      value: 'email',
+    },
+    {
+      text: 'Phone',
+      value: 'phone',
+    },
+    {
+      text: 'Manager ID',
+      value: 'manager_id',
+    },
+  ]
+
   async mounted() {
     this.loading = true
     try {
@@ -66,44 +93,19 @@ export default {
     } finally {
       this.loading = false
     }
-  },
-  data: () => ({
-    loading: false,
-    addContractorDialog: false,
-    addManagerDialog: false,
-    headers: [
-      {
-        text: 'ID',
-        value: 'id',
-      },
-      {
-        text: 'Name',
-        value: 'name',
-      },
-      {
-        text: 'Email',
-        value: 'email',
-      },
-      {
-        text: 'Phone',
-        value: 'phone',
-      },
-      {
-        text: 'Manager ID',
-        value: 'manager_id',
-      },
-    ],
-  }),
-  computed: {
-    ...mapGetters(['workforce']),
-    userIsOrgManager() {
-      return currentUserIs(UserRole.OrganizationManager)
-    },
-  },
-  methods: {
-    openUser(user) {
-      this.$router.push({ name: 'user', params: { userId: user.id } })
-    },
-  },
+  }
+  
+  get workforce() {
+    return this.$store.getters.workforce
+  }
+
+  get userIsOrgManager() {
+    return currentUserIs(UserRole.OrganizationManager)
+  }
+
+  openUser(user) {
+    this.$router.push({ name: 'user', params: { userId: user.id } })
+  }
 }
+
 </script>

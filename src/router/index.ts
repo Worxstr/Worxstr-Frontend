@@ -21,13 +21,13 @@ import SignIn from '@/views/auth/SignIn.vue'
 import SignUp from '@/views/auth/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
-import User from '@/views/User.vue'
 import Clock from '@/views/Clock.vue'
 import Payments from '@/views/payments/Payments.vue'
 // import Availability from '@/views/Availability.vue'
 import Jobs from '@/views/jobs/Jobs.vue'
 import Job from '@/views/jobs/Job.vue'
-import Workforce from '@/views/workforce/Workforce.vue'
+import Users from '@/views/users/Users.vue'
+import User from '@/views/users/User.vue'
 import Schedule from '@/views/Schedule.vue'
 import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
@@ -218,16 +218,16 @@ const routes = [
     }
   },
   {
-    path: '/workforce',
-    name: 'workforce',
-    component: Workforce,
+    path: '/users',
+    name: 'users',
+    component: Users,
     meta: {
       icon: 'mdi-account-group',
       restrict: Managers
     }
   },
   {
-    path: '/workforce/:userId',
+    path: '/users/:userId',
     name: 'user',
     component: User,
     meta: {

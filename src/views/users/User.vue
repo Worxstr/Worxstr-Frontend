@@ -6,6 +6,8 @@
 		)
 
 	div(v-else)
+		edit-user-dialog(:opened.sync='editUserDialog' :user='user')
+
 		v-container.d-flex.flex-column.justify-center
 			v-card.soft-shadow
 				v-card-title {{ user | fullName }}
@@ -16,28 +18,37 @@
 
 					.d-flex
 						v-spacer
-						v-btn(text disabled) Edit wage
+						v-btn(text color='primary' @click='editUserDialog = true') Edit wage
 						v-btn(text disabled color="red") Delete user
 
 </template>
 
-<script>
+<script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import EditUserDialog from './EditUserDialog.vue'
 
-@Component
+@Component({
+  components: {
+    EditUserDialog,
+  },
+})
 export default class User extends Vue {
-	metaInfo() {
+	selectedUser: User | null = null
+	editUserDialog = false
+	loading = false
+
+  metaInfo() {
     return {
-      title: this.user ? this.$options.filters.fullName(this.user) : 'User'
+      title: this.user ? this.$options.filters?.fullName(this.user) : 'User',
     }
   }
 
-  mounted() {
-    this.$store.dispatch('loadUser', this.$route.params.userId)
+  async mounted() {
+    await this.$store.dispatch('loadUser', this.$route.params.userId)
   }
 
-	get user() {
-		return this.$store.getters.user(this.$route.params.userId)
-	}
+  get user() {
+    return this.$store.getters.user(this.$route.params.userId)
+  }
 }
 </script>

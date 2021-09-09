@@ -480,11 +480,12 @@ const storeConfig: StoreOptions<RootState> = {
     },
 
     async loadUser({ commit }, userId) {
+      console.log(`loading user ${userId}`)
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/users/${userId}`,
       })
-      commit('ADD_USER', data.user)
+      commit('ADD_USER', data)
     },
 
     async loadClockHistory({ state, commit }) {

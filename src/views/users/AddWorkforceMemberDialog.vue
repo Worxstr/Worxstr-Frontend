@@ -102,7 +102,7 @@ import { mapState } from "vuex";
 import {
   exists,
   emailRules,
-  currencyRules,
+  currency,
 } from "@/plugins/inputValidation";
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
@@ -144,7 +144,10 @@ export default {
       firstName: [exists("First name required")],
       lastName: [exists("Last name required")],
       email: emailRules,
-      currency: currencyRules,
+      currency: [
+        (value) => !!value || "Wage required",
+        currency
+      ],
       managerId: [(value) => !!value || "Manager ID required"],
     },
   }),
