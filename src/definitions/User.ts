@@ -30,11 +30,12 @@ export const Managers = [
 
 // Take a list of roles as parameters
 // and a user and determine if the user has one of those roles
-export function userIs(user: User, ...roles: UserRole[]) {
+export function userIs(user: User, ...roles: UserRole[]): boolean {
+	if (!user.roles) return false
 	return roles.some((role) => user.roles.map((r) => r.id).includes(role))
 }
 
-export function currentUserIs(...roles: UserRole[]) {
+export function currentUserIs(...roles: UserRole[]): boolean {
 	if (!store.state.authenticatedUser) return false
 	return userIs(store.state.authenticatedUser, ...roles)
 }

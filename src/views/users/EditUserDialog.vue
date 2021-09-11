@@ -27,6 +27,7 @@ v-dialog(
           v-model="editedUser.first_name"
           :rules="rules.firstName"
           required
+          :disabled='editMode'
         )
         v-text-field(
           label="Last name"
@@ -35,6 +36,7 @@ v-dialog(
           v-model="editedUser.last_name"
           :rules="rules.lastName"
           required
+          :disabled='editMode'
         )
         v-text-field(
           label="Email"
@@ -44,18 +46,31 @@ v-dialog(
           :rules="rules.email"
           v-model="editedUser.email"
           required
+          :disabled='editMode'
         )
         phone-input(
           v-model="editedUser.phone"
           outlined
           required
+          :disabled='editMode'
         )
 
-        div
-          v-subheader {{ type | capitalize }} info
+        v-select(
+          v-model="editedUser.manager_id"
+          :items="managers.contractor"
+          :item-text="(m) => `${m.first_name} ${m.last_name}`"
+          :item-value="'id'"
+          outlined
+          dense
+          required
+          label="Direct manager"
+          :disabled='editMode'
+        )
+
+        div(v-if='userIsManager')
+          v-subheader Manager info
 
           v-select(
-            v-if="type == 'manager'"
             v-model="editedUser.roles"
             :items="managerTypes"
             multiple
@@ -63,10 +78,13 @@ v-dialog(
             dense
             required
             label="Manager type"
+            disabled
           )
 
+        div(v-if='userIsContractor')
+          v-subheader Contractor info
+
           v-text-field(
-            v-if="type == 'contractor'"
             prefix="$"
             suffix="/ hour"
             label="Hourly wage"
@@ -80,40 +98,29 @@ v-dialog(
             required
           )
 
-          v-select(
-            v-if="managers.contractor.length"
-            v-model="editedUser.manager_id"
-            :items="managers.contractor"
-            :item-text="(m) => `${m.first_name} ${m.last_name}`"
-            :item-value="'id'"
-            outlined
-            dense
-            required
-            label="Direct manager"
-          )
       v-spacer
 
       v-card-actions
         v-spacer
         v-btn(text @click="closeDialog") Cancel
-        v-btn(text color="green" :disabled="!isValid" type="submit") Add
+        v-btn(text color="green"  type="submit")
+          //- :disabled="!isValid"
+          | {{ editMode ? 'Save' : 'Add' }}
 </template>
 
 <script lang="ts">
-
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
-import { User, UserRole } from '@/definitions/User'
+import { Managers, User, userIs, UserRole } from '@/definitions/User'
 import { exists, emailRules, currency } from '@/plugins/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
 @Component({
   components: {
     PhoneInput,
-  }
+  },
 })
 export default class EditUserDialog extends Vue {
-
   @Prop({ default: false }) readonly opened!: boolean
   @Prop(Object) readonly user: User | undefined
 
@@ -125,7 +132,7 @@ export default class EditUserDialog extends Vue {
   editedUser: any = {
     contractor_info: {
       hourly_rate: 12.0,
-    }
+    },
   }
 
   managerTypes = [
@@ -154,7 +161,7 @@ export default class EditUserDialog extends Vue {
     if (opened) this.$store.dispatch('loadManagers')
     if (opened && this.user) {
       this.editMode = true
-      this.editedUser = Object.assign({}, this.user);
+      this.editedUser = {...this.user}
     }
   }
 
@@ -166,29 +173,54 @@ export default class EditUserDialog extends Vue {
     return this.$store.state.managers
   }
 
+  get userIsContractor() {
+    return userIs(this.editedUser, UserRole.Contractor)
+  }
+
+  get userIsManager() {
+    return userIs(this.editedUser, ...Managers)
+  }
+
   closeDialog() {
-    (this.$refs.form as HTMLFormElement).reset()
+    if (!this.editMode)
+      (this.$refs.form as HTMLFormElement).reset()
     this.$emit('update:opened', false)
   }
-  
+
   async addUser() {
     this.loading = true
     try {
-      if (this.type == 'manager') {
-        await this.$store.dispatch('addManager', {
-          ...this.editedUser,
-          password: 'test',
-        })
-      } else {
-        await this.$store.dispatch('addContractor', {
-          ...this.editedUser,
-          password: 'test',
-        })
+
+      if (this.editMode) {
+        if (this.userIsManager) {
+          // await this.$store.dispatch('updateManager')
+        }
+
+        if (this.userIsContractor) {
+          await this.$store.dispatch('updateContractor', {
+            contractorInfo: this.editedUser.contractor_info,
+            userId: this.editedUser.id,
+          })
+        }
       }
+
+      else {
+        if (this.userIsManager) {
+          await this.$store.dispatch('addManager', {
+            ...this.editedUser
+          })
+        }
+      }
+
       this.$store.dispatch('showSnackbar', {
-        text: this.$options.filters?.capitalize(this.type + ' added'),
+        text: `
+          ${this.editedUser.first_name}
+          ${this.editedUser.last_name}
+          ${this.editMode ? 'updated' : 'added'}
+        `
       })
       this.closeDialog()
+
     } finally {
       this.loading = false
     }

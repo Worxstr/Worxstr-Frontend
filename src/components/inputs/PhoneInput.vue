@@ -11,6 +11,7 @@
     :color="color",
     :filled="filled"
     :outlined='outlined',
+    :disabled='disabled'
   )
 </template>
 
@@ -31,6 +32,7 @@ export default class PhoneInput extends Vue {
   @Prop({ default: false }) readonly required!: boolean
   @Prop({ default: false }) readonly filled!: boolean
   @Prop({ default: false }) readonly outlined!: boolean
+  @Prop({ default: false }) readonly disabled!: boolean
 
   rules = phoneRules
 

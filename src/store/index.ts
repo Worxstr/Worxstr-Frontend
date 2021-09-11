@@ -488,6 +488,15 @@ const storeConfig: StoreOptions<RootState> = {
       commit('ADD_USER', data)
     },
 
+    async updateContractor({ commit }, { contractorInfo, userId }) {
+      const { data } = await axios({
+        method: 'PATCH',
+        url: `${baseUrl}/users/contractors/${userId}`,
+        data: contractorInfo,
+      })
+      commit('ADD_USER', data.event)
+    },
+
     async loadClockHistory({ state, commit }) {
       const { data } = await axios.get(`${baseUrl}/clock/history`, {
         params: {
