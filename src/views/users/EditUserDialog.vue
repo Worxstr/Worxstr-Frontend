@@ -51,16 +51,7 @@ v-dialog(
           required
         )
 
-        v-select(
-          v-model="type"
-          :items="['contractor', 'manager']"
-          outlined
-          dense
-          required
-          label="User type"
-        )
-
-        div(v-if='type')
+        div
           v-subheader {{ type | capitalize }} info
 
           v-select(
@@ -112,7 +103,7 @@ v-dialog(
 
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
-import { User } from '@/definitions/User'
+import { User, UserRole } from '@/definitions/User'
 import { exists, emailRules, currency } from '@/plugins/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
@@ -155,6 +146,8 @@ export default class EditUserDialog extends Vue {
     currency: [(value: string) => !!value || 'Wage required', currency],
     managerId: [(value: string) => !!value || 'Manager ID required'],
   }
+
+  userRoles = Object.keys(UserRole)
 
   @Watch('opened')
   onOpened(opened: boolean) {

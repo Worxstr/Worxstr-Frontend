@@ -40,12 +40,18 @@
 							div
 								v-chip.mr-2(label v-for="(role, i) in authenticatedUser.roles" :key='i')
 									| {{role.name | snakeToSpace | capitalize }}
-						
-				v-list-item(two-line v-if="authenticatedUser.contractor_info && !authenticatedUser.contractor_info.need_info")
+								
+				v-list-item(two-line v-if="authenticatedUser.contractor_info")
 					v-list-item-content
-						v-list-item-title SSN
-					v-list-item-action
-						v-btn(text color='primary' @click="ssnDialog = true") Set SSN
+						v-list-item-subtitle.mb-2 Hourly wage
+						v-list-item-title
+							span(v-if='authenticatedUser.contractor_info.hourly_rate') {{ authenticatedUser.contractor_info.hourly_rate | currency }}
+							span(v-else) Not set
+								
+				v-list-item(two-line v-if="authenticatedUser.manager_info")
+					v-list-item-content
+						v-list-item-subtitle.mb-2 Manager reference number
+						v-list-item-title {{ authenticatedUser.manager_info.reference_number }}
 
 				v-divider
 				v-subheader.text-subtitle-1 Payments

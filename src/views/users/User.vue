@@ -7,19 +7,15 @@
 
 	div(v-else)
 		edit-user-dialog(:opened.sync='editUserDialog' :user='user')
+		
+		portal(to="toolbarActions")
+			v-btn(text color='primary' @click='editUserDialog = true') Edit
+			v-btn(text disabled color="red") Delete
 
 		v-container.d-flex.flex-column.justify-center
-			v-card.soft-shadow
-				v-card-title {{ user | fullName }}
+			v-card(flat)
 				v-card-text
-					p User ID: {{ user.id }}
-					p {{ user.email }}
-					p {{ user.phone | phone }}
-
-					.d-flex
-						v-spacer
-						v-btn(text color='primary' @click='editUserDialog = true') Edit wage
-						v-btn(text disabled color="red") Delete user
+					pre {{ user }}
 
 </template>
 
