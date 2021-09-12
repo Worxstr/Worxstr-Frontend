@@ -44,7 +44,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       v-if="usePhone",
       v-model="form.phone",
       :rules='rules.phone'
-      required,
+      :required='true',
       outlined,
       dense,
       :color="color",

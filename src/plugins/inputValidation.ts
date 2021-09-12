@@ -32,12 +32,18 @@ export const passwordRules = [
 
 export const passwordMatches = matches('Passwords must match')
 
+export const phone = (optional: boolean) => (value: string) => {
+  const pattern = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/
+  if (optional && !value) return true
+  return pattern.test(value) || "Invalid phone"
+}
+
+export const phoneRulesOptional = [
+  phone(true)
+]
 export const phoneRules = [
   (value: string) => !!value || "Phone required",
-  (value: string) => {
-    const pattern = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/
-    return pattern.test(value) || "Invalid phone"
-  },
+  phone(false),
 ]
 
 export const url = (value: string) => {

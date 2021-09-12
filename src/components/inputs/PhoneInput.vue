@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { phoneRules } from '@/plugins/inputValidation'
+import { phoneRules, phoneRulesOptional } from '@/plugins/inputValidation'
 
 @Component
 export default class PhoneInput extends Vue {
@@ -34,7 +34,11 @@ export default class PhoneInput extends Vue {
   @Prop({ default: false }) readonly outlined!: boolean
   @Prop({ default: false }) readonly disabled!: boolean
 
-  rules = phoneRules
+  rules: any = phoneRulesOptional
+
+  mounted() {
+    if (this.required) this.rules = phoneRules
+  }
 
   get raw() {
     if (!this.value) return ''

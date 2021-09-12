@@ -16,7 +16,9 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ editMode ? 'Edit' : 'Add' }} user
+        v-toolbar-title.text-h6
+          | {{ editMode ? 'Edit' : 'Add' }}
+          | {{ userIsManager ? 'manager' : userIsContractor ? 'contractor' : 'user' }}
 
       v-card-text
         v-text-field(
@@ -51,7 +53,6 @@ v-dialog(
         phone-input(
           v-model="editedUser.phone"
           outlined
-          required
           :disabled='editMode'
         )
 
@@ -64,6 +65,7 @@ v-dialog(
           dense
           required
           label="Direct manager"
+          :rules="rules.directManager"
           :disabled='editMode'
         )
 
@@ -72,13 +74,15 @@ v-dialog(
 
           v-select(
             v-model="editedUser.roles"
-            :items="managerTypes"
+            :items="managerRoles"
+            :item-text='(r) => $options.filters.capitalize($options.filters.snakeToSpace(r.name))'
+            :item-value='(r) => r'
             multiple
             outlined
             dense
             required
-            label="Manager type"
-            disabled
+            label="Roles"
+            :disabled='editMode'
           )
 
         div(v-if='userIsContractor')
@@ -103,8 +107,7 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text @click="closeDialog") Cancel
-        v-btn(text color="green"  type="submit")
-          //- :disabled="!isValid"
+        v-btn(text color="green" :disabled="!isValid" type="submit")
           | {{ editMode ? 'Save' : 'Add' }}
 </template>
 
@@ -129,20 +132,17 @@ export default class EditUserDialog extends Vue {
   type: 'manager' | 'contractor' | null = null
   editMode = false
 
-  editedUser: any = {
-    contractor_info: {
-      hourly_rate: 12.0,
-    },
-  }
+  editedUser: any = {}
 
-  managerTypes = [
+  // TODO: Generate this from enum value in User.ts
+  managerRoles = [
     {
-      text: 'Organization manager',
-      value: 'organization_manager',
+      id: 2,
+      name: 'organization_manager',
     },
     {
-      text: 'Contractor manager',
-      value: 'contractor_manager',
+      id: 3,
+      name: 'contractor_manager',
     },
   ]
 
@@ -151,7 +151,9 @@ export default class EditUserDialog extends Vue {
     lastName: [exists('Last name required')],
     email: emailRules,
     currency: [(value: string) => !!value || 'Wage required', currency],
-    managerId: [(value: string) => !!value || 'Manager ID required'],
+    directManager: [(value: string) => !!value || 'Direct manager required'],
+    // TODO: Add rule for user roles
+    // roles: [(roles: any) => !!roles.length || 'Must select a role']
   }
 
   userRoles = Object.keys(UserRole)
@@ -161,7 +163,17 @@ export default class EditUserDialog extends Vue {
     if (opened) this.$store.dispatch('loadManagers')
     if (opened && this.user) {
       this.editMode = true
-      this.editedUser = {...this.user}
+      this.editedUser = {
+        ...this.user,
+      }
+    }
+    if (!this.editMode) {
+      Vue.set(this.editedUser, 'roles', [
+        {
+          id: UserRole.ContractorManager,
+          name: 'contractor_manager',
+        },
+      ])
     }
   }
 
@@ -182,15 +194,13 @@ export default class EditUserDialog extends Vue {
   }
 
   closeDialog() {
-    if (!this.editMode)
-      (this.$refs.form as HTMLFormElement).reset()
+    if (!this.editMode) (this.$refs.form as HTMLFormElement).reset()
     this.$emit('update:opened', false)
   }
 
   async addUser() {
     this.loading = true
     try {
-
       if (this.editMode) {
         if (this.userIsManager) {
           // await this.$store.dispatch('updateManager')
@@ -202,12 +212,10 @@ export default class EditUserDialog extends Vue {
             userId: this.editedUser.id,
           })
         }
-      }
-
-      else {
+      } else {
         if (this.userIsManager) {
           await this.$store.dispatch('addManager', {
-            ...this.editedUser
+            ...this.editedUser,
           })
         }
       }
@@ -217,10 +225,9 @@ export default class EditUserDialog extends Vue {
           ${this.editedUser.first_name}
           ${this.editedUser.last_name}
           ${this.editMode ? 'updated' : 'added'}
-        `
+        `,
       })
       this.closeDialog()
-
     } finally {
       this.loading = false
     }

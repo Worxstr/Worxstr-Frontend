@@ -59,9 +59,9 @@
 			
 				v-list-item(two-line v-if='showBeneficialOwnersForm')
 					v-list-item-content
-						v-list-item-title Verify beneficial owners
+						v-list-item-title Certify beneficial owners
 					v-list-item-action
-						v-btn(text color='primary' @click='beneficialOwnersDialog = true') Verify
+						v-btn(text color='primary' @click='beneficialOwnersDialog = true') Certify
 				
 				v-subheader.text-subtitle-2 Funding sources
 

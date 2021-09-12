@@ -8,7 +8,7 @@ v-container
       color="primary",
       @click="editUserDialog = true",
     )
-      span Add user
+      span Add manager
 
 
   v-card.soft-shadow
