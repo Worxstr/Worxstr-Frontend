@@ -24,6 +24,9 @@ v-container
       template(v-slot:item.phone="{ item }")
         span {{ item.phone | phone }}
 
+      template(v-slot:item.roles="{ item }")
+        roles(:roles='item.roles')
+
       //- template(v-slot:item.phone="{ item }")
       //- 	v-icon(small class="mr-2" @click="editUser(item)") mdi-pencil
       //- 	v-icon(small @click="deleteItem(item)") mdi-delete
@@ -33,13 +36,15 @@ v-container
 import { Component, Vue } from 'vue-property-decorator'
 import { currentUserIs, UserRole } from '@/definitions/User'
 import EditUserDialog from './EditUserDialog.vue'
+import Roles from '@/components/Roles.vue'
 
 @Component({
   metaInfo: {
     title: 'Users',
   },
   components: {
-    EditUserDialog
+    EditUserDialog,
+    Roles,
   }
 })
 export default class User extends Vue {
@@ -62,6 +67,10 @@ export default class User extends Vue {
     {
       text: 'Phone',
       value: 'phone',
+    },
+    {
+      text: 'Roles',
+      value: 'roles'
     },
     {
       text: 'Manager ID',

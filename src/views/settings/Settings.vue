@@ -37,9 +37,7 @@
 					v-list-item-content
 						v-list-item-subtitle.mb-2 Roles
 						v-list-item-title
-							div
-								v-chip.mr-2(label v-for="(role, i) in authenticatedUser.roles" :key='i')
-									| {{role.name | snakeToSpace | capitalize }}
+							roles(:roles='authenticatedUser.roles')
 								
 				v-list-item(two-line v-if="authenticatedUser.contractor_info")
 					v-list-item-content
@@ -118,6 +116,7 @@ import BeneficialOwnersDialog from './BeneficialOwnersDialog'
 import AddFundingSourceDialog from './AddFundingSourceDialog'
 import EditFundingSourceDialog from './EditFundingSourceDialog'
 import RemoveFundingSourceDialog from './RemoveFundingSourceDialog'
+import Roles from '@/components/Roles.vue'
 
 export default {
   name: 'settings',
@@ -130,6 +129,7 @@ export default {
     AddFundingSourceDialog,
     EditFundingSourceDialog,
     RemoveFundingSourceDialog,
+		Roles,
   },
   mounted() {
     if (this.$route.params.verifyBeneficialOwners == 'true') {
