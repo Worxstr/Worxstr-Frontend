@@ -14,8 +14,11 @@
 
 		v-container.d-flex.flex-column.justify-center
 			v-card(flat)
-				v-card-text
-					pre {{ user }}
+				v-list
+					v-list-item(v-for='key in Object.keys(user).sort()')
+						v-list-item-content
+							v-list-item-title {{ key }}
+							v-list-item-subtitle {{ user[key] }}
 
 </template>
 

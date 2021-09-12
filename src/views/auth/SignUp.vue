@@ -5,7 +5,7 @@ div
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5
           span(v-if='!accountType') Sign up
-          span(v-else) Sign up as {{ accountType == 'org' ? 'business' : 'contractor' }}
+          span(v-else) Sign up as a {{ accountType == 'org' ? 'business' : 'contractor' }}
         v-card-text.pb-0
           v-window.pt-2(v-model='step')
 
