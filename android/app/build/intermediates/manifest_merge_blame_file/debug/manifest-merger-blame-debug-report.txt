@@ -57,10 +57,9 @@
 35-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:9:9-54
 36        android:supportsRtl="true"
 36-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:10:9-35
-37        android:theme="@style/AppTheme"
-37-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:11:9-40
-38        android:usesCleartextTraffic="true" >
-38-->[:capacitor-cordova-android-plugins] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\capacitor-cordova-android-plugins\build\intermediates\library_manifest\debug\AndroidManifest.xml:12:18-53
+37        android:testOnly="true"
+38        android:theme="@style/AppTheme" >
+38-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:11:9-40
 39        <activity
 39-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:13:9-32:20
 40            android:name="com.worxstr.worxstr.MainActivity"
