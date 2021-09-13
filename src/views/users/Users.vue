@@ -105,7 +105,7 @@ export default class Users extends Vue {
     this.$router.push({
       name: 'user',
       params: {
-        userId: user.id
+        userId: user.id.toString()
       }
     })
   }
