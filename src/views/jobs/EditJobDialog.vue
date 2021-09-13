@@ -108,7 +108,7 @@ v-dialog(
         phone-input(
           v-model='editedJob.consultant_phone'
           outlined
-          required
+          :required='true'
         )
         v-text-field(
           outlined,

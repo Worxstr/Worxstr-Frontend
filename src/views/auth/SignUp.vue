@@ -5,7 +5,7 @@ div
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5
           span(v-if='!accountType') Sign up
-          span(v-else) Sign up as {{ accountType == 'org' ? 'business' : 'contractor' }}
+          span(v-else) Sign up as a {{ accountType == 'org' ? 'business' : 'contractor' }}
         v-card-text.pb-0
           v-window.pt-2(v-model='step')
 
@@ -36,7 +36,7 @@ div
 
             v-window-item(:value="2")
               v-text-field(
-                label='Manager reference'
+                label='Manager reference number'
                 v-model='form.manager_reference'
                 :rules='rules.managerReference'
                 outlined
@@ -122,7 +122,7 @@ export default class SignUp extends Vue {
     subscription_tier: null,
   }
   rules = {
-    managerReference: [exists('Manager reference required')],
+    managerReference: [exists('Manager reference number required')],
     password: passwordRules,
     confirmPassword: [exists('Password confirmation required')],
     passwordMatches,
