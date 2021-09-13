@@ -909,6 +909,11 @@
   resolved "https://registry.yarnpkg.com/@capacitor/geolocation/-/geolocation-1.0.0.tgz#672b7ce0ef359aefaba07cf5aa8df67f42dd8a16"
   integrity sha512-ojhwwJuEq00yKesZDK1SZKQslVXqGmzgxDQymvTMSKJs5WJprgsbHEyNES8fT5FeistRjybr/es0dfv8Q/g1rg==
 
+"@capacitor/ios@^3.2.2":
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-3.2.2.tgz#0417cf89df23f651c6a1e20a8fb98294a918ce1f"
+  integrity sha512-Eq17Y+UDHFmYGaZcObvxHAcHw0fF9TCBAg1f5f6qdV8ab3cKKEUB9xMvoCSZAueBfxFARrD18TsZJKoxh2YsLA==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz"

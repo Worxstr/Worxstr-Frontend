@@ -21,9 +21,10 @@ Vue.use(Vuex)
 axios.defaults.withCredentials = true
 
 
-const baseUrl = Capacitor.isNativePlatform()
-  ? 'https://dev.worxstr.com'
-  : process.env.VUE_APP_API_BASE_URL
+const baseUrl = 'http://192.168.86.29:5000'
+// const baseUrl = Capacitor.isNativePlatform()
+//   ? 'http://192.168.86.29:5000' //'https://dev.worxstr.com'
+//   : process.env.VUE_APP_API_BASE_URL
 
 interface RootState {
   snackbar: {
