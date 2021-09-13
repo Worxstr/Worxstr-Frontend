@@ -23,6 +23,16 @@ export enum UserRole {
 	OrganizationManager = 3,
 }
 
+export const userRoles = Object
+	.keys(UserRole)
+	.map((key: any) => ({ id: key, name: UserRole[key] }))
+	.slice(0, Object.keys(UserRole).length / 2) // Get first half, just keys. Other half is indicies
+	.map(r => ({
+		id: r.id,
+		name: r.name.replace(/([A-Z])/g, ' $1').split(' ').join('_').toLowerCase().substring(1)
+	})) // Convert to snake case
+
+
 export const Managers = [
 	UserRole.ContractorManager,
 	UserRole.OrganizationManager,

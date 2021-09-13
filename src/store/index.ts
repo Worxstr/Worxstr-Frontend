@@ -208,6 +208,11 @@ const storeConfig: StoreOptions<RootState> = {
       })
       if (!state.users.all.includes(user.id)) state.users.all.push(user.id)
     },
+    REMOVE_USER(state, userId) {
+      Vue.delete(state.users.byId, userId)
+      state.users.all = state.users.all.filter(id => id !== userId)
+      Vue.delete(state.workforce, state.workforce.indexOf(userId))
+    },
     SET_SSN_REGISTERED(state) {
       if (state.authenticatedUser?.contractor_info)
         state.authenticatedUser.contractor_info.need_info = false
@@ -842,7 +847,7 @@ const storeConfig: StoreOptions<RootState> = {
     async loadWorkforce({ commit }) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/users/contractors`,
+        url: `${baseUrl}/organizations/me/users`,
       })
       data.users.forEach((u: User) => {
         commit('ADD_USER', u)
@@ -860,6 +865,14 @@ const storeConfig: StoreOptions<RootState> = {
       commit('ADD_USER', data)
       commit('ADD_WORKFORCE_MEMBER', data.id)
       return data
+    },
+
+    async deleteUser({ commit }, userId) {
+      await axios({
+        method: 'DELETE',
+        url: `${baseUrl}/users/${userId}`,
+      })
+      commit('REMOVE_USER', userId)
     },
 
     async addContractor({ commit }, contractor) {

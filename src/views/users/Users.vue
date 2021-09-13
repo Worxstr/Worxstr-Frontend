@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container
-  edit-user-dialog(:opened.sync="editUserDialog" :user='user')
+  edit-user-dialog(:opened.sync="editUserDialog")
 
   portal(to="toolbarActions")
     v-btn(
@@ -27,14 +27,17 @@ v-container
       template(v-slot:item.roles="{ item }")
         roles(:roles='item.roles')
 
+      template(v-slot:item.manager_id="{ item }")
+        span {{ user(item.id) | fullName }}
+
       //- template(v-slot:item.phone="{ item }")
       //- 	v-icon(small class="mr-2" @click="editUser(item)") mdi-pencil
       //- 	v-icon(small @click="deleteItem(item)") mdi-delete
 </template>
 
-<script>
+<script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { currentUserIs, UserRole } from '@/definitions/User'
+import { currentUserIs, User, UserRole } from '@/definitions/User'
 import EditUserDialog from './EditUserDialog.vue'
 import Roles from '@/components/Roles.vue'
 
@@ -45,10 +48,9 @@ import Roles from '@/components/Roles.vue'
   components: {
     EditUserDialog,
     Roles,
-  }
+  },
 })
-export default class User extends Vue {
-
+export default class Users extends Vue {
   loading = false
   editUserDialog = false
   headers = [
@@ -70,10 +72,10 @@ export default class User extends Vue {
     },
     {
       text: 'Roles',
-      value: 'roles'
+      value: 'roles',
     },
     {
-      text: 'Manager ID',
+      text: 'Manager',
       value: 'manager_id',
     },
   ]
@@ -86,7 +88,7 @@ export default class User extends Vue {
       this.loading = false
     }
   }
-  
+
   get workforce() {
     return this.$store.getters.workforce
   }
@@ -95,9 +97,17 @@ export default class User extends Vue {
     return currentUserIs(UserRole.OrganizationManager)
   }
 
-  openUser(user) {
-    this.$router.push({ name: 'user', params: { userId: user.id } })
+  user(userId: number) {
+    return this.$store.getters.user(userId)
+  }
+
+  openUser(user: User) {
+    this.$router.push({
+      name: 'user',
+      params: {
+        userId: user.id
+      }
+    })
   }
 }
-
 </script>

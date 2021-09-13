@@ -101,7 +101,7 @@ v-dialog(
             v-model.number="editedUser.contractor_info.hourly_rate"
             required
           )
-
+      
       v-spacer
 
       v-card-actions
@@ -114,7 +114,7 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
-import { Managers, User, userIs, UserRole } from '@/definitions/User'
+import { Managers, User, userIs, UserRole, userRoles } from '@/definitions/User'
 import { exists, emailRules, currency } from '@/plugins/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
@@ -131,20 +131,8 @@ export default class EditUserDialog extends Vue {
   loading = false
   type: 'manager' | 'contractor' | null = null
   editMode = false
-
   editedUser: any = {}
-
-  // TODO: Generate this from enum value in User.ts
-  managerRoles = [
-    {
-      id: 2,
-      name: 'organization_manager',
-    },
-    {
-      id: 3,
-      name: 'contractor_manager',
-    },
-  ]
+  managerRoles = userRoles.filter(r => r.name.includes('manager'))
 
   rules = {
     firstName: [exists('First name required')],
@@ -160,14 +148,18 @@ export default class EditUserDialog extends Vue {
 
   @Watch('opened')
   onOpened(opened: boolean) {
-    if (opened) this.$store.dispatch('loadManagers')
-    if (opened && this.user) {
+    if (!opened) return
+
+    this.$store.dispatch('loadManagers')
+    
+    if (this.user) {
       this.editMode = true
-      this.editedUser = {
-        ...this.user,
-      }
+      this.editedUser = JSON.parse(JSON.stringify(this.user)) // Deep copy object
+      // this.editedUser = {
+      //   ...this.user,
+      // }
     }
-    if (!this.editMode) {
+    else {
       Vue.set(this.editedUser, 'roles', [
         {
           id: UserRole.ContractorManager,
