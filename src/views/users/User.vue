@@ -11,7 +11,7 @@
 		
 		portal(to="toolbarActions")
 			v-btn(text color='primary' @click='editUserDialog = true' :disabled='userIsManager') Edit
-			v-btn(text color='error' @click='deleteUserDialog = true') Delete
+			v-btn(text color='error' @click='deleteUserDialog = true' v-if='userIsOrgManager && user.id != authenticatedUser.id') Delete
 
 		v-container.d-flex.flex-column.justify-center
 			.py-5.d-flex.flex-column.align-center.text-center
@@ -37,7 +37,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import EditUserDialog from './EditUserDialog.vue'
 import DeleteUserDialog from './DeleteUserDialog.vue'
 import Roles from '@/components/Roles.vue'
-import { Managers, userIs } from '@/definitions/User'
+import { Managers, userIs, currentUserIs, UserRole } from '@/definitions/User'
 
 @Component({
   components: {
@@ -66,8 +66,16 @@ export default class User extends Vue {
     return this.$store.getters.user(this.$route.params.userId)
   }
 
+	get authenticatedUser() {
+		return this.$store.state.authenticatedUser
+	}
+
   get userIsManager() {
     return userIs(this.user, ...Managers)
   }
+
+	get userIsOrgManager() {
+		return currentUserIs(UserRole.OrganizationManager)
+	}
 }
 </script>

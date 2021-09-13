@@ -12,7 +12,7 @@ v-dialog(
     v-card-title.headline
       span Delete {{ user | fullName }}?
 
-    v-card-text This user will be permanently decativated.
+    v-card-text This user will be permanently deactivated.
 
     v-spacer
     
