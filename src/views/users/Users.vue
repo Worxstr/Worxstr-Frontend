@@ -24,11 +24,11 @@ v-container
       template(v-slot:item.phone="{ item }")
         span {{ item.phone | phone }}
 
-      template(v-slot:item.roles="{ item }")
-        roles(:roles='item.roles')
-
       template(v-slot:item.manager_id="{ item }")
         span {{ user(item.id) | fullName }}
+
+      template(v-slot:item.roles="{ item }")
+        roles(:roles='item.roles' small)
 
       //- template(v-slot:item.phone="{ item }")
       //- 	v-icon(small class="mr-2" @click="editUser(item)") mdi-pencil
@@ -71,12 +71,13 @@ export default class Users extends Vue {
       value: 'phone',
     },
     {
-      text: 'Roles',
-      value: 'roles',
-    },
-    {
       text: 'Manager',
       value: 'manager_id',
+    },
+    {
+      text: 'Roles',
+      value: 'roles',
+      align: 'end',
     },
   ]
 
