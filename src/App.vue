@@ -72,7 +72,7 @@ export default class App extends Vue {
   }
 
   get headerHeight() {
-    return this.$vuetify.breakpoint.mdAndUp ? 64 : 56;
+    return !this.mobileLayout ? 64 : 56;
   }
   footerHeight = 56;
 
@@ -81,6 +81,10 @@ export default class App extends Vue {
     if (!this.$route.meta.fullHeight || this.$route.meta.noSkeleton) return "100%";
     // Full height, bottom nav hidden
     else return `calc(100vh - ${this.headerHeight + this.safeAreaTop + this.safeAreaBottom}px)`;
+  }
+  
+  get mobileLayout() {
+    return this.$vuetify.breakpoint.smAndDown
   }
 
   // Get safe area values from css definitions
@@ -100,7 +104,7 @@ export default class App extends Vue {
   }
 
   get bottomPadding() {
-    return this.safeAreaBottom + this.headerHeight
+    return this.safeAreaBottom + (this.mobileLayout ? this.headerHeight : 0)
   }
 }
 </script>
