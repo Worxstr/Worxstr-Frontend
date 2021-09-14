@@ -4,12 +4,13 @@ v-container
 
   portal(to="toolbarActions")
     v-btn(
-      text,
-      color="primary",
-      @click="editUserDialog = true",
+      text
+      color='primary'
+      @click='editUserDialog = true'
+      :icon='$vuetify.breakpoint.xs'
     )
-      span Add manager
-
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-account-plus
+      span(v-if='!$vuetify.breakpoint.xs') Add manager
 
   v-card.soft-shadow
     v-data-table(
