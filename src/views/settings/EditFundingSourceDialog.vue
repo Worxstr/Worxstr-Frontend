@@ -72,10 +72,13 @@ export default class RemoveFundingSourceDialog extends Vue {
 
   async updateFundingSource() {
     this.loading = true
-    await this.$store.dispatch('updateFundingSource', this.editedFundingSource)
-    this.loading = false
-    this.closeDialog()
+    try {
+      await this.$store.dispatch('updateFundingSource', this.editedFundingSource)
+      this.closeDialog()
+    }
+    finally {
+      this.loading = false 
+    }
   }
-
 }
 </script>

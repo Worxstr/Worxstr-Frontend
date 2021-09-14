@@ -14,10 +14,12 @@
 			v-btn(text color='error' @click='deleteUserDialog = true' v-if='userIsOrgManager && user.id != authenticatedUser.id') Delete
 
 		v-container.d-flex.flex-column.justify-center
-			.py-5.d-flex.flex-column.align-center.text-center
-				h3.text-h3 {{ user | fullName }}
-				h5.text-h5
+			.py-5
+				h4.text-h4 {{ user | fullName }}
+				h6.text-h6
 					a(:href='`mailto:${user.email}`' target="_blank") {{ user.email }}
+				h6.text-h6
+					a(:href='`sms:${user.phone}`' target="_blank") {{ user.phone | phone }}
 
 				roles.mt-3(:roles='user.roles')
 
