@@ -20,13 +20,14 @@ import Terms from '@/views/landing/Terms.vue'
 import SignIn from '@/views/auth/SignIn.vue'
 import SignUp from '@/views/auth/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
-import User from '@/views/User.vue'
+import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
 import Clock from '@/views/Clock.vue'
 import Payments from '@/views/payments/Payments.vue'
 // import Availability from '@/views/Availability.vue'
 import Jobs from '@/views/jobs/Jobs.vue'
 import Job from '@/views/jobs/Job.vue'
-import Workforce from '@/views/workforce/Workforce.vue'
+import Users from '@/views/users/Users.vue'
+import User from '@/views/users/User.vue'
 import Schedule from '@/views/Schedule.vue'
 import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
@@ -36,7 +37,7 @@ import NotFound from '@/views/errors/NotFound.vue'
 Vue.use(VueRouter)
 Vue.use(Meta)
 
-import { UserRole, Manager, defaultRoute } from '@/definitions/User'
+import { UserRole, Managers, defaultRoute } from '@/definitions/User'
 
 
 const routes = [
@@ -151,6 +152,15 @@ const routes = [
     }
   },
   {
+    path: '/confirm-email',
+    name: 'confirmEmail',
+    component: ConfirmEmail,
+    meta: {
+      landing: true,
+      fullHeight: true,
+    }
+  },
+  {
     path: '/clock',
     name: 'clock',
     component: Clock,
@@ -174,7 +184,7 @@ const routes = [
     component: Jobs,
     meta: {
       icon: 'mdi-calendar-check',
-      restrict: Manager
+      restrict: Managers
     },
   },
   {
@@ -182,7 +192,7 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      restrict: Manager,
+      restrict: Managers,
       paramMap: {
         jobId: 'jobs',
         prop: 'name'
@@ -195,7 +205,6 @@ const routes = [
     component: Payments,
     meta: {
       icon: 'mdi-cash-multiple',
-      restrict: Manager
     }
   },
   {
@@ -204,22 +213,21 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      restrict: [UserRole.Contractor, ...Manager],
       fullHeight: true,
       hideNav: true,
     }
   },
   {
-    path: '/workforce',
-    name: 'workforce',
-    component: Workforce,
+    path: '/users',
+    name: 'users',
+    component: Users,
     meta: {
       icon: 'mdi-account-group',
-      restrict: Manager
+      restrict: Managers
     }
   },
   {
-    path: '/workforce/:userId',
+    path: '/users/:userId',
     name: 'user',
     component: User,
     meta: {
@@ -235,7 +243,6 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      restrict: [UserRole.Contractor, ...Manager],
       fullHeight: true,
     },
     children: [

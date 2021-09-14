@@ -5,7 +5,7 @@ v-container(fluid v-if="loading && !(directJobs.length || indirectJobs.length)")
     type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
   )
 
-v-container.approvals(fluid v-else)
+v-container.approvals(v-else)
   edit-job-dialog(:opened.sync="createJobDialog", :create="true")
 
   portal(to="toolbarActions")
@@ -35,7 +35,7 @@ v-container.approvals(fluid v-else)
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 
-import { userIs, UserRole } from '@/definitions/User'
+import { currentUserIs, UserRole } from '@/definitions/User'
 import { Job } from '@/definitions/Job'
 
 import EditJobDialog from './EditJobDialog.vue'
@@ -78,7 +78,7 @@ export default class JobsView extends Vue {
   }
 
   get userIsOrgManager() {
-    return this.$store.state.authenticatedUser ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser) : false
+    return currentUserIs(UserRole.OrganizationManager)
   }
 
   openCreateJobDialog() {

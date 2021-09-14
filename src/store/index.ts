@@ -10,13 +10,16 @@ import * as Plaid from '@/plugins/plaid'
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
 import { User, defaultRoute } from '@/definitions/User'
-import { ClockEvent, Timecard } from '@/definitions/Clock'
+import { ClockEvent } from '@/definitions/Clock'
+import { Timecard, FundingSource, Transfer } from '@/definitions/Payments'
 import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
 
 Vue.use(Vuex)
 
+// axios.defaults.baseURL = ''
 axios.defaults.withCredentials = true
+
 
 const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
@@ -27,6 +30,11 @@ interface RootState {
     show: boolean;
     text: string;
     timeout: number;
+    action?: {
+      text: string;
+      action: Function;
+      color?: string;
+    };
   };
   authenticatedUser: User | null;
   users: {
@@ -47,13 +55,27 @@ interface RootState {
     };
   };
   payments: {
-    wallet: {
-      balance: number | null;
+    balance: {
+      value: number | null;
+      currency: string;
+      location: string | null;
+    };
+    fundingSources: {
+      all: string[];
+      byLocation: {
+        [key: string]: FundingSource[];
+      };
     };
     timecards: {
       all: number[];
       byId: {
         [key: number]: Timecard;
+      };
+    };
+    transfers: {
+      all: string[];
+      byId: {
+        [key: string]: Transfer;
       };
     };
   };
@@ -89,68 +111,87 @@ interface RootState {
   contacts: User[];
 }
 
-const storeConfig: StoreOptions<RootState> = {
-  state: {
-    snackbar: {
-      show: false,
-      text: 'Test',
-      timeout: 5000,
-    },
-    authenticatedUser: null,
-    users: {
-      all: [],
-      byId: {},
-    },
-    clock: {
-      clocked: false,
-      break: false,
-      history: {
-        lastLoadedOffset: 0,
-        all: [],
-        byId: {},
-      },
-    },
-    payments: {
-      wallet: {
-        balance: null
-      },
-      timecards: {
-        all: [],
-        byId: {},
-      },
-    },
-    shifts: {
-      next: null,
-      // TODO: Flatten shift data from jobs
-      all: [],
-      byId: {},
-    },
-    jobs: {
-      all: [],
-      byId: {},
-    },
-    workforce: [],
-    managers: {
-      contractor: [],
-      organization: [],
-    },
-    events: {
-      all: [],
-      byId: {},
-    },
-    conversations: {
-      all: [],
-      byId: [],
-    },
-    contacts: [],
+const initialState = (): RootState => ({
+  snackbar: {
+    show: false,
+    text: '',
+    timeout: 5000,
   },
+  authenticatedUser: null,
+  users: {
+    all: [],
+    byId: {},
+  },
+  clock: {
+    clocked: false,
+    break: false,
+    history: {
+      lastLoadedOffset: 0,
+      all: [],
+      byId: {},
+    },
+  },
+  payments: {
+    balance: {
+      value: null,
+      currency: 'USD',
+      location: null,
+    },
+    fundingSources: {
+      all: [],
+      byLocation: {},
+    },
+    timecards: {
+      all: [],
+      byId: {},
+    },
+    transfers: {
+      all: [],
+      byId: {},
+    },
+  },
+  shifts: {
+    next: null,
+    // TODO: Flatten shift data from jobs
+    all: [],
+    byId: {},
+  },
+  jobs: {
+    all: [],
+    byId: {},
+  },
+  workforce: [],
+  managers: {
+    contractor: [],
+    organization: [],
+  },
+  events: {
+    all: [],
+    byId: {},
+  },
+  conversations: {
+    all: [],
+    byId: [],
+  },
+  contacts: [],
+})
+
+
+const storeConfig: StoreOptions<RootState> = {
+  state: initialState(),
   mutations: {
     SHOW_SNACKBAR(state, snackbar) {
+      if (snackbar.action)
+        snackbar.action.color = snackbar.action.color || 'accent'
+
       state.snackbar = {
         ...state.snackbar,
         ...snackbar,
         show: true,
       }
+    },
+    RESET_STATE(state, payload) {
+      Object.assign(state, initialState())
     },
     SET_AUTHENTICATED_USER(state, user) {
       state.authenticatedUser = user
@@ -166,6 +207,11 @@ const storeConfig: StoreOptions<RootState> = {
         ...user,
       })
       if (!state.users.all.includes(user.id)) state.users.all.push(user.id)
+    },
+    REMOVE_USER(state, userId) {
+      Vue.delete(state.users.byId, userId)
+      state.users.all = state.users.all.filter(id => id !== userId)
+      Vue.delete(state.workforce, state.workforce.indexOf(userId))
     },
     SET_SSN_REGISTERED(state) {
       if (state.authenticatedUser?.contractor_info)
@@ -191,8 +237,15 @@ const storeConfig: StoreOptions<RootState> = {
     END_BREAK(state) {
       state.clock.break = false
     },
-    SET_WALLET(state, wallet) {
-      state.payments.wallet = wallet
+    SET_BALANCE(state, { value, currency, location }) {
+      state.payments.balance = {
+        value: parseFloat(value),
+        currency,
+        location,
+      }
+    },
+    ADD_TO_BALANCE(state, amount) {
+      state.payments.balance.value += amount
     },
     ADD_TIMECARD(state, timecard) {
       Vue.set(state.payments.timecards.byId, timecard.id, timecard)
@@ -206,21 +259,54 @@ const storeConfig: StoreOptions<RootState> = {
         state.payments.timecards.all.indexOf(timecardId)
       )
     },
-    ADD_JOB(state, job) {
+    ADD_FUNDING_SOURCE(state, fundingSource: FundingSource) {
+      Vue.set(
+        state.payments.fundingSources.byLocation,
+        fundingSource._links.self.href,
+        {
+          ...state.payments.fundingSources.byLocation[fundingSource._links.self.href],
+          ...fundingSource,
+        }
+      )
+      if (!state.payments.fundingSources.all.includes(fundingSource._links.self.href))
+        state.payments.fundingSources.all.push(fundingSource._links.self.href)
+    },
+    REMOVE_FUNDING_SOURCE(state, fundingSourceLocation: string) {
+      Vue.delete(
+        state.payments.fundingSources.byLocation,
+        fundingSourceLocation
+      )
+      Vue.delete(
+        state.payments.fundingSources.all,
+        state.payments.fundingSources.all.findIndex(
+          (location) => location == fundingSourceLocation
+        )
+      )
+    },
+    ADD_TRANSFER(state, { transfer, prepend }) {
+      Vue.set(state.payments.transfers.byId, transfer.id, {
+        ...state.payments.transfers.byId[transfer.id],
+        ...transfer
+      })
+      if (!state.payments.transfers.all.includes(transfer.id))
+        if (prepend) state.payments.transfers.all.unshift(transfer.id)
+        else state.payments.transfers.all.push(transfer.id)
+    },
+    ADD_JOB(state, job: Job) {
       Vue.set(state.jobs.byId, job.id, {
         ...state.jobs.byId[job.id],
         ...job,
       })
       if (!state.jobs.all.includes(job.id)) state.jobs.all.push(job.id)
     },
-    REMOVE_JOB(state, jobId) {
+    REMOVE_JOB(state, jobId: number) {
       Vue.delete(state.jobs.byId, jobId)
       Vue.delete(
         state.jobs.all,
         state.jobs.all.findIndex((id) => id == jobId)
       )
     },
-    ADD_WORKFORCE_MEMBER(state, userId) {
+    ADD_WORKFORCE_MEMBER(state, userId: number) {
       if (!state.workforce.includes(userId)) {
         state.workforce.push(userId)
       }
@@ -230,7 +316,7 @@ const storeConfig: StoreOptions<RootState> = {
         state.managers[type].push(manager)
       }
     },
-    SET_NEXT_SHIFT(state, shift) {
+    SET_NEXT_SHIFT(state, shift: Shift) {
       state.shifts.next = shift
     },
     ADD_SHIFT(state, { shift, jobId }) {
@@ -351,6 +437,7 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/auth/logout`,
       })
       commit('UNSET_AUTHENTICATED_USER')
+      commit('RESET_STATE')
       router.push({ name: 'home' })
     },
 
@@ -364,6 +451,30 @@ const storeConfig: StoreOptions<RootState> = {
       })
     },
 
+    async confirmEmail(_context, token) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/auth/confirm-email`,
+        data: {
+          token
+        }
+      })
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      return data
+    },
+    
+    async resendEmailConfirmation({ dispatch }, email) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/auth/resend-email`,
+        data: {
+          email
+        }
+      })
+      dispatch('showSnackbar', { text: 'Confirmation email resent.' })
+      return data
+    },
+
     async getAuthenticatedUser({ commit }) {
       const { data } = await axios({
         method: 'GET',
@@ -374,11 +485,21 @@ const storeConfig: StoreOptions<RootState> = {
     },
 
     async loadUser({ commit }, userId) {
+      console.log(`loading user ${userId}`)
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/users/${userId}`,
       })
-      commit('ADD_USER', data.user)
+      commit('ADD_USER', data)
+    },
+
+    async updateContractor({ commit }, { contractorInfo, userId }) {
+      const { data } = await axios({
+        method: 'PATCH',
+        url: `${baseUrl}/users/contractors/${userId}`,
+        data: contractorInfo,
+      })
+      commit('ADD_USER', data.event)
     },
 
     async loadClockHistory({ state, commit }) {
@@ -450,104 +571,165 @@ const storeConfig: StoreOptions<RootState> = {
       commit(`${action.toUpperCase()}_BREAK`)
     },
 
-    async loadWallet({ commit }, _name) {
-      // const { data } = await axios({
-      //   method: 'GET',
-      //   url: `${baseUrl}/wallet`,
-      // })
-      const data = {
-        balance: 825.25,
-      }
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      commit('SET_WALLET', data)
-    },
-
-    async loadPayments({ commit }) {
+    async loadTimecards({ commit }) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/clock/timecards`,
+        url: `${baseUrl}/payments/timecards`,
       })
       data.timecards.forEach((timecard: Timecard) => {
         // TODO: Normalize nested data
         commit('ADD_TIMECARD', timecard)
       })
+      return data
     },
 
     async updateTimecard({ commit }, { timecardId, events }) {
       const { data } = await axios({
         method: 'PUT',
-        url: `${baseUrl}/clock/timecards/${timecardId}`,
+        url: `${baseUrl}/payments/timecards/${timecardId}`,
         data: {
           changes: events,
         },
       })
       commit('ADD_TIMECARD', data.timecard)
+      return data
     },
 
-    async approveTimecards({ commit }, timecards) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/payments/approve`,
-        data: {
-          timecards,
-        },
-      })
-      data.event.forEach((timecard: Timecard) => {
-        // TODO: Normalize nested data
-        commit('ADD_TIMECARD', timecard)
-      })
-    },
-
-    async denyTimecards({ commit }, timecards) {
+    async denyPayments({ commit }, timecardIds) {
       const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/payments/deny`,
         data: {
-          timecards,
+          timecard_ids: timecardIds,
         },
       })
-      data.event.forEach((timecard: Timecard) => {
+      timecardIds.forEach((timecardId: number) => {
         // TODO: Normalize nested data
-        commit('REMOVE_TIMECARD', timecard.id)
+        commit('REMOVE_TIMECARD', timecardId)
       })
+      return data
     },
 
-    async approvePayment({ commit }, { timecards, transaction }) {
-      await axios({
+    async completePayments({ commit }, timecardIds) {
+      const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/payments/complete`,
         data: {
-          timecards,
-          transaction,
+          timecard_ids: timecardIds
         },
       })
-      timecards.forEach((timecard: Timecard) => {
-        commit('REMOVE_TIMECARD', timecard.id)
+      timecardIds.forEach((timecardId: number) => {
+        commit('REMOVE_TIMECARD', timecardId)
+      })
+      data.transfers.forEach((obj: { transfer: Transfer }) => {
+        commit('ADD_TRANSFER', { transfer: obj.transfer, prepend: true })
       })
     },
 
-    async addPaymentMethod(_context, name) {
+    async loadBalance({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/payments/balance`,
+      })
+      commit('SET_BALANCE', {
+        ...data.balance,
+        location: data.location,
+      })
+    },
+
+    async openPlaidLink(_context, name) {
       return await Plaid.openPlaidLink(name)
     },
 
     async getPlaidLinkToken() {
       const { data } = await axios({
         method: 'POST',
-        url: `${baseUrl}/payments/plaid/link-token`,
+        url: `${baseUrl}/payments/plaid-link-token`,
       })
       return data.token
+    },
+
+    async loadFundingSources({ commit }) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/payments/accounts`,
+      })
+      data.funding_sources.forEach((source: FundingSource) => {
+        commit('ADD_FUNDING_SOURCE', source)
+      })
+      return data
     },
 
     async addPlaidFundingSource(_context, { name, publicToken, accountId }) {
       const { data } = await axios({
         method: 'POST',
-        url: `${baseUrl}/payments/plaid/add-account`,
+        url: `${baseUrl}/payments/accounts`,
         data: {
           name,
           public_token: publicToken,
           account_id: accountId,
         },
+      })
+      this.commit('ADD_FUNDING_SOURCE', data)
+      return data
+    },
+
+    async updateFundingSource({ commit }, fundingSource: FundingSource) {
+      const { data } = await axios({
+        method: 'PUT',
+        url: `${baseUrl}/payments/accounts`,
+        data: fundingSource,
+      })
+      commit('ADD_FUNDING_SOURCE', data)
+      return data
+    },
+
+    async removeFundingSource({ commit }, fundingSourceLocation: string) {
+      const { data } = await axios({
+        method: 'DELETE',
+        url: `${baseUrl}/payments/accounts`,
+        data: {
+          location: fundingSourceLocation,
+        },
+      })
+      commit('REMOVE_FUNDING_SOURCE', fundingSourceLocation)
+      return data
+    },
+
+    async addToBalance({ commit, dispatch }, transfer) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/payments/balance/add`,
+        data: transfer,
+      })
+      commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
+      dispatch('showSnackbar', { text: 'Hang tight, your transfer is being processed.' })
+      return data
+    },
+
+    async removeFromBalance({ commit, dispatch }, transfer) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/payments/balance/remove`,
+        data: transfer,
+      })
+      commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
+      commit('ADD_TO_BALANCE', -transfer.amount)
+      dispatch('showSnackbar', { text: 'Hang tight, your transfer is being processed.' })
+      return data
+    },
+
+    async loadTransfers({ commit }, { limit=10, offset=0 } = {}) {
+      const { data } = await axios({
+        method: 'GET',
+        url: `${baseUrl}/payments/transfers`,
+        params: {
+          limit,
+          offset,
+        }
+      })
+      data.transfers.forEach((transfer: Transfer) => {
+        commit('ADD_TRANSFER', { transfer })
       })
       return data
     },
@@ -557,8 +739,9 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/jobs/managers`,
         params: {
-          manager_id: state.authenticatedUser?.manager_id || state.authenticatedUser?.id
-        }
+          manager_id:
+            state.authenticatedUser?.manager_id || state.authenticatedUser?.id,
+        },
       })
       data.contractor_managers.forEach((m: User) => {
         commit('ADD_MANAGER', { type: 'contractor', manager: m })
@@ -566,6 +749,7 @@ const storeConfig: StoreOptions<RootState> = {
       data.organization_managers.forEach((m: User) => {
         commit('ADD_MANAGER', { type: 'organization', manager: m })
       })
+      return data
     },
 
     async loadJobs({ commit }) {
@@ -577,6 +761,7 @@ const storeConfig: StoreOptions<RootState> = {
         // TODO: Normalize nested data
         commit('ADD_JOB', job)
       })
+      return data
     },
 
     async loadJob({ commit }, jobId) {
@@ -596,6 +781,7 @@ const storeConfig: StoreOptions<RootState> = {
       })
 
       commit('ADD_JOB', data.job)
+      return data
     },
 
     async createJob({ commit }, job) {
@@ -605,6 +791,7 @@ const storeConfig: StoreOptions<RootState> = {
         data: job,
       })
       commit('ADD_JOB', data.job)
+      return data
     },
 
     async updateJob({ commit }, job) {
@@ -614,6 +801,7 @@ const storeConfig: StoreOptions<RootState> = {
         data: job,
       })
       commit('ADD_JOB', data.job)
+      return data
     },
 
     async closeJob({ commit }, jobId) {
@@ -634,6 +822,7 @@ const storeConfig: StoreOptions<RootState> = {
       data.shifts.forEach((shift: Shift) => {
         commit('ADD_SHIFT', { shift, jobId })
       })
+      return data
     },
 
     async updateShift({ commit }, shift) {
@@ -644,6 +833,7 @@ const storeConfig: StoreOptions<RootState> = {
       })
       commit('REMOVE_SHIFT', { shiftId: shift.id, jobId: data.shift.job_id })
       commit('ADD_SHIFT', { shift: data.shift, jobId: data.shift.job_id })
+      return data
     },
 
     async deleteShift({ commit }, { shiftId, jobId }) {
@@ -657,12 +847,13 @@ const storeConfig: StoreOptions<RootState> = {
     async loadWorkforce({ commit }) {
       const { data } = await axios({
         method: 'GET',
-        url: `${baseUrl}/users/contractors`,
+        url: `${baseUrl}/organizations/me/users`,
       })
       data.users.forEach((u: User) => {
         commit('ADD_USER', u)
         commit('ADD_WORKFORCE_MEMBER', u.id)
       })
+      return data
     },
 
     async addManager({ commit }, manager) {
@@ -673,6 +864,15 @@ const storeConfig: StoreOptions<RootState> = {
       })
       commit('ADD_USER', data)
       commit('ADD_WORKFORCE_MEMBER', data.id)
+      return data
+    },
+
+    async deleteUser({ commit }, userId) {
+      await axios({
+        method: 'DELETE',
+        url: `${baseUrl}/users/${userId}`,
+      })
+      commit('REMOVE_USER', userId)
     },
 
     async addContractor({ commit }, contractor) {
@@ -683,6 +883,7 @@ const storeConfig: StoreOptions<RootState> = {
       })
       commit('ADD_USER', data)
       commit('ADD_WORKFORCE_MEMBER', data.id)
+      return data
     },
 
     async loadCalendarEvents({ commit }, { start, end }) {
@@ -694,8 +895,8 @@ const storeConfig: StoreOptions<RootState> = {
           date_end: end,
         },
       })
-      console.log(data)
       data.events.forEach((event: CalendarEvent) => commit('ADD_EVENT', event))
+      return data
     },
 
     async loadConversations({ commit }) {
@@ -706,6 +907,7 @@ const storeConfig: StoreOptions<RootState> = {
       data.conversations.forEach((conversation: Conversation) => {
         commit('ADD_CONVERSATION', { conversation })
       })
+      return data
     },
 
     async loadConversation({ commit }, conversationId) {
@@ -714,6 +916,7 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/conversations/${conversationId}`,
       })
       commit('ADD_CONVERSATION', { conversation: data.conversation })
+      return data
     },
 
     async createConversation({ commit }, userIds) {
@@ -739,6 +942,7 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/conversations/contacts`,
       })
       commit('UPDATE_CONTACTS', data.contacts)
+      return data
     },
 
     async sendMessage({ commit }, { message, conversationId }) {
@@ -748,8 +952,9 @@ const storeConfig: StoreOptions<RootState> = {
         data: message,
       })
       commit('ADD_MESSAGE', { message: data.message, conversationId })
+      return data
     },
-    async updatePassword({ commit }, newPassword) {
+    async updatePassword(_context, newPassword) {
       const { data } = await axios({
         method: 'PUT',
         url: `${baseUrl}/users/reset-password`,
@@ -757,6 +962,7 @@ const storeConfig: StoreOptions<RootState> = {
           password: newPassword,
         },
       })
+      return data
     },
     async setSSN({ commit }, ssn) {
       await axios({
@@ -815,15 +1021,20 @@ const storeConfig: StoreOptions<RootState> = {
     timecards: (state, getters) => {
       return state.payments.timecards.all.map((id) => getters.timecard(id))
     },
-    approvedTimecards: (_state, getters) => {
-      return getters.timecards.filter(
-        (timecard: Timecard) => timecard.approved && !timecard.paid
-      )
+    timecardsByIds: (_state, getters) => (timecardIds: number[]) => {
+      return timecardIds.map((id) => getters.timecard(id))
     },
-    unapprovedTimecards: (_state, getters) => {
-      return getters.timecards.filter(
-        (timecard: Timecard) => !timecard.approved
-      )
+    fundingSource: (state) => (location: string) => {
+      return state.payments.fundingSources.byLocation[location]
+    },
+    fundingSources: (state, getters) => {
+      return state.payments.fundingSources.all.map((location) => getters.fundingSource(location))
+    },
+    transfer: (state) => (transferId: string) => {
+      return state.payments.transfers.byId[transferId]
+    },
+    transfers: (state, getters) => {
+      return state.payments.transfers.all.map((transferId) => getters.transfer(transferId))
     },
     job: (state) => (id: number) => {
       const job = state.jobs.byId[id]
@@ -900,7 +1111,7 @@ const storeConfig: StoreOptions<RootState> = {
         }
       })
     },
-    conversation: (state, _, __, _rootGetters) => (id: number) => {
+    conversation: (state,/*  _, __, _rootGetters */) => (id: number) => {
       return state.conversations.byId[id]
       // return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
     },
@@ -936,7 +1147,33 @@ axios.interceptors.response.use(
       const errorList = error.response.data.response.errors
       message = errorList[Object.keys(errorList)[0]][0]
     }
-    store.dispatch('showSnackbar', { text: message })
+    
+    let action
+
+    if (res.actions) {
+      action = {
+        text: res.actions[0].action_text,
+        action: () => {
+          switch (res.actions[0].name) {
+            case 'VERIFY_BENEFICIAL_OWNERS':
+              router.push({
+                name: 'settings',
+                params: {
+                  verifyBeneficialOwners: 'true',
+                }
+              })
+              break;
+          }
+        },
+      }
+    }
+
+    console.log({message, action})
+
+    store.dispatch('showSnackbar', {
+      text: message,
+      action
+    })
 
     return Promise.reject(error)
   }

@@ -25,15 +25,15 @@ v-dialog(
         //- Contractor selector
         v-select(
           autofocus
-          v-model="shift.contractor_ids",
-          :items="contractors",
-          :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)",
-          :item-value="'id'",
-          outlined,
+          v-model='shift.contractor_ids'
+          :items='contractors'
+          :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)"
+          item-value='id'
+          outlined
           multiple
-          dense,
-          required,
-          label="Contractors"
+          dense
+          required
+          label='Contractors'
         )
           template(v-slot:append-item)
             v-divider

@@ -19,52 +19,34 @@ v-dialog(
       p
         | {{ timecards.length }}
         | contractor{{ timecards.length == 1 ? '' : 's' }}
-        | will be paid {{ wagePayment  | currency }} in total.
+        | will be paid {{ wagePayment  | currency }}{{ timecards.length > 1 ? ' in total' : ''}}.
+        br
         | A {{ feesPayment | currency }} fee will be applied.
         br
-        | Your total is {{ totalPayment | currency }}.
-    
-      //- paypal-buttons(
-      //-   :createOrder="createOrder",
-      //-   :onApprove="onApprove",
-      //-   v-if="renderPaypal && !transaction"
-      //- )
-      div(v-if="transaction")
-        p.text-subtitle-2.green--text.d-flex.align-center.my-2
-          | Payment successful. Your PayPal order ID is:
-        p.green--text.font-weight-black.mx-1
-          | {{ transaction.orderID }}
+        | The total cost for this transaction is {{ totalPayment | currency }}.
 
     v-spacer
 
     v-card-actions
       v-spacer
-      v-btn(text, @click="closeDialog") Cancel
+      v-btn(text @click='closeDialog') Cancel
+      v-btn(text color='success' @click='completePayments' :loading='loading') Complete
 </template>
 
 <script>
-import Vue from "vue";
-// eslint-disable-next-line no-undef
-// const PayPalButton = paypal.Buttons.driver("vue", Vue);
-
 export default {
   name: "paymentDialog",
-  components: {
-    // "paypal-buttons": PayPalButton,
-  },
   props: {
     opened: Boolean,
-    timecards: Array,
-    transaction: null,
+    timecardIds: Array,
   },
   data: () => ({
-    renderPaypal: false,
+    loading: false,
   }),
-  mounted() {
-    // Wait to render paypal buttons so the DOM container is not removed
-    setTimeout(() => this.renderPaypal = true, 1)
-  },
   computed: {
+    timecards() {
+      return this.$store.getters.timecardsByIds(this.timecardIds)
+    },
     totalPayment() {
       return this.wagePayment + this.feesPayment;
     },
@@ -87,29 +69,11 @@ export default {
     closeDialog() {
       this.$emit("update:opened", false);
     },
-    createOrder(data, actions) {
-      console.log({ data, actions });
-      console.log(this.totalPayment)
-
-      return actions.order.create({
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        purchase_units: [
-          {
-            amount: {
-              value: this.totalPayment,
-            },
-          },
-        ],
-      });
-    },
-    async onApprove(data, actions) {
-      this.transaction = data;
-      this.closeDialog();
-      this.$store.dispatch("approvePayment", {
-        timecards: this.timecards,
-        transaction: data,
-      });
-      return actions.order.capture();
+    async completePayments() {
+      this.loading = true
+      await this.$store.dispatch("completePayments", this.timecards.map(t => t.id))
+      this.loading = false
+      this.closeDialog()
     },
   },
 };

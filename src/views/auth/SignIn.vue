@@ -58,6 +58,11 @@ export default {
     passwordRules,
     loading: false,
   }),
+  mounted() {
+    if (this.$route.params.email) {
+      this.form.email = this.$route.params.email
+    }
+  },
   methods: {
     async signIn() {
       this.loading = true;

@@ -45,13 +45,23 @@ div
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
+type Article = {
+  id: string;
+  title: string;
+}
+
+type Category = {
+  title: string;
+  articles: Article[];
+}
+
 @Component({
   metaInfo: {
     title: 'Support',
   }
 })
 export default class Support extends Vue {
-  categories = [
+  categories: Category[] = [
     {
       title: 'Jobs',
       articles: [
@@ -127,11 +137,11 @@ export default class Support extends Vue {
     },
   ]
 
-  openArticle(article: any) {
+  openArticle(article: Article) {
     this.$router.push({ name: 'supportArticle', params: { articleId: article.id }})
   }
 
-  get allArticles() {
+  get allArticles(): Article[] {
     return this.categories
       .map((c) => c.articles)
       .reduce((a, b) => a.concat(b), [])
