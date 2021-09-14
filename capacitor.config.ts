@@ -13,17 +13,8 @@ const config: CapacitorConfig = {
   cordova: {},
   server: {
     hostname: "worxstr.com",
-<<<<<<< HEAD
-    "url": "http://192.168.86.29:8080",
-    "cleartext": true
-=======
-<<<<<<< Updated upstream
-    // "url": "http://192.168.86.42:8080",
-=======
-    // "url": "http://192.168.86.24:8080",
->>>>>>> Stashed changes
+    // "url": "http://192.168.86.29:8080",
     // "cleartext": true
->>>>>>> d4c81ea34c92a53d9ac84989b3815ca275e3dc6a
   }
 };
 
