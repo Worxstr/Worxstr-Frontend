@@ -21,16 +21,12 @@ v-dialog(
       v-divider
 
       v-card-text.transfer-amount.pb-0
-        v-text-field.text-h5(
-          autofocus
-          outlined
-          type='number'
-          prefix='$'
-          step='1'
-          min='0.00'
-          label="Amount to transfer"
+        currency-input(
           v-model.number="transfer.amount"
           :rules="rules.amount"
+          label="Amount to transfer"
+          autofocus
+          outlined
           required
         )
 
@@ -57,8 +53,13 @@ v-dialog(
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { exists, currency } from '@/plugins/inputValidation'
+import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
 
-@Component
+@Component({
+  components: {
+    CurrencyInput,
+  },
+})
 export default class TransferFundsDialog extends Vue {
   isValid = false
   loading = false
@@ -69,7 +70,7 @@ export default class TransferFundsDialog extends Vue {
     location: [exists('You must choose a funding source.')],
   }
   transfer = {
-    amount: 10,
+    amount: 0,
     location: '',
   }
 
@@ -80,7 +81,7 @@ export default class TransferFundsDialog extends Vue {
   onOpened() {
     if (this.action == 'remove')
       this.transfer.amount = this.$store.state.payments.balance.value
-    else this.transfer.amount = 10
+    else this.transfer.amount = 0
   }
 
   closeDialog() {
