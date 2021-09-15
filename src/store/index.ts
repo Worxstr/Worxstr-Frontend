@@ -1136,12 +1136,12 @@ axios.interceptors.response.use(
     // if (error.config.hideErrorMessage) return
 
     let message
-    const res = error.response.data
+    const res = error.response?.data
 
     // TODO: this is stupid, don't keep this. use custom axios config
     if (error.request.responseURL.includes('/users/me')) return
 
-    if (res.message || res.response.error) {
+    if (res && (res.message || res.response.error)) {
       message = res.message || res.response.error
     } else {
       const errorList = error.response.data.response.errors
