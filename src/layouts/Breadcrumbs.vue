@@ -74,8 +74,7 @@ export default class Breadcrumbs extends Vue {
 .nav-breadcrumbs {
   overflow: hidden;
   
-  li:last-child {
-    text-overflow: ellipsis ellipsis;
+  li {
     white-space: nowrap;
   }
   .v-breadcrumbs__item--disabled {
