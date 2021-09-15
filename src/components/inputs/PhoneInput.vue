@@ -28,10 +28,7 @@ type PhoneObject = {
 @Component
 export default class PhoneInput extends Vue {
   @Prop({ type: [Object, String], required: true, default: '' })
-  value!:
-    | PhoneObject
-    | string
-    | ''
+  value!: PhoneObject | string | ''
 
   @Prop(String) readonly color: string | undefined
   @Prop({ default: false }) readonly required!: boolean
@@ -49,6 +46,7 @@ export default class PhoneInput extends Vue {
 
   phoneStringToObject(value: string): PhoneObject {
     if (!value) return { countryCode: '', areaCode: '', phoneNumber: '' }
+    value = value.replace(/[^0-9]/g, '')
 
     const raw = value.replace(/\W/g, '')
     const countryCode = '1'
@@ -64,7 +62,7 @@ export default class PhoneInput extends Vue {
 
   get raw() {
     if (!this.value) return ''
-    if (typeof(this.value) == 'string') {
+    if (typeof this.value == 'string') {
       this.updateValue(this.value)
       return this.value
     }
@@ -75,13 +73,11 @@ export default class PhoneInput extends Vue {
     let formatted = '('
     formatted += this.value.areaCode
 
-    if (this.value.areaCode.length >= 3)
-      formatted += ') '
+    if (this.value.areaCode.length >= 3) formatted += ') '
 
     formatted += number1
 
-    if (number1.length >= 3)
-      formatted += '-'
+    if (number1.length >= 3) formatted += '-'
 
     formatted += number2
 
