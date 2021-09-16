@@ -1,16 +1,17 @@
 <template lang="pug">
-  v-text-field.text-h5(
+  v-text-field(
+    :class="{'text-h5': headerFont}"
     @input='updateValue'
     @keydown='keydown'
     @focus='focus'
     :value='rawValue'
     :rules='rules'
     ref='input'
-    type='text'
     prefix='$'
 
     :required='required'
-    :color="color"
+    :color='color'
+    :suffix='suffix'
     :filled="filled"
     :dense='dense'
     :label='label'
@@ -26,9 +27,11 @@ import { currency } from '@/plugins/inputValidation'
 
 @Component
 export default class CurrencyInput extends Vue {
-  @Prop({ type: Number, required: true, default: 0 }) readonly value!: number
+  @Prop({ type: [Number, String], required: true, default: 0 }) value!: number | string
   @Prop(String) readonly color: string | undefined
+  @Prop(String) readonly suffix: string | undefined
 
+  @Prop({ default: false }) readonly headerFont!: boolean
   @Prop({ default: false }) readonly required!: boolean
   @Prop({ default: false }) readonly filled!: boolean
   @Prop({ default: false }) readonly dense!: boolean
@@ -38,6 +41,11 @@ export default class CurrencyInput extends Vue {
   @Prop({ default: false }) readonly disabled!: boolean
 
   rules = [currency]
+
+  mounted() {
+    if (typeof(this.value) === 'string')
+      this.value = parseFloat(this.value)
+  }
 
   getInput() {
     return (this.$refs.input as any)?.$el.querySelector('input')
@@ -69,7 +77,7 @@ export default class CurrencyInput extends Vue {
       this.setCaretPosition(caretIndex)
     }, 0)
 
-    return this.value.toFixed(2)
+    return (typeof(this.value) === 'string' ? parseFloat(this.value) : this.value).toFixed(2)
   }
 
   keydown(e: KeyboardEvent) {

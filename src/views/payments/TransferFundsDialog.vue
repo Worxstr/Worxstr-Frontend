@@ -28,6 +28,7 @@ v-dialog(
           autofocus
           outlined
           required
+          :headerFont='true'
         )
 
         v-select(
