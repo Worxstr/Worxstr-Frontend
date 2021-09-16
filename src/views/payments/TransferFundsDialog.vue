@@ -79,10 +79,17 @@ export default class TransferFundsDialog extends Vue {
   @Prop(String) readonly action!: 'add' | 'remove' | null
 
   @Watch('opened')
-  onOpened() {
-    if (this.action == 'remove')
-      this.transfer.amount = this.$store.state.payments.balance.value
-    else this.transfer.amount = 0
+  onOpened(opened: boolean) {
+    if (opened) {
+      // Set amount to how much is in balance
+      if (this.action == 'remove')
+        this.transfer.amount = this.$store.state.payments.balance.value
+      else this.transfer.amount = 0
+
+      // Set funding source to the first option
+      if (this.fundingSources.length)
+        this.transfer.location = this.fundingSources[0]._links.self.href
+    }
   }
 
   closeDialog() {
