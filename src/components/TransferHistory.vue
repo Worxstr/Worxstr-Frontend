@@ -23,6 +23,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
           v-badge.mr-5(
             v-if='$vuetify.breakpoint.smAndDown'
             dot
+            left
             :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
 
           v-chip.mr-3(
