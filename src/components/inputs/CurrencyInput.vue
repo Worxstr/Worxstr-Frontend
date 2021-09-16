@@ -48,14 +48,14 @@ export default class CurrencyInput extends Vue {
     const input = this.getInput()
 
     // If input is set to 0.00, ignore it and set the new value to the character typed
-    if (oldValue == 0) {
+    if (oldValue == 0 && input.selectionStart == 1) {
       this.$emit('input', parseInt(input.value.charAt(0)))
       return
     }
 
     let newValue = parseFloat(value)
 
-    if (isNaN(newValue)) newValue = 0
+    if (!newValue || isNaN(newValue)) newValue = 0
 
     this.$emit('input', newValue)
   }
@@ -64,6 +64,7 @@ export default class CurrencyInput extends Vue {
     const input = this.getInput()
     const caretIndex = input?.selectionStart
 
+    // After formatting, set the caret back to the original position
     setTimeout(() => {
       input?.setSelectionRange(caretIndex, caretIndex)
     }, 0)
@@ -76,27 +77,39 @@ export default class CurrencyInput extends Vue {
 
     const enteredCharacter = e.key.length == 1
 
-    if (enteredCharacter && !'1234567890.'.includes(e.key))
-      e.preventDefault()
+    // Only allow numbers, period, and control characters
+    if (enteredCharacter && !'1234567890.'.includes(e.key)) e.preventDefault()
 
+    // If a zero is typed and the value is set to zero, move the cursor over
+    if (e.key == '0' && input.value.charAt(input.selectionStart) == '0') {
+      e.preventDefault()
+      const caretIndex = input?.selectionStart
+      input.setSelectionRange(caretIndex + 1, caretIndex + 1)
+    }
+
+    // If the decimal has been typed
     if (input.value.includes('.')) {
+      // Do not allow a second decimal
       if (e.key === '.') {
         e.preventDefault()
-        const caretIndex = input?.selectionStart
-        input.setSelectionRange(caretIndex + 1, caretIndex + 1)
+
+        // If the decimal is the next character, move the cursor to after the decimal
+        if (input.value.charAt(input.selectionStart) === '.') {
+          const caretIndex = input?.selectionStart
+          input.setSelectionRange(caretIndex + 1, caretIndex + 1)
+        }
       }
 
-      if (
-        enteredCharacter &&
-        input.selectionStart == input.value.length
-       ) {
+      // Do not allow more than 2 decimal places
+      if (enteredCharacter && parseFloat(input.value).toString().split('.')[1]?.length == 2)
         e.preventDefault()
-      }
     }
   }
 
   focus() {
-    this.getInput().setSelectionRange(0, 0)
+    // If the current value is 0, set the cursor to the beginning of the input
+    const cursorIndex = this.value == 0 ? 0 : this.value.toFixed(2).length
+    this.getInput().setSelectionRange(cursorIndex, cursorIndex)
   }
 }
 </script>
