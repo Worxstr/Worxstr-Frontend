@@ -85,6 +85,7 @@ export default class TransferFundsDialog extends Vue {
   }
 
   closeDialog() {
+    (this.$refs.form as HTMLFormElement).reset()
     this.$emit('update:opened', null)
   }
 

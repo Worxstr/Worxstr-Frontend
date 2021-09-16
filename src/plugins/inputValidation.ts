@@ -64,7 +64,8 @@ export const ssnMatches = matches('SSNs must match')
 
 export const currency = (value: string) => {
   // https://regexlib.com/Search.aspx?k=currency&c=-1&m=5&ps=20
-  if (isNaN(parseInt(value))) return false
+  const parsed = parseFloat(value)
+  if (isNaN(parsed) || parsed == 0) return 'Invalid amount'
   const pattern = /^\$?-?([1-9]{1}[0-9]{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^-?\$?([1-9]{1}\d{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^\(\$?([1-9]{1}\d{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))\)$/
   return pattern.test(value.replace(/^0+/, '')) || "Invalid amount"
 }

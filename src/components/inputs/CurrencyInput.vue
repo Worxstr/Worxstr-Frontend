@@ -66,7 +66,7 @@ export default class CurrencyInput extends Vue {
 
     // After formatting, set the caret back to the original position
     setTimeout(() => {
-      input?.setSelectionRange(caretIndex, caretIndex)
+      this.setCaretPosition(caretIndex)
     }, 0)
 
     return this.value.toFixed(2)
@@ -83,8 +83,7 @@ export default class CurrencyInput extends Vue {
     // If a zero is typed and the value is set to zero, move the cursor over
     if (e.key == '0' && input.value.charAt(input.selectionStart) == '0') {
       e.preventDefault()
-      const caretIndex = input?.selectionStart
-      input.setSelectionRange(caretIndex + 1, caretIndex + 1)
+      this.setCaretPosition(+1, true)
     }
 
     // If the decimal has been typed
@@ -95,8 +94,7 @@ export default class CurrencyInput extends Vue {
 
         // If the decimal is the next character, move the cursor to after the decimal
         if (input.value.charAt(input.selectionStart) === '.') {
-          const caretIndex = input?.selectionStart
-          input.setSelectionRange(caretIndex + 1, caretIndex + 1)
+          this.setCaretPosition(+1, true)
         }
       }
 
@@ -109,7 +107,14 @@ export default class CurrencyInput extends Vue {
   focus() {
     // If the current value is 0, set the cursor to the beginning of the input
     const cursorIndex = this.value == 0 ? 0 : this.value.toFixed(2).length
-    this.getInput().setSelectionRange(cursorIndex, cursorIndex)
+    this.setCaretPosition(cursorIndex)
+  }
+
+  // Move the cursor in the text input
+  setCaretPosition(index: number, relative = false) {
+    const input = this.getInput()
+    const i = relative ? input.selectionStart + index : index
+    input.setSelectionRange(i, i)
   }
 }
 </script>
