@@ -74,6 +74,11 @@ export default class CurrencyInput extends Vue {
   keydown(e: KeyboardEvent) {
     const input = this.getInput()
 
+    const enteredCharacter = e.key.length == 1
+
+    if (enteredCharacter && !'1234567890.'.includes(e.key))
+      e.preventDefault()
+
     if (input.value.includes('.')) {
       if (e.key === '.') {
         e.preventDefault()
@@ -81,7 +86,10 @@ export default class CurrencyInput extends Vue {
         input.setSelectionRange(caretIndex + 1, caretIndex + 1)
       }
 
-      if (input.selectionStart == input.value.length && e.key != 'Backspace' && e.key != 'Tab') {
+      if (
+        enteredCharacter &&
+        input.selectionStart == input.value.length
+       ) {
         e.preventDefault()
       }
     }
