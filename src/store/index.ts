@@ -183,6 +183,8 @@ const storeConfig: StoreOptions<RootState> = {
     SHOW_SNACKBAR(state, snackbar) {
       if (snackbar.action)
         snackbar.action.color = snackbar.action.color || 'accent'
+      else
+        delete state.snackbar.action
 
       state.snackbar = {
         ...state.snackbar,
