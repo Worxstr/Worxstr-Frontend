@@ -10,8 +10,25 @@
 		delete-user-dialog(:opened.sync='deleteUserDialog' :user='user')
 		
 		portal(to="toolbarActions")
-			v-btn(text color='primary' @click='editUserDialog = true' :disabled='userIsManager') Edit
-			v-btn(text color='error' @click='deleteUserDialog = true' v-if='userIsOrgManager && user.id != authenticatedUser.id') Delete
+			v-btn(
+				:disabled='userIsManager'
+				text
+				color='primary'
+				@click='editUserDialog = true'
+				:icon='$vuetify.breakpoint.xs'
+			)
+				v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
+				span(v-if='!$vuetify.breakpoint.xs') Edit
+
+			v-btn(
+				v-if='userIsOrgManager && user.id != authenticatedUser.id'
+				text
+				color='error'
+				@click='deleteUserDialog = true'
+				:icon='$vuetify.breakpoint.xs'
+			)
+				v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
+				span(v-if='!$vuetify.breakpoint.xs') Delete
 
 		v-container.d-flex.flex-column.justify-center
 			.py-5

@@ -17,7 +17,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title Editing shift
+        v-toolbar-title.text-h6 Editing shift
 
       v-divider
 

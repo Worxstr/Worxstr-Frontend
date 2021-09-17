@@ -22,10 +22,10 @@
 
           .d-flex.mt-6.align-center
             p.mb-0.mr-2.font-weight-medium Get the app:
+            v-btn(icon href='https://testflight.apple.com/join/hvQXJsYe' target='_blank')
+              v-icon mdi-apple
             v-btn(icon href='https://play.google.com/store/apps/details?id=com.worxstr.worxstr' target='_blank')
               v-icon mdi-google-play
-            //- v-btn(icon)
-            //-   v-icon mdi-apple
 
           v-spacer(style='height: 70px')
 

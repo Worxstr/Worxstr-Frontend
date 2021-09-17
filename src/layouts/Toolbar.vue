@@ -27,7 +27,7 @@
 
       v-spacer
 
-      portal-target(name="toolbarActions")
+      portal-target.d-flex(name="toolbarActions")
 
       div(v-if="$route.meta.landing")
         v-btn(v-if='$vuetify.breakpoint.xs' icon @click='menu = true')

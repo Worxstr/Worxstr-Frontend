@@ -20,8 +20,18 @@ div(v-if="loadingTransfers && !(transfers.length)")
       v-expansion-panel-header
         
         .flex-grow-0.font-weight-medium
-          v-chip.mr-3(small :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
-            | {{ transfer.status | capitalize }}
+          v-badge.mr-5(
+            v-if='$vuetify.breakpoint.smAndDown'
+            dot
+            left
+            :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
+
+          v-chip.mr-3(
+            v-else
+            small
+            :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`'
+            )
+              | {{ transfer.status | capitalize }}
 
 
           span.mt-1
