@@ -132,6 +132,7 @@
             text
             :data-supplement='{num_contractors: this.calculator.contractors, num_managers: this.calculator.managers}'
             :show-manager-contractor-fields='false'
+            type='sales'
           )
 </template>
 
