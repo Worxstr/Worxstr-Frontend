@@ -107,14 +107,20 @@ export default class CurrencyInput extends Vue {
       }
 
       // Do not allow more than 2 decimal places
-      if (enteredCharacter && parseFloat(input.value).toString().split('.')[1]?.length == 2)
+      const split = parseFloat(input.value).toString().split('.')
+      if (
+        enteredCharacter &&
+        input.selectionStart > split[0].length &&
+        split[1]?.length == 2
+      )
         e.preventDefault()
     }
   }
 
   focus() {
     // If the current value is 0, set the cursor to the beginning of the input
-    const cursorIndex = this.value == 0 ? 0 : this.value.toFixed(2).length
+    const val = typeof(this.value) === 'string' ? parseFloat(this.value) : this.value
+    const cursorIndex = this.value == 0 ? 0 : val.toFixed(2).length
     this.setCaretPosition(cursorIndex)
   }
 
