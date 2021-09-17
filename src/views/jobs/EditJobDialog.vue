@@ -169,7 +169,11 @@ export default class EditJobDialog extends Vue {
 
   @Watch('opened')
   onOpened(newVal: boolean) {
-    if (newVal) this.$store.dispatch('loadManagers');
+    if (newVal) {
+      if (this.create) (this.$refs.form as HTMLFormElement).reset()
+      this.$store.dispatch('loadManagers')
+    }
+
     if (newVal && this.job)
       this.editedJob = Object.assign({}, this.job);
   }
@@ -183,8 +187,7 @@ export default class EditJobDialog extends Vue {
   }
 
   closeDialog() {
-    this.$emit("update:opened", false);
-    if (this.create) (this.$refs.form as HTMLFormElement).reset();
+    this.$emit("update:opened", false)
   }
   setPlace(address: any, place: string, id: string) {
     if (this.editedJob) {

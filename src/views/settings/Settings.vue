@@ -1,5 +1,5 @@
 <template lang="pug">
-	v-container.pb-16(fluid)
+	v-container.pb-3(fluid)
 		change-password-dialog(:opened.sync="changePasswordDialog")
 		add-funding-source-dialog(:opened.sync="addFundingSourceDialog")
 		edit-funding-source-dialog(
