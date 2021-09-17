@@ -94,6 +94,19 @@ export default class CurrencyInput extends Vue {
       this.setCaretPosition(+1, true)
     }
 
+    const decimalSplit = parseFloat(input.value).toString().split('.')
+
+    // If the user is backspacing the decimal, simple move the cursor
+    // If we don't do this, 1.00 becomes 100 which reformats to 100.00, which is unexpected
+    if (
+      e.key === 'Backspace' &&
+      input.selectionStart == decimalSplit[0].length + 1
+    ) {
+      e.preventDefault()
+      this.setCaretPosition(-1, true)
+    }
+
+
     // If the decimal has been typed
     if (input.value.includes('.')) {
       // Do not allow a second decimal
@@ -107,11 +120,10 @@ export default class CurrencyInput extends Vue {
       }
 
       // Do not allow more than 2 decimal places
-      const split = parseFloat(input.value).toString().split('.')
       if (
         enteredCharacter &&
-        input.selectionStart > split[0].length &&
-        split[1]?.length == 2
+        input.selectionStart > decimalSplit[0].length &&
+        decimalSplit[1]?.length == 2
       )
         e.preventDefault()
     }
