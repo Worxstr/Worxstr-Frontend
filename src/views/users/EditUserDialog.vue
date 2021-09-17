@@ -88,17 +88,12 @@ v-dialog(
         div(v-if='userIsContractor')
           v-subheader Contractor info
 
-          v-text-field(
-            prefix="$"
-            suffix="/ hour"
-            label="Hourly wage"
-            type="number"
-            min="0.01"
-            step="0.01"
+          currency-input(
+            suffix='/ hour'
+            label='Hourly wage'
             dense
             outlined
-            :rules="rules.currency"
-            v-model.number="editedUser.contractor_info.hourly_rate"
+            v-model.number='editedUser.contractor_info.hourly_rate'
             required
           )
       
@@ -117,10 +112,12 @@ import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import { Managers, User, userIs, UserRole, userRoles } from '@/definitions/User'
 import { exists, emailRules, currency } from '@/plugins/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
+import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
 
 @Component({
   components: {
     PhoneInput,
+    CurrencyInput,
   },
 })
 export default class EditUserDialog extends Vue {
