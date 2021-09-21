@@ -1,5 +1,7 @@
 <template lang="pug">
 div
+  edit-job-dialog(:opened.sync="createJobDialog", :create="true")
+
   portal(to="toolbarActions")
     v-btn(
       color="primary",
@@ -22,12 +24,10 @@ div
     p.text-center.text-body-1 No jobs yet.
 
   v-container.approvals(v-else)
-    edit-job-dialog(:opened.sync="createJobDialog", :create="true")
         
     v-card.mb-3.d-flex.flex-column.soft-shadow
       jobs-map(:jobs='allJobs')
       jobs-list(:jobs='directJobs')
-      
 
     .mb-5(v-if="indirectJobs.length")
       v-toolbar(flat, color="transparent")
