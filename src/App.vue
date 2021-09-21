@@ -8,8 +8,8 @@ v-app
 
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
+    :style="`padding-top: ${topPadding}px`"
   )
-    //- p pageHeight: {{pageHeight}} safeAreaTop: {{safeAreaTop}} safeAreaBottom: {{safeAreaBottom}}
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
         appear,
@@ -19,7 +19,7 @@ v-app
       )
         router-view#router-view(:style="`height: ${pageHeight}; padding-bottom: ${bottomPadding}px`")
 
-  worxstr-footer(v-if="showFooter")
+  worxstr-footer(v-if="isLanding")
 
   message-snackbar
 </template>
@@ -67,7 +67,7 @@ export default class App extends Vue {
     return !this.$route.meta.noSkeleton
   }
 
-  get showFooter() {
+  get isLanding() {
     return this.$route.meta.landing
   }
 
@@ -101,6 +101,12 @@ export default class App extends Vue {
         .getPropertyValue("--sab")
         .replace('px', '')
     )
+  }
+
+  get topPadding() {
+    return (!this.mobileLayout && this.showHeader) ||
+           (this.isLanding && this.showHeader) ?
+           this.headerHeight : 0
   }
 
   get bottomPadding() {

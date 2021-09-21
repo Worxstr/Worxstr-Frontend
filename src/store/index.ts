@@ -299,6 +299,10 @@ const storeConfig: StoreOptions<RootState> = {
       Vue.set(state.jobs.byId, job.id, {
         ...state.jobs.byId[job.id],
         ...job,
+        direct: (
+          state.authenticatedUser?.id === job.organization_manager_id ||
+          state.authenticatedUser?.id === job.contractor_manager_id
+        )
       })
       if (!state.jobs.all.includes(job.id)) state.jobs.all.push(job.id)
     },
@@ -1172,20 +1176,24 @@ axios.interceptors.response.use(
         text: res.actions[0].action_text,
         action: () => {
           switch (res.actions[0].name) {
+            case 'AUTHENTICATE':
+              router.push({
+                name: 'signIn'
+              })
+              break
+
             case 'VERIFY_BENEFICIAL_OWNERS':
               router.push({
-                name: 'settings',
+                name: 'settings/payments',
                 params: {
                   verifyBeneficialOwners: 'true',
                 }
               })
-              break;
+              break
           }
         },
       }
     }
-
-    console.log({message, action})
 
     store.dispatch('showSnackbar', {
       text: message,

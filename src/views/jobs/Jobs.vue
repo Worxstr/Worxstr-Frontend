@@ -5,6 +5,11 @@ v-container(fluid v-if="loading && !(directJobs.length || indirectJobs.length)")
     type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
   )
 
+  
+.d-flex.flex-column.justify-center(v-else-if='!allJobs.length')
+  v-icon.text-h2.ma-5 mdi-calendar-check
+  p.text-center.text-body-1 No jobs yet.
+
 v-container.approvals(v-else)
   edit-job-dialog(:opened.sync="createJobDialog", :create="true")
 
@@ -16,7 +21,7 @@ v-container.approvals(v-else)
       @click="openCreateJobDialog",
       v-if="userIsOrgManager"
     )
-      v-icon(left) mdi-plus
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
       span(v-if='!$vuetify.breakpoint.xs') Add job
 
       
@@ -27,9 +32,10 @@ v-container.approvals(v-else)
 
   .mb-5(v-if="indirectJobs.length")
     v-toolbar(flat, color="transparent")
-      v-toolbar-title.text-h6 Subordinate jobs
+      v-toolbar-title.text-h6 Other jobs
 
-    jobs-list(:jobs='indirectJobs')
+    v-card.soft-shadow
+      jobs-list(:jobs='indirectJobs')
 </template>
 
 <script lang="ts">

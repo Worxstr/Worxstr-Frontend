@@ -4,7 +4,7 @@
   v-sheet.arrow-container
     arrows(type='background' style='position: absolute')
     
-    v-container.px-10
+    v-container.px-10(:class="{'mt-9': $vuetify.breakpoint.smAndUp}")
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
@@ -132,6 +132,7 @@
             text
             :data-supplement='{num_contractors: this.calculator.contractors, num_managers: this.calculator.managers}'
             :show-manager-contractor-fields='false'
+            type='sales'
           )
 </template>
 

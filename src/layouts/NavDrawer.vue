@@ -25,7 +25,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
   v-divider
 
   //- Primary items
-  v-list.pt-0(dense)
+  v-list.py-0(dense)
     v-tooltip(
       v-for="link in primaryNavLinks",
       :key="link.text",
@@ -50,7 +50,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
   //- Secondary items
   template(v-slot:append)
-    v-list.secondary-nav-items(dense)
+    v-list.secondary-nav-items.py-0(dense)
       v-divider
 
       v-tooltip(

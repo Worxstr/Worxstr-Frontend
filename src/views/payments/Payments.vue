@@ -94,7 +94,7 @@ export default class Payments extends Vue {
         action: {
           text: 'Add funding source',
           action: () => this.$router.push({
-            name: 'settings',
+            name: 'settings/payments',
             params: {
               addFundingSource: 'true'
             }
