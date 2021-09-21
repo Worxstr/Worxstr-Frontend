@@ -1165,22 +1165,20 @@ axios.interceptors.response.use(
               router.push({
                 name: 'signIn'
               })
-              break;
+              break
 
             case 'VERIFY_BENEFICIAL_OWNERS':
               router.push({
-                name: 'settings',
+                name: 'settings/payments',
                 params: {
                   verifyBeneficialOwners: 'true',
                 }
               })
-              break;
+              break
           }
         },
       }
     }
-
-    console.log({message, action})
 
     store.dispatch('showSnackbar', {
       text: message,

@@ -1,34 +1,31 @@
 <template lang="pug">
-v-container.pb-16(fluid)
-  v-card.py-2(rounded)
-    v-tabs(:vertical="$vuetify.breakpoint.mdAndUp", center-active)
-      v-tab.justify-start
+v-container.pb-16
+  v-card.py-2.d-flex(
+    rounded
+    :class="{'flex-column': $vuetify.breakpoint.smAndDown}"
+  )
+    v-tabs(
+      :vertical="$vuetify.breakpoint.mdAndUp"
+      center-active
+      :style='$vuetify.breakpoint.mdAndUp && `max-width: 200px`'
+    )
+      v-tab.justify-start(to='/settings/me')
         v-icon(left) mdi-account
         | Me
 
-      v-tab.justify-start
+      v-tab.justify-start(to='/settings/payments')
         v-icon(left) mdi-cash-multiple
         | Payments
 
-      v-tab.justify-start
+      v-tab.justify-start(to='/settings/security')
         v-icon(left) mdi-lock
         | Security
 
-      v-tab.justify-start
+      v-tab.justify-start(to='/settings/preferences')
         v-icon(left) mdi-palette
         | Preferences
 
-      v-tab-item
-        me
-
-      v-tab-item
-        payments
-
-      v-tab-item
-        security
-
-      v-tab-item
-        preferences
+    router-view.flex-grow-1
         
 </template>
 

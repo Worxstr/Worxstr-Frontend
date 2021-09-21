@@ -32,6 +32,10 @@ import Schedule from '@/views/Schedule.vue'
 import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
 import Settings from '@/views/settings/Settings.vue'
+import SettingsMe from "@/views/settings/pages/me/Me.vue"
+import SettingsPayments from "@/views/settings/pages/payments/Payments.vue"
+import SettingsSecurity from "@/views/settings/pages/security/Security.vue"
+import SettingsPreferences from "@/views/settings/pages/preferences/Preferences.vue"
 import NotFound from '@/views/errors/NotFound.vue'
 
 Vue.use(VueRouter)
@@ -266,6 +270,33 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: Settings,
+    beforeEnter: (_to, _from, next) => {
+      // Default to /me if no sub-route is specified
+      if (_to.matched.length === 1) next({name: 'settings/me'})
+      else next()
+    },
+    children: [
+      {
+        name: 'settings/me',
+        path: 'me',
+        component: SettingsMe,
+      },
+      {
+        name: 'settings/payments',
+        path: 'payments',
+        component: SettingsPayments,
+      },
+      {
+        name: 'settings/security',
+        path: 'security',
+        component: SettingsSecurity,
+      },
+      {
+        name: 'settings/preferences',
+        path: 'preferences',
+        component: SettingsPreferences,
+      },
+    ]
   },
   {
     path: '*',
