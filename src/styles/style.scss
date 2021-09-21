@@ -20,8 +20,8 @@ html {
 a {
   text-decoration: none;
 }
-.v-btn__content {
-  text-transform: none;
+.v-btn__content, .v-tabs * {
+  text-transform: none !important;
 }
 
 /* Define safe area values for use in javascript */

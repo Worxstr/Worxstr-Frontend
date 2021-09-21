@@ -792,7 +792,7 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/jobs`,
         data: job,
       })
-      commit('ADD_JOB', data.job)
+      commit('ADD_JOB')
       return data
     },
 
