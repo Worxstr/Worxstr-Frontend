@@ -270,7 +270,7 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: Settings,
-    beforeEnter: (_to, _from, next) => {
+    beforeEnter: (_to: any, _from: any, next: any) => {
       // Default to /me if no sub-route is specified
       if (_to.matched.length === 1) next({name: 'settings/me'})
       else next()
