@@ -17,7 +17,7 @@
 
 				v-tab.justify-start
 					v-icon(left) mdi-account
-					| Profile
+					| Me
 
 				v-tab.justify-start
 					v-icon(left) mdi-cash-multiple
