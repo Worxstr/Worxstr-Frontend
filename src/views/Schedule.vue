@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container.home.d-flex.flex-column.align-stretch(
+v-container.home.d-flex.flex-column.align-stretch.pb-3(
   fluid,
   :fill-height="type == 'month'"
 )
