@@ -33,31 +33,36 @@ v-container.pb-16(fluid)
 </template>
 
 <script>
-import Me from "./pages/me/Me.vue";
-import Payments from "./pages/payments/Payments.vue";
-import Security from "./pages/security/Security.vue";
+import { Vue, Component } from "vue-property-decorator"
+
+import Me from "./pages/me/Me.vue"
+import Payments from "./pages/payments/Payments.vue"
+import Security from "./pages/security/Security.vue"
 import Preferences from "./pages/preferences/Preferences.vue";
 
-export default {
-  name: "settings",
-  metaInfo: {
+@Component({
+	metaInfo: {
     title: "Settings",
   },
-  components: {
+	components: {
     Me,
     Payments,
     Security,
     Preferences,
   },
-  mounted() {
-    if (this.$route.params.verifyBeneficialOwners == "true") {
-      this.beneficialOwnersDialog = true;
-    }
-    if (this.$route.params.addFundingSource == "true") {
-      this.addFundingSourceDialog = true;
-    }
-  },
-};
+})
+export default class Settings extends Vue {
+
+  // mounted() {
+  //   if (this.$route.params.verifyBeneficialOwners == "true") {
+  //     this.beneficialOwnersDialog = true;
+  //   }
+  //   if (this.$route.params.addFundingSource == "true") {
+  //     this.addFundingSourceDialog = true;
+  //   }
+  // }
+
+}
 </script>
 
 <style lang="scss">

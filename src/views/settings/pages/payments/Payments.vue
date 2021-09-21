@@ -10,7 +10,7 @@ div
     :fundingSource="selectedFundingSource"
   )
   beneficial-owners-dialog(:opened.sync="beneficialOwnersDialog")
-  
+
   v-list
     v-list-item(two-line, v-if="showBeneficialOwnersForm")
       v-list-item-content
@@ -71,6 +71,13 @@ export default class Payments extends Vue {
 	selectedFundingSource: any = null
 
   mounted() {
+    if (this.$route.params.verifyBeneficialOwners == "true") {
+      this.beneficialOwnersDialog = true
+    }
+    if (this.$route.params.addFundingSource == "true") {
+      this.addFundingSourceDialog = true
+    }
+
     this.loadFundingSources()
   }
 
