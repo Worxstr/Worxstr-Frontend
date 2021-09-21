@@ -2,7 +2,7 @@
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
     
-    v-card.soft-shadow(width='600' style='overflow: scroll;')
+    v-card.soft-shadow(width='600' style='overflow-y: auto')
   
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5
@@ -10,7 +10,7 @@ div
           span(v-else) Sign up as a {{ accountType == 'org' ? 'business' : 'contractor' }}
 
         v-card-text.pb-0
-          v-window.pt-2(v-model='step' touchless)
+          v-window.pt-2(v-model='step' touchless :style='step == 1 && `padding-bottom: 60px`')
 
             v-window-item(:value='0')
               .pa-1.d-flex.flex-column.flex-sm-row.justify-center
