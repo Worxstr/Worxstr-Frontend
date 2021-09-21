@@ -22,6 +22,9 @@ import ChangePasswordDialog from "./ChangePasswordDialog.vue";
 	components: {
 		ChangePasswordDialog,
 	},
+  metaInfo: {
+    title: 'Settings - Security'
+  }
 })
 export default class Security extends Vue {
 	changePasswordDialog = false

@@ -60,6 +60,9 @@ import BeneficialOwnersDialog from "./BeneficialOwnersDialog.vue"
     RemoveFundingSourceDialog,
     BeneficialOwnersDialog,
 	},
+  metaInfo: {
+    title: 'Settings - Payments'
+  }
 })
 export default class Payments extends Vue {
 

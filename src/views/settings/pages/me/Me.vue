@@ -44,6 +44,9 @@ import Roles from "@/components/Roles.vue"
   components: {
     Roles,
   },
+  metaInfo: {
+    title: 'Settings - Me'
+  }
 })
 export default class Me extends Vue {
   get authenticatedUser() {
