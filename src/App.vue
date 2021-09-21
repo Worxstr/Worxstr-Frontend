@@ -9,7 +9,6 @@ v-app
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
   )
-    //- p pageHeight: {{pageHeight}} safeAreaTop: {{safeAreaTop}} safeAreaBottom: {{safeAreaBottom}}
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
         appear,

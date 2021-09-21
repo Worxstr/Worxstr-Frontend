@@ -1,13 +1,16 @@
 <template lang="pug">
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
-    v-card.soft-shadow(width='600')
+    
+    v-card.soft-shadow(width='600' style='overflow: scroll;')
+  
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5
           span(v-if='!accountType') Sign up
           span(v-else) Sign up as a {{ accountType == 'org' ? 'business' : 'contractor' }}
+
         v-card-text.pb-0
-          v-window.pt-2(v-model='step')
+          v-window.pt-2(v-model='step' touchless)
 
             v-window-item(:value='0')
               .pa-1.d-flex.flex-column.flex-sm-row.justify-center
@@ -18,7 +21,12 @@ div
                   v-icon mdi-domain
                   span.ml-3.text-h6 I have a business
 
-            v-window-item(:value='1')
+            v-window-item(:value='1' :style='$vuetify.breakpoint.xs && `height: calc(80vh - 70px)`')
+              p(v-if="accountType == 'org'")
+                | Are you a contractor? Click
+                a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
+                | to create your account.
+
               dwolla-personal-vcr(
                 v-if="accountType == 'contractor'"
                 terms='/terms'
@@ -29,10 +37,6 @@ div
                 terms='/terms'
                 privacy='/privacy'
               )
-              p(v-if="accountType == 'org'")
-                | Are you a contractor? Click
-                a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
-                | to create your account.
 
             v-window-item(:value="2")
               v-text-field(

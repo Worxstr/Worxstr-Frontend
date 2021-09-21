@@ -13,7 +13,7 @@
 		beneficial-owners-dialog(:opened.sync="beneficialOwnersDialog")
 
 		v-card.py-2(rounded)
-			v-tabs(vertical)
+			v-tabs(:vertical='$vuetify.breakpoint.smAndUp')
 
 				v-tab.justify-start
 					v-icon(left) mdi-account
