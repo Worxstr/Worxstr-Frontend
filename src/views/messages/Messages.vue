@@ -6,8 +6,15 @@ div.pa-2
     v-tooltip(bottom)
       span New conversation
       template(v-slot:activator="{ on, attrs }")
-        v-btn(text color="primary" @click="newConversationDialog = true" v-bind="attrs" v-on="on")
-          v-icon mdi-plus
+        v-btn(
+          text
+          color="primary"
+          :icon='$vuetify.breakpoint.xs'
+          @click="newConversationDialog = true"
+          v-bind="attrs"
+          v-on="on"
+        )
+          v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
           span(v-if='$vuetify.breakpoint.smAndUp') New
       
   v-card.messages.pa-0.d-flex.flex-row.fill-height.align-start.soft-shadow

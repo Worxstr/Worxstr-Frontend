@@ -21,7 +21,7 @@ v-container.approvals(v-else)
       @click="openCreateJobDialog",
       v-if="userIsOrgManager"
     )
-      v-icon(left) mdi-plus
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
       span(v-if='!$vuetify.breakpoint.xs') Add job
 
       
