@@ -6,6 +6,7 @@ import router from '../router'
 
 import { Capacitor } from '@capacitor/core'
 import * as Plaid from '@/plugins/plaid'
+import { event } from 'vue-gtag'
 
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
@@ -1129,6 +1130,20 @@ const storeConfig: StoreOptions<RootState> = {
 const store = new Vuex.Store<RootState>(storeConfig)
 
 export default store
+
+axios.interceptors.request.use(config => {
+  const url = config.url?.replace(/^.*\/\/[^/]+/, '') || '' // Get url without domain
+  console.log(url)
+  event(url, {
+    event_category: 'API request',
+    event_label: url,
+    value: config.url
+  })
+  return config
+}, error => {
+  return Promise.reject(error)
+})
+
 
 axios.interceptors.response.use(
   (response) => {
