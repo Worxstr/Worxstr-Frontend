@@ -2,7 +2,7 @@
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
     
-    v-card.soft-shadow(width='600' style='overflow-y: auto')
+    v-card.soft-shadow(width='505' style='overflow-y: auto')
   
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5
@@ -10,7 +10,7 @@ div
           span(v-else) Sign up as a {{ accountType == 'org' ? 'business' : 'contractor' }}
 
         v-card-text.pb-0
-          v-window.pt-2(v-model='step' touchless :style='step == 1 && `padding-bottom: 60px`')
+          v-window.pt-2(v-model='step' touchless :style='step == 1 && `padding-bottom: ${$vuetify.breakpoint.xs ? "60px" : "20px"}`')
 
             v-window-item(:value='0')
               .pa-1.d-flex.flex-column.flex-sm-row.justify-center
@@ -65,12 +65,6 @@ div
                 outlined
                 dense
               )
-
-              //- v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
-              //-   template(v-slot:label)
-              //-     div
-              //-       span I agree to the
-              //-       a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
 
         v-card-actions(v-if='step != 1')
           v-spacer
