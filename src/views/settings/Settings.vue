@@ -12,111 +12,117 @@
 		)
 		beneficial-owners-dialog(:opened.sync="beneficialOwnersDialog")
 
-		v-tabs
-			v-tab
-				v-icon(left) mdi-account
-				| Profile
-			v-tab
-				v-icon(left) mdi-currency-usd
-				| Payments
-			v-tab
-				v-icon(left) mdi-lock
-				| Security
-			v-tab
-				v-icon(left) mdi-palette
-				| Preferences
-			
-			v-tab-item
-				v-list
-					v-list-item(two-line)
-						v-list-item-content
-							v-list-item-subtitle.mb-2 Name
-							v-list-item-title {{ authenticatedUser | fullName }}
-						v-list-item-action
-							v-btn(text color='primary' @click="signOut") Sign out
-					
-					v-list-item(two-line)
-						v-list-item-content
-							v-list-item-subtitle.mb-2 Organization
-							v-list-item-title {{ authenticatedUser.organization_info.name }}
-									
-					v-list-item(two-line v-if="authenticatedUser.contractor_info")
-						v-list-item-content
-							v-list-item-subtitle.mb-2 Address
-							v-list-item-title {{ authenticatedUser.contractor_info.address }}
-					
-					v-list-item(two-line)
-						v-list-item-content
-							v-list-item-subtitle.mb-2 Roles
-							v-list-item-title
-								roles(:roles='authenticatedUser.roles')
-									
-					v-list-item(two-line v-if="authenticatedUser.contractor_info")
-						v-list-item-content
-							v-list-item-subtitle.mb-2 Hourly wage
-							v-list-item-title
-								span(v-if='authenticatedUser.contractor_info.hourly_rate') {{ authenticatedUser.contractor_info.hourly_rate | currency }}
-								span(v-else) Not set
-									
-					v-list-item(two-line v-if="authenticatedUser.manager_info")
-						v-list-item-content
-							v-list-item-subtitle.mb-2 Manager reference number
-							v-list-item-title {{ authenticatedUser.manager_info.reference_number }}
-							
-			v-tab-item
-				v-list
+		v-card.py-2(rounded)
+			v-tabs(vertical)
+
+				v-tab.justify-start
+					v-icon(left) mdi-account
+					| Profile
+
+				v-tab.justify-start
+					v-icon(left) mdi-cash-multiple
+					| Payments
+
+				v-tab.justify-start
+					v-icon(left) mdi-lock
+					| Security
+
+				v-tab.justify-start
+					v-icon(left) mdi-palette
+					| Preferences
 				
-					v-list-item(two-line v-if='showBeneficialOwnersForm')
-						v-list-item-content
-							v-list-item-title Certify beneficial owners
-						v-list-item-action
-							v-btn(text color='primary' @click='beneficialOwnersDialog = true') Certify
-					
-					v-subheader.text-subtitle-2 Funding sources
-
-					v-skeleton-loader(
-						v-if='loadingFundingSources && !fundingSources.length'
-						type='list-item-two-line'
-					)
-
-					div(v-else)
-						v-list-item(two-line v-for='fundingSource in fundingSources' :key='fundingSource.id')
+				
+				v-tab-item
+					v-list
+						v-list-item(two-line)
 							v-list-item-content
-								v-list-item-title {{ fundingSource.name }}
-								v-list-item-subtitle {{ fundingSourceId(fundingSource._links.self.href) }}
+								v-list-item-subtitle.mb-2 Name
+								v-list-item-title {{ authenticatedUser | fullName }}
 							v-list-item-action
-								v-btn(text color='primary' @click='editFundingSource(fundingSource)') Edit
-							v-list-item-action.ml-0
-								v-btn(text color='error' @click='removeFundingSource(fundingSource)') Remove
-					
-					v-list-item
-						v-btn(text color='primary' @click='addFundingSourceDialog = true')
-							v-icon(left) mdi-plus
-							span Add funding source
-					
-			v-tab-item
-				v-list
-					
-					v-list-item(two-line)
-						v-list-item-content
-							v-list-item-title Password
-						v-list-item-action
-							v-btn(text color='primary' @click="changePasswordDialog = true") Change
+								v-btn(text color='primary' @click="signOut") Sign out
+						
+						v-list-item(two-line)
+							v-list-item-content
+								v-list-item-subtitle.mb-2 Organization
+								v-list-item-title {{ authenticatedUser.organization_info.name }}
+										
+						v-list-item(two-line v-if="authenticatedUser.contractor_info")
+							v-list-item-content
+								v-list-item-subtitle.mb-2 Address
+								v-list-item-title {{ authenticatedUser.contractor_info.address }}
+						
+						v-list-item(two-line)
+							v-list-item-content
+								v-list-item-subtitle.mb-2 Roles
+								v-list-item-title
+									roles(:roles='authenticatedUser.roles')
+										
+						v-list-item(two-line v-if="authenticatedUser.contractor_info")
+							v-list-item-content
+								v-list-item-subtitle.mb-2 Hourly wage
+								v-list-item-title
+									span(v-if='authenticatedUser.contractor_info.hourly_rate') {{ authenticatedUser.contractor_info.hourly_rate | currency }}
+									span(v-else) Not set
+										
+						v-list-item(two-line v-if="authenticatedUser.manager_info")
+							v-list-item-content
+								v-list-item-subtitle.mb-2 Manager reference number
+								v-list-item-title {{ authenticatedUser.manager_info.reference_number }}
+								
+				v-tab-item
+					v-list
 
-			v-tab-item
-				v-list
+						v-list-item(two-line v-if='showBeneficialOwnersForm')
+							v-list-item-content
+								v-list-item-title Certify beneficial owners
+							v-list-item-action
+								v-btn(text color='primary' @click='beneficialOwnersDialog = true') Certify
+						
+						v-subheader.text-subtitle-2 Funding sources
 
-					v-list-item(two-line)
-						v-list-item-content
-							v-list-item-title Dark theme
-						v-list-item-action
-							v-select.fit(
-								v-model="preferences.darkMode"
-								:items="['System default', 'Light', 'Dark']"
-								@change="updateDarkMode"
-								dense
-								hide-details
-							)
+						v-skeleton-loader(
+							v-if='loadingFundingSources && !fundingSources.length'
+							type='list-item-two-line'
+						)
+
+						div(v-else)
+							v-list-item(two-line v-for='fundingSource in fundingSources' :key='fundingSource.id')
+								v-list-item-content
+									v-list-item-title {{ fundingSource.name }}
+									v-list-item-subtitle {{ fundingSourceId(fundingSource._links.self.href) }}
+								v-list-item-action
+									v-btn(text color='primary' @click='editFundingSource(fundingSource)') Edit
+								v-list-item-action.ml-0
+									v-btn(text color='error' @click='removeFundingSource(fundingSource)') Remove
+						
+						v-list-item
+							v-btn(text color='primary' @click='addFundingSourceDialog = true')
+								v-icon(left) mdi-plus
+								span Add funding source
+						
+				v-tab-item
+					v-list
+						
+						v-list-item(two-line)
+							v-list-item-content
+								v-list-item-title Password
+							v-list-item-action
+								v-btn(text color='primary' @click="changePasswordDialog = true") Change
+
+				v-tab-item
+					v-list
+
+						v-list-item(two-line)
+							v-list-item-content
+								v-list-item-title Dark theme
+							v-list-item-action
+								v-select.fit(
+									v-model="preferences.darkMode"
+									:items="['System default', 'Light', 'Dark']"
+									@change="updateDarkMode"
+									dense
+									hide-details
+								)
 
 </template>
 
