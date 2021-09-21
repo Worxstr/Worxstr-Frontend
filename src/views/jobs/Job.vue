@@ -37,7 +37,7 @@ div(v-else)
         color="primary",
         @click="editJobDialog = true"
       )
-        v-icon(left) mdi-pencil
+        v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
         span(v-if='!$vuetify.breakpoint.xs') Edit
 
       v-btn(
@@ -47,7 +47,7 @@ div(v-else)
         color="red",
         @click="closeJobDialog = true"
       ) 
-        v-icon(left) mdi-close
+        v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
         span(v-if='!$vuetify.breakpoint.xs') Close
 
     v-card.mb-3.d-flex.flex-column.soft-shadow(:style='`border-top: 3px solid ${job.color}`')

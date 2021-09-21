@@ -6,6 +6,7 @@ import router from '../router'
 
 import { Capacitor } from '@capacitor/core'
 import * as Plaid from '@/plugins/plaid'
+import { event } from 'vue-gtag'
 
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
@@ -298,6 +299,10 @@ const storeConfig: StoreOptions<RootState> = {
       Vue.set(state.jobs.byId, job.id, {
         ...state.jobs.byId[job.id],
         ...job,
+        direct: (
+          state.authenticatedUser?.id === job.organization_manager_id ||
+          state.authenticatedUser?.id === job.contractor_manager_id
+        )
       })
       if (!state.jobs.all.includes(job.id)) state.jobs.all.push(job.id)
     },
@@ -1130,6 +1135,20 @@ const store = new Vuex.Store<RootState>(storeConfig)
 
 export default store
 
+axios.interceptors.request.use(config => {
+  const url = config.url?.replace(/^.*\/\/[^/]+/, '') || '' // Get url without domain
+  console.log(url)
+  event(url, {
+    event_category: 'API request',
+    event_label: url,
+    value: config.url
+  })
+  return config
+}, error => {
+  return Promise.reject(error)
+})
+
+
 axios.interceptors.response.use(
   (response) => {
     return response
@@ -1157,20 +1176,24 @@ axios.interceptors.response.use(
         text: res.actions[0].action_text,
         action: () => {
           switch (res.actions[0].name) {
+            case 'AUTHENTICATE':
+              router.push({
+                name: 'signIn'
+              })
+              break
+
             case 'VERIFY_BENEFICIAL_OWNERS':
               router.push({
-                name: 'settings',
+                name: 'settings/payments',
                 params: {
                   verifyBeneficialOwners: 'true',
                 }
               })
-              break;
+              break
           }
         },
       }
     }
-
-    console.log({message, action})
 
     store.dispatch('showSnackbar', {
       text: message,

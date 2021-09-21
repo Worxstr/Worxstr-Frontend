@@ -19,7 +19,7 @@ export type Job = {
 	latitude: number;
 	longitude: number;
 	organization_id: number;
-	organization_manager: number;
+	organization_manager_id: number;
 	contractor_manager_id: number;
 	shifts: Shift[];
 	contractors: User[];

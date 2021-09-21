@@ -56,10 +56,6 @@ export default class Users extends Vue {
   editUserDialog = false
   headers = [
     {
-      text: 'ID',
-      value: 'id',
-    },
-    {
       text: 'Name',
       value: 'name',
     },

@@ -32,13 +32,16 @@ import Schedule from '@/views/Schedule.vue'
 import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
 import Settings from '@/views/settings/Settings.vue'
+import SettingsMe from "@/views/settings/pages/me/Me.vue"
+import SettingsPayments from "@/views/settings/pages/payments/Payments.vue"
+import SettingsSecurity from "@/views/settings/pages/security/Security.vue"
+import SettingsPreferences from "@/views/settings/pages/preferences/Preferences.vue"
 import NotFound from '@/views/errors/NotFound.vue'
 
 Vue.use(VueRouter)
 Vue.use(Meta)
 
-import { UserRole, Managers, defaultRoute } from '@/definitions/User'
-
+import { UserRole, Managers, defaultRoute, currentUserIs, isAuthenticated } from '@/definitions/User'
 
 const routes = [
   {
@@ -266,6 +269,33 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: Settings,
+    beforeEnter: (_to: any, _from: any, next: any) => {
+      // Default to /me if no sub-route is specified
+      if (_to.matched.length === 1) next({name: 'settings/me'})
+      else next()
+    },
+    children: [
+      {
+        name: 'settings/me',
+        path: 'me',
+        component: SettingsMe,
+      },
+      {
+        name: 'settings/payments',
+        path: 'payments',
+        component: SettingsPayments,
+      },
+      {
+        name: 'settings/security',
+        path: 'security',
+        component: SettingsSecurity,
+      },
+      {
+        name: 'settings/preferences',
+        path: 'preferences',
+        component: SettingsPreferences,
+      },
+    ]
   },
   {
     path: '*',
@@ -284,14 +314,17 @@ const router = new VueRouter({
   routes
 })
 
-/* router.beforeEach((to, from, next) => {
-  if (store.state.authenticatedUser && to.meta.showInNav && !to.meta.showInNav.some(
-    (role) => store.state.authenticatedUser.roles.map(r => r.id).includes(role)
-  )) {
-    console.log('fuck u')
-    next({ name: 'home' })
+router.beforeEach((to, from, next) => {
+  console.log({to,from,next})
+  if (to.meta.restrict && !currentUserIs(...to.meta.restrict)) {
+    if (!isAuthenticated()) {
+      next({ name: 'signIn' })
+    }
+    else {
+      next({ name: defaultRoute() })
+    }
   }
   else next()
-}) */
+})
 
 export default router

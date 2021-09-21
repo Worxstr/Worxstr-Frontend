@@ -36,7 +36,7 @@
           v-btn(v-for="(link, i) in links" :key='i' text :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
 
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
-      v-list.mobile-nav-items(nav)
+      v-list.mobile-nav-items.pt-2(nav)
         v-list-item(v-for="(link, i) in links" :key='i' text :to="link.to" link)
           v-list-item-content
             v-list-item-title {{ link.text }}
