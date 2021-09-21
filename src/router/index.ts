@@ -37,8 +37,7 @@ import NotFound from '@/views/errors/NotFound.vue'
 Vue.use(VueRouter)
 Vue.use(Meta)
 
-import { UserRole, Managers, defaultRoute } from '@/definitions/User'
-
+import { UserRole, Managers, defaultRoute, currentUserIs, isAuthenticated } from '@/definitions/User'
 
 const routes = [
   {
@@ -284,14 +283,17 @@ const router = new VueRouter({
   routes
 })
 
-/* router.beforeEach((to, from, next) => {
-  if (store.state.authenticatedUser && to.meta.showInNav && !to.meta.showInNav.some(
-    (role) => store.state.authenticatedUser.roles.map(r => r.id).includes(role)
-  )) {
-    console.log('fuck u')
-    next({ name: 'home' })
+router.beforeEach((to, from, next) => {
+  console.log({to,from,next})
+  if (to.meta.restrict && !currentUserIs(...to.meta.restrict)) {
+    if (!isAuthenticated()) {
+      next({ name: 'signIn' })
+    }
+    else {
+      next({ name: defaultRoute() })
+    }
   }
   else next()
-}) */
+})
 
 export default router
