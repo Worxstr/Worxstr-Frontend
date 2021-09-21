@@ -1157,6 +1157,12 @@ axios.interceptors.response.use(
         text: res.actions[0].action_text,
         action: () => {
           switch (res.actions[0].name) {
+            case 'AUTHENTICATE':
+              router.push({
+                name: 'signIn'
+              })
+              break;
+              
             case 'VERIFY_BENEFICIAL_OWNERS':
               router.push({
                 name: 'settings',

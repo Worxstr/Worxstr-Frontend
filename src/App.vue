@@ -8,6 +8,7 @@ v-app
 
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
+    :style="`padding-top: ${topPadding}px`"
   )
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
@@ -100,6 +101,10 @@ export default class App extends Vue {
         .getPropertyValue("--sab")
         .replace('px', '')
     )
+  }
+
+  get topPadding() {
+    return (this.mobileLayout && this.showFooter ? this.headerHeight : 0)
   }
 
   get bottomPadding() {
