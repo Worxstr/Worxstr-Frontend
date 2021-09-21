@@ -13,7 +13,7 @@
 		beneficial-owners-dialog(:opened.sync="beneficialOwnersDialog")
 
 		v-card.py-2(rounded)
-			v-tabs(:vertical='$vuetify.breakpoint.smAndUp')
+			v-tabs(:vertical='$vuetify.breakpoint.mdAndUp' center-active)
 
 				v-tab.justify-start
 					v-icon(left) mdi-account
@@ -231,3 +231,10 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+	// Stupid left arrow won't go away even with hide-arrows prop
+	.v-slide-group__prev {
+		display: none !important;
+	}
+</style>
