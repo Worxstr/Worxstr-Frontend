@@ -34,7 +34,8 @@ v-container.approvals(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Other jobs
 
-    jobs-list(:jobs='indirectJobs')
+    v-card.soft-shadow
+      jobs-list(:jobs='indirectJobs')
 </template>
 
 <script lang="ts">

@@ -298,6 +298,10 @@ const storeConfig: StoreOptions<RootState> = {
       Vue.set(state.jobs.byId, job.id, {
         ...state.jobs.byId[job.id],
         ...job,
+        direct: (
+          state.authenticatedUser?.id === job.organization_manager_id ||
+          state.authenticatedUser?.id === job.contractor_manager_id
+        )
       })
       if (!state.jobs.all.includes(job.id)) state.jobs.all.push(job.id)
     },
@@ -792,7 +796,7 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/jobs`,
         data: job,
       })
-      commit('ADD_JOB')
+      commit('ADD_JOB', data.job)
       return data
     },
 
@@ -1162,7 +1166,7 @@ axios.interceptors.response.use(
                 name: 'signIn'
               })
               break;
-              
+
             case 'VERIFY_BENEFICIAL_OWNERS':
               router.push({
                 name: 'settings',
