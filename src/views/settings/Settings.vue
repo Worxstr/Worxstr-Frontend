@@ -1,10 +1,10 @@
 <template lang="pug">
 v-container.pb-16
-  v-card.py-2.d-flex(
+  v-card.d-flex(
     rounded
     :class="{'flex-column': $vuetify.breakpoint.smAndDown}"
   )
-    v-tabs(
+    v-tabs.py-2(
       :vertical="$vuetify.breakpoint.mdAndUp"
       center-active
       :style='$vuetify.breakpoint.mdAndUp && `max-width: 200px`'
@@ -24,6 +24,8 @@ v-container.pb-16
       v-tab.justify-start(to='/settings/preferences')
         v-icon(left) mdi-palette
         | Preferences
+
+    v-divider(vertical)
 
     router-view.flex-grow-1
         
