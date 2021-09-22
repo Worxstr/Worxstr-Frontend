@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(v-if="loading" fluid)
+v-container(v-if="loading")
   v-card.pa-4
     v-skeleton-loader.py-2(type="image, image")
     v-skeleton-loader.py-2(type="sentences, sentences")
@@ -10,7 +10,7 @@ v-container(v-if="loading" fluid)
   )
 
 div(v-else)
-  v-container.approvals.mb-16(v-if="job" fluid)
+  v-container.approvals.mb-16(v-if="job")
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
     create-shift-dialog(
