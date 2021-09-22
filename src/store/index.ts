@@ -21,7 +21,6 @@ Vue.use(Vuex)
 // axios.defaults.baseURL = ''
 axios.defaults.withCredentials = true
 
-
 const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
   : process.env.VUE_APP_API_BASE_URL
@@ -44,7 +43,7 @@ interface RootState {
       [key: number]: User;
     };
   };
-clock: {
+  clock: {
     clocked: boolean;
     break: boolean;
     history: {
@@ -56,6 +55,7 @@ clock: {
     };
   };
   payments: {
+    beneficialOwnersCertified: boolean;
     balance: {
       value: number | null;
       currency: string;
@@ -133,6 +133,7 @@ const initialState = (): RootState => ({
     },
   },
   payments: {
+    beneficialOwnersCertified: false,
     balance: {
       value: null,
       currency: 'USD',
@@ -261,6 +262,9 @@ const storeConfig: StoreOptions<RootState> = {
         state.payments.timecards.all,
         state.payments.timecards.all.indexOf(timecardId)
       )
+    },
+    SET_BENEFICIAL_OWNERS_CERTIFIED(state, certified: boolean) {
+      state.payments.beneficialOwnersCertified = certified
     },
     ADD_FUNDING_SOURCE(state, fundingSource: FundingSource) {
       Vue.set(
@@ -657,6 +661,7 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/payments/accounts`,
       })
+      commit('SET_BENEFICIAL_OWNERS_CERTIFIED', data.certified_ownership)
       data.funding_sources.forEach((source: FundingSource) => {
         commit('ADD_FUNDING_SOURCE', source)
       })
