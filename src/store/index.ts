@@ -43,7 +43,7 @@ interface RootState {
       [key: number]: User;
     };
   };
-  clock: {
+clock: {
     clocked: boolean;
     break: boolean;
     history: {
@@ -1125,6 +1125,10 @@ const storeConfig: StoreOptions<RootState> = {
       return state.conversations.all.map((id: number) =>
         getters.conversation(id)
       )
+      .sort((c1: Conversation, c2: Conversation) => {
+        return (new Date(c2.messages[c2.messages.length - 1]?.timestamp)).getTime() -
+               (new Date(c1.messages[c1.messages.length - 1]?.timestamp)).getTime()
+      })
     },
   },
   modules: {},

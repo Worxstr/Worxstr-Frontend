@@ -8,7 +8,7 @@ v-app
 
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
-    :style="`padding-top: ${topPadding}px`"
+    :style="`margin-top: ${topMargin}px`"
   )
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
@@ -17,7 +17,7 @@ v-app
         mode="out-in",
         :duration="{ enter: 150, leave: 50 }"
       )
-        router-view#router-view(:style="`height: ${pageHeight}; padding-bottom: ${bottomPadding}px`")
+        router-view#router-view(:style="`height: ${pageHeight}; margin-bottom: ${bottomMargin}px`")
 
   worxstr-footer(v-if="showFooter")
 
@@ -103,11 +103,11 @@ export default class App extends Vue {
     )
   }
 
-  get topPadding() {
+  get topMargin() {
     return (this.mobileLayout && this.showFooter ? this.headerHeight : 0)
   }
 
-  get bottomPadding() {
+  get bottomMargin() {
     return this.safeAreaBottom + (this.mobileLayout ? this.headerHeight : 0)
   }
 }
