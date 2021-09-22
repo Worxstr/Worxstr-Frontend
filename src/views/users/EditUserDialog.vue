@@ -147,7 +147,7 @@ export default class EditUserDialog extends Vue {
   onOpened(opened: boolean) {
     if (!opened) return
 
-    if (!this.editMode) (this.$refs.form as HTMLFormElement).reset()
+    if (!this.editMode) (this.$refs.form as HTMLFormElement)?.reset()
 
     this.$store.dispatch('loadManagers')
     
