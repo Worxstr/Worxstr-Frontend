@@ -48,7 +48,7 @@ export default class CurrencyInput extends Vue {
   }
 
   getInput() {
-    return (this.$refs.input as any)?.$el.querySelector('input')
+    return (this.$refs.input as HTMLFormElement)?.$el.querySelector('input')
   }
 
   updateValue(value: string) {
