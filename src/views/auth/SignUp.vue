@@ -2,7 +2,7 @@
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
     
-    v-card.soft-shadow(width='505' style='overflow-y: auto')
+    v-card.soft-shadow(width='520' style='overflow-y: auto')
   
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5
@@ -14,10 +14,10 @@ div
 
             v-window-item(:value='0')
               .pa-1.d-flex.flex-column.flex-sm-row.justify-center
-                v-btn.pa-10(text @click="accountType = 'contractor'; step++")
+                v-btn.pa-6(text @click="accountType = 'contractor'; step++")
                   v-icon mdi-account
                   span.ml-3.text-h6 I'm a contractor
-                v-btn.pa-10(text :to="{ name: 'pricing' }")
+                v-btn.pa-6(text :to="{ name: 'pricing' }")
                   v-icon mdi-domain
                   span.ml-3.text-h6 I have a business
 

@@ -6,6 +6,7 @@ import router from '../router'
 
 import { Capacitor } from '@capacitor/core'
 import * as Plaid from '@/plugins/plaid'
+import { event } from 'vue-gtag'
 
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
@@ -534,24 +535,20 @@ const storeConfig: StoreOptions<RootState> = {
       commit('SET_NEXT_SHIFT', data.shift)
     },
 
-    async clockIn({ commit, state }, { code }) {
-      try {
-        const { data } = await axios({
-          method: 'POST',
-          url: `${baseUrl}/clock/clock-in`,
-          params: {
-            shift_id: state.shifts.next?.id,
-          },
-          data: {
-            code,
-          },
-        })
-        commit('ADD_CLOCK_EVENT', data.event)
-        commit('CLOCK_IN')
-        return data
-      } catch (err) {
-        return err
-      }
+    async clockIn({ commit, state }, code) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/clock/clock-in`,
+        params: {
+          shift_id: state.shifts.next?.id,
+        },
+        data: {
+          code,
+        },
+      })
+      commit('ADD_CLOCK_EVENT', data.event)
+      commit('CLOCK_IN')
+      return data
     },
 
     async clockOut({ commit, state }) {
@@ -1065,7 +1062,7 @@ const storeConfig: StoreOptions<RootState> = {
       return state.shifts.byId[id]
     },
     shifts: (state, getters) => {
-      return state.shifts.all.map((id: number) => getters.shift(id))
+      return state .shifts.all.map((id: number) => getters.shift(id))
     },
     workforce: (state) => {
       return state.workforce.map((userId: number) => state.users.byId[userId])
@@ -1138,6 +1135,20 @@ const store = new Vuex.Store<RootState>(storeConfig)
 
 export default store
 
+axios.interceptors.request.use(config => {
+  const url = config.url?.replace(/^.*\/\/[^/]+/, '') || '' // Get url without domain
+  console.log(url)
+  event(url, {
+    event_category: 'API request',
+    event_label: url,
+    value: config.url
+  })
+  return config
+}, error => {
+  return Promise.reject(error)
+})
+
+
 axios.interceptors.response.use(
   (response) => {
     return response
@@ -1169,22 +1180,20 @@ axios.interceptors.response.use(
               router.push({
                 name: 'signIn'
               })
-              break;
+              break
 
             case 'VERIFY_BENEFICIAL_OWNERS':
               router.push({
-                name: 'settings',
+                name: 'settings/payments',
                 params: {
                   verifyBeneficialOwners: 'true',
                 }
               })
-              break;
+              break
           }
         },
       }
     }
-
-    console.log({message, action})
 
     store.dispatch('showSnackbar', {
       text: message,

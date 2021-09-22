@@ -19,7 +19,7 @@ v-app
       )
         router-view#router-view(:style="`height: ${pageHeight}; margin-bottom: ${bottomMargin}px`")
 
-  worxstr-footer(v-if="showFooter")
+  worxstr-footer(v-if="isLanding")
 
   message-snackbar
 </template>
@@ -67,7 +67,7 @@ export default class App extends Vue {
     return !this.$route.meta.noSkeleton
   }
 
-  get showFooter() {
+  get isLanding() {
     return this.$route.meta.landing
   }
 
@@ -104,7 +104,9 @@ export default class App extends Vue {
   }
 
   get topMargin() {
-    return (this.mobileLayout && this.showFooter ? this.headerHeight : 0)
+    return (!this.mobileLayout && this.showHeader) ||
+           (this.isLanding && this.showHeader) ?
+           this.headerHeight : 0
   }
 
   get bottomMargin() {

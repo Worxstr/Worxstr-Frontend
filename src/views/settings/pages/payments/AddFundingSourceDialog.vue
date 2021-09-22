@@ -57,10 +57,14 @@ export default {
       accountName: [exists('You must enter a name for your account.')],
     },
   }),
+  watch: {
+    opened(opened) {
+      if (opened) this.$refs.form.reset()
+    }
+  },
   methods: {
     closeDialog() {
       this.$emit("update:opened", false)
-      this.$refs.form.reset()
     },
     async openPlaidAuth() {
       this.loading = true

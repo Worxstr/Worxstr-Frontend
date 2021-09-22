@@ -12,6 +12,7 @@
     :filled="filled"
     :outlined='outlined',
     :disabled='disabled'
+    :autofocus='autofocus'
   )
 </template>
 
@@ -35,6 +36,7 @@ export default class PhoneInput extends Vue {
   @Prop({ default: false }) readonly filled!: boolean
   @Prop({ default: false }) readonly outlined!: boolean
   @Prop({ default: false }) readonly disabled!: boolean
+  @Prop({ default: false }) readonly autofocus!: boolean
 
   rules: Function[] | undefined = phoneRulesOptional
 
