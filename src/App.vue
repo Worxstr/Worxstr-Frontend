@@ -8,7 +8,7 @@ v-app
 
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
-    :style="`margin-top: ${topMargin}px`"
+    :style="`padding-top: ${topMargin}px`"
   )
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
@@ -17,7 +17,7 @@ v-app
         mode="out-in",
         :duration="{ enter: 150, leave: 50 }"
       )
-        router-view#router-view(:style="`height: ${pageHeight}; margin-bottom: ${bottomMargin}px`")
+        router-view#router-view(:style="`height: ${pageHeight}; padding-bottom: ${bottomMargin}px`")
 
   worxstr-footer(v-if="isLanding")
 
