@@ -47,6 +47,12 @@ div
                 dense
                 v-if="accountType == 'contractor'"
               )
+              phone-input(
+                v-model="form.phone"
+                :required='true'
+                outlined
+                dense
+              )
               v-text-field(
                 label='Password'
                 type='password'
@@ -95,6 +101,7 @@ import {
   passwordMatches,
 } from '@/plugins/inputValidation'
 import Arrows from '@/components/Arrows.vue'
+import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import dwolla from '@/plugins/dwolla'
 
 @Component({
@@ -103,6 +110,7 @@ import dwolla from '@/plugins/dwolla'
   },
   components: {
     Arrows,
+    PhoneInput,
   },
 })
 export default class SignUp extends Vue {

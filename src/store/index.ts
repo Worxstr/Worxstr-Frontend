@@ -21,7 +21,6 @@ Vue.use(Vuex)
 // axios.defaults.baseURL = ''
 axios.defaults.withCredentials = true
 
-
 const baseUrl = Capacitor.isNativePlatform()
   ? 'https://dev.worxstr.com'
   : process.env.VUE_APP_API_BASE_URL
@@ -56,6 +55,7 @@ interface RootState {
     };
   };
   payments: {
+    beneficialOwnersCertified: boolean;
     balance: {
       value: number | null;
       currency: string;
@@ -133,6 +133,7 @@ const initialState = (): RootState => ({
     },
   },
   payments: {
+    beneficialOwnersCertified: false,
     balance: {
       value: null,
       currency: 'USD',
@@ -261,6 +262,9 @@ const storeConfig: StoreOptions<RootState> = {
         state.payments.timecards.all,
         state.payments.timecards.all.indexOf(timecardId)
       )
+    },
+    SET_BENEFICIAL_OWNERS_CERTIFIED(state, certified: boolean) {
+      state.payments.beneficialOwnersCertified = certified
     },
     ADD_FUNDING_SOURCE(state, fundingSource: FundingSource) {
       Vue.set(
@@ -657,6 +661,7 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/payments/accounts`,
       })
+      commit('SET_BENEFICIAL_OWNERS_CERTIFIED', data.certified_ownership)
       data.funding_sources.forEach((source: FundingSource) => {
         commit('ADD_FUNDING_SOURCE', source)
       })
@@ -1122,6 +1127,10 @@ const storeConfig: StoreOptions<RootState> = {
       return state.conversations.all.map((id: number) =>
         getters.conversation(id)
       )
+      .sort((c1: Conversation, c2: Conversation) => {
+        return (new Date(c2.messages[c2.messages.length - 1]?.timestamp)).getTime() -
+               (new Date(c1.messages[c1.messages.length - 1]?.timestamp)).getTime()
+      })
     },
   },
   modules: {},

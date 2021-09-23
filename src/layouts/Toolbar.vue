@@ -21,7 +21,10 @@
         v-if="$route.meta.landing"
       )
         v-avatar(tile, size="130")
-          img(src="@/assets/logos/logotype.svg", alt="Worxstr logo")
+          img(
+            :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
+            alt="Worxstr logo"
+          )
 
       breadcrumbs
 

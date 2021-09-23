@@ -9,21 +9,14 @@ v-container.pb-16
       center-active
       :style='$vuetify.breakpoint.mdAndUp && `max-width: 200px`'
     )
-      v-tab.justify-start(to='/settings/me')
-        v-icon(left) mdi-account
-        | Me
-
-      v-tab.justify-start(to='/settings/payments')
-        v-icon(left) mdi-cash-multiple
-        | Payments
-
-      v-tab.justify-start(to='/settings/security')
-        v-icon(left) mdi-lock
-        | Security
-
-      v-tab.justify-start(to='/settings/preferences')
-        v-icon(left) mdi-palette
-        | Preferences
+      v-tab.justify-start(
+        v-for='route in childRoutes'
+        :to='route.path'
+        :key='route.path'
+        v-if='shouldShowRoute(route)'
+      )
+        v-icon(left) {{ route.meta.icon }}
+        | {{ route.path | capitalize }}
 
     v-divider(vertical)
 
@@ -31,8 +24,9 @@ v-container.pb-16
         
 </template>
 
-<script>
+<script lang="ts">
 import { Vue, Component } from "vue-property-decorator"
+import { currentUserIs } from "@/definitions/User"
 
 @Component({
 	metaInfo: {
@@ -40,7 +34,18 @@ import { Vue, Component } from "vue-property-decorator"
   },
 })
 export default class Settings extends Vue {
+
+  get childRoutes() {
+    return this.$router.options.routes?.find(route => route.name === 'settings')?.children
+  }
+
+  shouldShowRoute(route: any) {
+    if (!route.meta.restrict) return true
+    return currentUserIs(...route.meta.restrict)
+  }
 }
+
+
 </script>
 
 <style lang="scss">

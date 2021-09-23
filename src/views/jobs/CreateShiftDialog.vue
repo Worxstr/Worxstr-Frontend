@@ -35,6 +35,18 @@ v-dialog(
           required
           label='Contractors'
         )
+          template(v-slot:item='{ active, item, attrs, on }')
+            v-list-item(v-on='on' v-bind='attrs' #default='{ active }')
+              v-list-item-action
+                v-checkbox(:input-value='active')
+              v-list-item-content
+                v-list-item-title
+                  v-row(no-gutters align='center')
+                    span(v-if='item.id > 0') {{ item | fullName }}
+                    span(v-else) Unassigned {{ -item.id }}
+                    v-spacer
+                    v-chip(small v-if='!item.direct && item.id > 0') {{ !item.direct && 'Indirect' }}
+
           template(v-slot:append-item)
             v-divider
             v-list-item(ripple, @click="addUnassignedContractor")
@@ -263,6 +275,12 @@ export default class CreateShiftDialog extends Vue {
   closeDialog() {
     this.shift = initialState()
     this.$emit('update:opened', false)
+  }
+
+  get contractorsSorted() {
+    return this.contractors.sort((a: User, b: User) => {
+      return (a.direct === b.direct) ? 0 : (a.direct ? -1 : 1)
+    })
   }
 
   contractorName(contractorId: number) {

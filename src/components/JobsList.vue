@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Job } from '@/definitions/Job.ts'
+import { Job } from '@/definitions/Job'
 import EditJobDialog from '@/views/jobs/EditJobDialog.vue'
 import CloseJobDialog from '@/views/jobs/CloseJobDialog.vue'
 

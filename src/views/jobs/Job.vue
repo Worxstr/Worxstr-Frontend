@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(v-if="loading" fluid)
+v-container(v-if="loading")
   v-card.pa-4
     v-skeleton-loader.py-2(type="image, image")
     v-skeleton-loader.py-2(type="sentences, sentences")
@@ -10,7 +10,7 @@ v-container(v-if="loading" fluid)
   )
 
 div(v-else)
-  v-container.approvals.mb-16(v-if="job" fluid)
+  v-container.approvals.mb-16(v-if="job")
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
     create-shift-dialog(
@@ -54,27 +54,28 @@ div(v-else)
       
       jobs-map(:jobs='[job]' :show-user-location='true')
 
-      v-card-text
-        p {{ job.address }}
-          br
-          | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
+      div
+        v-card-text
+          p {{ job.address }}
+            br
+            | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
 
-      v-layout.flex-column.flex-sm-row.justify-space-between
-        .flex-grow-1.px-5
-          p.text-subtitle-2.mb-1 Organization manager
-          p {{ job.organization_manager | fullName }}
+        v-layout.flex-column.flex-sm-row.justify-space-between
+          .flex-grow-1.px-5
+            p.text-subtitle-2.mb-1 Organization manager
+            p {{ job.organization_manager | fullName }}
 
-        .flex-grow-1.px-5
-          p.text-subtitle-2.mb-1 Contractor manager
-          p {{ job.contractor_manager | fullName }}
+          .flex-grow-1.px-5
+            p.text-subtitle-2.mb-1 Contractor manager
+            p {{ job.contractor_manager | fullName }}
 
-        .flex-grow-1.px-5
-          p.text-subtitle-2.mb-1 Consultant
-          p {{ job.consultant_name }}
+          .flex-grow-1.px-5
+            p.text-subtitle-2.mb-1 Consultant
+            p {{ job.consultant_name }}
 
-        .flex-grow-1.px-5
-          p.text-subtitle-2.mb-1 Consultant code
-          p {{ job.consultant_code }}
+          .flex-grow-1.px-5
+            p.text-subtitle-2.mb-1 Consultant code
+            p {{ job.consultant_code }}
 
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
@@ -92,6 +93,7 @@ div(v-else)
           //- span.text-subtitle-1.flex-grow-0
           p.d-flex.flex-column.mb-0.flex-grow-0.px-2
             span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ (shift.contractor ? shift.contractor : getContractor(shift.contractor_id)) | fullName }}
+            span.my-1.font-weight-medium(v-else) Unassigned
             span.my-1 {{ shift.site_location }}
 
           v-chip.mx-4.px-2.flex-grow-0(

@@ -33,6 +33,7 @@ import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
 import Settings from '@/views/settings/Settings.vue'
 import SettingsMe from "@/views/settings/pages/me/Me.vue"
+import SettingsOrganization from "@/views/settings/pages/organization/Organization.vue"
 import SettingsPayments from "@/views/settings/pages/payments/Payments.vue"
 import SettingsSecurity from "@/views/settings/pages/security/Security.vue"
 import SettingsPreferences from "@/views/settings/pages/preferences/Preferences.vue"
@@ -279,21 +280,42 @@ const routes = [
         name: 'settings/me',
         path: 'me',
         component: SettingsMe,
+        meta: {
+          icon: 'mdi-account',
+        }
+      },
+      {
+        name: 'settings/organization',
+        path: 'organization',
+        component: SettingsOrganization,
+        meta: {
+          icon: 'mdi-account-group',
+          restrict: [UserRole.OrganizationManager],
+        }
       },
       {
         name: 'settings/payments',
         path: 'payments',
         component: SettingsPayments,
+        meta: {
+          icon: 'mdi-cash-multiple',
+        }
       },
       {
         name: 'settings/security',
         path: 'security',
         component: SettingsSecurity,
+        meta: {
+          icon: 'mdi-lock',
+        }
       },
       {
         name: 'settings/preferences',
         path: 'preferences',
         component: SettingsPreferences,
+        meta: {
+          icon: 'mdi-palette',
+        }
       },
     ]
   },
