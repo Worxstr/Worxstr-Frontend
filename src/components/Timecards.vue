@@ -87,10 +87,10 @@
 
           v-expansion-panel-content
             //- .text-body-1
-            v-card-text.d-flex
+            v-card-text.d-flex(v-if="timecard.time_clocks && timecard.time_clocks.length")
               .flex-grow-1
                 p {{ timecard.time_clocks[0].time | date }}
-                p(v-if="timecard.time_clocks && timecard.time_clocks.length")
+                p
                   | {{ timecard.time_clocks[0].time | time }}
                   | -
                   | {{

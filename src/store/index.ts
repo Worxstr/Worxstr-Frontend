@@ -630,7 +630,9 @@ const storeConfig: StoreOptions<RootState> = {
         commit('REMOVE_TIMECARD', timecardId)
       })
       data.transfers.forEach((obj: { transfer: Transfer }) => {
-        commit('ADD_TRANSFER', { transfer: obj.transfer, prepend: true })
+        const transfer = obj.transfer
+        commit('ADD_TRANSFER', { transfer, prepend: true })
+        commit('ADD_TO_BALANCE', (-parseFloat(transfer?.amount?.value)))
       })
     },
 
