@@ -323,6 +323,7 @@ const storeConfig: StoreOptions<RootState> = {
       }
     },
     ADD_MANAGER(state, { type, manager }: { type: string; manager: User }) {
+      // TODO: Normalize this to users list, and keep only the user id for each manager object
       if (!state.managers[type].some((m: User) => m.id == manager.id)) {
         state.managers[type].push(manager)
       }
@@ -504,11 +505,11 @@ const storeConfig: StoreOptions<RootState> = {
       commit('ADD_USER', data)
     },
 
-    async updateContractor({ commit }, { contractorInfo, userId }) {
+    async updateContractor({ commit }, { newFields, userId }) {
       const { data } = await axios({
         method: 'PATCH',
         url: `${baseUrl}/users/contractors/${userId}`,
-        data: contractorInfo,
+        data: newFields,
       })
       commit('ADD_USER', data.event)
     },
