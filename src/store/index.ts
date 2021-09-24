@@ -381,7 +381,7 @@ const storeConfig: StoreOptions<RootState> = {
         return err
       }
     },
-    async signIn({ commit, dispatch }, credentials) {
+    async signIn({ commit, dispatch }, { email, password }) {
       try {
         const { data } = await axios({
           method: 'POST',
@@ -390,7 +390,8 @@ const storeConfig: StoreOptions<RootState> = {
             include_auth_token: true,
           },
           data: {
-            ...credentials,
+            email,
+            password,
             remember_me: true,
           },
         })
@@ -405,6 +406,7 @@ const storeConfig: StoreOptions<RootState> = {
         await dispatch('getAuthenticatedUser')
         router.push({ name: defaultRoute() })
         return data
+
       } catch (err) {
         commit('UNSET_AUTHENTICATED_USER')
         return err
