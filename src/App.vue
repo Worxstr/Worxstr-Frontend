@@ -8,8 +8,8 @@ v-app
 
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
+    :style="`padding-top: ${topMargin}px`"
   )
-    //- p pageHeight: {{pageHeight}} safeAreaTop: {{safeAreaTop}} safeAreaBottom: {{safeAreaBottom}}
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
         appear,
@@ -17,9 +17,9 @@ v-app
         mode="out-in",
         :duration="{ enter: 150, leave: 50 }"
       )
-        router-view#router-view(:style="`height: ${pageHeight}; padding-bottom: ${bottomPadding}px`")
+        router-view#router-view(:style="`height: ${pageHeight}; padding-bottom: ${bottomMargin}px`")
 
-  worxstr-footer(v-if="showFooter")
+  worxstr-footer(v-if="isLanding")
 
   message-snackbar
 </template>
@@ -67,12 +67,12 @@ export default class App extends Vue {
     return !this.$route.meta.noSkeleton
   }
 
-  get showFooter() {
+  get isLanding() {
     return this.$route.meta.landing
   }
 
   get headerHeight() {
-    return this.$vuetify.breakpoint.mdAndUp ? 64 : 56;
+    return !this.mobileLayout ? 64 : 56;
   }
   footerHeight = 56;
 
@@ -81,6 +81,10 @@ export default class App extends Vue {
     if (!this.$route.meta.fullHeight || this.$route.meta.noSkeleton) return "100%";
     // Full height, bottom nav hidden
     else return `calc(100vh - ${this.headerHeight + this.safeAreaTop + this.safeAreaBottom}px)`;
+  }
+  
+  get mobileLayout() {
+    return this.$vuetify.breakpoint.smAndDown
   }
 
   // Get safe area values from css definitions
@@ -99,8 +103,14 @@ export default class App extends Vue {
     )
   }
 
-  get bottomPadding() {
-    return this.safeAreaBottom + this.headerHeight
+  get topMargin() {
+    return (!this.mobileLayout && this.showHeader) ||
+           (this.isLanding && this.showHeader) ?
+           this.headerHeight : 0
+  }
+
+  get bottomMargin() {
+    return this.safeAreaBottom + (this.mobileLayout ? this.headerHeight : 0)
   }
 }
 </script>

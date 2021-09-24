@@ -16,7 +16,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title Creating shift
+        v-toolbar-title.text-h6 Creating shift
 
       v-divider
 
@@ -25,16 +25,28 @@ v-dialog(
         //- Contractor selector
         v-select(
           autofocus
-          v-model="shift.contractor_ids",
-          :items="contractors",
-          :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)",
-          :item-value="'id'",
-          outlined,
+          v-model='shift.contractor_ids'
+          :items='contractors'
+          :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)"
+          item-value='id'
+          outlined
           multiple
-          dense,
-          required,
-          label="Contractors"
+          dense
+          required
+          label='Contractors'
         )
+          template(v-slot:item='{ active, item, attrs, on }')
+            v-list-item(v-on='on' v-bind='attrs' #default='{ active }')
+              v-list-item-action
+                v-checkbox(:input-value='active')
+              v-list-item-content
+                v-list-item-title
+                  v-row(no-gutters align='center')
+                    span(v-if='item.id > 0') {{ item | fullName }}
+                    span(v-else) Unassigned {{ -item.id }}
+                    v-spacer
+                    v-chip(small v-if='!item.direct && item.id > 0') {{ !item.direct && 'Indirect' }}
+
           template(v-slot:append-item)
             v-divider
             v-list-item(ripple, @click="addUnassignedContractor")
@@ -263,6 +275,12 @@ export default class CreateShiftDialog extends Vue {
   closeDialog() {
     this.shift = initialState()
     this.$emit('update:opened', false)
+  }
+
+  get contractorsSorted() {
+    return this.contractors.sort((a: any, b: any) => {
+      return (a.direct === b.direct) ? 0 : (a.direct ? -1 : 1)
+    })
   }
 
   contractorName(contractorId: number) {

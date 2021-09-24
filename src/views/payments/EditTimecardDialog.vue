@@ -52,15 +52,15 @@ v-dialog(
 </template>
 
 <script>
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-import TimeInput from "@/components/inputs/TimeInput.vue";
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import TimeInput from '@/components/inputs/TimeInput.vue'
 
-dayjs.extend(duration);
+dayjs.extend(duration)
 
 export default {
   components: { TimeInput },
-  name: "approvals",
+  name: 'approvals',
   data: () => ({
     loading: false,
     form: {
@@ -74,73 +74,77 @@ export default {
   }),
   props: {
     opened: Boolean,
-    timecard: Object,
+    timecardId: Object,
+  },
+  computed: {
+    timecard() {
+      return this.$store.getters.timecard(this.timecardId)
+    },
   },
   watch: {
-    timecard: function (newVal, oldVal) {
-      this.calculateFormValues();
+    timecardId: function() {
+      this.calculateFormValues()
     },
-    opened(newVal, oldVal) {
-      if (newVal == true) this.calculateFormValues();
+    opened(newVal) {
+      if (newVal == true) this.calculateFormValues()
     },
   },
   methods: {
     closeDialog() {
-      this.$emit("update:opened", false);
+      this.$emit('update:opened', false)
     },
 
     calculateFormValues() {
-      const events = this.timecard.time_clocks;
+      const events = this.timecard.time_clocks
 
-      this.form.data.timeIn = Object.assign({}, events[0]);
-      this.form.data.timeOut = Object.assign({}, events[events.length - 1]);
+      this.form.data.timeIn = Object.assign({}, events[0])
+      this.form.data.timeOut = Object.assign({}, events[events.length - 1])
 
       const breakEvents = events.slice(1, events.length - 1),
-        breaks = [];
+            breaks = []
 
       for (let i = 0; i < breakEvents.length; i += 2) {
         breaks.push({
           start: breakEvents[i],
           end: breakEvents[i + 1],
-        });
+        })
       }
-      this.form.data.breaks = breaks;
+      this.form.data.breaks = breaks
     },
 
     timeDiff(timeIn, timeOut) {
-      timeIn = dayjs(timeIn);
-      timeOut = dayjs(timeOut);
+      timeIn = dayjs(timeIn)
+      timeOut = dayjs(timeOut)
 
       const duration = dayjs.duration(timeOut.diff(timeIn)),
-        hours = duration.format("H"),
-        minutes = duration.format("m");
+        hours = duration.format('H'),
+        minutes = duration.format('m')
 
-      return `${hours} hour${hours == 1 ? "" : "s"}, ${minutes} minute${
-        minutes == 1 ? "" : "s"
-      }`;
+      return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${
+        minutes == 1 ? '' : 's'
+      }`
     },
     async updateTimecard() {
-      const newTimeclockEvents = [];
+      const newTimeclockEvents = []
 
-      newTimeclockEvents.push(this.form.data.timeIn);
+      newTimeclockEvents.push(this.form.data.timeIn)
       this.form.data.breaks.forEach((breakItem) => {
-        newTimeclockEvents.push(breakItem.start);
-        newTimeclockEvents.push(breakItem.end);
-      });
-      newTimeclockEvents.push(this.form.data.timeOut);
+        newTimeclockEvents.push(breakItem.start)
+        newTimeclockEvents.push(breakItem.end)
+      })
+      newTimeclockEvents.push(this.form.data.timeOut)
 
       this.loading = true
       try {
-        await this.$store.dispatch("updateTimecard", {
+        await this.$store.dispatch('updateTimecard', {
           timecardId: this.timecard.id,
           events: newTimeclockEvents,
         })
         this.closeDialog()
-      }
-      finally {
+      } finally {
         this.loading = false
       }
     },
   },
-};
+}
 </script>

@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import dayjs from 'dayjs'
+
 import { User } from '@/definitions/User'
 import { Conversation } from '@/definitions/Messages'
 
 Vue.filter('capitalize', (value: string) => {
+	if (!value) return ''
 	return value.charAt(0).toUpperCase() + value.slice(1);
 })
 
@@ -15,17 +17,39 @@ Vue.filter('numberFormat', (num: number, precision: number) => {
 	).toLocaleString('en')
 })
 
-Vue.filter('date', (value: (string|number|Date), format: string) => {
+export const date = (value: (string|number|Date), format?: string) => {
 	return dayjs(value).format(format || 'YYYY-MM-DD')
+}
+Vue.filter('date', date)
+
+export const time = (value: (string|number|Date), format?: string) => {
+	return dayjs(value).format(format || 'h:mm a')
+}
+Vue.filter('time', time)
+
+Vue.filter('dateOrTime', (value: (string|number|Date)) => {
+	console.log(new Date(value).getTime(), Date.now())
+	if (new Date(value).getTime() < Date.now() - (1000 * 60 * 60 * 24)) {
+		return date(value)
+	}
+	return time(value)
 })
 
-Vue.filter('time', (value: (string|number|Date), format: string) => {
-	return dayjs(value).format(format || 'h:mm a')
+Vue.filter('currency', (value: string) => {
+	return '$' + parseFloat(value).toFixed(2)
 })
 
 // 1234567890 -> (123) 456-7890
 Vue.filter('phone', (value: string) => {
+	if (!value || !value.length) return ''
 	return `(${value.substring(0,3)}) ${value.substring(3,6)}-${value.substring(6,10)}`
+})
+
+Vue.filter('distance', (value: number) => {
+	if (value < 1000) {
+		return value + ' m'
+	}
+	return (value / 1000).toFixed(1) + ' km'
 })
 
 Vue.filter('snakeToSpace', (value: string) => {

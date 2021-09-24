@@ -1,11 +1,5 @@
 <template lang="pug">
-v-container(fluid v-if="loading && !(directJobs.length || indirectJobs.length)")
-  v-skeleton-loader.my-4(type="heading")
-  v-skeleton-loader(
-    type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
-  )
-
-v-container.approvals(fluid v-else)
+div
   edit-job-dialog(:opened.sync="createJobDialog", :create="true")
 
   portal(to="toolbarActions")
@@ -16,51 +10,45 @@ v-container.approvals(fluid v-else)
       @click="openCreateJobDialog",
       v-if="userIsOrgManager"
     )
-      v-icon(left) mdi-plus
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
       span(v-if='!$vuetify.breakpoint.xs') Add job
 
-  .mb-5
-    v-card.soft-shadow(v-if="directJobs.length")
-      v-list
-        v-list-item(
-          v-for="job in directJobs",
-          :key="job.id",
-          link,
-          :to="{ name: 'job', params: { jobId: job.id } }"
-        )
-          v-list-item-content
-            v-list-item-title(v-text="job.name")
-              v-list-item-subtitle(v-text="job.address")
+  v-container(fluid v-if="loading && !(directJobs.length || indirectJobs.length)")
+    v-skeleton-loader.my-4(type="heading")
+    v-skeleton-loader(
+      type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
+    )
 
-    .d-flex.flex-column.justify-center(v-else)
-      v-icon.text-h2.ma-5 mdi-calendar-check
-      p.text-center.text-body-1 No jobs yet.
+  .d-flex.flex-column.justify-center(v-else-if='!allJobs.length')
+    v-icon.text-h2.ma-5 mdi-calendar-check
+    p.text-center.text-body-1 No jobs yet.
 
-  .mb-5(v-if="indirectJobs.length")
-    v-toolbar(flat, color="transparent")
-      v-toolbar-title.text-h6 Subordinate jobs
+  v-container.approvals(v-else)
+        
+    v-card.mb-3.d-flex.flex-column.soft-shadow
+      jobs-map(:jobs='allJobs')
+      jobs-list(:jobs='directJobs')
 
-    v-card
-      v-list
-        v-list-item(
-          v-for="job in indirectJobs",
-          :key="job.id",
-          link,
-          :to="{ name: 'job', params: { jobId: job.id } }"
-        )
-          v-list-item-content
-            v-list-item-title(v-text="job.name")
-              v-list-item-subtitle(v-text="job.address")
+    .mb-5(v-if="indirectJobs.length")
+      v-toolbar(flat, color="transparent")
+        v-toolbar-title.text-h6 Other jobs
+
+      v-card.soft-shadow
+        jobs-list(:jobs='indirectJobs')
 </template>
 
 <script lang="ts">
-import EditJobDialog from './EditJobDialog.vue'
-import { userIs, UserRole } from '@/definitions/User'
-import { Job } from '@/definitions/Job'
 import { Vue, Component } from 'vue-property-decorator'
 
+import { currentUserIs, UserRole } from '@/definitions/User'
+import { Job } from '@/definitions/Job'
+
+import EditJobDialog from './EditJobDialog.vue'
+import JobsMap from '@/components/JobsMap.vue'
+import JobsList from '@/components/JobsList.vue'
+
 @Component({
-  components: { EditJobDialog },
+  components: { EditJobDialog, JobsList, JobsMap },
 })
 export default class JobsView extends Vue {
 
@@ -90,8 +78,12 @@ export default class JobsView extends Vue {
     return this.$store.getters.indirectJobs
   }
 
+  get allJobs(): Job[] {
+    return [...this.directJobs, ...this.indirectJobs]
+  }
+
   get userIsOrgManager() {
-    return this.$store.state.authenticatedUser ? userIs(UserRole.OrganizationManager, this.$store.state.authenticatedUser) : false
+    return currentUserIs(UserRole.OrganizationManager)
   }
 
   openCreateJobDialog() {

@@ -15,7 +15,10 @@ v-navigation-drawer#nav.d-flex.flex-column(
   v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
     a(@click="mini = !mini", text)
       v-avatar.mb-1(tile, :size="mini ? 40 : 130")
-        img(:src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)", alt="Worxstr logo")
+        img(
+          :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
+          alt="Worxstr logo"
+        )
 
     v-spacer
 
@@ -25,7 +28,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
   v-divider
 
   //- Primary items
-  v-list.pt-0(dense)
+  v-list.py-0(dense)
     v-tooltip(
       v-for="link in primaryNavLinks",
       :key="link.text",
@@ -50,7 +53,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
   //- Secondary items
   template(v-slot:append)
-    v-list.secondary-nav-items(dense)
+    v-list.secondary-nav-items.py-0(dense)
       v-divider
 
       v-tooltip(
@@ -64,7 +67,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
           v-list-item.py-1(
             link,
             active-class="primary--text",
-            :to="link.to ? { name: link.to } : null",
+            :to="link.to ? link.to : null",
             @click="() => (link.click ? link.click() : '')"
           v-on="on",
           v-bind="attrs"
@@ -127,13 +130,20 @@ export default class NavDrawer extends Vue {
     {
       text: "Settings",
       icon: "mdi-cog",
-      to: "settings",
+      to: {
+        name: 'settings'
+      }
     },
-    // {
-    //   text: "Support",
-    //   icon: "mdi-help-circle-outline",
-    //   to: "support",
-    // },
+    {
+      text: 'Support',
+      icon: 'mdi-help-circle-outline',
+      to: {
+        name: 'contact',
+        params: {
+          option: 'support'
+        }
+      }
+    },
     {
       text: "Sign out",
       icon: "mdi-logout-variant",

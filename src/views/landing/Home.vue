@@ -4,7 +4,7 @@
   v-sheet.arrow-container
     arrows(type='background' style='position: absolute')
     
-    v-container.px-10
+    v-container.px-10(:class="{'mt-9': $vuetify.breakpoint.smAndUp}")
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
@@ -22,10 +22,10 @@
 
           .d-flex.mt-6.align-center
             p.mb-0.mr-2.font-weight-medium Get the app:
+            v-btn(icon href='https://testflight.apple.com/join/hvQXJsYe' target='_blank')
+              v-icon mdi-apple
             v-btn(icon href='https://play.google.com/store/apps/details?id=com.worxstr.worxstr' target='_blank')
               v-icon mdi-google-play
-            //- v-btn(icon)
-            //-   v-icon mdi-apple
 
           v-spacer(style='height: 70px')
 
@@ -44,7 +44,7 @@
     delimiter-icon="mdi-circle-medium",
     :dark="true",
   )
-    v-carousel-item(v-for='feature in carousel')
+    v-carousel-item(v-for='(feature, i) in carousel' :key='i')
       v-sheet(:dark='feature.dark', height='100%' :class='`gradient-${feature.gradient}`')
 
         v-row.jumbo.carousel-content.flex-column.flex-md-row.jumbo.d-flex.align-center.justify-center(:class="feature.reverse ? 'flex-md-row-reverse' : ''")
@@ -132,6 +132,7 @@
             text
             :data-supplement='{num_contractors: this.calculator.contractors, num_managers: this.calculator.managers}'
             :show-manager-contractor-fields='false'
+            type='sales'
           )
 </template>
 

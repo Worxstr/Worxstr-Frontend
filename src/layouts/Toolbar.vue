@@ -5,7 +5,7 @@
       outlined
       elevate-on-scroll
       :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
-      :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-5'"
+      :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
       :class="$route.meta.landing ? 'landing' : 'app'"
     )
       v-btn(
@@ -21,23 +21,26 @@
         v-if="$route.meta.landing"
       )
         v-avatar(tile, size="130")
-          img(src="@/assets/logos/logotype.svg", alt="Worxstr logo")
+          img(
+            :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
+            alt="Worxstr logo"
+          )
 
       breadcrumbs
 
       v-spacer
 
-      portal-target(name="toolbarActions")
+      portal-target.d-flex(name="toolbarActions")
 
       div(v-if="$route.meta.landing")
         v-btn(v-if='$vuetify.breakpoint.xs' icon @click='menu = true')
           v-icon mdi-menu
         div(v-else)
-          v-btn(v-for="link in links", text, :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
+          v-btn(v-for="(link, i) in links" :key='i' text :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
 
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
-      v-list.mobile-nav-items(nav)
-        v-list-item(v-for="link in links", text, :to="link.to" link)
+      v-list.mobile-nav-items.pt-2(nav)
+        v-list-item(v-for="(link, i) in links" :key='i' text :to="link.to" link)
           v-list-item-content
             v-list-item-title {{ link.text }}
 </template>
