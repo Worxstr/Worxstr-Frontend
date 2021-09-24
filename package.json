@@ -17,6 +17,7 @@
     "@capacitor/geolocation": "^1.0.0",
     "@types/socket.io": "^2.1.13",
     "axios": "^0.21.1",
+    "capacitor-native-biometric": "^3.0.3",
     "core-js": "^3.8.2",
     "dayjs": "^1.10.1",
     "dwolla-v2": "^3.2.0",

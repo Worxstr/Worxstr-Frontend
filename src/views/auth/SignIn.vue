@@ -36,43 +36,43 @@ div
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>
 
-<script>
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
 import { emailRules, passwordRules } from '@/plugins/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 
-export default {
-  name: "signIn",
+@Component({
   metaInfo: {
     title: 'Sign in',
   },
   components: {
     Arrows,
   },
-  data: () => ({
-    form: {
-      email: "",
-      password: "",
-    },
-    isValid: false,
-    emailRules,
-    passwordRules,
-    loading: false,
-  }),
+})
+export default class SignIn extends Vue {
+
+  form = {
+    email: '',
+    password: '',
+  }
+  isValid = false
+  loading = false
+  emailRules = emailRules
+  passwordRules = passwordRules
+
   mounted() {
     if (this.$route.params.email) {
       this.form.email = this.$route.params.email
     }
-  },
-  methods: {
-    async signIn() {
-      this.loading = true;
-      try {
-        await this.$store.dispatch("signIn", this.form);
-      }
-      finally {
-        this.loading = false;
-      }
-    },
-  },
-};
+  }
+
+  async signIn() {
+    this.loading = true
+    try {
+      await this.$store.dispatch('signIn', this.form)
+    } finally {
+      this.loading = false
+    }
+  }
+}
 </script>
