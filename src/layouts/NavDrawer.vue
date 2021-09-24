@@ -53,7 +53,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
   //- Secondary items
   template(v-slot:append)
-    v-list.secondary-nav-items.py-0(dense)
+    v-list.secondary-nav-items.pt-0(dense)
       v-divider
 
       v-tooltip(

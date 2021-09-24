@@ -16,8 +16,6 @@ import { Timecard, FundingSource, Transfer } from '@/definitions/Payments'
 import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
 
-
-
 Vue.use(Vuex)
 
 // axios.defaults.baseURL = ''
@@ -1179,6 +1177,16 @@ axios.interceptors.response.use(
     } else {
       const errorList = error.response.data.response.errors
       message = errorList[Object.keys(errorList)[0]][0]
+    }
+
+    // When we receive a 401 from the API, send them to the sign in page
+    // TODO: This can lead to unexpected results, like if they get a 401 after
+    // TODO: entering an incorrect consultant code. We can remove this after we have
+    // TODO: persistant auth working correctly.
+    if (error.response.status === 401) {
+      router.push({
+        name: 'signIn',
+      }) 
     }
     
     let action
