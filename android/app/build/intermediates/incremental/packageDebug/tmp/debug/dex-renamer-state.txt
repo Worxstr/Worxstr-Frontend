@@ -1,4 +1,4 @@
-#Fri Sep 24 14:57:52 EDT 2021
+#Fri Sep 24 15:53:54 EDT 2021
 base.2=C\:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\13\\classes.dex
 base.1=C\:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\11\\classes.dex
 base.0=C\:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
