@@ -23,9 +23,10 @@ div
             :rules="passwordRules"
             outlined
             dense
-            hide-details
+            :hide-details='biometricsAvailable'
           )
           v-checkbox(
+            v-if='biometricsAvailable'
             v-model='form.useBiometrics'
             label='Use biometrics for future sign-ins'
           )
@@ -66,12 +67,12 @@ export default class SignIn extends Vue {
   loading = false
   emailRules = emailRules
   passwordRules = passwordRules
+  biometricsAvailable = false
 
   mounted() {
     if (this.$route.params.email) {
       this.form.email = this.$route.params.email
     }
-
     this.loadCredentialsFromBiometrics()
   }
 
@@ -81,7 +82,7 @@ export default class SignIn extends Vue {
       const data = await this.$store.dispatch('signIn', this.form)
 
       // TODO: Find better way to determine login success
-      if (data.response.user) {
+      if (data?.response?.user) {
         const result: AvailableResult = await NativeBiometric.isAvailable()
 
         console.log(result)
@@ -109,6 +110,8 @@ export default class SignIn extends Vue {
     const biometricsAvailable = result.isAvailable
 
     if (biometricsAvailable) {
+      this.biometricsAvailable = true
+
       // Get user's credentials
       const credentials: Credentials = await NativeBiometric.getCredentials({
         server: 'worxstr.com',

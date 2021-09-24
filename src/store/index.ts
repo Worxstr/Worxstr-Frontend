@@ -16,13 +16,15 @@ import { Timecard, FundingSource, Transfer } from '@/definitions/Payments'
 import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
 
+
+
 Vue.use(Vuex)
 
 // axios.defaults.baseURL = ''
 axios.defaults.withCredentials = true
-
+// TODO: If using capacitor production, we need to be able to determine if the user is testing or using prod database
 const baseUrl = Capacitor.isNativePlatform()
-  ? 'https://dev.worxstr.com'
+  ? (process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : process.env.VUE_APP_API_BASE_URL)
   : process.env.VUE_APP_API_BASE_URL
 
 interface RootState {
