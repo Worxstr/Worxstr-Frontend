@@ -8,7 +8,7 @@ v-app
 
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
-    :style="`padding-top: ${topMargin}px`"
+    :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
@@ -17,7 +17,10 @@ v-app
         mode="out-in",
         :duration="{ enter: 150, leave: 50 }"
       )
-        router-view#router-view(:style="`height: ${pageHeight}; padding-bottom: ${bottomMargin}px`")
+        router-view#router-view(:style="`height: ${pageHeight};`")
+        
+        //- For some dumbass reason this computed value won't recalculate unless I have this here
+        div(style='display: none') {{ safeAreaTop }}
 
   worxstr-footer(v-if="isLanding")
 
@@ -54,6 +57,23 @@ import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 export default class App extends Vue {
 
   drawer = false
+  stylesLoaded = false
+
+  // Wait for external styles to load to compute safe areas
+  created() {
+    window.addEventListener('load', () => {
+      this.stylesLoaded = true
+    })
+    // Sometimes that doesn't work. So for the next 8 seconds we will recompute the value
+    // This is the most bullshit way to do this but it works
+    for (let i = 0; i < 13; i++) {
+      setTimeout(() => {
+        console.log(2 ** i)
+        this.stylesLoaded = false
+        this.stylesLoaded = true
+      }, 2 ** i)
+    }
+  }
 
   get authenticatedUser(): User {
     return this.$store.state.authenticatedUser;
@@ -68,10 +88,11 @@ export default class App extends Vue {
   }
 
   get isLanding() {
-    return this.$route.meta.landing
+    return !!this.$route.meta.landing
   }
 
   get headerHeight() {
+    if (!this.showHeader) return 0
     return !this.mobileLayout ? 64 : 56;
   }
   footerHeight = 56;
@@ -89,6 +110,7 @@ export default class App extends Vue {
 
   // Get safe area values from css definitions
   get safeAreaTop() {
+    if (!this.stylesLoaded) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
         .getPropertyValue("--sat")
@@ -96,6 +118,7 @@ export default class App extends Vue {
     )
   }
   get safeAreaBottom() {
+    if (!this.stylesLoaded || this.$route.meta.bleedSafeAreaBottom) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
         .getPropertyValue("--sab")
@@ -104,13 +127,15 @@ export default class App extends Vue {
   }
 
   get topMargin() {
-    return (!this.mobileLayout && this.showHeader) ||
-           (this.isLanding && this.showHeader) ?
-           this.headerHeight : 0
+    if (!this.mobileLayout || this.isLanding) {
+      return this.headerHeight + this.safeAreaTop
+    }
+    
+    return this.safeAreaTop
   }
 
   get bottomMargin() {
-    return this.safeAreaBottom + (this.mobileLayout ? this.headerHeight : 0)
+    return this.safeAreaBottom + (this.isLanding ? 0 : this.headerHeight)
   }
 }
 </script>

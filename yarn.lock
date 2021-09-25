@@ -860,20 +860,20 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@capacitor/android@^3.1.2":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-3.1.2.tgz#b9f42fcbfb31639575cd90b63754e9ec526d434d"
-  integrity sha512-WF2E2jWxO3EBl8Y3aTAa8PHwMZGiAl9pdqvJaEUUhbbovXe0UxAuG4n0mfci4ZI6dD8gannQ2peoZ74vJ0Gr3Q==
+"@capacitor/android@^3.0.0-rc.4":
+  version "3.0.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-3.0.0-rc.4.tgz#e492735f65f36f2fc64e60349d1569628325d967"
+  integrity sha512-OdopcFlOAXXu+zF0FXGq3NwfFKeG1/LJDVmWApzmxTAxw8Yi2jP3XaPq5ZUsdFx9jmLLvAW6z9r9xG08HgGpQA==
 
 "@capacitor/app@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@capacitor/app/-/app-1.0.2.tgz#920dbf7055aa8ba060932d6e8dcac6f8bbc821af"
   integrity sha512-P9PInUnUdkiqYk+7wzd51Oe6AzJ4KyKDRFVebDMGo7UgHFuK2ogDTDLabrv9XQUV1Zk2tXvpEoGmw46dd+2Img==
 
-"@capacitor/cli@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@capacitor/cli/-/cli-3.0.0.tgz#ce2defddbf6ecd40236f8cdfba62a0af84147606"
-  integrity sha512-WTU1PqinYSl8jibmWgQBnlHsXZmkYx2BTXtczlKUrZuiCm+He90qFEA2Fmf2uolqurpLWNnj/kfrACIZ/Sfr2Q==
+"@capacitor/cli@^3.0.0-rc.4":
+  version "3.0.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@capacitor/cli/-/cli-3.0.0-rc.4.tgz#f581992efd88f238f5503495c1a1ae86201565e4"
+  integrity sha512-tJeDzRIZ18HWhcEPtqZ5vv/lBN5led1q2WPTGOsQ30pk8aMmmp0IyggoOwbzUdn2oBQQqdF5sn3QwHTr0JogwA==
   dependencies:
     "@ionic/cli-framework-output" "^2.2.1"
     "@ionic/utils-fs" "^3.1.5"
@@ -892,27 +892,34 @@
     tslib "^2.1.0"
     xml2js "^0.4.23"
 
-"@capacitor/core@^3.0.0":
+"@capacitor/core@3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-3.0.0.tgz#c990688d838d523d6d473281b8a74e6b83b187d5"
   integrity sha512-JmKE6QEayo8MqWcApwMP5YFimpVb2mcIEHBwgP/P9nSAOxOcbdpJyd9HhBt5pzZAE1MBngPADWWwZLrdNSjCnA==
   dependencies:
     tslib "^2.1.0"
 
-"@capacitor/dialog@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@capacitor/dialog/-/dialog-1.0.0.tgz#2af3151086099e89983f6274db9eef525ecff7ac"
-  integrity sha512-MsSS4mUx2BIfsQMe6XM4jVVeRpl2OuTsktdSm9dfKXM1PysTqXt+mfDvt8kmS1ahHvWb0+5cO9MuLkAcFWGOCA==
+"@capacitor/core@^3.0.0-rc.4":
+  version "3.0.0-rc.4"
+  resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-3.0.0-rc.4.tgz#d2980a6d54f9692e5632093b21205bbaf0c2f3c2"
+  integrity sha512-9KN7WxU4eKdalS+8j+HembO73Bu738TMbQQX0Mpcco5wFCfsK83jUi5rZt3w3iTM1DGZ8w/WWQluQQnODtSdXg==
+  dependencies:
+    tslib "^2.1.0"
+
+"@capacitor/dialog@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@capacitor/dialog/-/dialog-1.0.3.tgz#00aade0cec777bbf8796b4bac3879324c82304b3"
+  integrity sha512-iktIT6tFkvYQVjH4Uoxv9bOe6cJipDtJaw3uqgnx35aOLGu/DraUlMq+XEGcbl+twRSmT9d6pvqJ2dWKwewqNA==
 
 "@capacitor/geolocation@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@capacitor/geolocation/-/geolocation-1.0.0.tgz#672b7ce0ef359aefaba07cf5aa8df67f42dd8a16"
   integrity sha512-ojhwwJuEq00yKesZDK1SZKQslVXqGmzgxDQymvTMSKJs5WJprgsbHEyNES8fT5FeistRjybr/es0dfv8Q/g1rg==
 
-"@capacitor/ios@^3.2.2":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-3.2.2.tgz#0417cf89df23f651c6a1e20a8fb98294a918ce1f"
-  integrity sha512-Eq17Y+UDHFmYGaZcObvxHAcHw0fF9TCBAg1f5f6qdV8ab3cKKEUB9xMvoCSZAueBfxFARrD18TsZJKoxh2YsLA==
+"@capacitor/ios@^3.2.3":
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-3.2.3.tgz#e8b9a34361ace5ef870b4852d690e04f6afd14da"
+  integrity sha512-HGuCf9CnHdpeCBU8grgaPxlF20gIs6R5UhngdLbUKc1ULj6EtfOFxfH6ptbdJ/rIuZ9a8ADlszFaN4CGl5P8Mg==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -2680,6 +2687,13 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001165:
   version "1.0.30001170"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001170.tgz"
   integrity sha512-Dd4d/+0tsK0UNLrZs3CvNukqalnVTRrxb5mcQm8rHL49t7V5ZaTygwXkrq+FB+dVDf++4ri8eJnFEJAB8332PA==
+
+capacitor-native-biometric@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/capacitor-native-biometric/-/capacitor-native-biometric-3.0.3.tgz#450881dc6e11ccfda3c9088abb519bca06ff9ef3"
+  integrity sha512-ewMxvMPZPAJH/5CFmezNUDOTS0pSP9sMLkM7bhxUBeSomYOdWiz42dN+gETCFSz7XrCfg+xPkN5tDHZekgy5lw==
+  dependencies:
+    "@capacitor/core" "3.0.0"
 
 case-sensitive-paths-webpack-plugin@^2.3.0:
   version "2.3.0"

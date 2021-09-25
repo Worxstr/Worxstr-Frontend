@@ -20,9 +20,9 @@ Vue.use(Vuex)
 
 // axios.defaults.baseURL = ''
 axios.defaults.withCredentials = true
-
+// TODO: If using capacitor production, we need to be able to determine if the user is testing or using prod database
 const baseUrl = Capacitor.isNativePlatform()
-  ? 'https://dev.worxstr.com'
+  ? (process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : process.env.VUE_APP_API_BASE_URL)
   : process.env.VUE_APP_API_BASE_URL
 
 interface RootState {
@@ -381,7 +381,7 @@ const storeConfig: StoreOptions<RootState> = {
         return err
       }
     },
-    async signIn({ commit, dispatch }, credentials) {
+    async signIn({ commit, dispatch }, { email, password }) {
       try {
         const { data } = await axios({
           method: 'POST',
@@ -390,7 +390,8 @@ const storeConfig: StoreOptions<RootState> = {
             include_auth_token: true,
           },
           data: {
-            ...credentials,
+            email,
+            password,
             remember_me: true,
           },
         })
@@ -405,6 +406,7 @@ const storeConfig: StoreOptions<RootState> = {
         await dispatch('getAuthenticatedUser')
         router.push({ name: defaultRoute() })
         return data
+
       } catch (err) {
         commit('UNSET_AUTHENTICATED_USER')
         return err
@@ -1175,6 +1177,16 @@ axios.interceptors.response.use(
     } else {
       const errorList = error.response.data.response.errors
       message = errorList[Object.keys(errorList)[0]][0]
+    }
+
+    // When we receive a 401 from the API, send them to the sign in page
+    // TODO: This can lead to unexpected results, like if they get a 401 after
+    // TODO: entering an incorrect consultant code. We can remove this after we have
+    // TODO: persistant auth working correctly.
+    if (error.response.status === 401) {
+      router.push({
+        name: 'signIn',
+      }) 
     }
     
     let action

@@ -69,6 +69,7 @@ const routes = [
     meta: {
       noSkeleton: true,
       fullHeight: true,
+      bleedSafeAreaBottom: true,
     }
   },
   {
@@ -337,7 +338,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log({to,from,next})
   if (to.meta.restrict && !currentUserIs(...to.meta.restrict)) {
     if (!isAuthenticated()) {
       next({ name: 'signIn' })
