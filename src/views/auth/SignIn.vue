@@ -76,16 +76,17 @@ export default class SignIn extends Vue {
     this.loadCredentialsFromBiometrics()
   }
 
-  async signIn() {
+  async signIn(email?: string, password?: string) {
     this.loading = true
     try {
-      const data = await this.$store.dispatch('signIn', this.form)
+      const data = await this.$store.dispatch('signIn', (email && password) ? {
+        email,
+        password,
+      } : this.form)
 
       // TODO: Find better way to determine login success
       if (data?.response?.user) {
         const result: AvailableResult = await NativeBiometric.isAvailable()
-
-        console.log(result)
 
         if (result.isAvailable)
           this.saveCredentials(this.form.email, this.form.password)
@@ -107,10 +108,9 @@ export default class SignIn extends Vue {
 
   async loadCredentialsFromBiometrics() {
     const result: AvailableResult = await NativeBiometric.isAvailable()
-    const biometricsAvailable = result.isAvailable
+    this.biometricsAvailable = result.isAvailable
 
-    if (biometricsAvailable) {
-      this.biometricsAvailable = true
+    if (this.biometricsAvailable) {
 
       // Get user's credentials
       const credentials: Credentials = await NativeBiometric.getCredentials({
@@ -118,6 +118,7 @@ export default class SignIn extends Vue {
       })
 
       try {
+        // TODO: Only do this when the user has checked the "use biometrics" checkbox
         await NativeBiometric.verifyIdentity({
           reason: 'For easy sign in.',
           title: 'Log in with biometrics',
@@ -125,9 +126,7 @@ export default class SignIn extends Vue {
         })
         
         // Authentication successful
-        this.form.email = credentials.username
-        this.form.password = credentials.password
-        this.signIn()
+        this.signIn(credentials.username, credentials.password)
       }
       catch (error) {
         this.$store.dispatch('showSnackbar', {
