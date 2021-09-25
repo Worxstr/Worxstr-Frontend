@@ -35,7 +35,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
               | {{ transfer.status | capitalize }}
 
           span.mt-1
-            | {{ transferFundsAdded(transfer) ? 'To' : 'From' }}&nbsp;
+            | {{ transferFundsAdded(transfer) ? 'From' : 'To' }}&nbsp;
             span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'business'")
               | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].businessName }}
 
