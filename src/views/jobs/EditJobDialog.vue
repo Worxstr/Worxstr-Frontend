@@ -167,11 +167,14 @@ export default class EditJobDialog extends Vue {
     consultantEmail: emailRules,
   }
 
+  mounted() {
+    this.$store.dispatch('loadManagers')
+  }
+
   @Watch('opened')
   onOpened(newVal: boolean) {
     if (newVal) {
       if (this.create) (this.$refs.form as HTMLFormElement).reset()
-      this.$store.dispatch('loadManagers')
     }
 
     if (newVal && this.job)

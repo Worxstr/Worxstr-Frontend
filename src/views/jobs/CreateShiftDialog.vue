@@ -278,7 +278,7 @@ export default class CreateShiftDialog extends Vue {
   }
 
   get contractorsSorted() {
-    return this.contractors.sort((a: User, b: User) => {
+    return this.contractors.sort((a: any, b: any) => {
       return (a.direct === b.direct) ? 0 : (a.direct ? -1 : 1)
     })
   }

@@ -89,7 +89,7 @@ export default class Payments extends Vue {
 	}
 
   get showBeneficialOwnersForm() {
-    return !this.$store.state.payments.beneficialOwnersCertified
+    return !this.loadingFundingSources && !this.$store.state.payments.beneficialOwnersCertified
   }
 
 	async loadFundingSources() {
