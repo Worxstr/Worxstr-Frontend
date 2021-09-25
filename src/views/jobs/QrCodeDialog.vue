@@ -5,8 +5,10 @@ v-dialog(
   persistent
 )
   v-toolbar.flex-grow-0(flat)
-    v-toolbar-title.text-h6 {{ jobName }}
+    v-toolbar-title.text-h6 Clock-in code
     v-spacer
+    v-btn(icon color='primary' @click='print()')
+      v-icon mdi-printer
     v-btn(
       icon
       @click='closeDialog'
@@ -17,7 +19,7 @@ v-dialog(
     v-card-title.headline {{ code }}
     v-card-text
       p.subtitle-1.py-0.my-0 
-      p Have your contractor scan this to clock in to their shift.
+      p.my-0 Have your contractor scan this to clock in to their shift.
 
     qrcode(
       :value='code'
@@ -40,10 +42,13 @@ export default class QrCodeDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop(String) readonly code!: string
-  @Prop(String) readonly jobName!: string
 
   closeDialog() {
     this.$emit('update:opened', false)
+  }
+
+  print() {
+    window.print()
   }
 }
 </script>

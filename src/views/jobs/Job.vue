@@ -31,7 +31,6 @@ div(v-else)
     qr-code-dialog(
       :opened.sync='qrCodeDialog'
       :code='job.consultant_code'
-      :jobName='job.name'
     )
 
     portal(to="toolbarActions")
