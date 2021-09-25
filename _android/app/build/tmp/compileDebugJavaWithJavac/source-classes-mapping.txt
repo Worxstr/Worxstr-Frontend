@@ -1,5 +1,0 @@
-com/worxstr/worxstr/BuildConfig.java
- com.worxstr.worxstr.BuildConfig
-com/worxstr/worxstr/MainActivity.java
- com.worxstr.worxstr.MainActivity
- com.worxstr.worxstr.MainActivity$1
