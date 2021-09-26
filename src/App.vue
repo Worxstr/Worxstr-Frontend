@@ -19,8 +19,8 @@ v-app
       )
         router-view#router-view(:style="`height: ${pageHeight};`")
         
-        //- For some dumbass reason this computed value won't recalculate unless I have this here
-        div(style='display: none') {{ safeAreaTop }}
+      //- For some dumbass reason this computed value won't recalculate unless I have this here
+      div(style='display: none') {{ safeAreaTop }}
 
   worxstr-footer(v-if="isLanding")
 
@@ -68,7 +68,6 @@ export default class App extends Vue {
     // This is the most bullshit way to do this but it works
     for (let i = 0; i < 13; i++) {
       setTimeout(() => {
-        console.log(2 ** i)
         this.stylesLoaded = false
         this.stylesLoaded = true
       }, 2 ** i)

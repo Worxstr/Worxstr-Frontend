@@ -4,7 +4,8 @@ import Vuex, { StoreOptions } from 'vuex'
 import axios from 'axios'
 import router from '../router'
 
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, PermissionState } from '@capacitor/core'
+import { Geolocation } from '@capacitor/geolocation'
 import * as Plaid from '@/plugins/plaid'
 import { event } from 'vue-gtag'
 
@@ -20,10 +21,11 @@ Vue.use(Vuex)
 
 // axios.defaults.baseURL = ''
 axios.defaults.withCredentials = true
+
 // TODO: If using capacitor production, we need to be able to determine if the user is testing or using prod database
-const baseUrl = Capacitor.isNativePlatform()
-  ? (process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : process.env.VUE_APP_API_BASE_URL)
-  : process.env.VUE_APP_API_BASE_URL
+const nativeUrl = process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : process.env.VUE_APP_API_BASE_URL
+const webUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace(':8080', ':5000')
+const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
 
 interface RootState {
   snackbar: {
@@ -37,6 +39,10 @@ interface RootState {
     };
   };
   authenticatedUser: User | null;
+  userLocation: {
+    lat: number;
+    lng: number;
+  } | null;
   users: {
     all: number[];
     byId: {
@@ -119,6 +125,7 @@ const initialState = (): RootState => ({
     timeout: 5000,
   },
   authenticatedUser: null,
+  userLocation: null,
   users: {
     all: [],
     byId: {},
@@ -217,9 +224,8 @@ const storeConfig: StoreOptions<RootState> = {
       state.users.all = state.users.all.filter(id => id !== userId)
       Vue.delete(state.workforce, state.workforce.indexOf(userId))
     },
-    SET_SSN_REGISTERED(state) {
-      if (state.authenticatedUser?.contractor_info)
-        state.authenticatedUser.contractor_info.need_info = false
+    SET_USER_LOCATION(state, { lat, lng }) {
+      state.userLocation = { lat, lng }
     },
     ADD_CLOCK_EVENT(state, event: ClockEvent) {
       Vue.set(state.clock.history.byId, event.id, event)
@@ -505,6 +511,21 @@ const storeConfig: StoreOptions<RootState> = {
         url: `${baseUrl}/users/${userId}`,
       })
       commit('ADD_USER', data)
+    },
+
+    async getUserLocation({ commit }) {
+      const { coords } = await Geolocation.getCurrentPosition()
+      const userLocation = {
+        lat: coords.latitude,
+        lng: coords.longitude,
+      }
+      commit('SET_USER_LOCATION', userLocation)
+      return userLocation
+    },
+
+    async userHasAllowedLocationPermission() {
+      const permissions = await Geolocation.checkPermissions()
+      return permissions.location === 'granted'
     },
 
     async updateContractor({ commit }, { newFields, userId }) {

@@ -1,5 +1,8 @@
 <template lang="pug">
   v-container.clock.d-flex.flex-column.flex-md-row-reverse.justify-md-center.align-md-start
+
+    clock-in-dialog(:opened.sync='clockInDialog')
+
     .mx-15.d-flex.align-center.align-md-start.flex-column.justify-center(
       style='margin-top: 20vh; margin-bottom: 15vh; top: 120px; position: sticky'
     )
@@ -37,33 +40,6 @@
               span That's right now!
 
         .d-flex.flex-row.justify-center.justify-md-start
-          v-dialog(
-            v-model='verifyDialog.opened'
-            :fullscreen='$vuetify.breakpoint.smAndDown'
-            max-width='500'
-          )
-            v-card.sign-in.fill-height
-              form(@submit.prevent='submitCode(verifyDialog.code)')
-                v-card-title Scan your clock in QR code
-
-                div
-                  v-btn(text @click='requestLocation')
-                    v-icon mdi-map-marker-radius
-                    span Use geolocation
-
-                div
-                  qrcode-stream(v-if='verifyDialog.opened' @decode='submitCode' @init='qrInit')
-
-                v-card-text
-                  v-text-field(label='Or enter the code manually' v-model='verifyDialog.code' hide-details)
-                v-card-actions
-                  v-spacer
-                  v-btn(text @click='verifyDialog.opened = false') Cancel
-                  v-btn(text color='primary' type='submit' :loading='togglingClock') Submit
-
-              v-fade-transition
-                v-overlay(absolute opacity='0.2' v-if='verifyDialog.cameraLoading')
-                  v-progress-circular(indeterminate)
 
           v-expand-x-transition
             .py-2(v-if='!onBreak')
@@ -113,13 +89,10 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import vueAwesomeCountdown from "vue-awesome-countdown"
-import { QrcodeStream } from "vue-qrcode-reader"
-
-import { Dialog } from '@capacitor/dialog'
-import { Geolocation } from '@capacitor/geolocation'
 
 import { ClockAction, ClockEvent } from '@/definitions/Clock'
 import ClockEvents from '@/components/ClockEvents.vue'
+import ClockInDialog from './ClockInDialog.vue'
 
 Vue.use(vueAwesomeCountdown, "vac");
 
@@ -128,18 +101,13 @@ Vue.use(vueAwesomeCountdown, "vac");
     title: 'Clock'
   },
   components: {
-    QrcodeStream,
     ClockEvents,
+    ClockInDialog,
   },
 })
 export default class Clock extends Vue {
   
-  verifyDialog = {
-    opened: false,
-    cameraLoading: false,
-    code: '',
-  }
-
+  clockInDialog = false
   togglingClock = false
   togglingBreak = false
 
@@ -174,19 +142,6 @@ export default class Clock extends Vue {
     return lastBreakEvent ? lastBreakEvent.action == ClockAction.StartBreak : null
   }
 
-  async clockIn(code: string) {
-    this.togglingClock = true
-    await this.$store.dispatch('clockIn', code)
-    console.log('done')
-    this.togglingClock = false
-  }
-
-  async submitCode(code: string) {
-    // TODO: Handle incorrect code
-    await this.clockIn(code)
-    this.verifyDialog.opened = false
-  }
-
   async clockOut() {
     this.togglingClock = true
     await this.$store.dispatch('clockOut')
@@ -201,47 +156,7 @@ export default class Clock extends Vue {
   }
 
   openVerifyDialog() {
-    this.verifyDialog.opened = true
-  }
-
-  async requestLocation() {
-    const { coords } = await Geolocation.getCurrentPosition()
-    Dialog.alert({
-      title: 'Got location',
-      message: `Lat: ${coords.latitude}, Long: ${coords.longitude}`
-    })
-  }
-
-  async qrInit(promise: any) {
-    this.verifyDialog.cameraLoading = true
-    try {
-      /* const { capabilities } = */ await promise
-    } catch (error) {
-      let errorMessage;
-      switch (error.name) {
-        case "NotAllowedError":
-          errorMessage = 'Camera permission denied'
-          break
-        case "NotFoundError":
-          errorMessage = 'No camera'
-          break
-        case "NotSupportedError":
-          errorMessage = 'Page must be served over HTTPS'
-          break
-        case "NotReadableError":
-          errorMessage = 'Camera in use'
-          break
-        case "OverconstrainedError":
-          errorMessage = 'No front camera'
-          break
-        case "StreamApiNotSupportedError":
-          errorMessage = 'Browser not supported'
-          break
-      }
-      this.$store.dispatch('showSnackbar', { text: errorMessage })
-    } finally {
-      this.verifyDialog.cameraLoading = false
-    }
+    this.clockInDialog = true
   }
 
   loadClockHistory() {
