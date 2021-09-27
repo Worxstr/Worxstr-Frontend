@@ -3,44 +3,55 @@ v-dialog(
   v-model='opened'
   :fullscreen='$vuetify.breakpoint.smAndDown'
   max-width='400'
+  persistent
 )
   v-card.sign-in.fill-height
-    form(@submit.prevent='submitCode(verifyDialog.code)')
+    v-form(ref='form' @submit.prevent='submitCode(code)')
       v-card-title.text-h6 Verify your presence
 
       v-card-text
 
         .d-flex.flex-column
-          v-btn(text @click='getUserLocation' x-large)
-            v-icon(left) mdi-map-marker-radius
-            span Use my location
+          //- v-btn(text @click='getUserLocation' x-large)
+          //-   v-icon(left) mdi-map-marker-radius
+          //-   span Use my location
 
-          v-btn(text @click='getUserLocation' x-large)
+          v-btn(text @click='webQrEnabled = true' x-large v-if='!allowedLocation && !webQrEnabled && !cameraFailed')
             v-icon(left) mdi-qrcode
-            span Scan QR code
+            span Scan clock-in code
 
-          v-btn(text @click='getUserLocation' x-large)
-            v-icon(left) mdi-form-textbox
-            span Enter clock-in code
 
-        //- v-text-field(label='Or enter the code manually' v-model='verifyDialog.code' hide-details)
+      div(v-if='opened && !allowedLocation && webQrEnabled && !cameraFailed')
 
-      div
-        qrcode-stream(v-if='verifyDialog.opened' @decode='submitCode' @init='qrInit')
+        qrcode-stream( @init='qrInit' @decode='submitCode')
+          v-fade-transition
+            v-overlay(absolute opacity='0.2' v-if='cameraLoading')
+              v-progress-circular(indeterminate)
 
-      //- v-card-actions
-      //-   v-spacer
-      //-   v-btn(text @click='closeDialog') Cancel
-      //-   v-btn(text color='primary' type='submit' :loading='togglingClock') Submit
+        v-card-text
+          p.text-caption Point your device at your consultant's clock-in QR code.
 
-    v-fade-transition
-      v-overlay(absolute opacity='0.2' v-if='verifyDialog.cameraLoading')
-        v-progress-circular(indeterminate)
+      v-card-text
+        v-text-field(
+          label='Or enter your clock-in code'
+          v-model='code'
+          dense
+          outlined
+          :rules='codeRules'
+        )
+
+      v-card-actions
+        v-spacer
+        v-btn(text @click='closeDialog') Cancel
+        v-btn(text color='primary' type='submit' :loading='togglingClock') Submit
+
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Capacitor } from '@capacitor/core'
 import { QrcodeStream } from 'vue-qrcode-reader'
+import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 
 @Component({
   components: {
@@ -48,33 +59,57 @@ import { QrcodeStream } from 'vue-qrcode-reader'
   },
 })
 export default class ClockInDialog extends Vue {
+  code = ''
+  webQrEnabled = false
+  cameraFailed = false
+  allowedCamera = false
+  allowedLocation = false
   togglingClock = false
-  verifyDialog = {
-    opened: false,
-    cameraLoading: false,
-    code: '',
-  }
+  cameraLoading = false
+
+  codeRules = [
+    (code: string) => !!code || 'Please enter your clock-in code',
+    (code: string) => code.length === 6 && code.match(/^-?\d+$/) || 'Please enter a valid clock-in code',
+  ]
 
   @Prop({ default: false }) readonly opened!: boolean
 
   @Watch('opened')
   async onOpened(opened: boolean) {
     if (opened) {
-      const userHasAllowedLocationPermission = await this.$store.dispatch(
-        'userHasAllowedLocationPermission'
-      )
+      (this.$refs.form as HTMLFormElement).reset()
+      // this.initLocation()
+      this.initQr()
+    }
+  }
 
-      if (userHasAllowedLocationPermission) {
-        const userLocation = await this.$store.dispatch('getUserLocation')
-        console.log('Already got location, clocking in')
-        // TODO: Fire clock in request with user location
-      }
+  async initLocation() {
+    this.allowedLocation = await this.$store.dispatch(
+      'locationPermissionGranted'
+    )
 
-      const userHasAllowedCameraPermission = false
-      if (userHasAllowedCameraPermission) {
-        console.log('Opening camera')
-        // TODO: Switch to camera input mode
+    if (this.allowedLocation) {
+      const location = await this.$store.dispatch('getUserLocation')
+      this.$store.dispatch('showSnackbar', {
+        text: `${location.lat} ${location.lng}`,
+      })
+      this.closeDialog()
+      // TODO: Fire clock in request with user location
+    }
+  }
+
+  async initQr() {
+    if (Capacitor.isNativePlatform()) {
+      BarcodeScanner.prepare()
+    } else {
+      if (await this.webCameraPermissionGranted()) {
+        this.webQrEnabled = true
       }
+    }
+
+    if (this.allowedCamera) {
+      console.log('Opening camera')
+      // TODO: Switch to camera input mode
     }
   }
 
@@ -96,7 +131,10 @@ export default class ClockInDialog extends Vue {
 
   async getUserLocation() {
     const location = await this.$store.dispatch('getUserLocation')
-    console.log(location)
+    this.$store.dispatch('showSnackbar', {
+      text: `${location.lat} ${location.lng}`,
+    })
+    this.closeDialog()
     // TODO: Clock in with location
     // Dialog.alert({
     //   title: 'Got location',
@@ -104,10 +142,42 @@ export default class ClockInDialog extends Vue {
     // })
   }
 
+  async webCameraPermissionGranted() {
+    const permissionStatus = await navigator.permissions.query({
+      name: 'camera',
+    })
+    return permissionStatus.state === 'granted'
+  }
+
+  async startScan() {
+    BarcodeScanner.hideBackground() // make background of WebView transparent
+
+    const result = await BarcodeScanner.startScan() // start scanning and wait for a result
+
+    // if the result has content
+    if (result.hasContent) {
+      console.log(result.content) // log the raw scanned content
+    }
+  }
+
+  stopScan() {
+    BarcodeScanner.showBackground()
+    BarcodeScanner.stopScan()
+  }
+
+  deactivated() {
+    this.stopScan()
+  }
+
+  beforeDestroy() {
+    this.stopScan()
+  }
+
   async qrInit(promise: any) {
-    this.verifyDialog.cameraLoading = true
+    this.cameraLoading = true
     try {
       /* const { capabilities } = */ await promise
+      this.webQrEnabled = true
     } catch (error) {
       let errorMessage
       switch (error.name) {
@@ -130,9 +200,10 @@ export default class ClockInDialog extends Vue {
           errorMessage = 'Browser not supported'
           break
       }
+      this.cameraFailed = true
       this.$store.dispatch('showSnackbar', { text: errorMessage })
     } finally {
-      this.verifyDialog.cameraLoading = false
+      this.cameraLoading = false
     }
   }
 }

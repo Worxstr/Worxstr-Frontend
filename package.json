@@ -9,6 +9,7 @@
     "deploy": "aws s3 sync ./dist s3://worxstr-secure-app-client"
   },
   "dependencies": {
+    "@capacitor-community/barcode-scanner": "^2.0.1",
     "@capacitor/android": "^3.0.0-rc.4",
     "@capacitor/app": "^1.0.2",
     "@capacitor/cli": "^3.0.0-rc.4",

@@ -42,6 +42,7 @@ interface RootState {
   userLocation: {
     lat: number;
     lng: number;
+    accuracy?: number;
   } | null;
   users: {
     all: number[];
@@ -224,8 +225,8 @@ const storeConfig: StoreOptions<RootState> = {
       state.users.all = state.users.all.filter(id => id !== userId)
       Vue.delete(state.workforce, state.workforce.indexOf(userId))
     },
-    SET_USER_LOCATION(state, { lat, lng }) {
-      state.userLocation = { lat, lng }
+    SET_USER_LOCATION(state, { lat, lng, accuracy }) {
+      state.userLocation = { lat, lng, accuracy }
     },
     ADD_CLOCK_EVENT(state, event: ClockEvent) {
       Vue.set(state.clock.history.byId, event.id, event)
@@ -523,7 +524,7 @@ const storeConfig: StoreOptions<RootState> = {
       return userLocation
     },
 
-    async userHasAllowedLocationPermission() {
+    async locationPermissionGranted() {
       const permissions = await Geolocation.checkPermissions()
       return permissions.location === 'granted'
     },

@@ -860,6 +860,11 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
+"@capacitor-community/barcode-scanner@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@capacitor-community/barcode-scanner/-/barcode-scanner-2.0.1.tgz#49ae48b111804388cc20d37d7bc04a36dbb2bac8"
+  integrity sha512-x5CWW57SgnKCuXj0re+7Q+5VrjnuaXAu0vEWOKwj2q154+R0KawEcf42HfEUcgLvbolp9A9+2Cl/5U7vRApI9w==
+
 "@capacitor/android@^3.0.0-rc.4":
   version "3.0.0-rc.4"
   resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-3.0.0-rc.4.tgz#e492735f65f36f2fc64e60349d1569628325d967"
