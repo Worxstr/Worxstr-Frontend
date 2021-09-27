@@ -23,8 +23,8 @@ Vue.use(Vuex)
 axios.defaults.withCredentials = true
 
 // TODO: If using capacitor production, we need to be able to determine if the user is testing or using prod database
-const nativeUrl = process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : process.env.VUE_APP_API_BASE_URL
 const webUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace(':8080', ':5000')
+const nativeUrl = process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : webUrl
 const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
 
 interface RootState {

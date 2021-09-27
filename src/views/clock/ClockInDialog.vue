@@ -6,15 +6,17 @@ v-dialog(
   persistent
 )
   v-card.sign-in.fill-height
-    v-form(ref='form' @submit.prevent='submitCode(code)')
+    v-form.d-flex.flex-column.fill-height(ref='form' @submit.prevent='submitCode(code)')
       v-card-title.text-h6 Verify your presence
+
+      v-spacer
 
       v-card-text
 
         .d-flex.flex-column
-          //- v-btn(text @click='getUserLocation' x-large)
-          //-   v-icon(left) mdi-map-marker-radius
-          //-   span Use my location
+          v-btn(text @click='getUserLocation' x-large)
+            v-icon(left) mdi-map-marker-radius
+            span Use my location
 
           v-btn(text @click='webQrEnabled = true' x-large v-if='!allowedLocation && !webQrEnabled && !cameraFailed')
             v-icon(left) mdi-qrcode
@@ -30,6 +32,8 @@ v-dialog(
 
         v-card-text
           p.text-caption Point your device at your consultant's clock-in QR code.
+
+      v-spacer
 
       v-card-text
         v-text-field(
@@ -77,8 +81,8 @@ export default class ClockInDialog extends Vue {
   @Watch('opened')
   async onOpened(opened: boolean) {
     if (opened) {
-      (this.$refs.form as HTMLFormElement).reset()
-      // this.initLocation()
+      (this.$refs.form as HTMLFormElement)?.reset()
+      this.initLocation()
       this.initQr()
     }
   }
@@ -102,7 +106,9 @@ export default class ClockInDialog extends Vue {
     if (Capacitor.isNativePlatform()) {
       BarcodeScanner.prepare()
     } else {
-      if (await this.webCameraPermissionGranted()) {
+      const webCameraPermissionGranted = await this.webCameraPermissionGranted()
+      console.log({webCameraPermissionGranted})
+      if (webCameraPermissionGranted) {
         this.webQrEnabled = true
       }
     }

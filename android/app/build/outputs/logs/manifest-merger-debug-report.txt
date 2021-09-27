@@ -128,6 +128,8 @@ MERGED from [androidx.constraintlayout:constraintlayout:1.1.3] C:\Users\alexw\.g
 		ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:6:9-35
 	android:theme
 		ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:11:9-40
+	android:usesCleartextTraffic
+		ADDED from [:capacitor-cordova-android-plugins] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\capacitor-cordova-android-plugins\build\intermediates\merged_manifest\debug\AndroidManifest.xml:10:18-53
 activity#com.worxstr.app.MainActivity
 ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:13:9-25:20
 	android:label
