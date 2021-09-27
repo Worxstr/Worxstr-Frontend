@@ -15,9 +15,9 @@ v-dialog(
       v-card-text
 
         .d-flex.flex-column
-          v-btn(text @click='getUserLocation' x-large)
-            v-icon(left) mdi-map-marker-radius
-            span Use my location
+          //- v-btn(text @click='getUserLocation' x-large)
+          //-   v-icon(left) mdi-map-marker-radius
+          //-   span Use my location
 
           v-btn(text @click='startScan' x-large v-if='!allowedLocation && !webQrEnabled && !cameraFailed')
             v-icon(left) mdi-qrcode
@@ -26,7 +26,7 @@ v-dialog(
 
       div(v-if='opened && !allowedLocation && webQrEnabled && !cameraFailed')
 
-        qrcode-stream( @init='qrInit' @decode='submitCode')
+        qrcode-stream(@init='webQrInit' @decode='submitCode')
           v-fade-transition
             v-overlay(absolute opacity='0.2' v-if='cameraLoading')
               v-progress-circular(indeterminate)
@@ -58,6 +58,13 @@ import { Capacitor } from '@capacitor/core'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 
+/*
+  We are using two difference QR code scanner libraries here.
+  vue-qrcode-reader only works on web, and @capacitor-community/barcode-scanner
+  works only on native. Depending on the result of Capacitor.isNativePlatform(),
+  we will context switch to use the appropriate scanner library.
+*/
+
 @Component({
   components: {
     QrcodeStream,
@@ -80,11 +87,27 @@ export default class ClockInDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
 
+  closeDialog() {
+    this.$emit('update:opened', false)
+  }
+
+  async submitCode(code: string) {
+    // TODO: Handle incorrect code
+    await this.clockIn(code)
+    this.closeDialog()
+  }
+
+  async clockIn(code: string) {
+    this.togglingClock = true
+    await this.$store.dispatch('clockIn', code)
+    this.togglingClock = false
+  }
+
   @Watch('opened')
   async onOpened(opened: boolean) {
     if (opened) {
       (this.$refs.form as HTMLFormElement)?.reset()
-      this.initLocation()
+      // this.initLocation()
       this.initQr()
     }
   }
@@ -105,99 +128,15 @@ export default class ClockInDialog extends Vue {
   }
 
   async initQr() {
-    if (Capacitor.isNativePlatform()) {
-      BarcodeScanner.prepare()
-    } else {
+    if (!Capacitor.isNativePlatform()) {
       const webCameraPermissionGranted = await this.webCameraPermissionGranted()
-      console.log({webCameraPermissionGranted})
       if (webCameraPermissionGranted) {
         this.webQrEnabled = true
       }
     }
-
-    if (this.allowedCamera) {
-      console.log('Opening camera')
-      // TODO: Switch to camera input mode
-    }
   }
 
-  closeDialog() {
-    this.$emit('update:opened', false)
-  }
-
-  async submitCode(code: string) {
-    // TODO: Handle incorrect code
-    await this.clockIn(code)
-    this.closeDialog()
-  }
-
-  async clockIn(code: string) {
-    this.togglingClock = true
-    await this.$store.dispatch('clockIn', code)
-    this.togglingClock = false
-  }
-
-  async getUserLocation() {
-    const location = await this.$store.dispatch('getUserLocation')
-    this.$store.dispatch('showSnackbar', {
-      text: `${location.lat} ${location.lng}`,
-    })
-    this.closeDialog()
-    // TODO: Clock in with location
-    // Dialog.alert({
-    //   title: 'Got location',
-    //   message: `Lat: ${coords.latitude}, Long: ${coords.longitude}`,
-    // })
-  }
-
-  async webCameraPermissionGranted() {
-    const permissionStatus = await navigator.permissions.query({
-      name: 'camera',
-    })
-    return permissionStatus.state === 'granted'
-  }
-
-  async startScan() {
-    if (Capacitor.isNativePlatform()) {
-
-      const nativeCameraPermissionGranted = await this.nativeCameraPermissionGranted()
-      if (!nativeCameraPermissionGranted) {
-        this.$store.dispatch('showSnackbar', {
-          text: 'Camera permission is not granted'
-        })
-        return
-      }
-      BarcodeScanner.hideBackground() // make background of WebView transparent
-      document.body.style.display = 'none'
-
-      const result = await BarcodeScanner.startScan() // start scanning and wait for a result
-
-      // if the result has content
-      if (result.hasContent && result.content) {
-        this.stopScan()
-        this.submitCode(result.content)
-      }
-    }
-    else {
-      this.webQrEnabled = true
-    }
-  }
-
-  stopScan() {
-    BarcodeScanner.showBackground()
-    BarcodeScanner.stopScan()
-    document.body.style.display = 'block'
-  }
-
-  deactivated() {
-    this.stopScan()
-  }
-
-  beforeDestroy() {
-    this.stopScan()
-  }
-
-  async qrInit(promise: any) {
+  async webQrInit(promise: any) {
     this.cameraLoading = true
     try {
       /* const { capabilities } = */ await promise
@@ -232,10 +171,71 @@ export default class ClockInDialog extends Vue {
     }
   }
 
+  async getUserLocation() {
+    const location = await this.$store.dispatch('getUserLocation')
+    this.$store.dispatch('showSnackbar', {
+      text: `${location.lat} ${location.lng}`,
+    })
+    this.closeDialog()
+    // TODO: Clock in with location
+    // Dialog.alert({
+    //   title: 'Got location',
+    //   message: `Lat: ${coords.latitude}, Long: ${coords.longitude}`,
+    // })
+  }
+
+  async webCameraPermissionGranted() {
+    const permissionStatus = await navigator.permissions.query({
+      name: 'camera',
+    })
+    return permissionStatus.state === 'granted'
+  }
+
   async nativeCameraPermissionGranted() {
-    const status = await BarcodeScanner.checkPermission({ force: false })
+    const status = await BarcodeScanner.checkPermission({ force: true })
     return !!status.granted
   }
 
+  async startScan() {
+    if (Capacitor.isNativePlatform()) {
+
+      const nativeCameraPermissionGranted = await this.nativeCameraPermissionGranted()
+      if (!nativeCameraPermissionGranted) {
+        this.$store.dispatch('showSnackbar', {
+          text: 'Camera permission is not granted'
+        })
+        return
+      }
+      this.toggleWebview(false)
+
+      const result = await BarcodeScanner.startScan() // start scanning and wait for a result
+
+      // if the result has content
+      if (result.hasContent && result.content) {
+        this.stopScan()
+        this.submitCode(result.content)
+      }
+    }
+    else {
+      this.webQrEnabled = true
+    }
+  }
+
+  stopScan() {
+    BarcodeScanner.stopScan()
+    this.toggleWebview(true)
+  }
+
+  toggleWebview(visible: boolean) {
+    document.body.style.display = visible ? 'block' : 'none'
+  }
+
+  deactivated() {
+    this.stopScan()
+  }
+
+  beforeDestroy() {
+    this.stopScan()
+  }
 }
 </script>

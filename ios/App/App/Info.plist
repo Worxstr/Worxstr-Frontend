@@ -4,6 +4,8 @@
 <dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>For an easier and faster sign in.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>For scanning QR codes.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location is used to ensure you stay at the worksite location.</string>
 	<key>CFBundleDevelopmentRegion</key>
