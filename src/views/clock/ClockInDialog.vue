@@ -159,6 +159,14 @@ export default class ClockInDialog extends Vue {
 
   async startScan() {
     if (Capacitor.isNativePlatform()) {
+
+      const nativeCameraPermissionGranted = await this.nativeCameraPermissionGranted()
+      if (!nativeCameraPermissionGranted) {
+        this.$store.dispatch('showSnackbar', {
+          text: 'Camera permission is not granted'
+        })
+        return
+      }
       BarcodeScanner.hideBackground() // make background of WebView transparent
       document.body.style.display = 'none'
 
@@ -223,5 +231,11 @@ export default class ClockInDialog extends Vue {
       this.cameraLoading = false
     }
   }
+
+  async nativeCameraPermissionGranted() {
+    const status = await BarcodeScanner.checkPermission({ force: false })
+    return !!status.granted
+  }
+
 }
 </script>
