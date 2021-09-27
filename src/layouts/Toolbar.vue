@@ -21,7 +21,10 @@
         v-if="$route.meta.landing"
       )
         v-avatar(tile, size="130")
-          img(src="@/assets/logos/logotype.svg", alt="Worxstr logo")
+          img(
+            :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
+            alt="Worxstr logo"
+          )
 
       breadcrumbs
 
@@ -36,7 +39,7 @@
           v-btn(v-for="(link, i) in links" :key='i' text :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
 
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
-      v-list.mobile-nav-items.pt-2(nav)
+      v-list.mobile-nav-items(nav)
         v-list-item(v-for="(link, i) in links" :key='i' text :to="link.to" link)
           v-list-item-content
             v-list-item-title {{ link.text }}
@@ -100,6 +103,6 @@ export default class Toolbar extends Vue {
   }
 }
 .mobile-nav-items {
-  padding-top: env(safe-area-inset-top) !important;
+  padding-top: max(env(safe-area-inset-top), 10px) !important;
 }
 </style>

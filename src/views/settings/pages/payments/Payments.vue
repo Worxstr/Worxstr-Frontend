@@ -89,11 +89,7 @@ export default class Payments extends Vue {
 	}
 
   get showBeneficialOwnersForm() {
-    // TODO: This is a hack to show the form for the first time
-    // If these two fields exist on the object returned at /payments/user in _links object, then return true
-    // certify-beneficial-ownership
-    // verify-beneficial-owners
-    return true
+    return !this.loadingFundingSources && !this.$store.state.payments.beneficialOwnersCertified
   }
 
 	async loadFundingSources() {

@@ -22,6 +22,7 @@ v-dialog(
 
       v-card-text
         v-text-field(
+          v-if='!editMode'
           autofocus
           label="First name"
           dense
@@ -32,6 +33,7 @@ v-dialog(
           :disabled='editMode'
         )
         v-text-field(
+          v-if='!editMode'
           label="Last name"
           dense
           outlined
@@ -41,6 +43,7 @@ v-dialog(
           :disabled='editMode'
         )
         v-text-field(
+          v-if='!editMode'
           label="Email"
           type="email"
           dense
@@ -51,6 +54,7 @@ v-dialog(
           :disabled='editMode'
         )
         phone-input(
+          v-if='!editMode'
           v-model="editedUser.phone"
           outlined
           :disabled='editMode'
@@ -66,12 +70,9 @@ v-dialog(
           required
           label="Direct manager"
           :rules="rules.directManager"
-          :disabled='editMode'
         )
 
         div(v-if='userIsManager')
-          v-subheader Manager info
-
           v-select(
             v-model="editedUser.roles"
             :items="managerRoles"
@@ -86,8 +87,6 @@ v-dialog(
           )
 
         div(v-if='userIsContractor')
-          v-subheader Contractor info
-
           currency-input(
             suffix='/ hour'
             label='Hourly wage'
@@ -146,8 +145,7 @@ export default class EditUserDialog extends Vue {
   @Watch('opened')
   onOpened(opened: boolean) {
     if (!opened) return
-
-    if (!this.editMode) (this.$refs.form as HTMLFormElement).reset()
+    if (!this.editMode) (this.$refs.form as HTMLFormElement)?.reset()
 
     this.$store.dispatch('loadManagers')
     
@@ -198,7 +196,10 @@ export default class EditUserDialog extends Vue {
 
         if (this.userIsContractor) {
           await this.$store.dispatch('updateContractor', {
-            contractorInfo: this.editedUser.contractor_info,
+            newFields: {
+              ...this.editedUser.contractor_info,
+              direct_manager: this.editedUser.manager_id
+            },
             userId: this.editedUser.id,
           })
         }

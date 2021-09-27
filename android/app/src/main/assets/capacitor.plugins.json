@@ -1,7 +1,15 @@
 [
 	{
+		"pkg": "@capacitor-community/barcode-scanner",
+		"classpath": "com.dutchconcepts.capacitor.barcodescanner.BarcodeScanner"
+	},
+	{
 		"pkg": "@capacitor/app",
 		"classpath": "com.capacitorjs.plugins.app.AppPlugin"
+	},
+	{
+		"pkg": "@capacitor/clipboard",
+		"classpath": "com.capacitorjs.plugins.clipboard.ClipboardPlugin"
 	},
 	{
 		"pkg": "@capacitor/dialog",
@@ -10,5 +18,9 @@
 	{
 		"pkg": "@capacitor/geolocation",
 		"classpath": "com.capacitorjs.plugins.geolocation.GeolocationPlugin"
+	},
+	{
+		"pkg": "capacitor-native-biometric",
+		"classpath": "com.epicshaggy.biometric.NativeBiometric"
 	}
 ]

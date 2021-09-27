@@ -3,14 +3,14 @@
     @input='updateValue'
     :value='raw'
     :rules='rules'
-    type="tel",
+    type="tel"
     maxlength='14'
-    label="Phone number",
-    dense,
-    :required='required',
-    :color="color",
+    label="Phone number"
+    dense
+    :required='required'
+    :color="color"
     :filled="filled"
-    :outlined='outlined',
+    :outlined='outlined'
     :disabled='disabled'
     :autofocus='autofocus'
   )
@@ -41,7 +41,7 @@ export default class PhoneInput extends Vue {
   rules: Function[] | undefined = phoneRulesOptional
 
   mounted() {
-    if (typeof this.value === 'string')
+    if (typeof this.value === 'string' && this.value)
       this.value = this.phoneStringToObject(this.value)
     if (this.required) this.rules = phoneRules
   }

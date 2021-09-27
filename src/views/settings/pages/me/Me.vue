@@ -34,11 +34,24 @@ v-list
     v-list-item-content
       v-list-item-subtitle.mb-2 Manager reference number
       v-list-item-title {{ authenticatedUser.manager_info.reference_number }}
+    v-list-item-action
+      v-tooltip(bottom)
+        span Copy to clipboard
+        template(v-slot:activator='{ on, attrs }')
+          v-btn(
+            icon
+            color='primary'
+            v-bind='attrs'
+            v-on='on'
+            @click='copyText(authenticatedUser.manager_info.reference_number)'
+          )
+            v-icon mdi-content-copy
 </template>
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator"
 import Roles from "@/components/Roles.vue"
+import { Clipboard } from '@capacitor/clipboard'
 
 @Component({
   components: {
@@ -55,6 +68,22 @@ export default class Me extends Vue {
 
   signOut() {
     this.$store.dispatch("signOut")
+  }
+
+  async copyText(text: string) {
+    try {
+      await Clipboard.write({
+        string: text
+      })
+      this.$store.dispatch('showSnackbar', {
+        text: "Copied."
+      })
+    }
+    catch (e) {
+      this.$store.dispatch('showSnackbar', {
+        text: "Couldn't copy to clipboard."
+      })
+    }
   }
 }
 </script>

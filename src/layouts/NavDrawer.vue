@@ -15,7 +15,10 @@ v-navigation-drawer#nav.d-flex.flex-column(
   v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
     a(@click="mini = !mini", text)
       v-avatar.mb-1(tile, :size="mini ? 40 : 130")
-        img(:src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)", alt="Worxstr logo")
+        img(
+          :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
+          alt="Worxstr logo"
+        )
 
     v-spacer
 
@@ -50,7 +53,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
   //- Secondary items
   template(v-slot:append)
-    v-list.secondary-nav-items.py-0(dense)
+    v-list.secondary-nav-items.pt-0(dense)
       v-divider
 
       v-tooltip(
