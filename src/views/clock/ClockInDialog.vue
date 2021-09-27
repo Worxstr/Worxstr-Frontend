@@ -4,6 +4,7 @@ v-dialog(
   :fullscreen='$vuetify.breakpoint.smAndDown'
   max-width='400'
   persistent
+  :class='{transparent}'
 )
   v-card.sign-in.fill-height
     v-form.d-flex.flex-column.fill-height(ref='form' @submit.prevent='submitCode(code)')
@@ -18,7 +19,7 @@ v-dialog(
             v-icon(left) mdi-map-marker-radius
             span Use my location
 
-          v-btn(text @click='webQrEnabled = true' x-large v-if='!allowedLocation && !webQrEnabled && !cameraFailed')
+          v-btn(text @click='startScan' x-large v-if='!allowedLocation && !webQrEnabled && !cameraFailed')
             v-icon(left) mdi-qrcode
             span Scan clock-in code
 
@@ -70,6 +71,7 @@ export default class ClockInDialog extends Vue {
   allowedLocation = false
   togglingClock = false
   cameraLoading = false
+  hideDialogForQr = false
 
   codeRules = [
     (code: string) => !!code || 'Please enter your clock-in code',
@@ -156,19 +158,27 @@ export default class ClockInDialog extends Vue {
   }
 
   async startScan() {
-    BarcodeScanner.hideBackground() // make background of WebView transparent
+    if (Capacitor.isNativePlatform()) {
+      BarcodeScanner.hideBackground() // make background of WebView transparent
+      document.body.style.display = 'none'
 
-    const result = await BarcodeScanner.startScan() // start scanning and wait for a result
+      const result = await BarcodeScanner.startScan() // start scanning and wait for a result
 
-    // if the result has content
-    if (result.hasContent) {
-      console.log(result.content) // log the raw scanned content
+      // if the result has content
+      if (result.hasContent && result.content) {
+        this.stopScan()
+        this.submitCode(result.content)
+      }
+    }
+    else {
+      this.webQrEnabled = true
     }
   }
 
   stopScan() {
     BarcodeScanner.showBackground()
     BarcodeScanner.stopScan()
+    document.body.style.display = 'block'
   }
 
   deactivated() {
@@ -207,6 +217,7 @@ export default class ClockInDialog extends Vue {
           break
       }
       this.cameraFailed = true
+      console.log(error)
       this.$store.dispatch('showSnackbar', { text: errorMessage })
     } finally {
       this.cameraLoading = false
