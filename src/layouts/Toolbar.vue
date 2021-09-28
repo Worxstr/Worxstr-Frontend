@@ -7,6 +7,7 @@
       :bottom="bottomToolbar"
       :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
       :class="$route.meta.landing ? 'landing' : 'app'"
+      v-touch='{up: () => { $emit("toggleDrawer") }}'
     )
       v-btn(
         icon
