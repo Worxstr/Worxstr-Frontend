@@ -33,20 +33,16 @@
                 v-list-item-icon.mr-3
                   v-icon(color='error') mdi-close
                 v-list-item-title Close
-
+                
       v-divider(v-if='i != jobs.length - 1')
-
-  .d-flex.flex-column.justify-center(v-else)
-    v-icon.text-h2.ma-5 mdi-calendar-check
-    p.text-center.text-body-1 No jobs yet.
 
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Job } from '@/definitions/Job.ts'
-import EditJobDialog from "@/views/jobs/EditJobDialog.vue"
-import CloseJobDialog from "@/views/jobs/CloseJobDialog.vue"
+import { Job } from '@/definitions/Job'
+import EditJobDialog from '@/views/jobs/EditJobDialog.vue'
+import CloseJobDialog from '@/views/jobs/CloseJobDialog.vue'
 
 @Component({
   components: {
@@ -71,6 +67,5 @@ export default class JobsList extends Vue {
     this.selectedJob = job
     this.closeJobDialog = true
   }
-
 }
 </script>

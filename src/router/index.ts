@@ -20,24 +20,29 @@ import Terms from '@/views/landing/Terms.vue'
 import SignIn from '@/views/auth/SignIn.vue'
 import SignUp from '@/views/auth/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
-import User from '@/views/User.vue'
-import Clock from '@/views/Clock.vue'
+import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
+import Clock from '@/views/clock/Clock.vue'
 import Payments from '@/views/payments/Payments.vue'
 // import Availability from '@/views/Availability.vue'
 import Jobs from '@/views/jobs/Jobs.vue'
 import Job from '@/views/jobs/Job.vue'
-import Workforce from '@/views/workforce/Workforce.vue'
+import Users from '@/views/users/Users.vue'
+import User from '@/views/users/User.vue'
 import Schedule from '@/views/Schedule.vue'
 import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
 import Settings from '@/views/settings/Settings.vue'
+import SettingsMe from "@/views/settings/pages/me/Me.vue"
+import SettingsOrganization from "@/views/settings/pages/organization/Organization.vue"
+import SettingsPayments from "@/views/settings/pages/payments/Payments.vue"
+import SettingsSecurity from "@/views/settings/pages/security/Security.vue"
+import SettingsPreferences from "@/views/settings/pages/preferences/Preferences.vue"
 import NotFound from '@/views/errors/NotFound.vue'
 
 Vue.use(VueRouter)
 Vue.use(Meta)
 
-import { UserRole, Manager, defaultRoute } from '@/definitions/User'
-
+import { UserRole, Managers, defaultRoute, currentUserIs, isAuthenticated } from '@/definitions/User'
 
 const routes = [
   {
@@ -64,6 +69,7 @@ const routes = [
     meta: {
       noSkeleton: true,
       fullHeight: true,
+      bleedSafeAreaBottom: true,
     }
   },
   {
@@ -151,6 +157,15 @@ const routes = [
     }
   },
   {
+    path: '/confirm-email',
+    name: 'confirmEmail',
+    component: ConfirmEmail,
+    meta: {
+      landing: true,
+      fullHeight: true,
+    }
+  },
+  {
     path: '/clock',
     name: 'clock',
     component: Clock,
@@ -174,7 +189,7 @@ const routes = [
     component: Jobs,
     meta: {
       icon: 'mdi-calendar-check',
-      restrict: Manager
+      restrict: Managers
     },
   },
   {
@@ -182,7 +197,7 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      restrict: Manager,
+      restrict: Managers,
       paramMap: {
         jobId: 'jobs',
         prop: 'name'
@@ -194,8 +209,7 @@ const routes = [
     name: 'payments',
     component: Payments,
     meta: {
-      icon: 'mdi-clock-check-outline',
-      restrict: Manager
+      icon: 'mdi-cash-multiple',
     }
   },
   {
@@ -204,22 +218,21 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      restrict: [UserRole.Contractor, ...Manager],
       fullHeight: true,
       hideNav: true,
     }
   },
   {
-    path: '/workforce',
-    name: 'workforce',
-    component: Workforce,
+    path: '/users',
+    name: 'users',
+    component: Users,
     meta: {
       icon: 'mdi-account-group',
-      restrict: Manager
+      restrict: Managers
     }
   },
   {
-    path: '/workforce/:userId',
+    path: '/users/:userId',
     name: 'user',
     component: User,
     meta: {
@@ -235,7 +248,6 @@ const routes = [
     component: Messages,
     meta: {
       icon: 'mdi-message-text-outline',
-      restrict: [UserRole.Contractor, ...Manager],
       fullHeight: true,
     },
     children: [
@@ -259,6 +271,54 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: Settings,
+    beforeEnter: (_to: any, _from: any, next: any) => {
+      // Default to /me if no sub-route is specified
+      if (_to.matched.length === 1) next({name: 'settings/me'})
+      else next()
+    },
+    children: [
+      {
+        name: 'settings/me',
+        path: 'me',
+        component: SettingsMe,
+        meta: {
+          icon: 'mdi-account',
+        }
+      },
+      {
+        name: 'settings/organization',
+        path: 'organization',
+        component: SettingsOrganization,
+        meta: {
+          icon: 'mdi-account-group',
+          restrict: [UserRole.OrganizationManager],
+        }
+      },
+      {
+        name: 'settings/payments',
+        path: 'payments',
+        component: SettingsPayments,
+        meta: {
+          icon: 'mdi-cash-multiple',
+        }
+      },
+      {
+        name: 'settings/security',
+        path: 'security',
+        component: SettingsSecurity,
+        meta: {
+          icon: 'mdi-lock',
+        }
+      },
+      {
+        name: 'settings/preferences',
+        path: 'preferences',
+        component: SettingsPreferences,
+        meta: {
+          icon: 'mdi-palette',
+        }
+      },
+    ]
   },
   {
     path: '*',
@@ -277,14 +337,16 @@ const router = new VueRouter({
   routes
 })
 
-/* router.beforeEach((to, from, next) => {
-  if (store.state.authenticatedUser && to.meta.showInNav && !to.meta.showInNav.some(
-    (role) => store.state.authenticatedUser.roles.map(r => r.id).includes(role)
-  )) {
-    console.log('fuck u')
-    next({ name: 'home' })
+router.beforeEach((to, from, next) => {
+  if (to.meta.restrict && !currentUserIs(...to.meta.restrict)) {
+    if (!isAuthenticated()) {
+      next({ name: 'signIn' })
+    }
+    else {
+      next({ name: defaultRoute() })
+    }
   }
   else next()
-}) */
+})
 
 export default router

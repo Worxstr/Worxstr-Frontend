@@ -5,6 +5,7 @@ v-form.flex-grow-1.d-flex.flex-column(
   style="width: 100%"
 )
   v-text-field(
+    v-if="type == 'sales'"
     autofocus,
     v-model="form.business_name",
     label="Business name",
@@ -17,6 +18,7 @@ v-form.flex-grow-1.d-flex.flex-column(
 
   .d-flex.flex-column.flex-md-row
     v-text-field.mr-2(
+      v-if="!$store.state.authenticatedUser"
       v-model="form.contact_name",
       label="Your name",
       required,
@@ -26,7 +28,9 @@ v-form.flex-grow-1.d-flex.flex-column(
       :color="color",
       :filled="filled"
     )
-    v-text-field.ml-2(
+    v-text-field(
+      :class="{'.ml-2': $store.state.authenticatedUser}"
+      v-if="type == 'sales'"
       v-model="form.contact_title",
       label="Job title",
       outlined,
@@ -35,12 +39,12 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
 
-  .d-flex
+  .d-flex(v-if='!$store.state.authenticatedUser')
     phone-input(
       v-if="usePhone",
       v-model="form.phone",
       :rules='rules.phone'
-      required,
+      :required='true',
       outlined,
       dense,
       :color="color",
@@ -61,6 +65,7 @@ v-form.flex-grow-1.d-flex.flex-column(
     v-btn.ml-2.mt-1(text, color="primary", @click="usePhone = !usePhone") Use {{ usePhone ? 'email' : 'phone' }} instead
 
   v-text-field(
+    v-if="type == 'sales'"
     v-model="form.website",
     label="Business website",
     type='url'
@@ -73,7 +78,7 @@ v-form.flex-grow-1.d-flex.flex-column(
     :filled="filled"
   )
 
-  .d-flex.flex-column.flex-md-row(v-if='showManagerContractorFields')
+  .d-flex.flex-column.flex-md-row(v-if="showManagerContractorFields && type == 'sales'")
     v-text-field.mr-2(
       v-model.number="form.num_managers",
       label="Number of managers",
@@ -97,6 +102,18 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
 
+  v-textarea(
+    v-if="type == 'support'"
+    v-model="form.description"
+    :rules="rules.description"
+    label="Describe your problem"
+    required 
+    outlined
+    dense
+    :color="color"
+    :filled="filled"
+  )
+
   v-spacer
 
   v-card-actions.pt-0
@@ -109,7 +126,8 @@ v-form.flex-grow-1.d-flex.flex-column(
       :color="color"
       :disabled='!isValid'
       :loading="loading"
-    ) Request information
+    ) {{ type == 'sales' ? 'Request information' : 'Contact support' }}
+
 </template>
 
 <script lang="ts">
@@ -118,6 +136,8 @@ v-form.flex-grow-1.d-flex.flex-column(
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { emailRules, exists, url } from '@/plugins/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
+
+import * as UAParser from 'ua-parser-js'
 
 @Component({
   components: {
@@ -129,24 +149,16 @@ export default class ContactForm extends Vue {
   isValid = false
   usePhone = false
 
-  form = {
-    business_name: '',
-    contact_name: '',
-    contact_title: '',
-    phone: '',
-    email: '',
-    website: '',
-    num_managers: null,
-    num_contractors: null,
-    notes: '',
-  }
+  form: any = {}
 
   rules = {
     contactName: [exists('Name required')],
     email: emailRules,
     url: [url],
+    description: [exists('Description required')],
   }
 
+  @Prop(String) readonly type!: string // 'sales' | 'support'
   @Prop(String) readonly color: string | undefined
   @Prop({ default: false }) readonly text!: boolean
   @Prop({ default: false }) readonly filled!: boolean
@@ -167,7 +179,7 @@ export default class ContactForm extends Vue {
   async submitForm() {
     this.loading = true 
 
-    const request: any = {...this.form}
+    let request: any = {...this.form}
 
     if (this.form.phone) {
       request.phone = {
@@ -180,8 +192,16 @@ export default class ContactForm extends Vue {
     else {
       delete request.phone
     }
-    
-    await this.$store.dispatch('contactSales', request)
+
+    request = {
+      ...request,
+      ...UAParser(navigator.userAgent)
+    }
+
+    await this.$store.dispatch('contactSales', {
+      form: request,
+      type: this.type
+    })
 
     this.loading = false
     this.$emit('submitted')

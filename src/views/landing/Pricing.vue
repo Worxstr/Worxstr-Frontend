@@ -2,7 +2,7 @@
 div
   v-sheet.gradient-secondary.overlap
     v-container.py-16
-      h3.text-h3.font-weight-black Pricing
+      h3.text-h3.font-weight-black Business pricing
 
   v-container.shift-down.mb-3
     v-row
@@ -37,8 +37,12 @@ div
     .mt-12
       h4.text-h4.font-weight-black.mb-3 Need help deciding?
       p
-        | Contact us
-        router-link(to="/contact") &nbsp;here&nbsp;
+        | Are you a contractor? Click
+        router-link(:to="{ name: 'signUp' }") &nbsp;here&nbsp;
+        | to create your account.
+        br
+        | Or, contact us
+        router-link(:to="{ name: 'contact' }") &nbsp;here&nbsp;
         | for support.
       
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0' v-if='$vuetify.breakpoint.smAndUp')
@@ -47,6 +51,21 @@ div
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Arrows from '@/components/Arrows.vue'
+
+type Tier = {
+  name: string;
+  price: number | null;
+  description?: string;
+  contractors: number;
+  support: string;
+  buttonText: string;
+  to: {
+    name: string;
+    params: {
+      [key: string]: string;
+    };
+  };
+}
 
 @Component({
   metaInfo: {
@@ -57,7 +76,7 @@ import Arrows from '@/components/Arrows.vue'
   }
 })
 export default class Pricing extends Vue {
-  pricingTiers = [
+  pricingTiers: Tier[] = [
     {
       price: 0,
       name: 'free',
@@ -65,7 +84,7 @@ export default class Pricing extends Vue {
       contractors: 10,
       support: 'Free tier chat assistance',
       buttonText: 'Get free',
-      to: {name: 'signUp'}
+      to: {name: 'signUp', params: { subscriptionTier: 'free' }}
     },
     {
       price: 100,
@@ -73,7 +92,7 @@ export default class Pricing extends Vue {
       contractors: 100,
       support: 'Standard support',
       buttonText: 'Get premium',
-      to: {name: 'signUp'}
+      to: {name: 'signUp', params: { subscriptionTier: 'premium' }}
     },
     {
       price: null,
@@ -86,7 +105,7 @@ export default class Pricing extends Vue {
     }
   ]
 
-  highlight(tier: any) {
+  highlight(tier: Tier) {
     return tier.name == "premium"
   }
 }

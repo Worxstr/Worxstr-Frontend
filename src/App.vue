@@ -8,8 +8,8 @@ v-app
 
   v-main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
+    :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
-    //- p pageHeight: {{pageHeight}} safeAreaTop: {{safeAreaTop}} safeAreaBottom: {{safeAreaBottom}}
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
       transition(
         appear,
@@ -17,9 +17,12 @@ v-app
         mode="out-in",
         :duration="{ enter: 150, leave: 50 }"
       )
-        router-view#router-view(:style="`height: ${pageHeight}; padding-bottom: ${bottomPadding}px`")
+        router-view#router-view(:style="`height: ${pageHeight};`")
+        
+      //- For some dumbass reason this computed value won't recalculate unless I have this here
+      div(style='display: none') {{ safeAreaTop }}
 
-  worxstr-footer(v-if="showFooter")
+  worxstr-footer(v-if="isLanding")
 
   message-snackbar
 </template>
@@ -54,6 +57,22 @@ import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 export default class App extends Vue {
 
   drawer = false
+  stylesLoaded = false
+
+  // Wait for external styles to load to compute safe areas
+  created() {
+    window.addEventListener('load', () => {
+      this.stylesLoaded = true
+    })
+    // Sometimes that doesn't work. So for the next 8 seconds we will recompute the value
+    // This is the most bullshit way to do this but it works
+    for (let i = 0; i < 13; i++) {
+      setTimeout(() => {
+        this.stylesLoaded = false
+        this.stylesLoaded = true
+      }, 2 ** i)
+    }
+  }
 
   get authenticatedUser(): User {
     return this.$store.state.authenticatedUser;
@@ -67,12 +86,13 @@ export default class App extends Vue {
     return !this.$route.meta.noSkeleton
   }
 
-  get showFooter() {
-    return this.$route.meta.landing
+  get isLanding() {
+    return !!this.$route.meta.landing
   }
 
   get headerHeight() {
-    return this.$vuetify.breakpoint.mdAndUp ? 64 : 56;
+    if (!this.showHeader) return 0
+    return !this.mobileLayout ? 64 : 56;
   }
   footerHeight = 56;
 
@@ -82,9 +102,14 @@ export default class App extends Vue {
     // Full height, bottom nav hidden
     else return `calc(100vh - ${this.headerHeight + this.safeAreaTop + this.safeAreaBottom}px)`;
   }
+  
+  get mobileLayout() {
+    return this.$vuetify.breakpoint.smAndDown
+  }
 
   // Get safe area values from css definitions
   get safeAreaTop() {
+    if (!this.stylesLoaded) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
         .getPropertyValue("--sat")
@@ -92,6 +117,7 @@ export default class App extends Vue {
     )
   }
   get safeAreaBottom() {
+    if (!this.stylesLoaded || this.$route.meta.bleedSafeAreaBottom) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
         .getPropertyValue("--sab")
@@ -99,8 +125,16 @@ export default class App extends Vue {
     )
   }
 
-  get bottomPadding() {
-    return this.safeAreaBottom + this.headerHeight
+  get topMargin() {
+    if (!this.mobileLayout || this.isLanding) {
+      return this.headerHeight + this.safeAreaTop
+    }
+    
+    return this.safeAreaTop
+  }
+
+  get bottomMargin() {
+    return this.safeAreaBottom + (this.isLanding ? 0 : this.headerHeight)
   }
 }
 </script>

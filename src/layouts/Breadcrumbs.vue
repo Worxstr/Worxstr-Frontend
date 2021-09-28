@@ -1,5 +1,5 @@
 <template lang="pug">
-v-breadcrumbs.pl-1(
+v-breadcrumbs.nav-breadcrumbs.pl-1.d-flex.flex-nowrap(
   :items="breadcrumbs",
   large,
   v-if="!$route.meta.landing"
@@ -71,10 +71,17 @@ export default class Breadcrumbs extends Vue {
 </script>
 
 <style lang="scss">
-.v-breadcrumbs__item--disabled {
-  color: black !important;
-}
-.white-text .v-breadcrumbs__item--disabled {
-  color: white !important;
+.nav-breadcrumbs {
+  overflow: hidden;
+  
+  li {
+    white-space: nowrap;
+  }
+  .v-breadcrumbs__item--disabled {
+    color: black !important;
+  }
+  .white-text .v-breadcrumbs__item--disabled {
+    color: white !important;
+  }
 }
 </style>

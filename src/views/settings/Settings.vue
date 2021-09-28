@@ -1,115 +1,56 @@
 <template lang="pug">
-	v-container.pb-16(fluid)
-		ChangePasswordDialog(:opened.sync="changePasswordDialog")
-		SSNDialog(:opened.sync="ssnDialog")
+v-container.pb-16
+  v-card.d-flex(
+    rounded
+    :class="{'flex-column': $vuetify.breakpoint.smAndDown}"
+  )
+    v-tabs.py-2(
+      :vertical="$vuetify.breakpoint.mdAndUp"
+      center-active
+      :style='$vuetify.breakpoint.mdAndUp && `max-width: 200px`'
+    )
+      v-tab.justify-start(
+        v-for='route in childRoutes'
+        :to='route.path'
+        :key='route.path'
+        v-if='shouldShowRoute(route)'
+      )
+        v-icon(left) {{ route.meta.icon }}
+        | {{ route.path | capitalize }}
 
-		v-card.soft-shadow
-			v-list.pa-0(rounded subheader)
-				v-subheader.text-subtitle-1.font-weight-medium Profile
-				
-				v-list-item(two-line)
-					v-list-item-content
-						v-list-item-subtitle.mb-2 Name
-						v-list-item-title {{ authenticatedUser | fullName }}
-					v-list-item-action
-						v-btn(text color='primary' @click="signOut") Sign out
-				
-				v-list-item(two-line)
-					v-list-item-content
-						v-list-item-subtitle.mb-2 Organization
-						v-list-item-title {{ authenticatedUser.organization_info.name }}
-								
-				v-list-item(two-line v-if="authenticatedUser.contractor_info")
-					v-list-item-content
-						v-list-item-subtitle.mb-2 Address
-						v-list-item-title {{ authenticatedUser.contractor_info.address }}
-				
-				v-list-item(two-line)
-					v-list-item-content
-						v-list-item-subtitle.mb-2 Roles
-						v-list-item-title
-							div
-								v-chip.mr-2(label v-for="(role, i) in authenticatedUser.roles" :key='i')
-									| {{role.name | snakeToSpace | capitalize }}
-						
-				v-list-item(two-line v-if="authenticatedUser.contractor_info && !authenticatedUser.contractor_info.need_info")
-					v-list-item-content
-						v-list-item-title SSN
-					v-list-item-action
-						v-btn(text color='primary' @click="ssnDialog = true") Set SSN
+    v-divider(vertical)
 
-				v-divider
-				v-subheader.text-subtitle-1.font-weight-medium Security
-				
-				v-list-item(two-line)
-					v-list-item-content
-						v-list-item-title Password
-					v-list-item-action
-						v-btn(text color='primary' @click="changePasswordDialog = true") Change
-
-				v-divider
-				v-subheader.text-subtitle-1.font-weight-medium Preferences
-
-				v-list-item(two-line)
-					v-list-item-content
-						v-list-item-title Dark theme
-					v-list-item-action
-						v-select.fit(
-							v-model="preferences.darkMode"
-							:items="['System default', 'Light', 'Dark']"
-							@change="updateDarkMode"
-							dense
-							hide-details
-						)
-
+    router-view.flex-grow-1
+        
 </template>
 
-<script>
-import { mapState } from 'vuex'
-import ChangePasswordDialog from './ChangePasswordDialog'
-import SSNDialog from './SSNDialog'
+<script lang="ts">
+import { Vue, Component } from "vue-property-decorator"
+import { currentUserIs } from "@/definitions/User"
 
-export default {
-	name: "settings",
+@Component({
 	metaInfo: {
-		title: 'Settings',
-	},
-	components: { SSNDialog, ChangePasswordDialog },
-	computed: {
-		...mapState(['authenticatedUser']),
-	},
-	mounted() {
-		if (this.$route.params.openSSNDialog == "true") {
-			this.ssnDialog = true
-		}
-	},
-	data: () => ({
-		changePasswordDialog: false,
-		ssnDialog: false,
-		preferences: {
-			darkMode: window.localStorage.getItem('darkMode') || 'System default',
-		},
-	}),
-	methods: {
-		updateDarkMode() {
-			let dark
-			switch (this.preferences.darkMode) {
-				case 'System default':
-					dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-					break 
-				case 'Light':
-					dark = false
-					break
-				case 'Dark':
-					dark = true
-					break
-			}
-			window.localStorage.setItem('darkMode', this.preferences.darkMode)
-			this.$vuetify.theme.dark = dark
-		},
-		signOut() {
-			this.$store.dispatch('signOut')
-		},
-	}
-};
+    title: "Settings",
+  },
+})
+export default class Settings extends Vue {
+
+  get childRoutes() {
+    return this.$router.options.routes?.find(route => route.name === 'settings')?.children
+  }
+
+  shouldShowRoute(route: any) {
+    if (!route.meta.restrict) return true
+    return currentUserIs(...route.meta.restrict)
+  }
+}
+
+
 </script>
+
+<style lang="scss">
+// Stupid left arrow won't go away even with hide-arrows prop
+.v-slide-group__prev {
+  display: none !important;
+}
+</style>

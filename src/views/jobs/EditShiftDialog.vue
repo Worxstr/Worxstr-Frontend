@@ -17,7 +17,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title Editing shift
+        v-toolbar-title.text-h6 Editing shift
 
       v-divider
 
@@ -81,6 +81,14 @@ import { exists } from '@/plugins/inputValidation'
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
 
+type ShiftForm = {
+  id: number | null;
+  contractor_id: number | null;
+  site_location: string;
+  time_begin: string;
+  time_end: string;
+}
+
 @Component({
   components: {
     DatetimeInput,
@@ -91,7 +99,7 @@ export default class EditShiftDialog extends Vue {
   recurring = false
   ends = 'on'
 
-  editedShift: any = {
+  editedShift: ShiftForm = {
     id: null,
     contractor_id: null,
     site_location: '',
@@ -122,8 +130,8 @@ export default class EditShiftDialog extends Vue {
   }
 
   contractorName(contractorId: number) {
-    const e: any = this.contractors.find((e) => e.id == contractorId)
-    if (contractorId > 0) return `${e.first_name} ${e.last_name}`
+    const contractor: User | undefined = this.contractors.find((c) => c.id == contractorId)
+    if (contractorId > 0) return `${contractor?.first_name} ${contractor?.last_name}`
     return `Unassigned ${-contractorId}`
   }
 
