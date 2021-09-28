@@ -30,7 +30,7 @@ export default class Preferences extends Vue {
 
   darkPreferenceOptions = [
     {
-      text: 'Default',
+      text: 'System default',
       value: 'default',
     },
     {

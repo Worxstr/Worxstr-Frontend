@@ -102,7 +102,7 @@ export default {
         socials: [
           {
             link: 'mailto:jackson@worxstr.com',
-            icon: 'mdi-at'
+            icon: 'mdi-email-outline',
           },
           {
             link: 'https://github.com/sippejw',
@@ -122,7 +122,7 @@ export default {
         socials: [
           {
             link: 'mailto:james@worxstr.com',
-            icon: 'mdi-at'
+            icon: 'mdi-email-outline',
           },
           {
             link: 'https://www.linkedin.com/in/jameswheeler94/',
@@ -142,7 +142,7 @@ export default {
           },
           {
             link: 'mailto:alexwohlbruck@gmail.com',
-            icon: 'mdi-at'
+            icon: 'mdi-email-outline',
           },
           {
             link: 'https://github.com/alexwohlbruck',
@@ -181,7 +181,7 @@ export default {
       //   socials: [
       //     {
       //       link: 'mailto:coleylipp237@gmail.com',
-      //       icon: 'mdi-at',
+            // icon: 'mdi-email-outline',
       //     },
       //     {
       //       link: 'https://www.linkedin.com/in/coleylipp',
@@ -196,7 +196,7 @@ export default {
       //   socials: [
       //     {
       //       link: 'mailto:victoriadimarco99@gmail.com',
-      //       icon: 'mdi-at',
+            // icon: 'mdi-email-outline',
       //     },
       //     {
       //       link: 'https://www.linkedin.com/in/victoriadimarco',
