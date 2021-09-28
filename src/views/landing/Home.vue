@@ -8,7 +8,7 @@
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
-            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to widescale temp labor management
+            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to contract labor management
 
           div(v-if='authenticatedUser')
             v-btn.mr-3.black--text(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
