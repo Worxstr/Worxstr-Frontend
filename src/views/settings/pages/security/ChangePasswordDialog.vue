@@ -29,15 +29,18 @@ v-dialog(
           v-model="password",
           :rules="rules.password",
           required
-          type="password"
+          :type="showPassword ? 'text' : 'password'"
+          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append='showPassword = !showPassword'
         )
 
         v-text-field(
-          outlined,
-          dense,
-          label="Confirm new password",
-          v-model="confirmPassword",
-          :rules="[...rules.confirmPassword, rules.passwordMatches(password, confirmPassword)]",
+          v-if='!showPassword'
+          outlined
+          dense
+          label="Confirm new password"
+          v-model="confirmPassword"
+          :rules="[...rules.confirmPassword, rules.passwordMatches(password, confirmPassword)]"
           required
           type="password"
         )
@@ -65,6 +68,7 @@ export default {
     loading: false,
     password: "",
     confirmPassword: "",
+    showPassword: false,
     rules: {
       password: passwordRules,
       confirmPassword: [exists('Password confirmation required')],
