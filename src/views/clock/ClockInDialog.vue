@@ -8,6 +8,7 @@ v-dialog(
 )
   portal(to="toolbarActions")
     v-btn(
+      v-if='hideDialogForQr'
       text
       :icon='$vuetify.breakpoint.xs'
       color="primary"
@@ -240,6 +241,7 @@ export default class ClockInDialog extends Vue {
   }
 
   toggleWebview(visible: boolean) {
+    this.hideDialogForQr = !visible
     if (visible) {
       document.getElementById('router-view')!.classList.remove('transparent')
       document.getElementById('main')!.classList.remove('transparent')
@@ -250,7 +252,6 @@ export default class ClockInDialog extends Vue {
       document.getElementById('main')!.classList.add('transparent')
       document.getElementById('app')!.classList.add('no-bg')
     }
-    this.hideDialogForQr = !visible
   }
 
   deactivated() {
