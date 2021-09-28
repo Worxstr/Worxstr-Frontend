@@ -15,7 +15,7 @@
         v-if='$vuetify.breakpoint.smAndDown && !$route.meta.landing'
       )
         v-icon mdi-menu
-
+      
       router-link.mb-2.mr-2(
         to="/",
         style="text-decoration: none",
