@@ -3,8 +3,8 @@
     v-app-bar.toolbar(
       app
       outlined
-      elevate-on-scroll
-      :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
+      :elevate-on-scroll='!bottomToolbar'
+      :bottom="bottomToolbar"
       :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
       :class="$route.meta.landing ? 'landing' : 'app'"
     )
@@ -56,6 +56,10 @@ import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
 })
 export default class Toolbar extends Vue {
   @Prop({ default: false }) drawer!: boolean
+  
+  get bottomToolbar() {
+    return this.$vuetify.breakpoint.smAndDown && !this.$route.meta.landing
+  }
 
   menu = false
 
