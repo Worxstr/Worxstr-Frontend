@@ -80,7 +80,7 @@
         v-card-actions.d-flex.justify-center
           v-btn(text color='primary' @click='loadClockHistory' :loading='loadingHistory')
             v-icon(left dark)  mdi-arrow-down 
-            span Load {{ clockHistoryCurrentWeek }}
+            span View {{ clockHistoryCurrentWeek }}
 
       v-card-text(v-else)
         | No history yet
