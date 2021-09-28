@@ -33,8 +33,11 @@ export async function setTheme(pref: DarkPreference) {
 
 	vuetify.framework.theme.dark = dark
 	window.localStorage.setItem('darkMode', pref)
-	if (Capacitor.isNativePlatform())
-		await StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light })
+	if (Capacitor.isNativePlatform()) {
+		await StatusBar.setStyle({
+			style: dark ? Style.Dark : Style.Light
+		})
+	}
 }
 
 export function initDarkMode() {
