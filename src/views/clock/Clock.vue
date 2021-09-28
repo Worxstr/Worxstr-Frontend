@@ -68,7 +68,7 @@
                 | {{ onBreak ? "End" : "Start" }} break
 
       div(v-else)
-        h6.text-h6 You have no upcoming shifts
+        h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
 
     v-card.soft-shadow.align-self-center(width='100%' max-width='500px' rounded='lg' style="margin-bottom: 60px")
 
