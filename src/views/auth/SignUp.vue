@@ -55,14 +55,17 @@ div
               )
               v-text-field(
                 label='Password'
-                type='password'
+                :type="showPassword ? 'text' : 'password'"
                 v-model='form.password'
                 :rules='rules.password'
                 required
                 outlined
                 dense
+                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append='showPassword = !showPassword'
               )
               v-text-field(
+                v-if='!showPassword'
                 label='Confirm password'
                 type='password'
                 v-model='form.confirm_password'
@@ -127,6 +130,7 @@ export default class SignUp extends Vue {
     customer_url: '',
     subscription_tier: null,
   }
+  showPassword = false
   rules = {
     managerReference: [exists('Manager reference number required')],
     password: passwordRules,
