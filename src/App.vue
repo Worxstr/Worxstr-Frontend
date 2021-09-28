@@ -79,15 +79,15 @@ export default class App extends Vue {
   }
 
   get showNavDrawer() {
-    return !this.$route.meta.landing && !this.$route.meta.noSkeleton
+    return !this.$route.meta?.landing && !this.$route.meta?.noSkeleton
   }
 
   get showHeader() {
-    return !this.$route.meta.noSkeleton
+    return !this.$route.meta?.noSkeleton
   }
 
   get isLanding() {
-    return !!this.$route.meta.landing
+    return !!this.$route.meta?.landing
   }
 
   get headerHeight() {
@@ -98,7 +98,7 @@ export default class App extends Vue {
 
   get pageHeight() {
     // Normal view
-    if (!this.$route.meta.fullHeight || this.$route.meta.noSkeleton) return "100%";
+    if (!this.$route.meta?.fullHeight || this.$route.meta?.noSkeleton) return "100%";
     // Full height, bottom nav hidden
     else return `calc(100vh - ${this.headerHeight + this.safeAreaTop + this.safeAreaBottom}px)`;
   }
@@ -117,7 +117,7 @@ export default class App extends Vue {
     )
   }
   get safeAreaBottom() {
-    if (!this.stylesLoaded || this.$route.meta.bleedSafeAreaBottom) return 0
+    if (!this.stylesLoaded || this.$route.meta?.bleedSafeAreaBottom) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
         .getPropertyValue("--sab")

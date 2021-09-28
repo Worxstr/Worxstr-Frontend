@@ -58,7 +58,7 @@ export default class Toolbar extends Vue {
   @Prop({ default: false }) drawer!: boolean
   
   get bottomToolbar() {
-    return this.$vuetify.breakpoint.smAndDown && !this.$route.meta.landing
+    return this.$vuetify.breakpoint.smAndDown && !this.$route.meta?.landing
   }
 
   menu = false
