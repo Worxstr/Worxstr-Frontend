@@ -134,7 +134,10 @@ export default class App extends Vue {
   }
 
   get bottomMargin() {
-    return this.safeAreaBottom + (this.isLanding ? 0 : this.headerHeight)
+    if (this.mobileLayout) {
+      return this.headerHeight + this.safeAreaBottom
+    }
+    return this.safeAreaBottom
   }
 }
 </script>
