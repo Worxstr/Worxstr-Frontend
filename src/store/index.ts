@@ -165,6 +165,11 @@ const initialState = (): RootState => ({
     next: null,
     // TODO: Flatten shift data from jobs
     all: [],
+    byId: {},
+  },
+  jobs: {
+    all: [],
+    byId: {},
   },
   workforce: [],
   managers: {
