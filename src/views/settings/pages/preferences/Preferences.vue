@@ -5,16 +5,17 @@ v-list
       v-list-item-title Dark theme
     v-list-item-action
       v-select.fit(
-        v-model="preferences.darkMode",
-        :items="['System default', 'Light', 'Dark']",
-        @change="updateDarkMode",
-        dense,
+        v-model="preferences.darkMode"
+        :items="darkPreferenceOptions"
+        @change="updateDarkMode"
+        dense
         hide-details
       )
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import { DarkPreference, getStoredPreference, setTheme } from '@/plugins/theme'
 
 @Component({
   metaInfo: {
@@ -24,26 +25,30 @@ import { Vue, Component } from 'vue-property-decorator'
 export default class Preferences extends Vue {
 
   preferences = {
-    darkMode: window.localStorage.getItem("darkMode") || "System default",
+    darkMode: 'Default',
+  }
+
+  darkPreferenceOptions = [
+    {
+      text: 'Default',
+      value: 'default',
+    },
+    {
+      text: 'Light',
+      value: 'light',
+    },
+    {
+      text: 'Dark',
+      value: 'dark',
+    },
+  ]
+
+  mounted() {
+    this.preferences.darkMode = getStoredPreference()
   }
 
   updateDarkMode() {
-    let dark
-    switch (this.preferences.darkMode) {
-      case "System default":
-        dark =
-          window.matchMedia &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches;
-        break;
-      case "Light":
-        dark = false;
-        break;
-      case "Dark":
-        dark = true;
-        break;
-    }
-    window.localStorage.setItem("darkMode", this.preferences.darkMode);
-    this.$vuetify.theme.dark = dark as boolean;
+    setTheme(this.preferences.darkMode as DarkPreference)
   }
 }
 </script>

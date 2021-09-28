@@ -931,6 +931,11 @@
   resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-3.2.3.tgz#e8b9a34361ace5ef870b4852d690e04f6afd14da"
   integrity sha512-HGuCf9CnHdpeCBU8grgaPxlF20gIs6R5UhngdLbUKc1ULj6EtfOFxfH6ptbdJ/rIuZ9a8ADlszFaN4CGl5P8Mg==
 
+"@capacitor/status-bar@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@capacitor/status-bar/-/status-bar-1.0.3.tgz#0ed10d86958b80342292e4044cc9e9630d2413fb"
+  integrity sha512-btprzQ5Spjqd6FX3eXKqRKTKZWlIZmJL4bQ79d5N1ESortOZ5NJFB25lAT/a073t8aaJv6DVdZurVFd0/0ELSA==
+
 "@chenfengyuan/vue-qrcode@1":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@chenfengyuan/vue-qrcode/-/vue-qrcode-1.0.2.tgz#37d71902e166e1ae58176bd6cb9c40905c1b0949"

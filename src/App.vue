@@ -1,6 +1,6 @@
 <template lang="pug">
 v-app
-  v-system-bar(app v-if='safeAreaTop' :height='safeAreaTop' color='rgba(0,0,0,.35)')
+  v-system-bar(app v-if='safeAreaTop' :height='safeAreaTop' :color="$vuetify.theme.dark ? 'black' : 'white'")
 
   toolbar(@toggleDrawer="drawer = !drawer" v-if='showHeader')
   
