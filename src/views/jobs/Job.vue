@@ -110,8 +110,8 @@ div(v-else)
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
       v-btn(text, @click="createShiftDialog = true")
-        v-icon(left) mdi-plus
-        span Add shift
+        v-icon(left) mdi-clipboard-plus-outline
+        span Assign shift
 
     p.text-body-2.text-center.mt-3(v-if="!job.shifts || !job.shifts.length")
       | There aren't any shifts for this job.
