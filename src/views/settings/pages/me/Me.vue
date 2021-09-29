@@ -9,6 +9,11 @@ v-list
 
   v-list-item(two-line)
     v-list-item-content
+      v-list-item-subtitle.mb-2 Email
+      v-list-item-title {{ authenticatedUser.email }}
+
+  v-list-item(two-line)
+    v-list-item-content
       v-list-item-subtitle.mb-2 Organization
       v-list-item-title {{ authenticatedUser.organization_info.name }}
 
