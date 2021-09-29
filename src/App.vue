@@ -1,12 +1,12 @@
 <template lang="pug">
 v-app
-  v-system-bar(app v-if='safeAreaTop' :height='safeAreaTop' color='rgba(0,0,0,.35)')
+  v-system-bar(app v-if='safeAreaTop' :height='safeAreaTop' :color="$vuetify.theme.dark ? 'black' : 'white'")
 
   toolbar(@toggleDrawer="drawer = !drawer" v-if='showHeader')
   
   nav-drawer(v-if="showNavDrawer", v-model="drawer")
 
-  v-main(
+  v-main#main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
     :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
@@ -24,7 +24,7 @@ v-app
 
   worxstr-footer(v-if="isLanding")
 
-  message-snackbar
+  message-snackbar(:bottom-offset='bottomMargin')
 </template>
 
 <script lang="ts">
@@ -79,15 +79,15 @@ export default class App extends Vue {
   }
 
   get showNavDrawer() {
-    return !this.$route.meta.landing && !this.$route.meta.noSkeleton
+    return !this.$route.meta?.landing && !this.$route.meta?.noSkeleton
   }
 
   get showHeader() {
-    return !this.$route.meta.noSkeleton
+    return !this.$route.meta?.noSkeleton
   }
 
   get isLanding() {
-    return !!this.$route.meta.landing
+    return !!this.$route.meta?.landing
   }
 
   get headerHeight() {
@@ -98,7 +98,7 @@ export default class App extends Vue {
 
   get pageHeight() {
     // Normal view
-    if (!this.$route.meta.fullHeight || this.$route.meta.noSkeleton) return "100%";
+    if (!this.$route.meta?.fullHeight || this.$route.meta?.noSkeleton) return "100%";
     // Full height, bottom nav hidden
     else return `calc(100vh - ${this.headerHeight + this.safeAreaTop + this.safeAreaBottom}px)`;
   }
@@ -117,7 +117,7 @@ export default class App extends Vue {
     )
   }
   get safeAreaBottom() {
-    if (!this.stylesLoaded || this.$route.meta.bleedSafeAreaBottom) return 0
+    if (!this.stylesLoaded || this.$route.meta?.bleedSafeAreaBottom) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
         .getPropertyValue("--sab")
@@ -134,7 +134,22 @@ export default class App extends Vue {
   }
 
   get bottomMargin() {
-    return this.safeAreaBottom + (this.isLanding ? 0 : this.headerHeight)
+    if (this.mobileLayout) {
+      return this.headerHeight + this.safeAreaBottom
+    }
+    return this.safeAreaBottom
   }
 }
 </script>
+
+<style lang="scss">
+  // Helper classes to hide app content for QR code scanner
+  // Used in ClockInDialog.vue
+  .transparent {
+    display: none !important;
+    opacity: 0 !important;
+  }
+  .no-bg {
+    background-color: transparent !important;
+  }
+</style>

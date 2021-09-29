@@ -9,6 +9,8 @@ v-navigation-drawer#nav.d-flex.flex-column(
   :permanent='$vuetify.breakpoint.mdAndUp'
   :temporary='$vuetify.breakpoint.smAndDown'
   :bottom='$vuetify.breakpoint.smAndDown'
+  touchless
+  v-touch='{down: () => { value = false }}'
 )
 
   //- Logo and collapse button
@@ -89,10 +91,6 @@ export default class NavDrawer extends Vue {
   mini = false
   @Prop({ default: false }) value!: boolean
 
-  test() {
-    console.log('toggeld')
-  }
-
   signOut(): void {
     this.$store.dispatch("signOut");
   }
@@ -121,7 +119,7 @@ export default class NavDrawer extends Vue {
       })
       .map((route) => ({
         text: route.name,
-        icon: route.meta.icon,
+        icon: route.meta?.icon,
         to: route.name,
       }))
   }

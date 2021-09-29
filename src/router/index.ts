@@ -334,10 +334,17 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes,
+  scrollBehavior (_to: any, _from: any, savedPosition: any) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      window.scrollTo(0, 0)
+    }
+  }
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to: any, _from: any, next: any) => {
   if (to.meta.restrict && !currentUserIs(...to.meta.restrict)) {
     if (!isAuthenticated()) {
       next({ name: 'signIn' })

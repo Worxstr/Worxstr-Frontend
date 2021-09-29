@@ -68,7 +68,7 @@
                 | {{ onBreak ? "End" : "Start" }} break
 
       div(v-else)
-        h6.text-h6 You have no upcoming shifts
+        h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
 
     v-card.soft-shadow.align-self-center(width='100%' max-width='500px' rounded='lg' style="margin-bottom: 60px")
 
@@ -78,9 +78,9 @@
         clock-events(:events='clockHistory')
 
         v-card-actions.d-flex.justify-center
-          v-btn(text color='primary' @click='loadClockHistory')
-            v-icon(right dark)  mdi-arrow-down 
-            |             Load previous week
+          v-btn(text color='primary' @click='loadClockHistory' :loading='loadingHistory')
+            v-icon(left dark)  mdi-arrow-down 
+            span View {{ clockHistoryCurrentWeek }}
 
       v-card-text(v-else)
         | No history yet
@@ -93,6 +93,7 @@ import vueAwesomeCountdown from "vue-awesome-countdown"
 import { ClockAction, ClockEvent } from '@/definitions/Clock'
 import ClockEvents from '@/components/ClockEvents.vue'
 import ClockInDialog from './ClockInDialog.vue'
+import dayjs from 'dayjs'
 
 Vue.use(vueAwesomeCountdown, "vac");
 
@@ -110,6 +111,7 @@ export default class Clock extends Vue {
   clockInDialog = false
   togglingClock = false
   togglingBreak = false
+  loadingHistory = false
 
   mounted() {
     if (!this.clockHistory.length) this.loadClockHistory()
@@ -122,6 +124,15 @@ export default class Clock extends Vue {
 
   get clockHistory() {
     return this.$store.getters.clockHistory
+  }
+
+  get clockHistoryCurrentWeek() {
+    const nextOffset = this.$store.state.clock.history.lastLoadedOffset + 1
+    const start = new Date()
+    const end = new Date()
+    start.setDate(start.getDate() - nextOffset * 7)
+    end.setDate(end.getDate() - (nextOffset * 7) + 7)
+    return `${dayjs(start).format('MMM DD')} - ${dayjs(end).format('MMM DD')}`
   }
 
   get nextShift() {
@@ -159,8 +170,10 @@ export default class Clock extends Vue {
     this.clockInDialog = true
   }
 
-  loadClockHistory() {
-    this.$store.dispatch("loadClockHistory")
+  async loadClockHistory() {
+    this.loadingHistory = true
+    await this.$store.dispatch("loadClockHistory")
+    this.loadingHistory = false
   }
 
 }

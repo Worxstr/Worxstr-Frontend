@@ -49,7 +49,7 @@ export default class Breadcrumbs extends Vue {
       let dynamicName
       try {
         // Get param mapping from route metadata
-        const paramMap = this.$route.meta.paramMap
+        const paramMap = this.$route.meta?.paramMap
         // Extract the param name
         const param = matched[i].replace(':', '')
         // Find the item in the store state
