@@ -18,7 +18,11 @@ v-dialog(
       span(v-if='!$vuetify.breakpoint.xs') Cancel
 
   v-card.sign-in.fill-height
-    v-form.d-flex.flex-column.fill-height(ref='form' @submit.prevent='submitCode(code)')
+    v-form.d-flex.flex-column.fill-height(
+      ref='form'
+      v-model="isValid"
+      @submit.prevent='submitCode(code)'
+    )
       v-card-title.text-h6 Verify your presence
 
       v-spacer
@@ -58,7 +62,7 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text @click='closeDialog') Cancel
-        v-btn(text color='primary' type='submit' :loading='togglingClock') Submit
+        v-btn(text color='primary' type='submit' :loading='loading' :disabled='!isValid') Submit
 
 </template>
 
@@ -82,11 +86,12 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 })
 export default class ClockInDialog extends Vue {
   code = ''
+  loading = false
+  isValid = false
   webQrEnabled = false
   cameraFailed = false
   allowedCamera = false
   allowedLocation = false
-  togglingClock = false
   cameraLoading = false
   hideDialogForQr = false
 
@@ -107,14 +112,14 @@ export default class ClockInDialog extends Vue {
 
   async submitCode(code: string) {
     // TODO: Handle incorrect code
-    await this.clockIn(code)
-    this.closeDialog()
-  }
-
-  async clockIn(code: string) {
-    this.togglingClock = true
-    await this.$store.dispatch('clockIn', code)
-    this.togglingClock = false
+    try {
+      this.loading = true
+      await this.$store.dispatch('clockIn', code)
+      this.closeDialog()
+    }
+    finally {
+      this.loading = false
+    }
   }
 
   @Watch('opened')
