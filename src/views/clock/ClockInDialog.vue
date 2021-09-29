@@ -243,13 +243,13 @@ export default class ClockInDialog extends Vue {
   toggleWebview(visible: boolean) {
     this.hideDialogForQr = !visible
     if (visible) {
-      document.getElementById('router-view')!.classList.remove('transparent')
-      document.getElementById('main')!.classList.remove('transparent')
+      document.getElementById('router-view')!.classList.remove('webview-transparent')
+      document.getElementById('main')!.classList.remove('webview-transparent')
       document.getElementById('app')!.classList.remove('no-bg')
     }
     else {
-      document.getElementById('router-view')!.classList.add('transparent')
-      document.getElementById('main')!.classList.add('transparent')
+      document.getElementById('router-view')!.classList.add('webview-transparent')
+      document.getElementById('main')!.classList.add('webview-transparent')
       document.getElementById('app')!.classList.add('no-bg')
     }
   }
