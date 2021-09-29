@@ -7,6 +7,7 @@
       :bottom="bottomToolbar"
       :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
       :class="$route.meta.landing ? 'landing' : 'app'"
+      v-touch='{up: () => { $emit("toggleDrawer") }}'
     )
       v-btn(
         icon
@@ -14,7 +15,7 @@
         v-if='$vuetify.breakpoint.smAndDown && !$route.meta.landing'
       )
         v-icon mdi-menu
-
+      
       router-link.mb-2.mr-2(
         to="/",
         style="text-decoration: none",

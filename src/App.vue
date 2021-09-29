@@ -24,7 +24,7 @@ v-app
 
   worxstr-footer(v-if="isLanding")
 
-  message-snackbar
+  message-snackbar(:bottom-offset='bottomMargin')
 </template>
 
 <script lang="ts">
