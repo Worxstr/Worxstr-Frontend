@@ -7,23 +7,25 @@ div
         v-card-text.pb-0
           v-text-field(
             autofocus
-            label="Email",
-            type="email",
-            required="",
-            v-model="form.email",
-            :rules="emailRules"
+            label='Email'
+            type='emali'
+            required
+            v-model='form.email'
+            :rules='emailRules'
             outlined
             dense
           )
           v-text-field(
-            label="Password",
-            type="password",
-            required="",
-            v-model="form.password",
-            :rules="passwordRules"
+            label='Password'
+            :type="showPassword ? 'text' : 'password'"
+            v-model='form.password'
+            :rules='passwordRules'
+            required
             outlined
             dense
             :hide-details='biometricsAvailable'
+            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append='showPassword = !showPassword'
           )
           v-checkbox(
             v-if='biometricsAvailable'
@@ -63,11 +65,12 @@ export default class SignIn extends Vue {
     password: '',
     useBiometrics: false,
   }
+  showPassword = false
   isValid = false
   loading = false
+  biometricsAvailable = false
   emailRules = emailRules
   passwordRules = passwordRules
-  biometricsAvailable = false
 
   mounted() {
     if (this.$route.params.email) {
