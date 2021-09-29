@@ -5,11 +5,11 @@ v-form.flex-grow-1.d-flex.flex-column(
   style="width: 100%"
 )
   v-text-field(
+    v-if="type == 'sales'"
     autofocus,
     v-model="form.business_name",
     label="Business name",
     required,
-    :rules='rules.businessName'
     outlined,
     dense,
     :color="color",
@@ -18,6 +18,7 @@ v-form.flex-grow-1.d-flex.flex-column(
 
   .d-flex.flex-column.flex-md-row
     v-text-field.mr-2(
+      v-if="!$store.state.authenticatedUser"
       v-model="form.contact_name",
       label="Your name",
       required,
@@ -27,7 +28,9 @@ v-form.flex-grow-1.d-flex.flex-column(
       :color="color",
       :filled="filled"
     )
-    v-text-field.ml-2(
+    v-text-field(
+      :class="{'.ml-2': $store.state.authenticatedUser}"
+      v-if="type == 'sales'"
       v-model="form.contact_title",
       label="Job title",
       outlined,
@@ -36,15 +39,12 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
 
-  .d-flex
-    v-text-field(
+  .d-flex(v-if='!$store.state.authenticatedUser')
+    phone-input(
       v-if="usePhone",
       v-model="form.phone",
       :rules='rules.phone'
-      type="tel",
-      v-mask="'(###) ###-####'",
-      label="Phone number",
-      required,
+      :required='true',
       outlined,
       dense,
       :color="color",
@@ -65,119 +65,146 @@ v-form.flex-grow-1.d-flex.flex-column(
     v-btn.ml-2.mt-1(text, color="primary", @click="usePhone = !usePhone") Use {{ usePhone ? 'email' : 'phone' }} instead
 
   v-text-field(
+    v-if="type == 'sales'"
     v-model="form.website",
     label="Business website",
+    type='url'
+    :rules='rules.url'
+    placeholder='https://example.com'
+    required,
     outlined,
     dense,
     :color="color",
     :filled="filled"
   )
 
-  .d-flex.flex-column.flex-md-row
-    v-select.mr-2(
-      v-model="form.num_managers",
+  .d-flex.flex-column.flex-md-row(v-if="showManagerContractorFields && type == 'sales'")
+    v-text-field.mr-2(
+      v-model.number="form.num_managers",
       label="Number of managers",
       type="number",
       min="1",
-      :items='contractorCountOptions'
+      required,
       outlined,
       dense,
       :color="color",
       :filled="filled"
     )
-    v-select.ml-2(
-      v-model="form.num_contractors",
+    v-text-field.ml-2(
+      v-model.number="form.num_contractors",
       label="Number of contractors",
       type="number",
       min="1",
-      :items='contractorCountOptions'
+      required,
       outlined,
       dense,
       :color="color",
       :filled="filled"
     )
+
+  v-textarea(
+    v-if="type == 'support'"
+    v-model="form.description"
+    :rules="rules.description"
+    label="Describe your problem"
+    required 
+    outlined
+    dense
+    :color="color"
+    :filled="filled"
+  )
 
   v-spacer
 
   v-card-actions.pt-0
     v-spacer
     slot
-    v-btn(text, elevation='0' :text="text", :color="color" :disabled='!isValid' type='submit') Send message
+    v-btn(
+      type='submit'
+      text
+      :text="text"
+      :color="color"
+      :disabled='!isValid'
+      :loading="loading"
+    ) {{ type == 'sales' ? 'Request information' : 'Contact support' }}
+
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { emailRules, exists, phoneRules } from '@/plugins/inputValidation'
+import { emailRules, exists, url } from '@/plugins/inputValidation'
+import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
-// This is a temporary fix for the contact form. When merging dev, do not keep this code
-import axios from 'axios'
-import { Capacitor } from '@capacitor/core'
-// ----------------
+import * as UAParser from 'ua-parser-js'
 
-@Component
+@Component({
+  components: {
+    PhoneInput
+  }
+})
 export default class ContactForm extends Vue {
   
   isValid = false
   usePhone = false
 
-  form = {
-    business_name: '',
-    contact_name: '',
-    contact_title: '',
-    phone: '',
-    email: '',
-    website: '',
-    num_managers: null,
-    num_contractors: null,
-    notes: '',
-  }
+  form: any = {}
 
   rules = {
-    businessName: [exists('Business name required')],
     contactName: [exists('Name required')],
-    phone: phoneRules,
     email: emailRules,
+    url: [url],
+    description: [exists('Description required')],
   }
 
-  contractorCountOptions = [{
-    text: '0-25',
-    value: 0
-  },{
-    text: '26-100',
-    value: 1
-  },{
-    text: '101+',
-    value: 2
-  }]
-
+  @Prop(String) readonly type!: string // 'sales' | 'support'
   @Prop(String) readonly color: string | undefined
   @Prop({ default: false }) readonly text!: boolean
   @Prop({ default: false }) readonly filled!: boolean
+  @Prop({ default: true }) readonly showManagerContractorFields!: boolean
+  @Prop(Object) readonly dataSupplement: object | undefined
 
-  // This is a temporary fix for the contact form. When merging dev, do not keep this code
-  async submitForm() {
-    const baseUrl = process.env.VUE_APP_API_BASE_URL || 
-      (
-        Capacitor.isNativePlatform()
-          ? 'https://dev.worxstr.com'
-          : window.location.origin.replace('8080', '5000')
-      )
-    try {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/contact/sales`,
-        data: this.form,
-      })
-      this.$store.dispatch('showSnackbar', {
-        text: 'Thanks! We will get back to you shortly.',
-      })
-      return data
-    } catch (err) {
-      return err
+  loading = false
+
+  mounted() {
+    if (this.dataSupplement) {
+      this.form = {
+        ...this.form,
+        ...this.dataSupplement
+      }
     }
   }
-  // ----------------
+
+  async submitForm() {
+    this.loading = true 
+
+    let request: any = {...this.form}
+
+    if (this.form.phone) {
+      request.phone = {
+        country_code: '1',
+        area_code: this.form.phone.substring(1,4),
+        phone_number: this.form.phone.substring(6,9) + this.form.phone.substring(10,14)
+      }
+      delete request.email
+    }
+    else {
+      delete request.phone
+    }
+
+    request = {
+      ...request,
+      ...UAParser(navigator.userAgent)
+    }
+
+    await this.$store.dispatch('contactSales', {
+      form: request,
+      type: this.type
+    })
+
+    this.loading = false
+    this.$emit('submitted')
+  }
 }
 </script>

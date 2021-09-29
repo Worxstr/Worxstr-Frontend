@@ -2,7 +2,7 @@
 v-dialog(
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  max-width="700",
   persistent
 )
   v-card.d-flex.flex-column(v-if="editedJob")
@@ -42,6 +42,37 @@ v-dialog(
           :rules="rules.address"
         )
 
+        div(v-if='showMap')
+          .d-flex.align-center
+            .d-flex.align-center
+              p.mr-4.mb-3 Job color
+              v-menu(offset-y content-class='color-picker')
+                template(v-slot:activator='{ on, attrs }')
+                  .mb-3(v-bind='attrs' v-on='on')
+                    v-badge.soft-shadow(:color="editedJob.color || '#4285f4'" bordered)
+                    
+                v-color-picker(
+                  v-model='editedJob.color'
+                  show-swatches
+                  hide-canvas
+                  hide-sliders
+                  hide-inputs
+                  swatches-max-height='350'
+                )
+
+            .mx-4
+            
+            v-slider.mt-3(
+              v-model='editedJob.radius'
+              label='Radius'
+              min='75'
+              max='1000'
+            )
+            p.mt-1 {{ editedJob.radius | distance }}
+
+          v-card.soft-shadow
+            jobs-map(:jobs='[editedJob]')
+
         v-subheader Managers
         v-select(
           v-if="managers.organization && managers.organization.length",
@@ -74,15 +105,10 @@ v-dialog(
           :rules="rules.consultantName",
           required
         )
-        v-text-field(
-          outlined,
-          dense,
-          label="Phone number",
-          type="tel",
-          v-mask="'(###) ###-####'",
-          v-model="editedJob.consultant_phone",
-          :rules="rules.consultantPhone",
-          required
+        phone-input(
+          v-model='editedJob.consultant_phone'
+          outlined
+          :required='true'
         )
         v-text-field(
           outlined,
@@ -106,19 +132,30 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
+import colors from 'vuetify/lib/util/colors'
 import { User } from '@/definitions/User'
 import { Job } from '@/definitions/Job';
 import { exists, phoneRules, emailRules } from '@/plugins/inputValidation'
+import PhoneInput from '@/components/inputs/PhoneInput.vue'
+import JobsMap from '@/components/JobsMap.vue'
 
-@Component
+@Component({
+  components: {
+    PhoneInput,
+    JobsMap,
+  }
+})
 export default class EditJobDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ default: false }) readonly create!: boolean
   @Prop(Object) readonly job: Job | undefined
 
+  editedJob: any = {
+    color: colors.red.base,
+    address: null,
+  } // TODO: add type
   isValid = false
-  editedJob: any = {} // TODO: add type
   loading = false
   place: any
 
@@ -130,11 +167,22 @@ export default class EditJobDialog extends Vue {
     consultantEmail: emailRules,
   }
 
+  mounted() {
+    this.$store.dispatch('loadManagers')
+  }
+
   @Watch('opened')
   onOpened(newVal: boolean) {
-    if (newVal) this.$store.dispatch('loadManagers');
+    if (newVal) {
+      if (this.create) (this.$refs.form as HTMLFormElement).reset()
+    }
+
     if (newVal && this.job)
       this.editedJob = Object.assign({}, this.job);
+  }
+
+  get showMap() {
+    return !!this.editedJob?.address
   }
 
   get managers(): User[] {
@@ -142,8 +190,7 @@ export default class EditJobDialog extends Vue {
   }
 
   closeDialog() {
-    this.$emit("update:opened", false);
-    if (this.create) (this.$refs.form as HTMLFormElement).reset();
+    this.$emit("update:opened", false)
   }
   setPlace(address: any, place: string, id: string) {
     if (this.editedJob) {
@@ -170,3 +217,11 @@ export default class EditJobDialog extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.color-picker {
+  &.v-menu__content {
+    min-width: unset !important;
+  }
+}
+</style>

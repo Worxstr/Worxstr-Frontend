@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container.home.d-flex.flex-column.align-stretch(
+v-container.home.d-flex.flex-column.align-stretch.pb-3(
   fluid,
   :fill-height="type == 'month'"
 )
@@ -41,50 +41,50 @@ v-container.home.d-flex.flex-column.align-stretch(
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import { Manager } from "@/definitions/User";
+import { mapGetters } from 'vuex'
+import {  } from '@/definitions/User'
+import { currentUserIs, Managers } from '@/definitions/User'
 
 export default {
-  name: "schedule",
+  name: 'schedule',
   metaInfo: {
-    title: 'Schedule'
+    title: 'Schedule',
   },
   data: () => ({
     loading: false,
-    type: "month",
-    types: ["month", "week", "day", "4day"],
-    value: "",
+    type: 'month',
+    types: ['month', 'week', 'day', '4day'],
+    value: '',
   }),
   computed: {
-    ...mapGetters(["calendarEvents"]),
+    ...mapGetters(['calendarEvents']),
   },
   methods: {
     async getEvents({ start, end }) {
       this.loading = true
       try {
-        await this.$store.dispatch("loadCalendarEvents", {
+        await this.$store.dispatch('loadCalendarEvents', {
           start: new Date(`${start.date}T00:00:00`).toISOString(),
           end: new Date(`${end.date}T23:59:59`).toISOString(),
-        });
-      }
-      finally {
+        })
+      } finally {
         this.loading = false
       }
     },
     getEventColor(event) {
-      return event.color;
+      return event.color
     },
-    openEvent({ nativeEvent, event }) {
-      // nativeEvent is the browser click event, event is the calendar event data
 
-      if (
-        this.$store.state.authenticatedUser.roles.some((role) => Manager.includes(role.id))
-      ) {
-        this.$router.push({ name: "job", params: { jobId: event.job_id } });
-      }
+    openEvent({ /* nativeEvent, */ event }) {
+      // nativeEvent is the browser click event, event is the calendar event data
+      // TODO: Use hasRole defined in User.ts
+
+      if (currentUserIs(...Managers))
+        this.$router.push({ name: 'job', params: { jobId: event.job_id } })
+
     },
   },
-};
+}
 </script>
 
 <style lang="scss">

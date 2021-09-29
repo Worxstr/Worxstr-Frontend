@@ -4,12 +4,20 @@ div.pa-2
 
   portal(to="toolbarActions")
     v-tooltip(bottom)
+      span New conversation
       template(v-slot:activator="{ on, attrs }")
-        v-btn(text, color="primary", v-bind="attrs", v-on="on")
-          v-icon(@click="newConversationDialog = true") mdi-plus
-          span New
+        v-btn(
+          text
+          color="primary"
+          :icon='$vuetify.breakpoint.xs'
+          @click="newConversationDialog = true"
+          v-bind="attrs"
+          v-on="on"
+        )
+          v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
+          span(v-if='$vuetify.breakpoint.smAndUp') New
       
-  v-card.messages.pa-0.d-flex.flex-row.fill-height.align-start.soft-shadow(fluid)
+  v-card.messages.pa-0.d-flex.flex-row.fill-height.align-start.soft-shadow
     div(
       v-if="$route.name == 'messages' || $vuetify.breakpoint.mdAndUp",
       :style="`width: ${$route.name == 'conversation' ? '35%' : '100%'}`",

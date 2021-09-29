@@ -4,11 +4,11 @@
   v-sheet.arrow-container
     arrows(type='background' style='position: absolute')
     
-    v-container.px-10
+    v-container.px-10(:class="{'mt-9': $vuetify.breakpoint.smAndUp}")
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
-            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to widescale temp labor management
+            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to contract labor management
 
           div(v-if='authenticatedUser')
             v-btn.mr-3.black--text(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
@@ -19,6 +19,13 @@
             v-btn.mr-3.black--text(elevation='0' color="accent", :to="{ name: `signUp` }") Start now
             v-btn.mr-3(outlined, color="accent", :to="{ name: `signIn` }")
               span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") Sign in
+
+          .d-flex.mt-6.align-center
+            p.mb-0.mr-2.font-weight-medium Get the app:
+            v-btn(icon href='https://testflight.apple.com/join/hvQXJsYe' target='_blank')
+              v-icon mdi-apple
+            v-btn(icon href='https://play.google.com/store/apps/details?id=com.worxstr.worxstr' target='_blank')
+              v-icon mdi-google-play
 
           v-spacer(style='height: 70px')
 
@@ -37,7 +44,7 @@
     delimiter-icon="mdi-circle-medium",
     :dark="true",
   )
-    v-carousel-item(v-for='feature in carousel')
+    v-carousel-item(v-for='(feature, i) in carousel' :key='i')
       v-sheet(:dark='feature.dark', height='100%' :class='`gradient-${feature.gradient}`')
 
         v-row.jumbo.carousel-content.flex-column.flex-md-row.jumbo.d-flex.align-center.justify-center(:class="feature.reverse ? 'flex-md-row-reverse' : ''")
@@ -68,7 +75,7 @@
         v-col(cols="12", md="6")
           p.text-h6.mb-4.pl-2 My company has:
           v-text-field.pb-4(
-            v-model="calculator.managers",
+            v-model.number="calculator.managers",
             suffix="managers",
             outlined,
             color="accent",
@@ -78,7 +85,7 @@
             filled
           )
           v-text-field.pb-4(
-            v-model="calculator.contracts",
+            v-model.number="calculator.contracts",
             suffix="contracts / year",
             outlined,
             color="accent",
@@ -88,7 +95,7 @@
             filled
           )
           v-text-field.pb-4(
-            v-model="calculator.contractors",
+            v-model.number="calculator.contractors",
             suffix="contractors",
             outlined,
             color="accent",
@@ -119,8 +126,14 @@
             span(v-if="calculator.helpful") Great! We'd love to get in touch with you about how Worxstr can help solve your management issues.
             span(v-else) We're sorry to hear that. We would love a moment to speak with you about what we could be doing differently.
 
-          contact-form(color='accent' filled text)
-  
+          contact-form(
+            color='accent'
+            filled
+            text
+            :data-supplement='{num_contractors: this.calculator.contractors, num_managers: this.calculator.managers}'
+            :show-manager-contractor-fields='false'
+            type='sales'
+          )
 </template>
 
 <script>

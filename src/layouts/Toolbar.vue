@@ -1,12 +1,13 @@
 <template lang="pug">
   div
-
-    v-app-bar(
+    v-app-bar.toolbar(
       app
       outlined
+      :elevate-on-scroll='!bottomToolbar'
+      :bottom="bottomToolbar"
       :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
-      elevate-on-scroll
-      :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
+      :class="$route.meta.landing ? 'landing' : 'app'"
+      v-touch='{up: () => { $emit("toggleDrawer") }}'
     )
       v-btn(
         icon
@@ -14,30 +15,33 @@
         v-if='$vuetify.breakpoint.smAndDown && !$route.meta.landing'
       )
         v-icon mdi-menu
-
+      
       router-link.mb-2.mr-2(
         to="/",
         style="text-decoration: none",
         v-if="$route.meta.landing"
       )
         v-avatar(tile, size="130")
-          img(src="@/assets/logos/logotype.svg", alt="Worxstr logo")
+          img(
+            :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
+            alt="Worxstr logo"
+          )
 
       breadcrumbs
 
       v-spacer
 
-      portal-target(name="toolbarActions")
+      portal-target.d-flex(name="toolbarActions")
 
       div(v-if="$route.meta.landing")
         v-btn(v-if='$vuetify.breakpoint.xs' icon @click='menu = true')
           v-icon mdi-menu
         div(v-else)
-          v-btn(v-for="link in links", text, :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
-          
+          v-btn(v-for="(link, i) in links" :key='i' text :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
+
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
-      v-list(nav)
-        v-list-item(v-for="link in links", text, :to="link.to" link)
+      v-list.mobile-nav-items(nav)
+        v-list-item(v-for="(link, i) in links" :key='i' text :to="link.to" link)
           v-list-item-content
             v-list-item-title {{ link.text }}
 </template>
@@ -53,6 +57,10 @@ import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
 })
 export default class Toolbar extends Vue {
   @Prop({ default: false }) drawer!: boolean
+  
+  get bottomToolbar() {
+    return this.$vuetify.breakpoint.smAndDown && !this.$route.meta?.landing
+  }
 
   menu = false
 
@@ -91,3 +99,15 @@ export default class Toolbar extends Vue {
   ]
 }
 </script>
+
+<style lang='scss'>
+.toolbar {
+  height: auto !important;
+  &.app {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+.mobile-nav-items {
+  padding-top: max(env(safe-area-inset-top), 10px) !important;
+}
+</style>

@@ -35,7 +35,8 @@
           md="4",
           lg="3"
           xl='2'
-          v-for="member in team"
+          v-for="(member, i) in team"
+          :key='i'
         )
           v-card.soft-shadow(rounded='lg' outlined @click='viewMember(member)')
             v-card-text.pa-4.d-flex.flex-column.justify-start.align-center
@@ -65,7 +66,7 @@
         span.text-center.mb-3.text-subtitle-1.font-weight-medium {{ selectedMember.title }}
         span.text-center.mb-3 {{ selectedMember.description }}
         .mb-3
-          v-btn(v-for='social in selectedMember.socials', icon :href='social.link' target="_blank" rel="noreferrer")
+          v-btn(v-for='(social, i) in selectedMember.socials' :key='i' icon :href='social.link' target="_blank" rel="noreferrer")
             v-icon(size='24px') {{ social.icon }}
   
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0')
@@ -101,7 +102,7 @@ export default {
         socials: [
           {
             link: 'mailto:jackson@worxstr.com',
-            icon: 'mdi-at'
+            icon: 'mdi-email-outline',
           },
           {
             link: 'https://github.com/sippejw',
@@ -121,7 +122,7 @@ export default {
         socials: [
           {
             link: 'mailto:james@worxstr.com',
-            icon: 'mdi-at'
+            icon: 'mdi-email-outline',
           },
           {
             link: 'https://www.linkedin.com/in/jameswheeler94/',
@@ -131,13 +132,17 @@ export default {
       },
       {
         name: "Alex Wohlbruck",
-        title: "Lead Frontend Developer",
+        title: "Vice president of engineering",
         photo: "alex.jpg",
         description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He loves cats, and he is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
         socials: [
           {
+            link: 'https://alex.wohlbruck.com',
+            icon: 'mdi-web'
+          },
+          {
             link: 'mailto:alexwohlbruck@gmail.com',
-            icon: 'mdi-at'
+            icon: 'mdi-email-outline',
           },
           {
             link: 'https://github.com/alexwohlbruck',
@@ -155,6 +160,10 @@ export default {
         photo: 'andrew.jpg',
         socials: [
           {
+            link: 'https://thorp.dev/',
+            icon: 'mdi-web'
+          },
+          {
             link: 'https://github.com/aThorp96',
             icon: 'mdi-github',
           },
@@ -164,41 +173,41 @@ export default {
           },
         ]
       },
-      {
-        name: 'Coley Lippard',
-        title: "Creative Marketing Director",
-        photo: 'coley.jpg',
-        description: "Coley Lippard has grown from a unique history of forward-thinking individuals that push the envelope of normalcy. As the son of a variety entertainer, his creativity has lead to a career in design and marketing with a fresh perspective and an eye on sustainable results. He is a recent Digital Marketing and Computer Information Service graduate at Appalachian State University and is currently guiding the creative direction of several businesses.",
-        socials: [
-          {
-            link: 'mailto:coleylipp237@gmail.com',
-            icon: 'mdi-at',
-          },
-          {
-            link: 'https://www.linkedin.com/in/coleylipp',
-            icon: 'mdi-linkedin'
-          },
-        ]
-      },
-      {
-        name: 'Victoria DiMarco',
-        title: "Lead UI/UX Designer",
-        photo: 'victoria.jpg',
-        socials: [
-          {
-            link: 'mailto:victoriadimarco99@gmail.com',
-            icon: 'mdi-at',
-          },
-          {
-            link: 'https://www.linkedin.com/in/victoriadimarco',
-            icon: 'mdi-linkedin'
-          },
-          {
-            link: 'https://www.instagram.com/designdimarco',
-            icon: 'mdi-instagram'
-          },
-        ]
-      },
+      // {
+      //   name: 'Coley Lippard',
+      //   title: "Creative Marketing Director",
+      //   photo: 'coley.jpg',
+      //   description: "Coley Lippard has grown from a unique history of forward-thinking individuals that push the envelope of normalcy. As the son of a variety entertainer, his creativity has lead to a career in design and marketing with a fresh perspective and an eye on sustainable results. He is a recent Digital Marketing and Computer Information Service graduate at Appalachian State University and is currently guiding the creative direction of several businesses.",
+      //   socials: [
+      //     {
+      //       link: 'mailto:coleylipp237@gmail.com',
+            // icon: 'mdi-email-outline',
+      //     },
+      //     {
+      //       link: 'https://www.linkedin.com/in/coleylipp',
+      //       icon: 'mdi-linkedin'
+      //     },
+      //   ]
+      // },
+      // {
+      //   name: 'Victoria DiMarco',
+      //   title: "Lead UI/UX Designer",
+      //   photo: 'victoria.jpg',
+      //   socials: [
+      //     {
+      //       link: 'mailto:victoriadimarco99@gmail.com',
+            // icon: 'mdi-email-outline',
+      //     },
+      //     {
+      //       link: 'https://www.linkedin.com/in/victoriadimarco',
+      //       icon: 'mdi-linkedin'
+      //     },
+      //     {
+      //       link: 'https://www.instagram.com/designdimarco',
+      //       icon: 'mdi-instagram'
+      //     },
+      //   ]
+      // },
     ],
   }),
 };

@@ -32,13 +32,25 @@ export const passwordRules = [
 
 export const passwordMatches = matches('Passwords must match')
 
+export const phone = (optional: boolean) => (value: string) => {
+  const pattern = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/
+  if (optional && !value) return true
+  return pattern.test(value) || "Invalid phone"
+}
+
+export const phoneRulesOptional = [
+  phone(true)
+]
 export const phoneRules = [
   (value: string) => !!value || "Phone required",
-  (value: string) => {
-    const pattern = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/
-    return pattern.test(value) || "Invalid phone"
-  },
+  phone(false),
 ]
+
+export const url = (value: string) => {
+  if (!value.length) return true
+  const pattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/
+  return pattern.test(value) || "Invalid url"
+}
 
 export const ssnRules = [
   exists("SSN required"),
@@ -50,11 +62,10 @@ export const ssnRules = [
 
 export const ssnMatches = matches('SSNs must match')
 
-export const currencyRules = [
-  (value: string) => !!value || "Wage required",
-  (value: string) => {
-    // https://regexlib.com/Search.aspx?k=currency&c=-1&m=5&ps=20
-    const pattern = /^\$?-?([1-9]{1}[0-9]{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^-?\$?([1-9]{1}\d{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^\(\$?([1-9]{1}\d{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))\)$/
-    return pattern.test(value) || "Invalid wage"
-  }
-]
+export const currency = (value: string) => {
+  // https://regexlib.com/Search.aspx?k=currency&c=-1&m=5&ps=20
+  const parsed = parseFloat(value)
+  if (isNaN(parsed) || parsed == 0) return 'Invalid amount'
+  const pattern = /^\$?-?([1-9]{1}[0-9]{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^-?\$?([1-9]{1}\d{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))$|^\(\$?([1-9]{1}\d{0,2}(,\d{3})*(\.\d{0,2})?|[1-9]{1}\d{0,}(\.\d{0,2})?|0(\.\d{0,2})?|(\.\d{1,2}))\)$/
+  return pattern.test(value.replace(/^0+/, '')) || "Invalid amount"
+}

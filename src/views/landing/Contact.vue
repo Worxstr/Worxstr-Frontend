@@ -7,10 +7,10 @@ div
   v-container.shift-down(style='position: relative; z-index: 1')
     v-row.justify-center
       v-col(
-        v-for="(option, i) in helpOptions", :index="i"
+        v-for="(option, i) in helpOptions" :key="i"
         cols="12",
         :md="chosenOption == option.name ? 9 : 6",
-        v-if="chosenOption == option.name || chosenOption == null"
+        v-if="(chosenOption == option.name || chosenOption == null) && !(option.name == 'sales' && $store.state.authenticatedUser)"
       )
         v-card.soft-shadow(outlined :class="chosenOption ? '' : 'hover-effect'")
           v-card-title.text-h5 {{ option.title }}
@@ -23,16 +23,17 @@ div
               v-card-actions.pb-5.justify-center
                 v-btn(
                   elevation='0'
-                  v-bind="attrs",
-                  v-on="on",
-                  :color="option.button.color",
+                  v-bind="attrs"
+                  v-on="on"
+                  :class="{'black--text': option.button.color == 'accent'}"
+                  :color="option.button.color"
                   @click="chosenOption = option.name"
                 ) {{ option.button.text }}
 
           v-expand-transition(appear)
             v-card-text.py-0(v-if="chosenOption == option.name")
-              contact-form.py-4(color="primary")
-                v-btn(elevation='0' text, @click="chosenOption = null") Cancel
+              contact-form(:type='chosenOption' color="primary" @submitted='chosenOption = null')
+                v-btn(text, @click="chosenOption = null") Cancel
 
     //- .mt-12
     //-   h4.text-h4.font-weight-black.mb-3 Need help now?
@@ -70,16 +71,16 @@ export default class Contact extends Vue {
   chosenOption: 'support' | 'sales' | string | null = null
 
   helpOptions = [
-    // {
-    //   name: 'support',
-    //   title: "Help and support",
-    //   text: "Having technical trouble? Contact our support team and we will get back to you soon.",
-    //   button: {
-    //     text: "Contact support",
-    //     color: "primary",
-    //   },
-    //   dialog: false,
-    // },
+    {
+      name: 'support',
+      title: "Help and support",
+      text: "Having technical trouble? Contact our support team and we will get back to you soon.",
+      button: {
+        text: "Contact support",
+        color: "primary",
+      },
+      dialog: false,
+    },
     {
       name: 'sales',
       title: "Sales and pricing",
