@@ -145,7 +145,7 @@ export default class App extends Vue {
 <style lang="scss">
   // Helper classes to hide app content for QR code scanner
   // Used in ClockInDialog.vue
-  .transparent {
+  .webview-transparent {
     display: none !important;
     opacity: 0 !important;
   }
