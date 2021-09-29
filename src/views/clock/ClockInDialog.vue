@@ -1,11 +1,22 @@
 <template lang="pug">
 v-dialog(
-  v-model='opened'
+  id='clock-in-dialog'
+  v-model='dialogOpened'
   :fullscreen='$vuetify.breakpoint.smAndDown'
   max-width='400'
   persistent
-  :class='{transparent}'
 )
+  portal(to="toolbarActions")
+    v-btn(
+      v-if='hideDialogForQr'
+      text
+      :icon='$vuetify.breakpoint.xs'
+      color="primary"
+      @click='stopScan'
+    )
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
+      span(v-if='!$vuetify.breakpoint.xs') Cancel
+
   v-card.sign-in.fill-height
     v-form.d-flex.flex-column.fill-height(ref='form' @submit.prevent='submitCode(code)')
       v-card-title.text-h6 Verify your presence
@@ -22,7 +33,6 @@ v-dialog(
           v-btn(text @click='startScan' x-large v-if='!allowedLocation && !webQrEnabled && !cameraFailed')
             v-icon(left) mdi-qrcode
             span Scan clock-in code
-
 
       div(v-if='opened && !allowedLocation && webQrEnabled && !cameraFailed')
 
@@ -86,6 +96,10 @@ export default class ClockInDialog extends Vue {
   ]
 
   @Prop({ default: false }) readonly opened!: boolean
+
+  get dialogOpened() {
+    return this.opened && !this.hideDialogForQr
+  }
 
   closeDialog() {
     this.$emit('update:opened', false)
@@ -227,7 +241,17 @@ export default class ClockInDialog extends Vue {
   }
 
   toggleWebview(visible: boolean) {
-    document.body.style.display = visible ? 'block' : 'none'
+    this.hideDialogForQr = !visible
+    if (visible) {
+      document.getElementById('router-view')!.classList.remove('transparent')
+      document.getElementById('main')!.classList.remove('transparent')
+      document.getElementById('app')!.classList.remove('no-bg')
+    }
+    else {
+      document.getElementById('router-view')!.classList.add('transparent')
+      document.getElementById('main')!.classList.add('transparent')
+      document.getElementById('app')!.classList.add('no-bg')
+    }
   }
 
   deactivated() {
@@ -239,3 +263,9 @@ export default class ClockInDialog extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+  .v-main, .v-main__wrap, .v-main__wrap > container {
+    background: transparent !important;
+  }
+</style>

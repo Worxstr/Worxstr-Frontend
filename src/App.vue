@@ -6,7 +6,7 @@ v-app
   
   nav-drawer(v-if="showNavDrawer", v-model="drawer")
 
-  v-main(
+  v-main#main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
     :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
@@ -141,3 +141,15 @@ export default class App extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+  // Helper classes to hide app content for QR code scanner
+  // Used in ClockInDialog.vue
+  .transparent {
+    display: none !important;
+    opacity: 0 !important;
+  }
+  .no-bg {
+    background-color: transparent !important;
+  }
+</style>
