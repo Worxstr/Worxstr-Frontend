@@ -132,7 +132,7 @@ export default {
       },
       {
         name: "Alex Wohlbruck",
-        title: "Lead Frontend Developer",
+        title: "Vice president of engineering",
         photo: "alex.jpg",
         description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He loves cats, and he is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
         socials: [
