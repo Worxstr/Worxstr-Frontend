@@ -18,6 +18,7 @@ import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
 import { configureDwolla } from './plugins/dwolla'
+import { initDarkMode } from './plugins/theme'
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
@@ -69,24 +70,6 @@ async function getUserData() {
   }
   catch (e) {
     console.error(e)
-  }
-}
-
-function initDarkMode() {
-  const userPrefDarkMode = window.localStorage.getItem('darkMode')
-  const darkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-  if (userPrefDarkMode == 'System default') {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    darkMediaQuery.addEventListener('change', (e) => {
-      vuetify.framework.theme.dark = !vuetify.framework.theme.dark
-    })
-
-    if (darkMediaQuery.matches) {
-      setTimeout(() => (vuetify.framework.theme.dark = true), 0)
-    }
-  } else {
-    vuetify.framework.theme.dark = userPrefDarkMode == 'Dark'
   }
 }
 

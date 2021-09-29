@@ -121,7 +121,7 @@ export default class NavDrawer extends Vue {
       })
       .map((route) => ({
         text: route.name,
-        icon: route.meta.icon,
+        icon: route.meta?.icon,
         to: route.name,
       }))
   }
