@@ -3,9 +3,7 @@
 
     clock-in-dialog(:opened.sync='clockInDialog')
 
-    .mx-15.d-flex.align-center.align-md-start.flex-column.justify-center(
-      style='margin-top: 20vh; margin-bottom: 15vh; top: 120px; position: sticky'
-    )
+    .clock-display.mx-15.d-flex.align-center.align-md-start.flex-column.justify-center
       div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
         h6.text-h6.text-center.text-md-left
           | Your shift at
@@ -70,7 +68,7 @@
       div(v-else)
         h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
 
-    v-card.soft-shadow.align-self-center(width='100%' max-width='500px' rounded='lg' style="margin-bottom: 60px")
+    v-card.clock-history.soft-shadow.align-self-center(width='100%' max-width='500px' rounded='lg')
 
       v-card-title.text-h5.ma-1 Your history
 
@@ -178,3 +176,19 @@ export default class Clock extends Vue {
 
 }
 </script>
+
+<style lang="scss">
+.clock-display {
+  margin-top: 20vh;
+  margin-bottom: 15vh;
+  top: 120px;
+  position: sticky;
+  z-index: 1;
+}
+
+.clock-history {
+  position: relative !important;
+  z-index: 3;
+  transform: translate3d(0,0,0)
+}
+</style>
