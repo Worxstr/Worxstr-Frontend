@@ -38,6 +38,10 @@ export const Managers = [
 	UserRole.OrganizationManager,
 ]
 
+export function isAuthenticated() {
+	return !!store.state.authenticatedUser
+}
+
 // Take a list of roles as parameters
 // and a user and determine if the user has one of those roles
 export function userIs(user: User, ...roles: UserRole[]): boolean {

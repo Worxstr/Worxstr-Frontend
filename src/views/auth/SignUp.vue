@@ -1,24 +1,32 @@
 <template lang="pug">
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
-    v-card.soft-shadow(width='600')
+    
+    v-card.soft-shadow(width='520' style='overflow-y: auto' light)
+  
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5
           span(v-if='!accountType') Sign up
           span(v-else) Sign up as a {{ accountType == 'org' ? 'business' : 'contractor' }}
+
         v-card-text.pb-0
-          v-window.pt-2(v-model='step')
+          v-window.pt-2(v-model='step' touchless :style="step == 1 && 'padding-bottom: 20px'")
 
             v-window-item(:value='0')
               .pa-1.d-flex.flex-column.flex-sm-row.justify-center
-                v-btn.pa-10(text @click="accountType = 'contractor'; step++")
+                v-btn.pa-6(text @click="accountType = 'contractor'; step++")
                   v-icon mdi-account
                   span.ml-3.text-h6 I'm a contractor
-                v-btn.pa-10(text :to="{ name: 'pricing' }")
+                v-btn.pa-6(text :to="{ name: 'pricing' }")
                   v-icon mdi-domain
                   span.ml-3.text-h6 I have a business
 
-            v-window-item(:value='1')
+            v-window-item(:value='1' :style='$vuetify.breakpoint.xs && `min-height: calc(80vh - 70px)`')
+              p(v-if="accountType == 'org'")
+                | Are you a contractor? Click
+                a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
+                | to create your account.
+
               dwolla-personal-vcr(
                 v-if="accountType == 'contractor'"
                 terms='/terms'
@@ -29,10 +37,6 @@ div
                 terms='/terms'
                 privacy='/privacy'
               )
-              p(v-if="accountType == 'org'")
-                | Are you a contractor? Click
-                a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
-                | to create your account.
 
             v-window-item(:value="2")
               v-text-field(
@@ -43,16 +47,25 @@ div
                 dense
                 v-if="accountType == 'contractor'"
               )
+              phone-input(
+                v-model="form.phone"
+                :required='true'
+                outlined
+                dense
+              )
               v-text-field(
                 label='Password'
-                type='password'
+                :type="showPassword ? 'text' : 'password'"
                 v-model='form.password'
                 :rules='rules.password'
                 required
                 outlined
                 dense
+                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append='showPassword = !showPassword'
               )
               v-text-field(
+                v-if='!showPassword'
                 label='Confirm password'
                 type='password'
                 v-model='form.confirm_password'
@@ -61,12 +74,6 @@ div
                 outlined
                 dense
               )
-
-              //- v-checkbox(v-model='form.agreeToTerms' required :rules='[(value) => !!value]' hide-details)
-              //-   template(v-slot:label)
-              //-     div
-              //-       span I agree to the
-              //-       a(href='/terms' target='_blank' @click.stop) &nbsp;terms of service
 
         v-card-actions(v-if='step != 1')
           v-spacer
@@ -97,6 +104,7 @@ import {
   passwordMatches,
 } from '@/plugins/inputValidation'
 import Arrows from '@/components/Arrows.vue'
+import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import dwolla from '@/plugins/dwolla'
 
 @Component({
@@ -105,6 +113,7 @@ import dwolla from '@/plugins/dwolla'
   },
   components: {
     Arrows,
+    PhoneInput,
   },
 })
 export default class SignUp extends Vue {
@@ -121,6 +130,7 @@ export default class SignUp extends Vue {
     customer_url: '',
     subscription_tier: null,
   }
+  showPassword = false
   rules = {
     managerReference: [exists('Manager reference number required')],
     password: passwordRules,

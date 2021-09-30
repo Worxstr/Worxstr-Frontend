@@ -21,17 +21,14 @@ v-dialog(
       v-divider
 
       v-card-text.transfer-amount.pb-0
-        v-text-field.text-h5(
-          autofocus
-          outlined
-          type='number'
-          prefix='$'
-          step='1'
-          min='0.00'
-          label="Amount to transfer"
+        currency-input(
           v-model.number="transfer.amount"
           :rules="rules.amount"
+          label="Amount to transfer"
+          autofocus
+          outlined
           required
+          :headerFont='true'
         )
 
         v-select(
@@ -57,8 +54,13 @@ v-dialog(
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { exists, currency } from '@/plugins/inputValidation'
+import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
 
-@Component
+@Component({
+  components: {
+    CurrencyInput,
+  },
+})
 export default class TransferFundsDialog extends Vue {
   isValid = false
   loading = false
@@ -69,7 +71,7 @@ export default class TransferFundsDialog extends Vue {
     location: [exists('You must choose a funding source.')],
   }
   transfer = {
-    amount: 10,
+    amount: 0,
     location: '',
   }
 
@@ -77,13 +79,21 @@ export default class TransferFundsDialog extends Vue {
   @Prop(String) readonly action!: 'add' | 'remove' | null
 
   @Watch('opened')
-  onOpened() {
-    if (this.action == 'remove')
-      this.transfer.amount = this.$store.state.payments.balance.value
-    else this.transfer.amount = 10
+  onOpened(opened: boolean) {
+    if (opened) {
+      // Set amount to how much is in balance
+      if (this.action == 'remove')
+        this.transfer.amount = this.$store.state.payments.balance.value
+      else this.transfer.amount = 0
+
+      // Set funding source to the first option
+      if (this.fundingSources.length)
+        this.transfer.location = this.fundingSources[0]._links.self.href
+    }
   }
 
   closeDialog() {
+    (this.$refs.form as HTMLFormElement).reset()
     this.$emit('update:opened', null)
   }
 

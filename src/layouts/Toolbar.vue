@@ -3,10 +3,11 @@
     v-app-bar.toolbar(
       app
       outlined
-      elevate-on-scroll
-      :bottom="$vuetify.breakpoint.smAndDown && !$route.meta.landing"
+      :elevate-on-scroll='!bottomToolbar'
+      :bottom="bottomToolbar"
       :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'"
       :class="$route.meta.landing ? 'landing' : 'app'"
+      v-touch='{up: () => { $emit("toggleDrawer") }}'
     )
       v-btn(
         icon
@@ -14,20 +15,23 @@
         v-if='$vuetify.breakpoint.smAndDown && !$route.meta.landing'
       )
         v-icon mdi-menu
-
+      
       router-link.mb-2.mr-2(
         to="/",
         style="text-decoration: none",
         v-if="$route.meta.landing"
       )
         v-avatar(tile, size="130")
-          img(src="@/assets/logos/logotype.svg", alt="Worxstr logo")
+          img(
+            :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
+            alt="Worxstr logo"
+          )
 
       breadcrumbs
 
       v-spacer
 
-      portal-target(name="toolbarActions")
+      portal-target.d-flex(name="toolbarActions")
 
       div(v-if="$route.meta.landing")
         v-btn(v-if='$vuetify.breakpoint.xs' icon @click='menu = true')
@@ -53,6 +57,10 @@ import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
 })
 export default class Toolbar extends Vue {
   @Prop({ default: false }) drawer!: boolean
+  
+  get bottomToolbar() {
+    return this.$vuetify.breakpoint.smAndDown && !this.$route.meta?.landing
+  }
 
   menu = false
 
@@ -100,6 +108,6 @@ export default class Toolbar extends Vue {
   }
 }
 .mobile-nav-items {
-  padding-top: env(safe-area-inset-top) !important;
+  padding-top: max(env(safe-area-inset-top), 10px) !important;
 }
 </style>

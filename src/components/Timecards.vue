@@ -31,7 +31,8 @@
         )
 
         v-toolbar-title.px-4.text-h6
-          span Pending payments
+          span(v-if='$vuetify.breakpoint.smAndUp') Pending payments
+          span(v-else) Pending
           v-chip.mx-3.pa-2.font-weight-bold(small) {{ timecards.length }}
 
         v-spacer
@@ -87,10 +88,10 @@
 
           v-expansion-panel-content
             //- .text-body-1
-            v-card-text.d-flex
+            v-card-text.d-flex(v-if="timecard.time_clocks && timecard.time_clocks.length")
               .flex-grow-1
                 p {{ timecard.time_clocks[0].time | date }}
-                p(v-if="timecard.time_clocks && timecard.time_clocks.length")
+                p
                   | {{ timecard.time_clocks[0].time | time }}
                   | -
                   | {{

@@ -9,13 +9,18 @@ v-navigation-drawer#nav.d-flex.flex-column(
   :permanent='$vuetify.breakpoint.mdAndUp'
   :temporary='$vuetify.breakpoint.smAndDown'
   :bottom='$vuetify.breakpoint.smAndDown'
+  touchless
+  v-touch='{down: () => { value = false }}'
 )
 
   //- Logo and collapse button
   v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
     a(@click="mini = !mini", text)
       v-avatar.mb-1(tile, :size="mini ? 40 : 130")
-        img(:src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)", alt="Worxstr logo")
+        img(
+          :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
+          alt="Worxstr logo"
+        )
 
     v-spacer
 
@@ -25,7 +30,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
   v-divider
 
   //- Primary items
-  v-list.pt-0(dense)
+  v-list.py-0(dense)
     v-tooltip(
       v-for="link in primaryNavLinks",
       :key="link.text",
@@ -50,7 +55,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
   //- Secondary items
   template(v-slot:append)
-    v-list.secondary-nav-items(dense)
+    v-list.secondary-nav-items.pt-0(dense)
       v-divider
 
       v-tooltip(
@@ -86,10 +91,6 @@ export default class NavDrawer extends Vue {
   mini = false
   @Prop({ default: false }) value!: boolean
 
-  test() {
-    console.log('toggeld')
-  }
-
   signOut(): void {
     this.$store.dispatch("signOut");
   }
@@ -118,7 +119,7 @@ export default class NavDrawer extends Vue {
       })
       .map((route) => ({
         text: route.name,
-        icon: route.meta.icon,
+        icon: route.meta?.icon,
         to: route.name,
       }))
   }

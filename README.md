@@ -1,4 +1,5 @@
 # Worxstr
+Frontend application
 
 ## Setup
 

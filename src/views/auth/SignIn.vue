@@ -7,23 +7,32 @@ div
         v-card-text.pb-0
           v-text-field(
             autofocus
-            label="Email",
-            type="email",
-            required="",
-            v-model="form.email",
-            :rules="emailRules"
+            label='Email'
+            type='emali'
+            required
+            v-model='form.email'
+            :rules='emailRules'
             outlined
             dense
           )
           v-text-field(
-            label="Password",
-            type="password",
-            required="",
-            v-model="form.password",
-            :rules="passwordRules"
+            label='Password'
+            :type="showPassword ? 'text' : 'password'"
+            v-model='form.password'
+            :rules='passwordRules'
+            required
             outlined
             dense
+            :hide-details='biometricsAvailable'
+            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append='showPassword = !showPassword'
           )
+          v-checkbox(
+            v-if='biometricsAvailable'
+            v-model='form.useBiometrics'
+            label='Use biometrics for future sign-ins'
+          )
+
         v-card-actions
           v-btn(text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
           v-spacer
@@ -36,43 +45,98 @@ div
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>
 
-<script>
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+import { AvailableResult, Credentials, NativeBiometric } from 'capacitor-native-biometric'
 import { emailRules, passwordRules } from '@/plugins/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 
-export default {
-  name: "signIn",
+@Component({
   metaInfo: {
     title: 'Sign in',
   },
   components: {
     Arrows,
   },
-  data: () => ({
-    form: {
-      email: "",
-      password: "",
-    },
-    isValid: false,
-    emailRules,
-    passwordRules,
-    loading: false,
-  }),
+})
+export default class SignIn extends Vue {
+  form = {
+    email: '',
+    password: '',
+    useBiometrics: false,
+  }
+  showPassword = false
+  isValid = false
+  loading = false
+  biometricsAvailable = false
+  emailRules = emailRules
+  passwordRules = passwordRules
+
   mounted() {
     if (this.$route.params.email) {
       this.form.email = this.$route.params.email
     }
-  },
-  methods: {
-    async signIn() {
-      this.loading = true;
+    this.loadCredentialsFromBiometrics()
+  }
+
+  async signIn(email?: string, password?: string) {
+    this.loading = true
+    try {
+      const data = await this.$store.dispatch('signIn', (email && password) ? {
+        email,
+        password,
+      } : this.form)
+
+      // TODO: Find better way to determine login success
+      if (data?.response?.user) {
+        const result: AvailableResult = await NativeBiometric.isAvailable()
+
+        if (result.isAvailable)
+          this.saveCredentials(this.form.email, this.form.password)
+      }
+    } finally {
+      this.loading = false
+    }
+  }
+
+  async saveCredentials(email: string, password: string) {
+    if (this.form.useBiometrics) {
+      await NativeBiometric.setCredentials({
+        username: email,
+        password,
+        server: 'worxstr.com',
+      })
+    }
+  }
+
+  async loadCredentialsFromBiometrics() {
+    const result: AvailableResult = await NativeBiometric.isAvailable()
+    this.biometricsAvailable = result.isAvailable
+
+    if (this.biometricsAvailable) {
+
+      // Get user's credentials
+      const credentials: Credentials = await NativeBiometric.getCredentials({
+        server: 'worxstr.com',
+      })
+
       try {
-        await this.$store.dispatch("signIn", this.form);
+        // TODO: Only do this when the user has checked the "use biometrics" checkbox
+        await NativeBiometric.verifyIdentity({
+          reason: 'For easy sign in.',
+          title: 'Log in with biometrics',
+          subtitle: 'Your Worxstr credentials are saved securely on this device.',
+        })
+        
+        // Authentication successful
+        this.signIn(credentials.username, credentials.password)
       }
-      finally {
-        this.loading = false;
+      catch (error) {
+        this.$store.dispatch('showSnackbar', {
+          text: "Couldn't sign in with biometrics."
+        })
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>

@@ -31,6 +31,7 @@ export function configureDwolla() {
     environment: 'sandbox',
     // styles: '/main.css',
     tokenUrl: `${process.env.VUE_APP_API_BASE_URL}/payments/access`,
+    styles: '/dwolla.css',
     success: async (res: any) => {
       
       // Dwolla sdk can't fucking figure out how to handle errors properly

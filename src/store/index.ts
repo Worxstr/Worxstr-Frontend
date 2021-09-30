@@ -4,8 +4,10 @@ import Vuex, { StoreOptions } from 'vuex'
 import axios from 'axios'
 import router from '../router'
 
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, PermissionState } from '@capacitor/core'
+import { Geolocation } from '@capacitor/geolocation'
 import * as Plaid from '@/plugins/plaid'
+import { event } from 'vue-gtag'
 
 import { normalizeRelations, resolveRelations } from '../plugins/helpers'
 import { Conversation } from '@/definitions/Messages'
@@ -20,10 +22,10 @@ Vue.use(Vuex)
 // axios.defaults.baseURL = ''
 axios.defaults.withCredentials = true
 
-
-const baseUrl = Capacitor.isNativePlatform()
-  ? 'https://dev.worxstr.com'
-  : process.env.VUE_APP_API_BASE_URL
+// TODO: If using capacitor production, we need to be able to determine if the user is testing or using prod database
+const webUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace(':8080', ':5000')
+const nativeUrl = process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : webUrl
+const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
 
 interface RootState {
   snackbar: {
@@ -37,6 +39,11 @@ interface RootState {
     };
   };
   authenticatedUser: User | null;
+  userLocation: {
+    lat: number;
+    lng: number;
+    accuracy?: number;
+  } | null;
   users: {
     all: number[];
     byId: {
@@ -55,6 +62,7 @@ interface RootState {
     };
   };
   payments: {
+    beneficialOwnersCertified: boolean;
     balance: {
       value: number | null;
       currency: string;
@@ -118,6 +126,7 @@ const initialState = (): RootState => ({
     timeout: 5000,
   },
   authenticatedUser: null,
+  userLocation: null,
   users: {
     all: [],
     byId: {},
@@ -132,6 +141,7 @@ const initialState = (): RootState => ({
     },
   },
   payments: {
+    beneficialOwnersCertified: false,
     balance: {
       value: null,
       currency: 'USD',
@@ -183,6 +193,8 @@ const storeConfig: StoreOptions<RootState> = {
     SHOW_SNACKBAR(state, snackbar) {
       if (snackbar.action)
         snackbar.action.color = snackbar.action.color || 'accent'
+      else
+        delete state.snackbar.action
 
       state.snackbar = {
         ...state.snackbar,
@@ -213,9 +225,8 @@ const storeConfig: StoreOptions<RootState> = {
       state.users.all = state.users.all.filter(id => id !== userId)
       Vue.delete(state.workforce, state.workforce.indexOf(userId))
     },
-    SET_SSN_REGISTERED(state) {
-      if (state.authenticatedUser?.contractor_info)
-        state.authenticatedUser.contractor_info.need_info = false
+    SET_USER_LOCATION(state, { lat, lng, accuracy }) {
+      state.userLocation = { lat, lng, accuracy }
     },
     ADD_CLOCK_EVENT(state, event: ClockEvent) {
       Vue.set(state.clock.history.byId, event.id, event)
@@ -259,6 +270,9 @@ const storeConfig: StoreOptions<RootState> = {
         state.payments.timecards.all.indexOf(timecardId)
       )
     },
+    SET_BENEFICIAL_OWNERS_CERTIFIED(state, certified: boolean) {
+      state.payments.beneficialOwnersCertified = certified
+    },
     ADD_FUNDING_SOURCE(state, fundingSource: FundingSource) {
       Vue.set(
         state.payments.fundingSources.byLocation,
@@ -296,6 +310,10 @@ const storeConfig: StoreOptions<RootState> = {
       Vue.set(state.jobs.byId, job.id, {
         ...state.jobs.byId[job.id],
         ...job,
+        direct: (
+          state.authenticatedUser?.id === job.organization_manager_id ||
+          state.authenticatedUser?.id === job.contractor_manager_id
+        )
       })
       if (!state.jobs.all.includes(job.id)) state.jobs.all.push(job.id)
     },
@@ -312,6 +330,7 @@ const storeConfig: StoreOptions<RootState> = {
       }
     },
     ADD_MANAGER(state, { type, manager }: { type: string; manager: User }) {
+      // TODO: Normalize this to users list, and keep only the user id for each manager object
       if (!state.managers[type].some((m: User) => m.id == manager.id)) {
         state.managers[type].push(manager)
       }
@@ -369,7 +388,7 @@ const storeConfig: StoreOptions<RootState> = {
         return err
       }
     },
-    async signIn({ commit, dispatch }, credentials) {
+    async signIn({ commit, dispatch }, { email, password }) {
       try {
         const { data } = await axios({
           method: 'POST',
@@ -378,7 +397,8 @@ const storeConfig: StoreOptions<RootState> = {
             include_auth_token: true,
           },
           data: {
-            ...credentials,
+            email,
+            password,
             remember_me: true,
           },
         })
@@ -393,6 +413,7 @@ const storeConfig: StoreOptions<RootState> = {
         await dispatch('getAuthenticatedUser')
         router.push({ name: defaultRoute() })
         return data
+
       } catch (err) {
         commit('UNSET_AUTHENTICATED_USER')
         return err
@@ -493,11 +514,26 @@ const storeConfig: StoreOptions<RootState> = {
       commit('ADD_USER', data)
     },
 
-    async updateContractor({ commit }, { contractorInfo, userId }) {
+    async getUserLocation({ commit }) {
+      const { coords } = await Geolocation.getCurrentPosition()
+      const userLocation = {
+        lat: coords.latitude,
+        lng: coords.longitude,
+      }
+      commit('SET_USER_LOCATION', userLocation)
+      return userLocation
+    },
+
+    async locationPermissionGranted() {
+      const permissions = await Geolocation.checkPermissions()
+      return permissions.location === 'granted'
+    },
+
+    async updateContractor({ commit }, { newFields, userId }) {
       const { data } = await axios({
         method: 'PATCH',
         url: `${baseUrl}/users/contractors/${userId}`,
-        data: contractorInfo,
+        data: newFields,
       })
       commit('ADD_USER', data.event)
     },
@@ -528,24 +564,20 @@ const storeConfig: StoreOptions<RootState> = {
       commit('SET_NEXT_SHIFT', data.shift)
     },
 
-    async clockIn({ commit, state }, { code }) {
-      try {
-        const { data } = await axios({
-          method: 'POST',
-          url: `${baseUrl}/clock/clock-in`,
-          params: {
-            shift_id: state.shifts.next?.id,
-          },
-          data: {
-            code,
-          },
-        })
-        commit('ADD_CLOCK_EVENT', data.event)
-        commit('CLOCK_IN')
-        return data
-      } catch (err) {
-        return err
-      }
+    async clockIn({ commit, state }, code) {
+      const { data } = await axios({
+        method: 'POST',
+        url: `${baseUrl}/clock/clock-in`,
+        params: {
+          shift_id: state.shifts.next?.id,
+        },
+        data: {
+          code,
+        },
+      })
+      commit('ADD_CLOCK_EVENT', data.event)
+      commit('CLOCK_IN')
+      return data
     },
 
     async clockOut({ commit, state }) {
@@ -622,7 +654,9 @@ const storeConfig: StoreOptions<RootState> = {
         commit('REMOVE_TIMECARD', timecardId)
       })
       data.transfers.forEach((obj: { transfer: Transfer }) => {
-        commit('ADD_TRANSFER', { transfer: obj.transfer, prepend: true })
+        const transfer = obj.transfer
+        commit('ADD_TRANSFER', { transfer, prepend: true })
+        commit('ADD_TO_BALANCE', (-parseFloat(transfer?.amount?.value)))
       })
     },
 
@@ -654,6 +688,7 @@ const storeConfig: StoreOptions<RootState> = {
         method: 'GET',
         url: `${baseUrl}/payments/accounts`,
       })
+      commit('SET_BENEFICIAL_OWNERS_CERTIFIED', data.certified_ownership)
       data.funding_sources.forEach((source: FundingSource) => {
         commit('ADD_FUNDING_SOURCE', source)
       })
@@ -1059,7 +1094,7 @@ const storeConfig: StoreOptions<RootState> = {
       return state.shifts.byId[id]
     },
     shifts: (state, getters) => {
-      return state.shifts.all.map((id: number) => getters.shift(id))
+      return state .shifts.all.map((id: number) => getters.shift(id))
     },
     workforce: (state) => {
       return state.workforce.map((userId: number) => state.users.byId[userId])
@@ -1119,6 +1154,10 @@ const storeConfig: StoreOptions<RootState> = {
       return state.conversations.all.map((id: number) =>
         getters.conversation(id)
       )
+      .sort((c1: Conversation, c2: Conversation) => {
+        return (new Date(c2.messages[c2.messages.length - 1]?.timestamp)).getTime() -
+               (new Date(c1.messages[c1.messages.length - 1]?.timestamp)).getTime()
+      })
     },
   },
   modules: {},
@@ -1128,6 +1167,20 @@ const store = new Vuex.Store<RootState>(storeConfig)
 
 export default store
 
+axios.interceptors.request.use(config => {
+  const url = config.url?.replace(/^.*\/\/[^/]+/, '') || '' // Get url without domain
+  console.log(url)
+  event(url, {
+    event_category: 'API request',
+    event_label: url,
+    value: config.url
+  })
+  return config
+}, error => {
+  return Promise.reject(error)
+})
+
+
 axios.interceptors.response.use(
   (response) => {
     return response
@@ -1136,16 +1189,28 @@ axios.interceptors.response.use(
     // if (error.config.hideErrorMessage) return
 
     let message
-    const res = error.response.data
+    const res = error.response?.data
 
     // TODO: this is stupid, don't keep this. use custom axios config
     if (error.request.responseURL.includes('/users/me')) return
 
-    if (res.message || res.response.error) {
+    if (res && (res.message || res.response.error)) {
       message = res.message || res.response.error
     } else {
       const errorList = error.response.data.response.errors
       message = errorList[Object.keys(errorList)[0]][0]
+    }
+
+    // When we receive a 401 from the API, send them to the sign in page
+    // TODO: This can lead to unexpected results, like if they get a 401 after
+    // TODO: entering an incorrect consultant code. We can remove this after we have
+    // TODO: persistant auth working correctly.
+    console.log('Error: '+ message)
+    console.log({error, response: error.response})
+    if (error.response.data?.login_required) {
+      router.push({
+        name: 'signIn',
+      }) 
     }
     
     let action
@@ -1155,20 +1220,24 @@ axios.interceptors.response.use(
         text: res.actions[0].action_text,
         action: () => {
           switch (res.actions[0].name) {
+            case 'AUTHENTICATE':
+              router.push({
+                name: 'signIn'
+              })
+              break
+
             case 'VERIFY_BENEFICIAL_OWNERS':
               router.push({
-                name: 'settings',
+                name: 'settings/payments',
                 params: {
                   verifyBeneficialOwners: 'true',
                 }
               })
-              break;
+              break
           }
         },
       }
     }
-
-    console.log({message, action})
 
     store.dispatch('showSnackbar', {
       text: message,

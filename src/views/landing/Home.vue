@@ -4,11 +4,11 @@
   v-sheet.arrow-container
     arrows(type='background' style='position: absolute')
     
-    v-container.px-10
+    v-container.px-10(:class="{'mt-9': $vuetify.breakpoint.smAndUp}")
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
-            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to widescale temp labor management
+            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to contract labor management
 
           div(v-if='authenticatedUser')
             v-btn.mr-3.black--text(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
@@ -22,10 +22,10 @@
 
           .d-flex.mt-6.align-center
             p.mb-0.mr-2.font-weight-medium Get the app:
+            v-btn(icon href='https://testflight.apple.com/join/hvQXJsYe' target='_blank')
+              v-icon mdi-apple
             v-btn(icon href='https://play.google.com/store/apps/details?id=com.worxstr.worxstr' target='_blank')
               v-icon mdi-google-play
-            //- v-btn(icon)
-            //-   v-icon mdi-apple
 
           v-spacer(style='height: 70px')
 
@@ -132,6 +132,7 @@
             text
             :data-supplement='{num_contractors: this.calculator.contractors, num_managers: this.calculator.managers}'
             :show-manager-contractor-fields='false'
+            type='sales'
           )
 </template>
 
