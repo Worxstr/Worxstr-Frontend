@@ -126,8 +126,6 @@ export default class App extends Vue {
   }
 
   get topMargin() {
-    console.log("sat: " + this.safeAreaTop)
-    console.log("headerHeight: " + this.headerHeight)
     if (!this.mobileLayout || this.isLanding) {
       return this.headerHeight + this.safeAreaTop
     }
@@ -136,7 +134,7 @@ export default class App extends Vue {
   }
 
   get bottomMargin() {
-    if (this.mobileLayout) {
+    if (this.mobileLayout && !this.isLanding) {
       return this.headerHeight + this.safeAreaBottom
     }
     return this.safeAreaBottom
