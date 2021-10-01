@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+[]
+=======
 [
 	{
 		"pkg": "@capacitor-community/barcode-scanner",
@@ -24,3 +27,4 @@
 		"classpath": "com.epicshaggy.biometric.NativeBiometric"
 	}
 ]
+>>>>>>> 14d5c6383ab89bfd8dd29bcd5476248942dc6a68
