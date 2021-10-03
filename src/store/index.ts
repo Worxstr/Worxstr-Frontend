@@ -17,7 +17,7 @@ import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
 import { DarkPreference, getStoredPreference } from '@/util/theme'
 
-import messagesStore from './messages'
+import messages from './messages'
 
 Vue.use(Vuex)
 
@@ -1079,7 +1079,7 @@ const storeConfig: StoreOptions<RootState> = {
     },
   },
   modules: {
-    messagesStore
+    messages
   },
 }
 

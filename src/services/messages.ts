@@ -51,12 +51,11 @@ export async function loadContacts() {
 }
 
 export async function sendMessage(message: { body: string }, conversationId: number) {
-	console.log({message})
 	const { data } = await axios({
 		method: 'POST',
 		url: `conversations/${conversationId}/messages`,
 		data: message,
 	})
-	commit('ADD_MESSAGE', { message: data.message, conversationId })
-	return data
+	commit('ADD_MESSAGE', data.message)
+	return data.message
 }
