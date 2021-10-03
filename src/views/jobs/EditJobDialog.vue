@@ -138,6 +138,7 @@ import { Job } from '@/definitions/Job';
 import { exists, phoneRules, emailRules } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import JobsMap from '@/components/JobsMap.vue'
+import * as jobs from '@/services/jobs'
 
 @Component({
   components: {

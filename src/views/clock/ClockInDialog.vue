@@ -56,6 +56,7 @@ v-dialog(
           v-model='code'
           dense
           outlined
+          maxlength='6'
           :rules='codeRules'
         )
 
@@ -72,6 +73,7 @@ import { Capacitor } from '@capacitor/core'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 
+import * as clock from '@/services/clock'
 /*
   We are using two difference QR code scanner libraries here.
   vue-qrcode-reader only works on web, and @capacitor-community/barcode-scanner
@@ -97,7 +99,7 @@ export default class ClockInDialog extends Vue {
 
   codeRules = [
     (code: string) => !!code || 'Please enter your clock-in code',
-    (code: string) => code.length === 6 && code.match(/^-?\d+$/) || 'Please enter a valid clock-in code',
+    (code: string) => (code.length === 6 && code.match(/^-?\d+$/)) || 'Please enter a valid clock-in code',
   ]
 
   @Prop({ default: false }) readonly opened!: boolean
@@ -114,7 +116,7 @@ export default class ClockInDialog extends Vue {
     // TODO: Handle incorrect code
     try {
       this.loading = true
-      await this.$store.dispatch('clockIn', code)
+      await clock.clockIn(code)
       this.closeDialog()
     }
     finally {

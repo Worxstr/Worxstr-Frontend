@@ -169,6 +169,7 @@ import ClockEvents from '@/components/ClockEvents.vue'
 
 import { currentUserIs, UserRole } from '@/definitions/User'
 import { Job, Shift } from '@/definitions/Job'
+import { loadJob } from '@/services/jobs'
 
 @Component({
   components: {
@@ -202,7 +203,7 @@ export default class JobView extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch('loadJob', this.$route.params.jobId)
+      await loadJob(parseInt(this.$route.params.jobId))
     } finally {
       this.loading = false
     }

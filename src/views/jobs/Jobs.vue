@@ -42,6 +42,7 @@ import { Vue, Component } from 'vue-property-decorator'
 
 import { currentUserIs, UserRole } from '@/definitions/User'
 import { Job } from '@/definitions/Job'
+import { loadJobs } from '@/services/jobs'
 
 import EditJobDialog from './EditJobDialog.vue'
 import JobsMap from '@/components/JobsMap.vue'
@@ -63,7 +64,7 @@ export default class JobsView extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch("loadJobs")
+      await loadJobs()
     }
     finally {
       this.loading = false

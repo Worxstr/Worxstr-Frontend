@@ -77,6 +77,7 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { User } from '@/definitions/User'
 import { Shift } from '@/definitions/Job'
 import { exists } from '@/util/inputValidation'
+import { updateShift } from '@/services/jobs'
 
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
@@ -117,7 +118,7 @@ export default class EditShiftDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ default: [] }) readonly contractors!: User[]
-  @Prop(Object) readonly shift: Shift | undefined
+  @Prop(Object) readonly shift!: Shift
 
   @Watch('shift')
   onShiftUpdated(shift: Shift) {
@@ -146,7 +147,7 @@ export default class EditShiftDialog extends Vue {
     shift.time_end = new Date(shift.time_end).toISOString()
 
     try {
-      await this.$store.dispatch('updateShift', shift)
+      await updateShift(shift)
       this.closeDialog()
     } finally {
       this.loading = false

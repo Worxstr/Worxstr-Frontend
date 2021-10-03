@@ -26,23 +26,25 @@ v-dialog(
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Job } from '@/definitions/Job'
+import { closeJob } from '@/services/jobs'
 
 @Component
 export default class CloseJobDialog extends Vue {
   loading = false
 
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop(Object) readonly job: Job | undefined
+  @Prop(Object) readonly job!: Job
   @Prop(String) readonly contractorName: string | undefined
 
   closeDialog() {
-    this.$emit('update:opened', false);
+    this.$emit('update:opened', false)
   }
+
   async closeJob() {
     this.loading = true
     try {
-      await this.$store.dispatch('closeJob', this.job?.id);
-      this.closeDialog();
+      await closeJob(this.job.id)
+      this.closeDialog()
       this.$router.push({name: 'jobs'})
     }
     finally {

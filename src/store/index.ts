@@ -8,12 +8,12 @@ import { Capacitor } from '@capacitor/core'
 import { Geolocation } from '@capacitor/geolocation'
 import { event } from 'vue-gtag'
 
-import { normalizeRelations, resolveRelations } from '../util/helpers'
 import { User, defaultRoute } from '@/definitions/User'
-import { ClockEvent } from '@/definitions/Clock'
-import { Job, Shift } from '@/definitions/Job'
+import { Job } from '@/definitions/Job'
 import { DarkPreference, getStoredPreference } from '@/util/theme'
 
+import clock from './clock'
+import jobs from './jobs'
 import payments from './payments'
 import schedule from './schedule'
 import messages from './messages'
@@ -28,7 +28,7 @@ const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
 axios.defaults.baseURL = baseUrl
 axios.defaults.withCredentials = true
 
-interface RootState {
+export interface RootState {
   snackbar: {
     show: boolean;
     text: string;
@@ -51,30 +51,6 @@ interface RootState {
       [key: number]: User;
     };
   };
-  clock: {
-    clocked: boolean;
-    break: boolean;
-    history: {
-      lastLoadedOffset: number;
-      all: number[];
-      byId: {
-        [key: number]: ClockEvent;
-      };
-    };
-  };
-  shifts: {
-    next: Shift | null;
-    all: number[];
-    byId: {
-      [key: number]: Shift;
-    };
-  };
-  jobs: {
-    all: number[];
-    byId: {
-      [key: number]: Job;
-    };
-  };
   workforce: number[];
   managers: {
     [key: string]: User[];
@@ -94,25 +70,6 @@ const initialState = (): RootState => ({
   authenticatedUser: null,
   userLocation: null,
   users: {
-    all: [],
-    byId: {},
-  },
-  clock: {
-    clocked: false,
-    break: false,
-    history: {
-      lastLoadedOffset: 0,
-      all: [],
-      byId: {},
-    },
-  },
-  shifts: {
-    next: null,
-    // TODO: Flatten shift data from jobs
-    all: [],
-    byId: {},
-  },
-  jobs: {
     all: [],
     byId: {},
   },
@@ -169,44 +126,6 @@ const storeConfig: StoreOptions<RootState> = {
     SET_USER_LOCATION(state, { lat, lng, accuracy }) {
       state.userLocation = { lat, lng, accuracy }
     },
-    ADD_CLOCK_EVENT(state, event: ClockEvent) {
-      Vue.set(state.clock.history.byId, event.id, event)
-      if (!state.clock.history.all.includes(event.id))
-        state.clock.history.all.push(event.id)
-    },
-    INCREMENT_CLOCK_HISTORY_OFFSET(state) {
-      state.clock.history.lastLoadedOffset++
-    },
-    CLOCK_IN(state) {
-      state.clock.clocked = true
-    },
-    CLOCK_OUT(state) {
-      state.clock.clocked = false
-    },
-    START_BREAK(state) {
-      state.clock.break = true
-    },
-    END_BREAK(state) {
-      state.clock.break = false
-    },
-    ADD_JOB(state, job: Job) {
-      Vue.set(state.jobs.byId, job.id, {
-        ...state.jobs.byId[job.id],
-        ...job,
-        direct: (
-          state.authenticatedUser?.id === job.organization_manager_id ||
-          state.authenticatedUser?.id === job.contractor_manager_id
-        )
-      })
-      if (!state.jobs.all.includes(job.id)) state.jobs.all.push(job.id)
-    },
-    REMOVE_JOB(state, jobId: number) {
-      Vue.delete(state.jobs.byId, jobId)
-      Vue.delete(
-        state.jobs.all,
-        state.jobs.all.findIndex((id) => id == jobId)
-      )
-    },
     ADD_WORKFORCE_MEMBER(state, userId: number) {
       if (!state.workforce.includes(userId)) {
         state.workforce.push(userId)
@@ -217,21 +136,6 @@ const storeConfig: StoreOptions<RootState> = {
       if (!state.managers[type].some((m: User) => m.id == manager.id)) {
         state.managers[type].push(manager)
       }
-    },
-    SET_NEXT_SHIFT(state, shift: Shift) {
-      state.shifts.next = shift
-    },
-    ADD_SHIFT(state, { shift, jobId }) {
-      state.jobs.byId[jobId].shifts.push(shift)
-      // TODO: Flatten shift data from jobs
-      // Vue.set(state.shifts.byId, shift.id, shift)
-      // if (!state.shifts.all.includes(shift.id))
-      //   state.shifts.all.push(shift.id)
-    },
-    REMOVE_SHIFT(state, { jobId, shiftId }) {
-      state.jobs.byId[jobId].shifts = state.jobs.byId[jobId].shifts.filter(
-        (shift) => shift.id != shiftId
-      )
     },
   },
   actions: {
@@ -401,71 +305,6 @@ const storeConfig: StoreOptions<RootState> = {
       commit('ADD_USER', data.event)
     },
 
-    async loadClockHistory({ state, commit }) {
-      const { data } = await axios.get(`${baseUrl}/clock/history`, {
-        params: {
-          week_offset: state.clock.history.lastLoadedOffset,
-        },
-      })
-      data.history.forEach((event: ClockEvent) => {
-        // TODO: Normalize nested data
-        commit(
-          'ADD_CLOCK_EVENT',
-          normalizeRelations(event, [
-            /*'user'*/
-          ])
-        )
-        /* commit('ADD_USER', event.user, {
-          root: true
-        }) */
-      })
-      commit('INCREMENT_CLOCK_HISTORY_OFFSET')
-    },
-
-    async loadNextShift({ commit }) {
-      const { data } = await axios.get(`${baseUrl}/shifts/next`)
-      commit('SET_NEXT_SHIFT', data.shift)
-    },
-
-    async clockIn({ commit, state }, code) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/clock/clock-in`,
-        params: {
-          shift_id: state.shifts.next?.id,
-        },
-        data: {
-          code,
-        },
-      })
-      commit('ADD_CLOCK_EVENT', data.event)
-      commit('CLOCK_IN')
-      return data
-    },
-
-    async clockOut({ commit, state }) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/clock/clock-out`,
-        params: {
-          shift_id: state.shifts.next?.id,
-        },
-      })
-      commit('ADD_CLOCK_EVENT', data.event)
-      commit('CLOCK_OUT')
-    },
-
-    async toggleBreak({ commit }, breakState) {
-      const action = breakState ? 'end' : 'start'
-
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/clock/${action}-break`,
-      })
-      commit('ADD_CLOCK_EVENT', data.data)
-      commit(`${action.toUpperCase()}_BREAK`)
-    },
-
     async loadManagers({ commit, state }) {
       const { data } = await axios({
         method: 'GET',
@@ -482,98 +321,6 @@ const storeConfig: StoreOptions<RootState> = {
         commit('ADD_MANAGER', { type: 'organization', manager: m })
       })
       return data
-    },
-
-    async loadJobs({ commit }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/jobs`,
-      })
-      data.jobs.forEach((job: Job) => {
-        // TODO: Normalize nested data
-        commit('ADD_JOB', job)
-      })
-      return data
-    },
-
-    async loadJob({ commit }, jobId) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/jobs/${jobId}`,
-      })
-
-      // Flatten shift data
-      // data.job.shifts = data.job.shifts.map(shift => {
-      //   commit('ADD_SHIFT', shift)
-      //   return shift.id
-      // })
-
-      data.job.contractors.forEach((c: User) => {
-        commit('ADD_USER', c)
-      })
-
-      commit('ADD_JOB', data.job)
-      return data
-    },
-
-    async createJob({ commit }, job) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/jobs`,
-        data: job,
-      })
-      commit('ADD_JOB', data.job)
-      return data
-    },
-
-    async updateJob({ commit }, job) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/jobs/${job.id}`,
-        data: job,
-      })
-      commit('ADD_JOB', data.job)
-      return data
-    },
-
-    async closeJob({ commit }, jobId) {
-      await axios({
-        method: 'PUT',
-        url: `${baseUrl}/jobs/${jobId}/close`,
-      })
-      commit('REMOVE_JOB', jobId)
-    },
-
-    async createShift({ commit }, { shift, jobId }) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/shifts`,
-        data: shift,
-        params: { job_id: jobId },
-      })
-      data.shifts.forEach((shift: Shift) => {
-        commit('ADD_SHIFT', { shift, jobId })
-      })
-      return data
-    },
-
-    async updateShift({ commit }, shift) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/shifts/${shift.id}`,
-        data: { shift },
-      })
-      commit('REMOVE_SHIFT', { shiftId: shift.id, jobId: data.shift.job_id })
-      commit('ADD_SHIFT', { shift: data.shift, jobId: data.shift.job_id })
-      return data
-    },
-
-    async deleteShift({ commit }, { shiftId, jobId }) {
-      await axios({
-        method: 'DELETE',
-        url: `${baseUrl}/shifts/${shiftId}`,
-      })
-      commit('REMOVE_SHIFT', { shiftId, jobId })
     },
 
     async loadWorkforce({ commit }) {
@@ -644,71 +391,19 @@ const storeConfig: StoreOptions<RootState> = {
     user: (state) => (id: number) => {
       return state.users.byId[id]
     },
-    clockEvent: (state, _, __, rootGetters) => (id: number) => {
-      return resolveRelations(
-        state.clock.history.byId[id],
-        [
-          /*'user'*/
-        ],
-        rootGetters
-      )
-    },
-    clockHistory: (state, getters) => {
-      let events = state.clock.history.all.map((eventId) =>
-        getters.clockEvent(eventId)
-      )
-      events = events.sort((a, b) => {
-        return new Date(b.time).getTime() - new Date(a.time).getTime()
-      })
-
-      return events
-    },
-    nextShift: (state) => {
-      if (!state.shifts.next) return {}
-
-      const begin = new Date(state.shifts.next.time_begin),
-        end = new Date(state.shifts.next.time_end),
-        now = new Date()
-
-      const shiftActive = begin <= now && now <= end
-
-      return {
-        ...state.shifts.next,
-        time_begin: begin,
-        time_end: end,
-        shiftActive,
-      }
-    },
-    job: (state) => (id: number) => {
-      const job = state.jobs.byId[id]
-
-      // if (job && job.shifts)
-      //   job.shifts = job.shifts.map(shiftId => {
-      //     return getters.shift(shiftId)
-      //   })
-
-      return job
-    },
-    jobs: (state, getters) => {
-      return state.jobs.all.map((id) => getters.job(id))
-    },
     directJobs: (_state, getters) => {
       return getters.jobs.filter((job: Job) => job.direct)
     },
     indirectJobs: (_state, getters) => {
       return getters.jobs.filter((job: Job) => !job.direct)
     },
-    shift: (state) => (id: number) => {
-      return state.shifts.byId[id]
-    },
-    shifts: (state, getters) => {
-      return state .shifts.all.map((id: number) => getters.shift(id))
-    },
     workforce: (state) => {
       return state.workforce.map((userId: number) => state.users.byId[userId])
     },
   },
   modules: {
+    clock,
+    jobs,
     payments,
     schedule,
     messages,
