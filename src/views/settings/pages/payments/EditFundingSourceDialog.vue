@@ -45,7 +45,7 @@ v-dialog(
 
 import { FundingSource } from '@/definitions/Payments'
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { exists } from '@/plugins/inputValidation'
+import { exists } from '@/util/inputValidation'
 
 @Component
 export default class RemoveFundingSourceDialog extends Vue {

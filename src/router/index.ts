@@ -6,7 +6,7 @@ import store from '@/store'
 import { Capacitor } from '@capacitor/core'
 
 import * as MessagesTypes from '@/definitions/Messages'
-import { fullName, groupNameList } from '@/plugins/filters'
+import { fullName, groupNameList } from '@/util/filters'
 
 import Home from '@/views/landing/Home.vue'
 import NativeHome from '@/views/landing/NativeHome.vue'

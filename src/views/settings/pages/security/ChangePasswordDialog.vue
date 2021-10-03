@@ -56,7 +56,7 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
-import { exists, passwordRules, passwordMatches } from '@/plugins/inputValidation'
+import { exists, passwordRules, passwordMatches } from '@/util/inputValidation'
 
 export default {
   name: "changePasswordDialog",

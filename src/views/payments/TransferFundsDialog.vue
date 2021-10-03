@@ -53,7 +53,7 @@ v-dialog(
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { exists, currency } from '@/plugins/inputValidation'
+import { exists, currency } from '@/util/inputValidation'
 import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
 
 @Component({

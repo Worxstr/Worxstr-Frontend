@@ -4,28 +4,28 @@ import Vuex, { StoreOptions } from 'vuex'
 import axios from 'axios'
 import router from '../router'
 
-import { Capacitor, PermissionState } from '@capacitor/core'
+import { Capacitor } from '@capacitor/core'
 import { Geolocation } from '@capacitor/geolocation'
-import * as Plaid from '@/plugins/plaid'
+import * as Plaid from '@/util/plaid'
 import { event } from 'vue-gtag'
 
-import { normalizeRelations, resolveRelations } from '../plugins/helpers'
-import { Conversation } from '@/definitions/Messages'
+import { normalizeRelations, resolveRelations } from '../util/helpers'
 import { User, defaultRoute } from '@/definitions/User'
 import { ClockEvent } from '@/definitions/Clock'
 import { Timecard, FundingSource, Transfer } from '@/definitions/Payments'
 import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
+import { DarkPreference, getStoredPreference } from '@/util/theme'
 
 Vue.use(Vuex)
-
-// axios.defaults.baseURL = ''
-axios.defaults.withCredentials = true
 
 // TODO: If using capacitor production, we need to be able to determine if the user is testing or using prod database
 const webUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace(':8080', ':5000')
 const nativeUrl = process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : webUrl
 const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
+
+axios.defaults.baseURL = baseUrl
+axios.defaults.withCredentials = true
 
 interface RootState {
   snackbar: {
@@ -110,14 +110,12 @@ interface RootState {
       [key: number]: CalendarEvent;
     };
   };
-  conversations: {
-    all: number[];
-    byId: {
-      [key: number]: Conversation;
-    };
+  preferences: {
+    darkMode: DarkPreference;
+    miniNav: boolean;
   };
-  contacts: User[];
 }
+
 
 const initialState = (): RootState => ({
   snackbar: {
@@ -179,12 +177,13 @@ const initialState = (): RootState => ({
     all: [],
     byId: {},
   },
-  conversations: {
-    all: [],
-    byId: [],
-  },
-  contacts: [],
+  preferences: {
+    darkMode: getStoredPreference(),
+    miniNav: false,
+  }
 })
+
+
 
 
 const storeConfig: StoreOptions<RootState> = {
@@ -202,8 +201,9 @@ const storeConfig: StoreOptions<RootState> = {
         show: true,
       }
     },
-    RESET_STATE(state, payload) {
+    RESET_STATE(state) {
       Object.assign(state, initialState())
+      // Object.assign(state.messages, messagesInitialState())
     },
     SET_AUTHENTICATED_USER(state, user) {
       state.authenticatedUser = user
@@ -339,7 +339,6 @@ const storeConfig: StoreOptions<RootState> = {
       state.shifts.next = shift
     },
     ADD_SHIFT(state, { shift, jobId }) {
-      console.log(shift, jobId)
       state.jobs.byId[jobId].shifts.push(shift)
       // TODO: Flatten shift data from jobs
       // Vue.set(state.shifts.byId, shift.id, shift)
@@ -347,7 +346,6 @@ const storeConfig: StoreOptions<RootState> = {
       //   state.shifts.all.push(shift.id)
     },
     REMOVE_SHIFT(state, { jobId, shiftId }) {
-      console.log(shiftId, jobId)
       state.jobs.byId[jobId].shifts = state.jobs.byId[jobId].shifts.filter(
         (shift) => shift.id != shiftId
       )
@@ -355,19 +353,6 @@ const storeConfig: StoreOptions<RootState> = {
     ADD_EVENT(state, event) {
       Vue.set(state.events.byId, event.id, event)
       if (!state.events.all.includes(event.id)) state.events.all.push(event.id)
-    },
-    ADD_CONVERSATION(state, { conversation, prepend }) {
-      Vue.set(state.conversations.byId, conversation.id, conversation)
-      if (!state.conversations.all.includes(conversation.id))
-        prepend
-          ? state.conversations.all.unshift(conversation.id)
-          : state.conversations.all.push(conversation.id)
-    },
-    UPDATE_CONTACTS(state, contacts) {
-      state.contacts = contacts
-    },
-    ADD_MESSAGE(state, { conversationId, message }) {
-      state.conversations.byId[conversationId].messages.push(message)
     },
   },
   actions: {
@@ -506,7 +491,6 @@ const storeConfig: StoreOptions<RootState> = {
     },
 
     async loadUser({ commit }, userId) {
-      console.log(`loading user ${userId}`)
       const { data } = await axios({
         method: 'GET',
         url: `${baseUrl}/users/${userId}`,
@@ -934,61 +918,6 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async loadConversations({ commit }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/conversations`,
-      })
-      data.conversations.forEach((conversation: Conversation) => {
-        commit('ADD_CONVERSATION', { conversation })
-      })
-      return data
-    },
-
-    async loadConversation({ commit }, conversationId) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/conversations/${conversationId}`,
-      })
-      commit('ADD_CONVERSATION', { conversation: data.conversation })
-      return data
-    },
-
-    async createConversation({ commit }, userIds) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/conversations`,
-        data: {
-          users: userIds,
-        },
-      })
-      commit('ADD_CONVERSATION', {
-        conversation: data.conversation,
-        prepend: true,
-      })
-      return data.conversation
-    },
-
-    async loadContacts({ commit }) {
-      // TODO: Flatten contacts data into users store
-
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/conversations/contacts`,
-      })
-      commit('UPDATE_CONTACTS', data.contacts)
-      return data
-    },
-
-    async sendMessage({ commit }, { message, conversationId }) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/conversations/${conversationId}/messages`,
-        data: message,
-      })
-      commit('ADD_MESSAGE', { message: data.message, conversationId })
-      return data
-    },
     async updatePassword(_context, newPassword) {
       const { data } = await axios({
         method: 'PUT',
@@ -1146,21 +1075,10 @@ const storeConfig: StoreOptions<RootState> = {
         }
       })
     },
-    conversation: (state,/*  _, __, _rootGetters */) => (id: number) => {
-      return state.conversations.byId[id]
-      // return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
-    },
-    conversations: (state, getters) => {
-      return state.conversations.all.map((id: number) =>
-        getters.conversation(id)
-      )
-      .sort((c1: Conversation, c2: Conversation) => {
-        return (new Date(c2.messages[c2.messages.length - 1]?.timestamp)).getTime() -
-               (new Date(c1.messages[c1.messages.length - 1]?.timestamp)).getTime()
-      })
-    },
   },
-  modules: {},
+  modules: {
+    messages
+  },
 }
 
 const store = new Vuex.Store<RootState>(storeConfig)
@@ -1169,7 +1087,6 @@ export default store
 
 axios.interceptors.request.use(config => {
   const url = config.url?.replace(/^.*\/\/[^/]+/, '') || '' // Get url without domain
-  console.log(url)
   event(url, {
     event_category: 'API request',
     event_label: url,
@@ -1205,8 +1122,6 @@ axios.interceptors.response.use(
     // TODO: This can lead to unexpected results, like if they get a 401 after
     // TODO: entering an incorrect consultant code. We can remove this after we have
     // TODO: persistant auth working correctly.
-    console.log('Error: '+ message)
-    console.log({error, response: error.response})
     if (error.response.data?.login_required) {
       router.push({
         name: 'signIn',

@@ -11,7 +11,7 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
       v-list-item(
         two-line
         link,
-        activeclass="primary--text",
+        active-class="primary--text",
         :to="{ name: 'conversation', params: { conversationId: conversation.id } }"
       )
         v-list-item-content
@@ -28,14 +28,15 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex"
+import { loadConversations } from '@/store/messages'
 
 export default {
   name: "Conversations",
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch("loadConversations")
+      await loadConversations()
     }
     finally {
       this.loading = false

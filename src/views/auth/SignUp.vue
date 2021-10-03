@@ -102,10 +102,10 @@ import {
   exists,
   passwordRules,
   passwordMatches,
-} from '@/plugins/inputValidation'
+} from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
-import dwolla from '@/plugins/dwolla'
+import dwolla from '@/util/dwolla'
 
 @Component({
   metaInfo: {

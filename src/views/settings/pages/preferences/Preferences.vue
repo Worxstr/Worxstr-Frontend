@@ -11,11 +11,20 @@ v-list
         dense
         hide-details
       )
+    
+  v-list-item(two-line)
+    v-list-item-content
+      v-list-item-title Mini navigation
+    v-list-item-action
+      v-switch(
+        v-model='preferences.miniNav'
+        @change='updateMiniNav'
+      )
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { DarkPreference, getStoredPreference, setTheme } from '@/plugins/theme'
+import { DarkPreference, setTheme } from '@/util/theme'
 
 @Component({
   metaInfo: {
@@ -24,8 +33,8 @@ import { DarkPreference, getStoredPreference, setTheme } from '@/plugins/theme'
 })
 export default class Preferences extends Vue {
 
-  preferences = {
-    darkMode: 'Default',
+  get preferences() {
+    return this.$store.state.preferences
   }
 
   darkPreferenceOptions = [
@@ -42,10 +51,6 @@ export default class Preferences extends Vue {
       value: 'dark',
     },
   ]
-
-  mounted() {
-    this.preferences.darkMode = getStoredPreference()
-  }
 
   updateDarkMode() {
     setTheme(this.preferences.darkMode as DarkPreference)

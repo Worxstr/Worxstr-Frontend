@@ -76,7 +76,7 @@ v-dialog(
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { User } from '@/definitions/User'
 import { Shift } from '@/definitions/Job'
-import { exists } from '@/plugins/inputValidation'
+import { exists } from '@/util/inputValidation'
 
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'

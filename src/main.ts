@@ -3,22 +3,23 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import vuetify from './plugins/vuetify'
+import vuetify from './util/vuetify'
 import { io } from 'socket.io-client'
 import { App as CapacitorApp } from '@capacitor/app'
 
 import './styles/style.scss'
-import './plugins/filters'
+import './util/filters'
 
 import VueMask  from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
-import VueSocketIO from 'vue-socket.io'
+import VueSocketIOExt from 'vue-socket.io-extended'
+import socket from '@/util/socket-io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
-import { configureDwolla } from './plugins/dwolla'
-import { initDarkMode } from './plugins/theme'
+import { configureDwolla } from './util/dwolla'
+import { initDarkMode } from './util/theme'
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
@@ -37,19 +38,11 @@ Vue.use(VuetifyGoogleAutocomplete, {
   vueGoogleMapsCompatibility: true,
 })
 
-Vue.use(
-  new VueSocketIO({
-    debug: true,
-    connection: io(process.env.VUE_APP_API_BASE_URL, {
-      path: '/socket.io',
-    }),
-    vuex: {
-      store,
-      actionPrefix: 'SOCKET_',
-      mutationPrefix: 'SOCKET_',
-    },
-  })
-)
+Vue.use(VueSocketIOExt, socket, {
+  store,
+  actionPrefix: 'SOCKET_',
+  mutationPrefix: 'SOCKET_',
+})
 
 Vue.use(VueGtag, {
   config: { id: process.env.VUE_APP_GTAG_API },

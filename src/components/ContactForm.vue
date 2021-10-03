@@ -134,7 +134,7 @@ v-form.flex-grow-1.d-flex.flex-column(
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { emailRules, exists, url } from '@/plugins/inputValidation'
+import { emailRules, exists, url } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 
 import * as UAParser from 'ua-parser-js'

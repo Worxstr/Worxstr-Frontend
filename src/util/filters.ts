@@ -28,7 +28,6 @@ export const time = (value: (string|number|Date), format?: string) => {
 Vue.filter('time', time)
 
 Vue.filter('dateOrTime', (value: (string|number|Date)) => {
-	console.log(new Date(value).getTime(), Date.now())
 	if (new Date(value).getTime() < Date.now() - (1000 * 60 * 60 * 24)) {
 		return date(value)
 	}

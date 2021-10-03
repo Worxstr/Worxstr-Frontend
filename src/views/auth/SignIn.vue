@@ -48,7 +48,7 @@ div
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { AvailableResult, Credentials, NativeBiometric } from 'capacitor-native-biometric'
-import { emailRules, passwordRules } from '@/plugins/inputValidation'
+import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 
 @Component({

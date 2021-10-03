@@ -42,7 +42,7 @@ v-dialog(
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 
-import { exists } from '@/plugins/inputValidation'
+import { exists } from '@/util/inputValidation'
 
 export default {
   name: "addFundingSourceDialog",
