@@ -45,7 +45,7 @@ v-dialog(
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import * as messages from '@/store/messages'
+import * as messages from '@/services/messages'
 
 @Component
 export default class NewConversationDialog extends Vue {

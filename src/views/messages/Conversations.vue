@@ -29,7 +29,7 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
 
 <script>
 import { mapState, mapGetters } from "vuex"
-import { loadConversations } from '@/store/messages'
+import { loadConversations } from '@/services/messages'
 
 export default {
   name: "Conversations",

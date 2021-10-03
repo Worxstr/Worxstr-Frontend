@@ -17,6 +17,8 @@ import { Job, Shift } from '@/definitions/Job'
 import { CalendarEvent } from '@/definitions/Schedule'
 import { DarkPreference, getStoredPreference } from '@/util/theme'
 
+import messagesStore from './messages'
+
 Vue.use(Vuex)
 
 // TODO: If using capacitor production, we need to be able to determine if the user is testing or using prod database
@@ -1077,7 +1079,7 @@ const storeConfig: StoreOptions<RootState> = {
     },
   },
   modules: {
-    messages
+    messagesStore
   },
 }
 

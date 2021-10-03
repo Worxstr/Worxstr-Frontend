@@ -41,7 +41,7 @@
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import { Component, Vue } from 'vue-property-decorator'
-import * as messages from '@/store/messages'
+import * as messages from '@/services/messages'
 import { Socket } from 'vue-socket.io-extended'
 import { Message } from '@/definitions/Messages'
 import { User } from '@/definitions/User'

@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
-import store from './'
-import axios from 'axios'
 import { Conversation, Message } from '@/definitions/Messages'
 import { User } from '@/definitions/User'
-
-const { commit } = store
 
 interface MessagesState {
   conversations: {
@@ -38,13 +34,13 @@ const mutations = {
 		state.contacts = contacts
 	},
 	
-	ADD_MESSAGE(state: MessagesState, { conversation_id, message }: Message) {
-		state.conversations.byId[conversation_id].messages.push(message)
+	ADD_MESSAGE(state: MessagesState, message: Message) {
+		state.conversations.byId[message.conversation_id].messages.push(message)
 	}
 }
 
 const getters = {
-	conversation: (state,/*  _, __, _rootGetters */) => (id: number) => {
+	conversation: (state: MessagesState,/*  _, __, _rootGetters */) => (id: number) => {
 		return state.conversations.byId[id]
 		// return resolveRelations(state.conversations.byId[id], ['messages.sender_id'], rootGetters)
 	},
@@ -60,64 +56,7 @@ const getters = {
 	},
 }
 
-export async function loadConversations() {
-	const { data } = await axios({
-		method: 'GET',
-		url: 'conversations',
-	})
-	data.conversations.forEach((conversation: Conversation) => {
-		commit('ADD_CONVERSATION', { conversation })
-	})
-	return data
-}
-
-export async function loadConversation(conversationId: number) {
-	const { data } = await axios({
-		method: 'GET',
-		url: `conversations/${conversationId}`,
-	})
-	commit('ADD_CONVERSATION', { conversation: data.conversation })
-	return data
-}
-
-export async function createConversation(userIds: number[]) {
-	const { data } = await axios({
-		method: 'POST',
-		url: `conversations`,
-		data: {
-			users: userIds,
-		},
-	})
-	commit('ADD_CONVERSATION', {
-		conversation: data.conversation,
-		prepend: true,
-	})
-	return data.conversation
-}
-
-export async function loadContacts() {
-	// TODO: Flatten contacts data into users store
-
-	const { data } = await axios({
-		method: 'GET',
-		url: `conversations/contacts`,
-	})
-	commit('UPDATE_CONTACTS', data.contacts)
-	return data
-}
-
-export async function sendMessage(message: { body: string }, conversationId: number) {
-	console.log({message})
-	const { data } = await axios({
-		method: 'POST',
-		url: `conversations/${conversationId}/messages`,
-		data: message,
-	})
-	commit('ADD_MESSAGE', { message: data.message, conversationId })
-	return data
-}
-
-export const messagesStore = {
+export default {
   state: messagesInitialState(),
   mutations,
   getters,
