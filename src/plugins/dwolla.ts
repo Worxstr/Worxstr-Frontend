@@ -28,7 +28,7 @@ const success = async (res: any) => {
 
 export function configureDwolla() {
   window.dwolla.configure({
-    environment: 'sandbox',
+    environment: process.env.VUE_APP_DWOLLA_HOST || 'sandbox',
     // styles: '/main.css',
     tokenUrl: `${process.env.VUE_APP_API_BASE_URL}/payments/access`,
     styles: '/dwolla.css',

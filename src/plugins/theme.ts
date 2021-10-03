@@ -1,7 +1,6 @@
 import vuetify from './vuetify'
 import { Capacitor } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
-import { NavigationBar } from 'capacitor-navigationbar'
 
 export type DarkPreference = 'default' | 'light' | 'dark'
 
@@ -41,7 +40,6 @@ export async function setTheme(pref: DarkPreference) {
 		if (Capacitor.getPlatform() === 'android') {
 			const color = dark ? '#000000' : '#ffffff'
 			await StatusBar.setBackgroundColor({ color })
-			await NavigationBar.setBackgroundColor({ color })
 		}
 	}
 }
