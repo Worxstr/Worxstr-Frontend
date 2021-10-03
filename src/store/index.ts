@@ -18,6 +18,7 @@ import { CalendarEvent } from '@/definitions/Schedule'
 import { DarkPreference, getStoredPreference } from '@/util/theme'
 
 import messages from './messages'
+import schedule from './schedule'
 
 Vue.use(Vuex)
 
@@ -106,17 +107,12 @@ interface RootState {
   managers: {
     [key: string]: User[];
   };
-  events: {
-    all: number[];
-    byId: {
-      [key: number]: CalendarEvent;
-    };
-  };
   preferences: {
     darkMode: DarkPreference;
     miniNav: boolean;
   };
 }
+
 
 
 const initialState = (): RootState => ({
@@ -175,18 +171,11 @@ const initialState = (): RootState => ({
     contractor: [],
     organization: [],
   },
-  events: {
-    all: [],
-    byId: {},
-  },
   preferences: {
     darkMode: getStoredPreference(),
     miniNav: false,
   }
 })
-
-
-
 
 const storeConfig: StoreOptions<RootState> = {
   state: initialState(),
@@ -351,10 +340,6 @@ const storeConfig: StoreOptions<RootState> = {
       state.jobs.byId[jobId].shifts = state.jobs.byId[jobId].shifts.filter(
         (shift) => shift.id != shiftId
       )
-    },
-    ADD_EVENT(state, event) {
-      Vue.set(state.events.byId, event.id, event)
-      if (!state.events.all.includes(event.id)) state.events.all.push(event.id)
     },
   },
   actions: {
@@ -907,19 +892,6 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async loadCalendarEvents({ commit }, { start, end }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/calendar`,
-        params: {
-          date_begin: start,
-          date_end: end,
-        },
-      })
-      data.events.forEach((event: CalendarEvent) => commit('ADD_EVENT', event))
-      return data
-    },
-
     async updatePassword(_context, newPassword) {
       const { data } = await axios({
         method: 'PUT',
@@ -1030,56 +1002,10 @@ const storeConfig: StoreOptions<RootState> = {
     workforce: (state) => {
       return state.workforce.map((userId: number) => state.users.byId[userId])
     },
-    calendarEvent: (state) => (id: number) => {
-      return state.events.byId[id]
-    },
-    calendarEvents: (state, getters) => {
-      let colorCounter = 0
-      const eventColors = [
-        'blue',
-        'green',
-        'purple',
-        'indigo',
-        'orange darken-1',
-        'deep-purple',
-        'red',
-        'light-blue',
-        'yellow darken-2',
-        'light-green',
-        'cyan',
-        'pink',
-        'teal',
-        'lime',
-      ]
-      const colorMap: {
-        [key: number]: string;
-      } = {} // Map job ID to color
-
-      return state.events.all.map((eventId) => {
-        const event = getters.calendarEvent(eventId)
-
-        let color
-        if (colorMap[event.job_id]) {
-          color = colorMap[event.job_id]
-        } else {
-          color = eventColors[colorCounter % eventColors.length]
-          colorMap[event.job_id] = color
-          colorCounter++
-        }
-
-        return {
-          name: event.site_location,
-          start: new Date(event.time_begin),
-          end: new Date(event.time_end),
-          color,
-          timed: true,
-          ...event,
-        }
-      })
-    },
   },
   modules: {
-    messages
+    messages,
+    schedule,
   },
 }
 
@@ -1098,7 +1024,6 @@ axios.interceptors.request.use(config => {
 }, error => {
   return Promise.reject(error)
 })
-
 
 axios.interceptors.response.use(
   (response) => {

@@ -13,7 +13,7 @@ interface MessagesState {
   contacts: User[];
 }
 
-const messagesInitialState = (): MessagesState => ({
+const initialState = (): MessagesState => ({
   conversations: {
     all: [],
     byId: [],
@@ -58,7 +58,7 @@ const getters = {
 }
 
 export default {
-  state: messagesInitialState(),
+  state: initialState(),
   mutations,
   getters,
 }
