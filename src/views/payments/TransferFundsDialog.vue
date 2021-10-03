@@ -55,6 +55,7 @@ v-dialog(
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { exists, currency } from '@/util/inputValidation'
 import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
+import * as payments from '@/services/payments'
 
 @Component({
   components: {
@@ -97,14 +98,19 @@ export default class TransferFundsDialog extends Vue {
     this.$emit('update:opened', null)
   }
 
-  mounted() {
-    this.$store.dispatch('loadFundingSources')
+  async mounted() {
+    await payments.loadFundingSources()
   }
 
   async sendTransfer() {
     this.loading = true
     try {
-      await this.$store.dispatch(this.action == 'add' ? 'addToBalance' : 'removeFromBalance', this.transfer)
+      if (this.action === 'add') {
+        await payments.addToBalance(this.transfer)
+      }
+      else {
+        await payments.removeFromBalance(this.transfer)
+      }
     }
     finally {
       this.loading = false

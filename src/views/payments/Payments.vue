@@ -50,6 +50,7 @@ import Timecards from '@/components/Timecards.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import { currentUserIs, Managers } from '@/definitions/User'
+import { loadBalance } from '@/services/payments'
 
 @Component({
   metaInfo: {
@@ -69,7 +70,7 @@ export default class Payments extends Vue {
   async mounted() {
     this.loadingBalance = true
     try {
-      await this.$store.dispatch('loadBalance')
+      await loadBalance()
     } finally {
       this.loadingBalance = false
     }

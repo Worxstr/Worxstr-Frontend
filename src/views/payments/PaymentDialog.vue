@@ -33,48 +33,52 @@ v-dialog(
       v-btn(text color='success' @click='completePayments' :loading='loading') Complete
 </template>
 
-<script>
-export default {
-  name: "paymentDialog",
-  props: {
-    opened: Boolean,
-    timecardIds: Array,
-  },
-  data: () => ({
-    loading: false,
-  }),
-  computed: {
-    timecards() {
-      return this.$store.getters.timecardsByIds(this.timecardIds)
-    },
-    totalPayment() {
-      return this.wagePayment + this.feesPayment;
-    },
-    wagePayment() {
-      const total = this.timecards.reduce((total, current) => {
-        return total + parseFloat(current.wage_payment);
-      }, 0);
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Timecard } from '@/definitions/Payments'
+import { completePayments } from '@/services/payments'
 
-      return Math.round(total * 100) / 100;
-    },
-    feesPayment() {
-      const total = this.timecards.reduce((total, current) => {
-        return total + parseFloat(current.fees_payment);
-      }, 0);
+@Component
+export default class PaymentDialog extends Vue {
 
-      return Math.round(total * 100) / 100;
-    },
-  },
-  methods: {
-    closeDialog() {
-      this.$emit("update:opened", false);
-    },
-    async completePayments() {
-      this.loading = true
-      await this.$store.dispatch("completePayments", this.timecards.map(t => t.id))
-      this.loading = false
-      this.closeDialog()
-    },
-  },
-};
+  @Prop({ default: false }) opened!: boolean
+  @Prop({ type: Array }) timecardIds!: number[]
+
+  loading = false
+
+  get timecards() {
+    return this.$store.getters.timecardsByIds(this.timecardIds)
+  }
+
+  get totalPayment() {
+    return this.wagePayment + this.feesPayment;
+  }
+
+  get wagePayment() {
+    const total = this.timecards.reduce((total: number, current: Timecard) => {
+      return total + parseFloat(current.wage_payment)
+    }, 0)
+
+    return Math.round(total * 100) / 100
+  }
+
+  get feesPayment() {
+    const total = this.timecards.reduce((total: number, current: Timecard) => {
+      return total + parseFloat(current.fees_payment)
+    }, 0)
+
+    return Math.round(total * 100) / 100
+  }
+
+  closeDialog() {
+    this.$emit("update:opened", false);
+  }
+  
+  async completePayments() {
+    this.loading = true
+    await completePayments(this.timecards.map((t: Timecard) => t.id))
+    this.loading = false
+    this.closeDialog()
+  }
+}
 </script>

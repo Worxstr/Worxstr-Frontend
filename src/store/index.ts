@@ -6,19 +6,17 @@ import router from '../router'
 
 import { Capacitor } from '@capacitor/core'
 import { Geolocation } from '@capacitor/geolocation'
-import * as Plaid from '@/util/plaid'
 import { event } from 'vue-gtag'
 
 import { normalizeRelations, resolveRelations } from '../util/helpers'
 import { User, defaultRoute } from '@/definitions/User'
 import { ClockEvent } from '@/definitions/Clock'
-import { Timecard, FundingSource, Transfer } from '@/definitions/Payments'
 import { Job, Shift } from '@/definitions/Job'
-import { CalendarEvent } from '@/definitions/Schedule'
 import { DarkPreference, getStoredPreference } from '@/util/theme'
 
-import messages from './messages'
+import payments from './payments'
 import schedule from './schedule'
+import messages from './messages'
 
 Vue.use(Vuex)
 
@@ -64,32 +62,6 @@ interface RootState {
       };
     };
   };
-  payments: {
-    beneficialOwnersCertified: boolean;
-    balance: {
-      value: number | null;
-      currency: string;
-      location: string | null;
-    };
-    fundingSources: {
-      all: string[];
-      byLocation: {
-        [key: string]: FundingSource[];
-      };
-    };
-    timecards: {
-      all: number[];
-      byId: {
-        [key: number]: Timecard;
-      };
-    };
-    transfers: {
-      all: string[];
-      byId: {
-        [key: string]: Transfer;
-      };
-    };
-  };
   shifts: {
     next: Shift | null;
     all: number[];
@@ -113,8 +85,6 @@ interface RootState {
   };
 }
 
-
-
 const initialState = (): RootState => ({
   snackbar: {
     show: false,
@@ -132,26 +102,6 @@ const initialState = (): RootState => ({
     break: false,
     history: {
       lastLoadedOffset: 0,
-      all: [],
-      byId: {},
-    },
-  },
-  payments: {
-    beneficialOwnersCertified: false,
-    balance: {
-      value: null,
-      currency: 'USD',
-      location: null,
-    },
-    fundingSources: {
-      all: [],
-      byLocation: {},
-    },
-    timecards: {
-      all: [],
-      byId: {},
-    },
-    transfers: {
       all: [],
       byId: {},
     },
@@ -238,64 +188,6 @@ const storeConfig: StoreOptions<RootState> = {
     },
     END_BREAK(state) {
       state.clock.break = false
-    },
-    SET_BALANCE(state, { value, currency, location }) {
-      state.payments.balance = {
-        value: parseFloat(value),
-        currency,
-        location,
-      }
-    },
-    ADD_TO_BALANCE(state, amount) {
-      state.payments.balance.value += amount
-    },
-    ADD_TIMECARD(state, timecard) {
-      Vue.set(state.payments.timecards.byId, timecard.id, timecard)
-      if (!state.payments.timecards.all.includes(timecard.id))
-        state.payments.timecards.all.push(timecard.id)
-    },
-    REMOVE_TIMECARD(state, timecardId) {
-      Vue.delete(state.payments.timecards.byId, timecardId)
-      Vue.delete(
-        state.payments.timecards.all,
-        state.payments.timecards.all.indexOf(timecardId)
-      )
-    },
-    SET_BENEFICIAL_OWNERS_CERTIFIED(state, certified: boolean) {
-      state.payments.beneficialOwnersCertified = certified
-    },
-    ADD_FUNDING_SOURCE(state, fundingSource: FundingSource) {
-      Vue.set(
-        state.payments.fundingSources.byLocation,
-        fundingSource._links.self.href,
-        {
-          ...state.payments.fundingSources.byLocation[fundingSource._links.self.href],
-          ...fundingSource,
-        }
-      )
-      if (!state.payments.fundingSources.all.includes(fundingSource._links.self.href))
-        state.payments.fundingSources.all.push(fundingSource._links.self.href)
-    },
-    REMOVE_FUNDING_SOURCE(state, fundingSourceLocation: string) {
-      Vue.delete(
-        state.payments.fundingSources.byLocation,
-        fundingSourceLocation
-      )
-      Vue.delete(
-        state.payments.fundingSources.all,
-        state.payments.fundingSources.all.findIndex(
-          (location) => location == fundingSourceLocation
-        )
-      )
-    },
-    ADD_TRANSFER(state, { transfer, prepend }) {
-      Vue.set(state.payments.transfers.byId, transfer.id, {
-        ...state.payments.transfers.byId[transfer.id],
-        ...transfer
-      })
-      if (!state.payments.transfers.all.includes(transfer.id))
-        if (prepend) state.payments.transfers.all.unshift(transfer.id)
-        else state.payments.transfers.all.push(transfer.id)
     },
     ADD_JOB(state, job: Job) {
       Vue.set(state.jobs.byId, job.id, {
@@ -574,172 +466,6 @@ const storeConfig: StoreOptions<RootState> = {
       commit(`${action.toUpperCase()}_BREAK`)
     },
 
-    async loadTimecards({ commit }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/payments/timecards`,
-      })
-      data.timecards.forEach((timecard: Timecard) => {
-        // TODO: Normalize nested data
-        commit('ADD_TIMECARD', timecard)
-      })
-      return data
-    },
-
-    async updateTimecard({ commit }, { timecardId, events }) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/payments/timecards/${timecardId}`,
-        data: {
-          changes: events,
-        },
-      })
-      commit('ADD_TIMECARD', data.timecard)
-      return data
-    },
-
-    async denyPayments({ commit }, timecardIds) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/payments/deny`,
-        data: {
-          timecard_ids: timecardIds,
-        },
-      })
-      timecardIds.forEach((timecardId: number) => {
-        // TODO: Normalize nested data
-        commit('REMOVE_TIMECARD', timecardId)
-      })
-      return data
-    },
-
-    async completePayments({ commit }, timecardIds) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/payments/complete`,
-        data: {
-          timecard_ids: timecardIds
-        },
-      })
-      timecardIds.forEach((timecardId: number) => {
-        commit('REMOVE_TIMECARD', timecardId)
-      })
-      data.transfers.forEach((obj: { transfer: Transfer }) => {
-        const transfer = obj.transfer
-        commit('ADD_TRANSFER', { transfer, prepend: true })
-        commit('ADD_TO_BALANCE', (-parseFloat(transfer?.amount?.value)))
-      })
-    },
-
-    async loadBalance({ commit }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/payments/balance`,
-      })
-      commit('SET_BALANCE', {
-        ...data.balance,
-        location: data.location,
-      })
-    },
-
-    async openPlaidLink(_context, name) {
-      return await Plaid.openPlaidLink(name)
-    },
-
-    async getPlaidLinkToken() {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/payments/plaid-link-token`,
-      })
-      return data.token
-    },
-
-    async loadFundingSources({ commit }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/payments/accounts`,
-      })
-      commit('SET_BENEFICIAL_OWNERS_CERTIFIED', data.certified_ownership)
-      data.funding_sources.forEach((source: FundingSource) => {
-        commit('ADD_FUNDING_SOURCE', source)
-      })
-      return data
-    },
-
-    async addPlaidFundingSource(_context, { name, publicToken, accountId }) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/payments/accounts`,
-        data: {
-          name,
-          public_token: publicToken,
-          account_id: accountId,
-        },
-      })
-      this.commit('ADD_FUNDING_SOURCE', data)
-      return data
-    },
-
-    async updateFundingSource({ commit }, fundingSource: FundingSource) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/payments/accounts`,
-        data: fundingSource,
-      })
-      commit('ADD_FUNDING_SOURCE', data)
-      return data
-    },
-
-    async removeFundingSource({ commit }, fundingSourceLocation: string) {
-      const { data } = await axios({
-        method: 'DELETE',
-        url: `${baseUrl}/payments/accounts`,
-        data: {
-          location: fundingSourceLocation,
-        },
-      })
-      commit('REMOVE_FUNDING_SOURCE', fundingSourceLocation)
-      return data
-    },
-
-    async addToBalance({ commit, dispatch }, transfer) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/payments/balance/add`,
-        data: transfer,
-      })
-      commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
-      dispatch('showSnackbar', { text: 'Hang tight, your transfer is being processed.' })
-      return data
-    },
-
-    async removeFromBalance({ commit, dispatch }, transfer) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/payments/balance/remove`,
-        data: transfer,
-      })
-      commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
-      commit('ADD_TO_BALANCE', -transfer.amount)
-      dispatch('showSnackbar', { text: 'Hang tight, your transfer is being processed.' })
-      return data
-    },
-
-    async loadTransfers({ commit }, { limit=10, offset=0 } = {}) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/payments/transfers`,
-        params: {
-          limit,
-          offset,
-        }
-      })
-      data.transfers.forEach((transfer: Transfer) => {
-        commit('ADD_TRANSFER', { transfer })
-      })
-      return data
-    },
-
     async loadManagers({ commit, state }) {
       const { data } = await axios({
         method: 'GET',
@@ -953,27 +679,6 @@ const storeConfig: StoreOptions<RootState> = {
         shiftActive,
       }
     },
-    timecard: (state) => (id: number) => {
-      return state.payments.timecards.byId[id]
-    },
-    timecards: (state, getters) => {
-      return state.payments.timecards.all.map((id) => getters.timecard(id))
-    },
-    timecardsByIds: (_state, getters) => (timecardIds: number[]) => {
-      return timecardIds.map((id) => getters.timecard(id))
-    },
-    fundingSource: (state) => (location: string) => {
-      return state.payments.fundingSources.byLocation[location]
-    },
-    fundingSources: (state, getters) => {
-      return state.payments.fundingSources.all.map((location) => getters.fundingSource(location))
-    },
-    transfer: (state) => (transferId: string) => {
-      return state.payments.transfers.byId[transferId]
-    },
-    transfers: (state, getters) => {
-      return state.payments.transfers.all.map((transferId) => getters.transfer(transferId))
-    },
     job: (state) => (id: number) => {
       const job = state.jobs.byId[id]
 
@@ -1004,8 +709,9 @@ const storeConfig: StoreOptions<RootState> = {
     },
   },
   modules: {
-    messages,
+    payments,
     schedule,
+    messages,
   },
 }
 
