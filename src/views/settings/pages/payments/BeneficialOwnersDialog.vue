@@ -36,10 +36,9 @@ export default class BeneficialOwnersDialog extends Vue {
   }
 
   customerId(customerUrl: string) {
-    return customerUrl.replace(
-      'https://api-sandbox.dwolla.com/customers/',
-      ''
-    )
+    return customerUrl
+      .replace('https://api-sandbox.dwolla.com/customers/', '')
+      .replace('https://api.dwolla.com/customers/', '')
   }
 
   // async removeFundingSource() {
