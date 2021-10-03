@@ -32,7 +32,7 @@ export default class BeneficialOwnersDialog extends Vue {
   }
 
   get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.users.authenticatedUser
   }
 
   customerId(customerUrl: string) {

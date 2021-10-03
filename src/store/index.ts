@@ -5,13 +5,12 @@ import axios from 'axios'
 import router from '../router'
 
 import { Capacitor } from '@capacitor/core'
-import { Geolocation } from '@capacitor/geolocation'
 import { event } from 'vue-gtag'
 
-import { User, defaultRoute } from '@/definitions/User'
-import { Job } from '@/definitions/Job'
+import { defaultRoute } from '@/definitions/User'
 import { DarkPreference, getStoredPreference } from '@/util/theme'
 
+import users from './users'
 import clock from './clock'
 import jobs from './jobs'
 import payments from './payments'
@@ -39,22 +38,6 @@ export interface RootState {
       color?: string;
     };
   };
-  authenticatedUser: User | null;
-  userLocation: {
-    lat: number;
-    lng: number;
-    accuracy?: number;
-  } | null;
-  users: {
-    all: number[];
-    byId: {
-      [key: number]: User;
-    };
-  };
-  workforce: number[];
-  managers: {
-    [key: string]: User[];
-  };
   preferences: {
     darkMode: DarkPreference;
     miniNav: boolean;
@@ -67,22 +50,12 @@ const initialState = (): RootState => ({
     text: '',
     timeout: 5000,
   },
-  authenticatedUser: null,
-  userLocation: null,
-  users: {
-    all: [],
-    byId: {},
-  },
-  workforce: [],
-  managers: {
-    contractor: [],
-    organization: [],
-  },
   preferences: {
     darkMode: getStoredPreference(),
     miniNav: false,
   }
 })
+
 
 const storeConfig: StoreOptions<RootState> = {
   state: initialState(),
@@ -102,40 +75,6 @@ const storeConfig: StoreOptions<RootState> = {
     RESET_STATE(state) {
       Object.assign(state, initialState())
       // Object.assign(state.messages, messagesInitialState())
-    },
-    SET_AUTHENTICATED_USER(state, user) {
-      state.authenticatedUser = user
-      localStorage.setItem('authenticatedUser', JSON.stringify(user))
-    },
-    UNSET_AUTHENTICATED_USER(state) {
-      state.authenticatedUser = null
-      localStorage.removeItem('authenticatedUser')
-    },
-    ADD_USER(state, user) {
-      Vue.set(state.users.byId, user.id, {
-        ...state.users.byId[user.id],
-        ...user,
-      })
-      if (!state.users.all.includes(user.id)) state.users.all.push(user.id)
-    },
-    REMOVE_USER(state, userId) {
-      Vue.delete(state.users.byId, userId)
-      state.users.all = state.users.all.filter(id => id !== userId)
-      Vue.delete(state.workforce, state.workforce.indexOf(userId))
-    },
-    SET_USER_LOCATION(state, { lat, lng, accuracy }) {
-      state.userLocation = { lat, lng, accuracy }
-    },
-    ADD_WORKFORCE_MEMBER(state, userId: number) {
-      if (!state.workforce.includes(userId)) {
-        state.workforce.push(userId)
-      }
-    },
-    ADD_MANAGER(state, { type, manager }: { type: string; manager: User }) {
-      // TODO: Normalize this to users list, and keep only the user id for each manager object
-      if (!state.managers[type].some((m: User) => m.id == manager.id)) {
-        state.managers[type].push(manager)
-      }
     },
   },
   actions: {
@@ -264,107 +203,6 @@ const storeConfig: StoreOptions<RootState> = {
       return data
     },
 
-    async getAuthenticatedUser({ commit }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/users/me`,
-      })
-      commit('SET_AUTHENTICATED_USER', data.authenticated_user)
-      return data.authenticated_user
-    },
-
-    async loadUser({ commit }, userId) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/users/${userId}`,
-      })
-      commit('ADD_USER', data)
-    },
-
-    async getUserLocation({ commit }) {
-      const { coords } = await Geolocation.getCurrentPosition()
-      const userLocation = {
-        lat: coords.latitude,
-        lng: coords.longitude,
-      }
-      commit('SET_USER_LOCATION', userLocation)
-      return userLocation
-    },
-
-    async locationPermissionGranted() {
-      const permissions = await Geolocation.checkPermissions()
-      return permissions.location === 'granted'
-    },
-
-    async updateContractor({ commit }, { newFields, userId }) {
-      const { data } = await axios({
-        method: 'PATCH',
-        url: `${baseUrl}/users/contractors/${userId}`,
-        data: newFields,
-      })
-      commit('ADD_USER', data.event)
-    },
-
-    async loadManagers({ commit, state }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/jobs/managers`,
-        params: {
-          manager_id:
-            state.authenticatedUser?.manager_id || state.authenticatedUser?.id,
-        },
-      })
-      data.contractor_managers.forEach((m: User) => {
-        commit('ADD_MANAGER', { type: 'contractor', manager: m })
-      })
-      data.organization_managers.forEach((m: User) => {
-        commit('ADD_MANAGER', { type: 'organization', manager: m })
-      })
-      return data
-    },
-
-    async loadWorkforce({ commit }) {
-      const { data } = await axios({
-        method: 'GET',
-        url: `${baseUrl}/organizations/me/users`,
-      })
-      data.users.forEach((u: User) => {
-        commit('ADD_USER', u)
-        commit('ADD_WORKFORCE_MEMBER', u.id)
-      })
-      return data
-    },
-
-    async addManager({ commit }, manager) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/users/add-manager`,
-        data: manager,
-      })
-      commit('ADD_USER', data)
-      commit('ADD_WORKFORCE_MEMBER', data.id)
-      return data
-    },
-
-    async deleteUser({ commit }, userId) {
-      await axios({
-        method: 'DELETE',
-        url: `${baseUrl}/users/${userId}`,
-      })
-      commit('REMOVE_USER', userId)
-    },
-
-    async addContractor({ commit }, contractor) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/users/add-contractor`,
-        data: contractor,
-      })
-      commit('ADD_USER', data)
-      commit('ADD_WORKFORCE_MEMBER', data.id)
-      return data
-    },
-
     async updatePassword(_context, newPassword) {
       const { data } = await axios({
         method: 'PUT',
@@ -375,33 +213,13 @@ const storeConfig: StoreOptions<RootState> = {
       })
       return data
     },
-    async setSSN({ commit }, ssn) {
-      await axios({
-        method: 'PUT',
-        url: `${baseUrl}/users/me/ssn`,
-        data: {
-          ssn,
-        },
-      })
-      commit('SET_SSN_REGISTERED')
-    },
   },
   getters: {
     // TODO: Transform this and add labels, separated by day of week
-    user: (state) => (id: number) => {
-      return state.users.byId[id]
-    },
-    directJobs: (_state, getters) => {
-      return getters.jobs.filter((job: Job) => job.direct)
-    },
-    indirectJobs: (_state, getters) => {
-      return getters.jobs.filter((job: Job) => !job.direct)
-    },
-    workforce: (state) => {
-      return state.workforce.map((userId: number) => state.users.byId[userId])
-    },
+
   },
   modules: {
+    users,
     clock,
     jobs,
     payments,

@@ -96,7 +96,7 @@ export default class NavDrawer extends Vue {
   }
 
   get authenticatedUser(): User {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.users.authenticatedUser
   }
 
   // TODO: Combine primary and secondary links

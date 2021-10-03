@@ -74,6 +74,7 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 
 import * as clock from '@/services/clock'
+import { getUserLocation, locationPermissionGranted } from '@/services/users'
 /*
   We are using two difference QR code scanner libraries here.
   vue-qrcode-reader only works on web, and @capacitor-community/barcode-scanner
@@ -134,12 +135,10 @@ export default class ClockInDialog extends Vue {
   }
 
   async initLocation() {
-    this.allowedLocation = await this.$store.dispatch(
-      'locationPermissionGranted'
-    )
+    this.allowedLocation = await locationPermissionGranted()
 
     if (this.allowedLocation) {
-      const location = await this.$store.dispatch('getUserLocation')
+      const location = await getUserLocation()
       this.$store.dispatch('showSnackbar', {
         text: `${location.lat} ${location.lng}`,
       })
@@ -193,7 +192,7 @@ export default class ClockInDialog extends Vue {
   }
 
   async getUserLocation() {
-    const location = await this.$store.dispatch('getUserLocation')
+    const location = await getUserLocation()
     this.$store.dispatch('showSnackbar', {
       text: `${location.lat} ${location.lng}`,
     })

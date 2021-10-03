@@ -77,7 +77,7 @@ export default class Payments extends Vue {
   }
 
   get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.users.authenticatedUser
   }
 
   get payments() {

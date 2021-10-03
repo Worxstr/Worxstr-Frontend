@@ -138,7 +138,7 @@ import { Job } from '@/definitions/Job';
 import { exists, phoneRules, emailRules } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import JobsMap from '@/components/JobsMap.vue'
-import * as jobs from '@/services/jobs'
+import { loadManagers } from '@/services/users'
 
 @Component({
   components: {
@@ -168,8 +168,8 @@ export default class EditJobDialog extends Vue {
     consultantEmail: emailRules,
   }
 
-  mounted() {
-    this.$store.dispatch('loadManagers')
+  async mounted() {
+    await loadManagers()
   }
 
   @Watch('opened')

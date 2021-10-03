@@ -81,7 +81,7 @@ export default class Conversation extends Vue {
   }
 
   get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.users.authenticatedUser
   }
 
   get conversation() {

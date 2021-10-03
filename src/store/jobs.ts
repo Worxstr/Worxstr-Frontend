@@ -84,6 +84,14 @@ const getters = {
     return state.all.map((id: number) => getters.job(id))
   },
 
+  directJobs: (_state: JobsState, getters: any) => {
+    return getters.jobs.filter((job: Job) => job.direct)
+  },
+
+  indirectJobs: (_state: JobsState, getters: any) => {
+    return getters.jobs.filter((job: Job) => !job.direct)
+  },
+
   shift: (state: JobsState) => (id: number) => {
     return state.shifts.byId[id]
   },

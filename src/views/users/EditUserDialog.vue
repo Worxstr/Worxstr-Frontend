@@ -112,6 +112,7 @@ import { Managers, User, userIs, UserRole, userRoles } from '@/definitions/User'
 import { exists, emailRules, currency } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
+import { addManager, loadManagers, updateContractor } from '@/services/users'
 
 @Component({
   components: {
@@ -147,7 +148,7 @@ export default class EditUserDialog extends Vue {
     if (!opened) return
     if (!this.editMode) (this.$refs.form as HTMLFormElement)?.reset()
 
-    this.$store.dispatch('loadManagers')
+    loadManagers()
     
     if (this.user) {
       this.editMode = true
@@ -167,7 +168,7 @@ export default class EditUserDialog extends Vue {
   }
 
   mounted() {
-    this.editedUser.manager_id = this.$store.state.authenticatedUser?.id
+    this.editedUser.manager_id = this.$store.state.users.authenticatedUser?.id
   }
 
   get managers() {
@@ -195,19 +196,17 @@ export default class EditUserDialog extends Vue {
         }
 
         if (this.userIsContractor) {
-          await this.$store.dispatch('updateContractor', {
-            newFields: {
+          await updateContractor(
+            {
               ...this.editedUser.contractor_info,
               direct_manager: this.editedUser.manager_id
             },
-            userId: this.editedUser.id,
-          })
+            this.editedUser.id,
+          )
         }
       } else {
         if (this.userIsManager) {
-          await this.$store.dispatch('addManager', {
-            ...this.editedUser,
-          })
+          await addManager(this.editedUser)
         }
       }
 

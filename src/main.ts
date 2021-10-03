@@ -20,6 +20,7 @@ import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
 import { configureDwolla } from './util/dwolla'
 import { initDarkMode } from './util/theme'
+import { getAuthenticatedUser } from '@/services/users'
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
@@ -59,29 +60,10 @@ async function getUserData() {
 
   try {
     // Load new user data
-    await store.dispatch('getAuthenticatedUser')
+    await getAuthenticatedUser()
   }
   catch (e) {
     console.error(e)
-  }
-}
-
-function promptSSN() {
-  // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
-  const user = store.state.authenticatedUser
-  if (user && user.contractor_info?.need_info) {
-    store.dispatch('showSnackbar', {
-      text: `You haven't set your Social Security number.`,
-      action: () => {
-        router.push({
-          name: 'settings',
-          params: {
-            openSSNDialog: 'true',
-          },
-        })
-      },
-      actionText: 'Set SSN',
-    })
   }
 }
 
@@ -102,7 +84,6 @@ async function init() {
   }).$mount('#app')
 
   initDarkMode()
-  promptSSN()
   configureBackButtonPress()
   configureDwolla()
 }

@@ -68,7 +68,7 @@ import { Clipboard } from '@capacitor/clipboard'
 })
 export default class Me extends Vue {
   get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.users.authenticatedUser
   }
 
   signOut() {

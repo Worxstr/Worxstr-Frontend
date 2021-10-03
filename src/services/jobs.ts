@@ -3,6 +3,7 @@ import axios from 'axios'
 import store from '@/store'
 import { Job, Shift } from '@/definitions/Job'
 import { User } from '@/definitions/User'
+import usersStore from '@/store/users'
 
 const { commit } = store
 
@@ -15,7 +16,7 @@ export async function loadJobs() {
     // TODO: Normalize nested data
     commit('ADD_JOB', {
       job,
-      authenticatedUser: store.state.authenticatedUser
+      authenticatedUser: usersStore.state.authenticatedUser
     })
   })
   return data
@@ -39,7 +40,7 @@ export async function loadJob(jobId: number) {
 
   commit('ADD_JOB', {
     job: data.job,
-    authenticatedUser: store.state.authenticatedUser,
+    authenticatedUser: usersStore.state.authenticatedUser,
   })
   return data
 }
@@ -52,7 +53,7 @@ export async function createJob(job: Job) {
   })
   commit('ADD_JOB', {
     job: data.job,
-    authenticatedUser: store.state.authenticatedUser,
+    authenticatedUser: usersStore.state.authenticatedUser,
   })
   return data
 }
@@ -65,7 +66,7 @@ export async function updateJob(job: Job) {
   })
   commit('ADD_JOB', {
     job: data.job,
-    uthenticatedUser: store.state.authenticatedUser,
+    uthenticatedUser: usersStore.state.authenticatedUser,
   })
   return data
 }

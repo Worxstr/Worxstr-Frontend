@@ -18,7 +18,7 @@ v-form.flex-grow-1.d-flex.flex-column(
 
   .d-flex.flex-column.flex-md-row
     v-text-field.mr-2(
-      v-if="!$store.state.authenticatedUser"
+      v-if="!$store.state.users.authenticatedUser"
       v-model="form.contact_name",
       label="Your name",
       required,
@@ -29,7 +29,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
     v-text-field(
-      :class="{'.ml-2': $store.state.authenticatedUser}"
+      :class="{'.ml-2': $store.state.users.authenticatedUser}"
       v-if="type == 'sales'"
       v-model="form.contact_title",
       label="Job title",
@@ -39,7 +39,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
 
-  .d-flex(v-if='!$store.state.authenticatedUser')
+  .d-flex(v-if='!$store.state.users.authenticatedUser')
     phone-input(
       v-if="usePhone",
       v-model="form.phone",
