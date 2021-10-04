@@ -57,6 +57,7 @@ v-dialog(
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 import { exists, passwordRules, passwordMatches } from '@/util/inputValidation'
+import updatePassword from '@/services/auth'
 
 export default {
   name: "changePasswordDialog",
@@ -83,7 +84,7 @@ export default {
     async updatePassword() {
       this.loading = true
       try {
-        await this.$store.dispatch("updatePassword", this.password)
+        await updatePassword(this.password)
         this.$store.dispatch("showSnackbar", { text: "Password changed" })
         this.closeDialog()
       }

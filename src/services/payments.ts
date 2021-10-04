@@ -5,7 +5,7 @@ import * as Plaid from '@/util/plaid'
 import { FundingSource, Timecard, Transfer } from '@/definitions/Payments'
 import { ClockEvent } from '@/definitions/Clock'
 
-const { commit, dispatch } = store
+// const { commit, dispatch } = store
 
 export async function loadTimecards() {
   const { data } = await axios({

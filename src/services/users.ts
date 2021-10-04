@@ -5,7 +5,7 @@ import { Geolocation } from '@capacitor/geolocation'
 import { User } from '@/definitions/User'
 import usersStore from '@/store/users'
 
-const { commit } = store
+// const { commit } = store
 
 export async function getAuthenticatedUser() {
   const { data } = await axios({

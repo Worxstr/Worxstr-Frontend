@@ -1,3 +1,12 @@
+import store from '@/store'
+
+// const { commit } = store
+
+export function showSnackbar(snackbar: any) {
+  // commit('SHOW_SNACKBAR', snackbar)
+  console.log("snackbar")
+}
+
 export function normalizeRelations(data: any, fields: any) {
     return {
       ...data,

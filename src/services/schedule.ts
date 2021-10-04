@@ -3,7 +3,7 @@ import store from '@/store'
 import axios from 'axios'
 import { CalendarEvent } from '@/definitions/Schedule'
 
-const { commit } = store
+// const { commit } = store
 
 export async function loadCalendarEvents(start: string, end: string) {
   const { data } = await axios({

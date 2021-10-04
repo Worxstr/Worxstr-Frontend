@@ -50,6 +50,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { AvailableResult, Credentials, NativeBiometric } from 'capacitor-native-biometric'
 import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
+import { signIn } from '@/services/auth'
 
 @Component({
   metaInfo: {
@@ -82,10 +83,10 @@ export default class SignIn extends Vue {
   async signIn(email?: string, password?: string) {
     this.loading = true
     try {
-      const data = await this.$store.dispatch('signIn', (email && password) ? {
-        email,
-        password,
-      } : this.form)
+      if (!email) email = this.form.email
+      if (!password) password = this.form.password
+
+      const data = await signIn(email, password)
 
       // TODO: Find better way to determine login success
       if (data?.response?.user) {

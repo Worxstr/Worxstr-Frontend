@@ -57,6 +57,7 @@ v-list
 import { Vue, Component } from "vue-property-decorator"
 import Roles from "@/components/Roles.vue"
 import { Clipboard } from '@capacitor/clipboard'
+import { signOut } from "@/services/auth"
 
 @Component({
   components: {
@@ -72,7 +73,7 @@ export default class Me extends Vue {
   }
 
   signOut() {
-    this.$store.dispatch("signOut")
+    signOut()
   }
 
   async copyText(text: string) {

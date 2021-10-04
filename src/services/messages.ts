@@ -2,7 +2,7 @@ import store from '@/store'
 import axios from 'axios'
 import { Conversation } from '@/definitions/Messages'
 
-const { commit } = store
+// const { commit } = store
 
 export async function loadConversations() {
 	const { data } = await axios({

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import { ClockEvent } from '@/definitions/Clock'
-import { normalizeRelations, resolveRelations } from '../util/helpers'
-import { Shift } from '@/definitions/Job'
+import { resolveRelations } from '../util/helpers'
 
 interface ClockState {
   clocked: boolean;

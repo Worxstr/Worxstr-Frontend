@@ -7,9 +7,7 @@ import router from '../router'
 import { Capacitor } from '@capacitor/core'
 import { event } from 'vue-gtag'
 
-import { defaultRoute } from '@/definitions/User'
-import { DarkPreference, getStoredPreference } from '@/util/theme'
-
+import app from './app'
 import users from './users'
 import clock from './clock'
 import jobs from './jobs'
@@ -27,198 +25,16 @@ const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
 axios.defaults.baseURL = baseUrl
 axios.defaults.withCredentials = true
 
-export interface RootState {
-  snackbar: {
-    show: boolean;
-    text: string;
-    timeout: number;
-    action?: {
-      text: string;
-      action: Function;
-      color?: string;
-    };
-  };
-  preferences: {
-    darkMode: DarkPreference;
-    miniNav: boolean;
-  };
+/* 
+RESET_STATE(state) {
+  Object.assign(state, initialState())
+  // Object.assign(state.messages, messagesInitialState())
 }
+*/
 
-const initialState = (): RootState => ({
-  snackbar: {
-    show: false,
-    text: '',
-    timeout: 5000,
-  },
-  preferences: {
-    darkMode: getStoredPreference(),
-    miniNav: false,
-  }
-})
-
-
-const storeConfig: StoreOptions<RootState> = {
-  state: initialState(),
-  mutations: {
-    SHOW_SNACKBAR(state, snackbar) {
-      if (snackbar.action)
-        snackbar.action.color = snackbar.action.color || 'accent'
-      else
-        delete state.snackbar.action
-
-      state.snackbar = {
-        ...state.snackbar,
-        ...snackbar,
-        show: true,
-      }
-    },
-    RESET_STATE(state) {
-      Object.assign(state, initialState())
-      // Object.assign(state.messages, messagesInitialState())
-    },
-  },
-  actions: {
-    showSnackbar({ commit }, snackbar) {
-      commit('SHOW_SNACKBAR', snackbar)
-    },
-    async contactSales({ dispatch }, { form, type }) {
-      try {
-        const { data } = await axios({
-          method: 'POST',
-          url: `${baseUrl}/contact/${type}`,
-          data: form
-        })
-        dispatch('showSnackbar', { text: "Thanks! We will get back to you shortly." })
-        return data
-      }
-      catch (err) {
-        return err
-      }
-    },
-    async signIn({ commit, dispatch }, { email, password }) {
-      try {
-        const { data } = await axios({
-          method: 'POST',
-          url: `${baseUrl}/auth/login`,
-          params: {
-            include_auth_token: true,
-          },
-          data: {
-            email,
-            password,
-            remember_me: true,
-          },
-        })
-        // const authToken = data.response?.user?.authentication_token
-        // Use authentication token in subsequent requests
-        // axios.defaults.headers.common['Authentication-Token'] = authToken
-        // Set token in secure storage on iOS/Android
-        // await SecureStoragePlugin.set({
-        //   key: 'authToken',
-        //   value: authToken
-        // })
-        await dispatch('getAuthenticatedUser')
-        router.push({ name: defaultRoute() })
-        return data
-
-      } catch (err) {
-        commit('UNSET_AUTHENTICATED_USER')
-        return err
-      }
-    },
-
-    /*
-      accountType: 'contractor' | 'org'
-      dwollaCustomerUrl: Customer url returned after Dwolla account registration
-      dwollaAuthToken: Auth token used for Dwolla account registration
-    */
-    async signUp(
-      { dispatch },
-      { accountType, customer_url, password, manager_reference }
-    ) {
-      try {
-        const { data } = await axios({
-          method: 'POST',
-          url: `${baseUrl}/auth/sign-up/${accountType}`,
-          // headers: {
-          //   'Authorization': `Bearer ${dwollaAuthToken}`
-          // },
-          data: {
-            customer_url,
-            password,
-            manager_reference,
-          },
-        })
-        router.push({ name: 'home' })
-        dispatch('showSnackbar', {
-          text: 'Check your email to verify your account!',
-        })
-        return data
-      } catch (err) {
-        return err
-      }
-    },
-
-    async signOut({ commit }) {
-      await axios({
-        method: 'POST',
-        url: `${baseUrl}/auth/logout`,
-      })
-      commit('UNSET_AUTHENTICATED_USER')
-      commit('RESET_STATE')
-      router.push({ name: 'home' })
-    },
-
-    async resetPassword(_context, email) {
-      await axios({
-        method: 'POST',
-        url: `${baseUrl}/auth/reset`,
-        data: {
-          email,
-        },
-      })
-    },
-
-    async confirmEmail(_context, token) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/auth/confirm-email`,
-        data: {
-          token
-        }
-      })
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      return data
-    },
-    
-    async resendEmailConfirmation({ dispatch }, email) {
-      const { data } = await axios({
-        method: 'POST',
-        url: `${baseUrl}/auth/resend-email`,
-        data: {
-          email
-        }
-      })
-      dispatch('showSnackbar', { text: 'Confirmation email resent.' })
-      return data
-    },
-
-    async updatePassword(_context, newPassword) {
-      const { data } = await axios({
-        method: 'PUT',
-        url: `${baseUrl}/users/reset-password`,
-        data: {
-          password: newPassword,
-        },
-      })
-      return data
-    },
-  },
-  getters: {
-    // TODO: Transform this and add labels, separated by day of week
-
-  },
+const storeConfig: StoreOptions<{}> = {
   modules: {
+    app,
     users,
     clock,
     jobs,
@@ -228,7 +44,7 @@ const storeConfig: StoreOptions<RootState> = {
   },
 }
 
-const store = new Vuex.Store<RootState>(storeConfig)
+const store = new Vuex.Store<{}>(storeConfig)
 
 export default store
 

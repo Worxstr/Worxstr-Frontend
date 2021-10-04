@@ -84,6 +84,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { User, Role, UserRole } from '@/definitions/User'
+import { signOut } from '@/services/auth'
 
 @Component
 export default class NavDrawer extends Vue {
@@ -92,7 +93,7 @@ export default class NavDrawer extends Vue {
   @Prop({ default: false }) value!: boolean
 
   signOut(): void {
-    this.$store.dispatch("signOut");
+    signOut()
   }
 
   get authenticatedUser(): User {

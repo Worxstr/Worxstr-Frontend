@@ -13,6 +13,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { confirmEmail, resendEmailConfirmation } from '@/services/auth'
 
 @Component({
   metaInfo: {
@@ -27,7 +28,10 @@ export default class ConfirmEmail extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch('confirmEmail', this.$route.query.token)
+      if (!this.$route.query.token) {
+        return this.$store.dispatch('No token provided')
+      }
+      await confirmEmail(this.$route.query.token as string)
       this.message = 'Email confirmed.'
       this.valid = true
     }
@@ -49,7 +53,7 @@ export default class ConfirmEmail extends Vue {
   }
 
   resendEmail() {
-    this.$store.dispatch('resendEmailConfirmation', this.$route.query.email)
+    resendEmailConfirmation(this.$route.query.email as string)
   }
 }
 </script>

@@ -106,6 +106,7 @@ import {
 import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import dwolla from '@/util/dwolla'
+import { signUp } from '@/services/auth'
 
 @Component({
   metaInfo: {
@@ -159,7 +160,7 @@ export default class SignUp extends Vue {
   async signUp() {
     this.loading = true
     try {
-      await this.$store.dispatch('signUp', {
+      await signUp({
         ...this.form,
         accountType: this.accountType,
       })

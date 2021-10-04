@@ -136,6 +136,7 @@ v-form.flex-grow-1.d-flex.flex-column(
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { emailRules, exists, url } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
+import { contactSales } from '@/services/landing'
 
 import * as UAParser from 'ua-parser-js'
 
@@ -158,7 +159,7 @@ export default class ContactForm extends Vue {
     description: [exists('Description required')],
   }
 
-  @Prop(String) readonly type!: string // 'sales' | 'support'
+  @Prop(String) readonly type!: 'sales' | 'support'
   @Prop(String) readonly color: string | undefined
   @Prop({ default: false }) readonly text!: boolean
   @Prop({ default: false }) readonly filled!: boolean
@@ -198,10 +199,10 @@ export default class ContactForm extends Vue {
       ...UAParser(navigator.userAgent)
     }
 
-    await this.$store.dispatch('contactSales', {
-      form: request,
-      type: this.type
-    })
+    await contactSales(
+      request,
+      this.type
+    )
 
     this.loading = false
     this.$emit('submitted')
