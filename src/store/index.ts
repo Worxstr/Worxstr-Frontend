@@ -16,7 +16,7 @@ Vue.use(Vuex)
 configAxios()
 
 // TODO: Figure out how to reset the state for all modules at once
-// https://app.clickup.com/t/1nf09jf
+// https://app.clickup.com/t/1n3f09jf
 /* 
 RESET_STATE(state) {
   Object.assign(state, initialState())
