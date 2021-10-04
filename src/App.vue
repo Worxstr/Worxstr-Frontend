@@ -134,7 +134,7 @@ export default class App extends Vue {
   }
 
   get bottomMargin() {
-    if (this.mobileLayout) {
+    if (this.mobileLayout && !this.isLanding) {
       return this.headerHeight + this.safeAreaBottom
     }
     return this.safeAreaBottom
@@ -143,13 +143,17 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
-  // Helper classes to hide app content for QR code scanner
-  // Used in ClockInDialog.vue
-  .webview-transparent {
-    display: none !important;
-    opacity: 0 !important;
-  }
-  .no-bg {
-    background-color: transparent !important;
-  }
+.v-system-bar {
+  z-index: 100 !important;
+}
+
+// Helper classes to hide app content for QR code scanner
+// Used in ClockInDialog.vue
+.webview-transparent {
+  display: none !important;
+  opacity: 0 !important;
+}
+.no-bg {
+  background-color: transparent !important;
+}
 </style>
