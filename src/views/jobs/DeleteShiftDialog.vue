@@ -44,6 +44,7 @@ export default class DeleteShiftDialog extends Vue {
     if (this.shift) {
       try {
         await deleteShift(
+          this.$store,
           this.shift.id,
           parseInt(this.$route.params.jobId)
         )

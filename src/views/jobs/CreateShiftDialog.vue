@@ -350,6 +350,7 @@ export default class CreateShiftDialog extends Vue {
     // TODO: Validate shifts so that end time is after start time
     try {
       await createShift(
+        this.$store,
         shift,
         parseInt(this.$route.params.jobId),
       )

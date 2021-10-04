@@ -79,7 +79,7 @@ export default class User extends Vue {
   }
 
   async mounted() {
-		await loadUser(parseInt(this.$route.params.userId))
+		await loadUser(this.$store, parseInt(this.$route.params.userId))
 	}
 
   get user() {

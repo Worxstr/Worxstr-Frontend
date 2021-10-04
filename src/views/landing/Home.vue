@@ -173,7 +173,7 @@ export default {
   },
   methods: {
     signOut() {
-      signOut()
+      signOut(this.$store)
     }
   },
   data: () => ({

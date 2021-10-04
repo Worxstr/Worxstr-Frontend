@@ -117,7 +117,7 @@ export default class ClockInDialog extends Vue {
     // TODO: Handle incorrect code
     try {
       this.loading = true
-      await clock.clockIn(code)
+      await clock.clockIn(this.$store, code)
       this.closeDialog()
     }
     finally {
@@ -135,10 +135,10 @@ export default class ClockInDialog extends Vue {
   }
 
   async initLocation() {
-    this.allowedLocation = await locationPermissionGranted()
+    this.allowedLocation = await locationPermissionGranted(this.$store)
 
     if (this.allowedLocation) {
-      const location = await getUserLocation()
+      const location = await getUserLocation(this.$store)
       this.$store.dispatch('showSnackbar', {
         text: `${location.lat} ${location.lng}`,
       })
@@ -192,7 +192,7 @@ export default class ClockInDialog extends Vue {
   }
 
   async getUserLocation() {
-    const location = await getUserLocation()
+    const location = await getUserLocation(this.$store)
     this.$store.dispatch('showSnackbar', {
       text: `${location.lat} ${location.lng}`,
     })

@@ -2,7 +2,7 @@
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
     v-card.soft-shadow(width="500")
-      v-form(@submit.prevent="signIn", v-model="isValid")
+      v-form(@submit.prevent="signIn()", v-model="isValid")
         v-card-title.text-h5 Sign in
         v-card-text.pb-0
           v-text-field(
@@ -86,7 +86,7 @@ export default class SignIn extends Vue {
       if (!email) email = this.form.email
       if (!password) password = this.form.password
 
-      const data = await signIn(email, password)
+      const data = await signIn(this.$store, email, password)
 
       // TODO: Find better way to determine login success
       if (data?.response?.user) {

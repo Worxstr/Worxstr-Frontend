@@ -70,7 +70,7 @@ export default class Payments extends Vue {
   async mounted() {
     this.loadingBalance = true
     try {
-      await loadBalance()
+      await loadBalance(this.$store)
     } finally {
       this.loadingBalance = false
     }

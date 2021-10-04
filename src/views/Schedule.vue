@@ -65,6 +65,7 @@ export default class Schedule extends Vue {
     this.loading = true
     try {
       await schedule.loadCalendarEvents(
+        this.$store,
         new Date(`${start.date}T00:00:00`).toISOString(),
         new Date(`${end.date}T23:59:59`).toISOString(),
       )

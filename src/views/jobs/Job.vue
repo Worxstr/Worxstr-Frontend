@@ -203,7 +203,7 @@ export default class JobView extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await loadJob(parseInt(this.$route.params.jobId))
+      await loadJob(this.$store, parseInt(this.$route.params.jobId))
     } finally {
       this.loading = false
     }

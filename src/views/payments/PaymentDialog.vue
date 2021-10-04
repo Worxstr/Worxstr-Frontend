@@ -76,7 +76,7 @@ export default class PaymentDialog extends Vue {
   
   async completePayments() {
     this.loading = true
-    await completePayments(this.timecards.map((t: Timecard) => t.id))
+    await completePayments(this.$store, this.timecards.map((t: Timecard) => t.id))
     this.loading = false
     this.closeDialog()
   }

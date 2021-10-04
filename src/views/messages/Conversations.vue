@@ -36,7 +36,7 @@ export default {
   async mounted() {
     this.loading = true
     try {
-      await loadConversations()
+      await loadConversations(this.$store)
     }
     finally {
       this.loading = false

@@ -84,7 +84,7 @@ export default {
     async updatePassword() {
       this.loading = true
       try {
-        await updatePassword(this.password)
+        await updatePassword(this.$store, this.password)
         this.$store.dispatch("showSnackbar", { text: "Password changed" })
         this.closeDialog()
       }

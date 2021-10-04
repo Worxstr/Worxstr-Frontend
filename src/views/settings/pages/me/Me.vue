@@ -73,7 +73,7 @@ export default class Me extends Vue {
   }
 
   signOut() {
-    signOut()
+    signOut(this.$store)
   }
 
   async copyText(text: string) {

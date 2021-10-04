@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
-import store from '@/store'
 import router from '@/router'
 import { getAuthenticatedUser } from './users'
 
 import { defaultRoute } from '@/definitions/User'
 
-const { commit, dispatch } = store
-
-export async function signIn(email: string, password: string) {
+export async function signIn({ commit }: any, email: string, password: string) {
   try {
     const { data } = await axios({
       method: 'POST',
@@ -30,7 +27,7 @@ export async function signIn(email: string, password: string) {
     //   key: 'authToken',
     //   value: authToken
     // })
-    await getAuthenticatedUser()
+    await getAuthenticatedUser({ commit })
     router.push({ name: defaultRoute() })
     return data
   } catch (err) {
@@ -44,7 +41,7 @@ export async function signIn(email: string, password: string) {
   dwollaCustomerUrl: Customer url returned after Dwolla account registration
   dwollaAuthToken: Auth token used for Dwolla account registration
 */
-export async function signUp({
+export async function signUp({ commit, dispatch }: any, {
   accountType,
   customer_url,
   password,
@@ -78,7 +75,7 @@ export async function signUp({
   }
 }
 
-export async function signOut() {
+export async function signOut({ commit }: any) {
   await axios({
     method: 'POST',
     url: `/auth/logout`,
@@ -88,7 +85,7 @@ export async function signOut() {
   router.push({ name: 'home' })
 }
 
-export async function resetPassword(email: string) {
+export async function resetPassword(_context: any, email: string) {
   await axios({
     method: 'POST',
     url: `/auth/reset`,
@@ -98,7 +95,7 @@ export async function resetPassword(email: string) {
   })
 }
 
-export async function confirmEmail(token: string) {
+export async function confirmEmail(_context: any, token: string) {
   const { data } = await axios({
     method: 'PUT',
     url: `/auth/confirm-email`,
@@ -110,7 +107,7 @@ export async function confirmEmail(token: string) {
   return data
 }
 
-export async function resendEmailConfirmation(email: string) {
+export async function resendEmailConfirmation({ dispatch }: any, email: string) {
   const { data } = await axios({
     method: 'POST',
     url: `/auth/resend-email`,
@@ -122,7 +119,7 @@ export async function resendEmailConfirmation(email: string) {
   return data
 }
 
-export async function updatePassword(newPassword: string) {
+export async function updatePassword(_context: any, newPassword: string) {
   const { data } = await axios({
     method: 'PUT',
     url: `/users/reset-password`,

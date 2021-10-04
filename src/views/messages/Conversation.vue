@@ -64,7 +64,7 @@ export default class Conversation extends Vue {
   async mounted() {
     // TODO: get the text input to focus
     // console.log(this.$refs.message) //.$el.focus();
-    await messages.loadConversation(parseInt(this.$route.params.conversationId))
+    await messages.loadConversation(this.$store, parseInt(this.$route.params.conversationId))
   }
 
   @Socket()
@@ -127,7 +127,7 @@ export default class Conversation extends Vue {
 
   async sendMessage() {
     this.$socket.client.emit('test', { test: 1 })
-    await messages.sendMessage({ body: this.message }, parseInt(this.$route.params.conversationId))
+    await messages.sendMessage(this.$store, { body: this.message }, parseInt(this.$route.params.conversationId))
     this.message = ''
   }
 

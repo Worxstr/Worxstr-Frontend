@@ -31,7 +31,7 @@ export default class ConfirmEmail extends Vue {
       if (!this.$route.query.token) {
         return this.$store.dispatch('No token provided')
       }
-      await confirmEmail(this.$route.query.token as string)
+      await confirmEmail(this.$store, this.$route.query.token as string)
       this.message = 'Email confirmed.'
       this.valid = true
     }
@@ -53,7 +53,7 @@ export default class ConfirmEmail extends Vue {
   }
 
   resendEmail() {
-    resendEmailConfirmation(this.$route.query.email as string)
+    resendEmailConfirmation(this.$store, this.$route.query.email as string)
   }
 }
 </script>

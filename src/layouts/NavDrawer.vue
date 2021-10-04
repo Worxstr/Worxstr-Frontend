@@ -93,7 +93,7 @@ export default class NavDrawer extends Vue {
   @Prop({ default: false }) value!: boolean
 
   signOut(): void {
-    signOut()
+    signOut(this.$store)
   }
 
   get authenticatedUser(): User {

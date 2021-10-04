@@ -64,7 +64,7 @@ export default class JobsView extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await loadJobs()
+      await loadJobs(this.$store)
     }
     finally {
       this.loading = false

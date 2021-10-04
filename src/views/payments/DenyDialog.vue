@@ -50,7 +50,7 @@ export default class DenyDialog extends Vue {
 
   async denyPayments() {
     this.loading = true
-    await denyPayments(this.timecardIds)
+    await denyPayments(this.$store, this.timecardIds)
     this.loading = false
     this.closeDialog()
   }

@@ -139,6 +139,7 @@ import { exists, phoneRules, emailRules } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import JobsMap from '@/components/JobsMap.vue'
 import { loadManagers } from '@/services/users'
+import { createJob, updateJob } from '@/services/jobs'
 
 @Component({
   components: {
@@ -169,7 +170,7 @@ export default class EditJobDialog extends Vue {
   }
 
   async mounted() {
-    await loadManagers()
+    await loadManagers(this.$store)
   }
 
   @Watch('opened')
@@ -208,8 +209,8 @@ export default class EditJobDialog extends Vue {
   async updateJob() {
     this.loading = true
     try {
-      if (this.create) await this.$store.dispatch("createJob", this.editedJob)
-      else await this.$store.dispatch("updateJob", this.editedJob)
+      if (this.create) await createJob(this.$store, this.editedJob)
+      else await updateJob(this.$store, this.editedJob)
       this.closeDialog()
     }
     finally {

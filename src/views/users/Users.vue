@@ -82,7 +82,7 @@ export default class Users extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await loadWorkforce()
+      await loadWorkforce(this.$store)
     } finally {
       this.loading = false
     }

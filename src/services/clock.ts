@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
-import store from '@/store'
 import clockStore from '@/store/clock'
 import jobsStore from '@/store/jobs'
 import { ClockEvent } from '@/definitions/Clock'
 
-// const { commit } = store
-
-export async function loadClockHistory() {
+export async function loadClockHistory({ commit }: any) {
   const { data } = await axios.get(`clock/history`, {
     params: {
       week_offset: clockStore.state.history.lastLoadedOffset,
@@ -30,12 +27,12 @@ export async function loadClockHistory() {
   commit('INCREMENT_CLOCK_HISTORY_OFFSET')
 }
 
-export async function loadNextShift() {
+export async function loadNextShift({ commit }: any) {
   const { data } = await axios.get(`shifts/next`)
   commit('SET_NEXT_SHIFT', data.shift)
 }
 
-export async function clockIn(code: string) {
+export async function clockIn({ commit }: any, code: string) {
   const { data } = await axios({
     method: 'POST',
     url: `clock/clock-in`,
@@ -51,7 +48,7 @@ export async function clockIn(code: string) {
   return data
 }
 
-export async function clockOut() {
+export async function clockOut({ commit }: any) {
   const { data } = await axios({
     method: 'POST',
     url: `clock/clock-out`,
@@ -63,7 +60,7 @@ export async function clockOut() {
   commit('CLOCK_OUT')
 }
 
-export async function toggleBreak(breakState: boolean) {
+export async function toggleBreak({ commit }: any, breakState: boolean) {
   const action = breakState ? 'end' : 'start'
 
   const { data } = await axios({

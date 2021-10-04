@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import store from '@/store'
 import axios from 'axios'
 import * as Plaid from '@/util/plaid'
 import { FundingSource, Timecard, Transfer } from '@/definitions/Payments'
 import { ClockEvent } from '@/definitions/Clock'
 
-// const { commit, dispatch } = store
-
-export async function loadTimecards() {
+export async function loadTimecards({ commit }: any) {
   const { data } = await axios({
     method: 'GET',
     url: 'payments/timecards',
@@ -19,7 +16,7 @@ export async function loadTimecards() {
   return data
 }
 
-export async function updateTimecard(timecardId: number, events: ClockEvent[]) {
+export async function updateTimecard({ commit }: any, timecardId: number, events: ClockEvent[]) {
   const { data } = await axios({
     method: 'PUT',
     url: `payments/timecards/${timecardId}`,
@@ -31,7 +28,7 @@ export async function updateTimecard(timecardId: number, events: ClockEvent[]) {
   return data
 }
 
-export async function denyPayments(timecardIds: number[]) {
+export async function denyPayments({ commit }: any, timecardIds: number[]) {
   const { data } = await axios({
     method: 'PUT',
     url: 'payments/deny',
@@ -46,7 +43,7 @@ export async function denyPayments(timecardIds: number[]) {
   return data
 }
 
-export async function completePayments(timecardIds: number[]) {
+export async function completePayments({ commit }: any, timecardIds: number[]) {
   const { data } = await axios({
     method: 'PUT',
     url: 'payments/complete',
@@ -64,7 +61,7 @@ export async function completePayments(timecardIds: number[]) {
   })
 }
 
-export async function loadBalance() {
+export async function loadBalance({ commit }: any) {
   const { data } = await axios({
     method: 'GET',
     url: 'payments/balance',
@@ -75,11 +72,11 @@ export async function loadBalance() {
   })
 }
 
-export async function openPlaidLink(name: string) {
+export async function openPlaidLink({ commit }: any, name: string) {
   return await Plaid.openPlaidLink(name)
 }
 
-export async function getPlaidLinkToken() {
+export async function getPlaidLinkToken({ commit }: any) {
   const { data } = await axios({
     method: 'POST',
     url: 'payments/plaid-link-token',
@@ -87,7 +84,7 @@ export async function getPlaidLinkToken() {
   return data.token
 }
 
-export async function loadFundingSources() {
+export async function loadFundingSources({ commit }: any) {
   const { data } = await axios({
     method: 'GET',
     url: 'payments/accounts',
@@ -99,7 +96,7 @@ export async function loadFundingSources() {
   return data
 }
 
-export async function addPlaidFundingSource({ name, publicToken, accountId }: {
+export async function addPlaidFundingSource({ commit }: any, { name, publicToken, accountId }: {
   name: string;
   publicToken: string;
   accountId: string;
@@ -117,7 +114,7 @@ export async function addPlaidFundingSource({ name, publicToken, accountId }: {
   return data
 }
 
-export async function updateFundingSource(fundingSource: FundingSource) {
+export async function updateFundingSource({ commit }: any, fundingSource: FundingSource) {
   const { data } = await axios({
     method: 'PUT',
     url: 'payments/accounts',
@@ -127,7 +124,7 @@ export async function updateFundingSource(fundingSource: FundingSource) {
   return data
 }
 
-export async function removeFundingSource(fundingSourceLocation: string) {
+export async function removeFundingSource({ commit }: any, fundingSourceLocation: string) {
   const { data } = await axios({
     method: 'DELETE',
     url: 'payments/accounts',
@@ -139,7 +136,7 @@ export async function removeFundingSource(fundingSourceLocation: string) {
   return data
 }
 
-export async function addToBalance(transfer: { amount: number; location: string }) {
+export async function addToBalance({ commit, dispatch }: any, transfer: { amount: number; location: string }) {
   const { data } = await axios({
     method: 'POST',
     url: 'payments/balance/add',
@@ -150,7 +147,7 @@ export async function addToBalance(transfer: { amount: number; location: string 
   return data
 }
 
-export async function removeFromBalance(transfer: { amount: number; location: string }) {
+export async function removeFromBalance({ commit, dispatch }: any, transfer: { amount: number; location: string }) {
   const { data } = await axios({
     method: 'POST',
     url: 'payments/balance/remove',
@@ -162,7 +159,7 @@ export async function removeFromBalance(transfer: { amount: number; location: st
   return data
 }
 
-export async function loadTransfers({ limit=10, offset=0 } = {}) {
+export async function loadTransfers({ commit }: any, { limit=10, offset=0 } = {}) {
   const { data } = await axios({
     method: 'GET',
     url: 'payments/transfers',

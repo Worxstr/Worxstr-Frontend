@@ -114,7 +114,7 @@ export default class Clock extends Vue {
 
   mounted() {
     if (!this.clockHistory.length) this.loadClockHistory()
-    clock.loadNextShift()
+    clock.loadNextShift(this.$store)
   }
 
   get clock() {
@@ -154,14 +154,14 @@ export default class Clock extends Vue {
 
   async clockOut() {
     this.togglingClock = true
-    await clock.clockOut()
+    await clock.clockOut(this.$store)
     console.log('done')
     this.togglingClock = false
   }
 
   async toggleBreak(breakState: boolean) {
     this.togglingBreak = true
-    await clock.toggleBreak(breakState)
+    await clock.toggleBreak(this.$store, breakState)
     this.togglingBreak = false
   }
 
@@ -171,7 +171,7 @@ export default class Clock extends Vue {
 
   async loadClockHistory() {
     this.loadingHistory = true
-    await clock.loadClockHistory()
+    await clock.loadClockHistory(this.$store)
     this.loadingHistory = false
   }
 

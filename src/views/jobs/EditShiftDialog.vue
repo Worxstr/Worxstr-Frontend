@@ -147,7 +147,7 @@ export default class EditShiftDialog extends Vue {
     shift.time_end = new Date(shift.time_end).toISOString()
 
     try {
-      await updateShift(shift)
+      await updateShift(this.$store, shift)
       this.closeDialog()
     } finally {
       this.loading = false

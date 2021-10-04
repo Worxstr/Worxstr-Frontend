@@ -99,17 +99,17 @@ export default class TransferFundsDialog extends Vue {
   }
 
   async mounted() {
-    await payments.loadFundingSources()
+    await payments.loadFundingSources(this.$store)
   }
 
   async sendTransfer() {
     this.loading = true
     try {
       if (this.action === 'add') {
-        await payments.addToBalance(this.transfer)
+        await payments.addToBalance(this.$store, this.transfer)
       }
       else {
-        await payments.removeFromBalance(this.transfer)
+        await payments.removeFromBalance(this.$store, this.transfer)
       }
     }
     finally {

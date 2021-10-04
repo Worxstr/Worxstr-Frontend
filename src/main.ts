@@ -60,7 +60,7 @@ async function getUserData() {
 
   try {
     // Load new user data
-    await getAuthenticatedUser()
+    await getAuthenticatedUser(store)
   }
   catch (e) {
     console.error(e)

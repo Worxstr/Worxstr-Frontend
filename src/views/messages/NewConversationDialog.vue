@@ -62,7 +62,7 @@ export default class NewConversationDialog extends Vue {
   }
 
   async mounted() {
-    await messages.loadContacts()
+    await messages.loadContacts(this.$store)
   }
 
   get contacts() {
@@ -76,7 +76,7 @@ export default class NewConversationDialog extends Vue {
   async createConversation() {
     this.loading = true
     try {
-      const conversation = await messages.createConversation(this.selectedUsers)
+      const conversation = await messages.createConversation(this.$store, this.selectedUsers)
       this.$router.push({
         name: 'conversation',
         params: { conversationId: conversation.id },

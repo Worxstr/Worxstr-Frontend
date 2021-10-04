@@ -39,7 +39,7 @@ export default class DeleteUserDialog extends Vue {
 
   async deleteUser() {
     this.loading = true
-    await deleteUser(this.user.id)
+    await deleteUser(this.$store, this.user.id)
     this.$router.push({name: 'users'})
     this.loading = false
     this.closeDialog()

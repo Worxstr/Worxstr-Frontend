@@ -157,7 +157,7 @@ export default class Timecards extends Vue {
     async mounted() {
       this.loadingTimecards = true
       try {
-        await loadTimecards()
+        await loadTimecards(this.$store)
       } finally {
         this.loadingTimecards = false
       }

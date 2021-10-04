@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
-import store from '@/store'
 import { Job, Shift } from '@/definitions/Job'
 import { User } from '@/definitions/User'
 import usersStore from '@/store/users'
 
-// const { commit } = store
-
-export async function loadJobs() {
+export async function loadJobs({ commit }: any) {
   const { data } = await axios({
     method: 'GET',
     url: 'jobs',
@@ -22,7 +19,7 @@ export async function loadJobs() {
   return data
 }
 
-export async function loadJob(jobId: number) {
+export async function loadJob({ commit }: any, jobId: number) {
   const { data } = await axios({
     method: 'GET',
     url: `jobs/${jobId}`,
@@ -45,7 +42,7 @@ export async function loadJob(jobId: number) {
   return data
 }
 
-export async function createJob(job: Job) {
+export async function createJob({ commit }: any, job: Job) {
   const { data } = await axios({
     method: 'POST',
     url: 'jobs',
@@ -58,7 +55,7 @@ export async function createJob(job: Job) {
   return data
 }
 
-export async function updateJob(job: Job) {
+export async function updateJob({ commit }: any, job: Job) {
   const { data } = await axios({
     method: 'PUT',
     url: `jobs/${job.id}`,
@@ -71,7 +68,7 @@ export async function updateJob(job: Job) {
   return data
 }
 
-export async function closeJob(jobId: number) {
+export async function closeJob({ commit }: any, jobId: number) {
   await axios({
     method: 'PUT',
     url: `jobs/${jobId}/close`,
@@ -79,7 +76,7 @@ export async function closeJob(jobId: number) {
   commit('REMOVE_JOB', jobId)
 }
 
-export async function createShift(shift: Shift, jobId: number) {
+export async function createShift({ commit }: any, shift: Shift, jobId: number) {
   const { data } = await axios({
     method: 'POST',
     url: 'shifts',
@@ -92,7 +89,7 @@ export async function createShift(shift: Shift, jobId: number) {
   return data
 }
 
-export async function updateShift(shift: {
+export async function updateShift({ commit }: any, shift: {
   id: number | null; // TODO: Remove null
   contractor_id: number | null; // TODO:
   site_location: string;
@@ -109,7 +106,7 @@ export async function updateShift(shift: {
   return data
 }
 
-export async function deleteShift(shiftId: number, jobId: number) {
+export async function deleteShift({ commit }: any, shiftId: number, jobId: number) {
   await axios({
     method: 'DELETE',
     url: `shifts/${shiftId}`,

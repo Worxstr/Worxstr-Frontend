@@ -160,7 +160,7 @@ export default class SignUp extends Vue {
   async signUp() {
     this.loading = true
     try {
-      await signUp({
+      await signUp(this.$store, {
         ...this.form,
         accountType: this.accountType,
       })

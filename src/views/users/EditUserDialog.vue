@@ -148,7 +148,7 @@ export default class EditUserDialog extends Vue {
     if (!opened) return
     if (!this.editMode) (this.$refs.form as HTMLFormElement)?.reset()
 
-    loadManagers()
+    loadManagers(this.$store)
     
     if (this.user) {
       this.editMode = true
@@ -197,6 +197,7 @@ export default class EditUserDialog extends Vue {
 
         if (this.userIsContractor) {
           await updateContractor(
+            this.$store,
             {
               ...this.editedUser.contractor_info,
               direct_manager: this.editedUser.manager_id
@@ -206,7 +207,7 @@ export default class EditUserDialog extends Vue {
         }
       } else {
         if (this.userIsManager) {
-          await addManager(this.editedUser)
+          await addManager(this.$store, this.editedUser)
         }
       }
 

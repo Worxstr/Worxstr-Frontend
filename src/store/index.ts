@@ -25,6 +25,8 @@ const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
 axios.defaults.baseURL = baseUrl
 axios.defaults.withCredentials = true
 
+
+// TODO: Figure out how to reset the state for all modules at once
 /* 
 RESET_STATE(state) {
   Object.assign(state, initialState())
@@ -44,7 +46,7 @@ const storeConfig: StoreOptions<{}> = {
   },
 }
 
-const store = new Vuex.Store<{}>(storeConfig)
+export const store = new Vuex.Store<{}>(storeConfig)
 
 export default store
 
