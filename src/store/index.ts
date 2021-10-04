@@ -22,11 +22,8 @@ const webUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replac
 const nativeUrl = process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : webUrl
 const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
 
-axios.defaults.baseURL = baseUrl
-axios.defaults.withCredentials = true
-
-
 // TODO: Figure out how to reset the state for all modules at once
+// https://app.clickup.com/t/1nf09jf
 /* 
 RESET_STATE(state) {
   Object.assign(state, initialState())
@@ -49,6 +46,11 @@ const storeConfig: StoreOptions<{}> = {
 export const store = new Vuex.Store<{}>(storeConfig)
 
 export default store
+
+
+// TODO: Create axios config file
+axios.defaults.baseURL = baseUrl
+axios.defaults.withCredentials = true
 
 axios.interceptors.request.use(config => {
   const url = config.url?.replace(/^.*\/\/[^/]+/, '') || '' // Get url without domain

@@ -34,7 +34,7 @@ import { DarkPreference, setTheme } from '@/util/theme'
 export default class Preferences extends Vue {
 
   get preferences() {
-    return this.$store.state.preferences
+    return this.$store.state.app.preferences
   }
 
   darkPreferenceOptions = [
