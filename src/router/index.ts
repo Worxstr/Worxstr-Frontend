@@ -149,6 +149,7 @@ const routes = [
   },
   {
     path: '/reset-password',
+    alias: '/auth/reset',
     name: 'resetPassword',
     component: ResetPassword,
     meta: {

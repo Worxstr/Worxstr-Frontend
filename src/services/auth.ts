@@ -86,7 +86,7 @@ export async function signOut({ commit }: any) {
   router.push({ name: 'home' })
 }
 
-export async function resetPassword(_context: any, email: string) {
+export async function sendResetPasswordEmail(_context: any, email: string) {
   await axios({
     method: 'POST',
     url: `/auth/reset`,
@@ -94,6 +94,26 @@ export async function resetPassword(_context: any, email: string) {
       email,
     },
   })
+}
+
+export async function resetPassword(context: any, token: string,newPassword: string) {
+  const response = await axios({
+    method: 'POST',
+    url: `auth/reset/${token}`,
+    data: {
+      password: newPassword,
+      password_confirm: newPassword,
+    }
+  })
+  if (response.status === 200) {
+    await getAuthenticatedUser(context)
+    router.push({
+      name: defaultRoute()
+    })
+  }
+  else {
+    console.log(response)
+  }
 }
 
 export async function confirmEmail(_context: any, token: string) {
