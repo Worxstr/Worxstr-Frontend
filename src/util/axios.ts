@@ -2,7 +2,7 @@
 import axios from 'axios'
 import router from '@/router'
 import { event } from 'vue-gtag'
-import { showToast } from './helpers'
+import { showToast } from '@/services/app'
 
 const productionUrl = 'https://api.worxstr.com'
 const sandboxUrl = 'https://dev.worxstr.com'

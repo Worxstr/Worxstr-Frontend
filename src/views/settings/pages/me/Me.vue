@@ -58,7 +58,7 @@ import { Vue, Component } from "vue-property-decorator"
 import Roles from "@/components/Roles.vue"
 import { Clipboard } from '@capacitor/clipboard'
 import { signOut } from "@/services/auth"
-import { showToast } from "@/util/helpers"
+import { showToast } from '@/services/app'
 
 @Component({
   components: {

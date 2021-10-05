@@ -51,7 +51,7 @@ import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import { currentUserIs, Managers } from '@/definitions/User'
 import { loadBalance } from '@/services/payments'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 
 @Component({
   metaInfo: {

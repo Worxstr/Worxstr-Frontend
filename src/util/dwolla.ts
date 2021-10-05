@@ -1,6 +1,6 @@
 import mitt from 'mitt'
 import store from '@/store'
-import { showToast } from './helpers'
+import { showToast } from '@/services/app'
 
 // Create an event bus for dwolla component events, eg. 'success' and 'error'
 const dwolla = mitt()

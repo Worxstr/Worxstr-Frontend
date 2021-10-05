@@ -75,7 +75,7 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 
 import * as clock from '@/services/clock'
 import { getUserLocation, locationPermissionGranted } from '@/services/users'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 /*
   We are using two difference QR code scanner libraries here.
   vue-qrcode-reader only works on web, and @capacitor-community/barcode-scanner

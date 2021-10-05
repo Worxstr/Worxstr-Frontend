@@ -14,7 +14,7 @@ function onSuccess(name: string) {
   return async function(public_token: string, metadata: any) {
     const accountId = metadata.accounts[0].id
   
-    const accessToken = await addPlaidFundingSource(this.$store, {
+    const accessToken = await addPlaidFundingSource(store, {
       name,
       publicToken: public_token,
       accountId

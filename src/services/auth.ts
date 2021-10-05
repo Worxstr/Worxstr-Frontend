@@ -2,7 +2,7 @@
 import axios from 'axios'
 import router from '@/router'
 import { getAuthenticatedUser } from './users'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 
 import { defaultRoute } from '@/definitions/User'
 

@@ -25,7 +25,7 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
 import { emailRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import { resetPassword } from '@/services/auth'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 
 export default {
   name: "resetPassword",

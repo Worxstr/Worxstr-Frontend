@@ -170,7 +170,7 @@ import ClockEvents from '@/components/ClockEvents.vue'
 import { currentUserIs, UserRole } from '@/definitions/User'
 import { Job, Shift } from '@/definitions/Job'
 import { loadJob } from '@/services/jobs'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 
 @Component({
   components: {

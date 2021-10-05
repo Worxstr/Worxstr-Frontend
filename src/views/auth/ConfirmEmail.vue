@@ -14,7 +14,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { confirmEmail, resendEmailConfirmation } from '@/services/auth'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 
 @Component({
   metaInfo: {

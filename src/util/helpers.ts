@@ -1,7 +1,3 @@
-export function showToast({ commit }: any, snackbar: any) {
-  commit('SHOW_SNACKBAR', snackbar)
-}
-
 export function normalizeRelations(data: any, fields: any) {
     return {
       ...data,

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 
 export async function contactSales({ commit }: any, form: {
   business_name?: string;

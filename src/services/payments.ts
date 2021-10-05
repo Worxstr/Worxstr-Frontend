@@ -3,7 +3,7 @@ import axios from 'axios'
 import * as Plaid from '@/util/plaid'
 import { FundingSource, Timecard, Transfer } from '@/definitions/Payments'
 import { ClockEvent } from '@/definitions/Clock'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 
 export async function loadTimecards({ commit }: any) {
   const { data } = await axios({

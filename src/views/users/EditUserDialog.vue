@@ -113,7 +113,7 @@ import { exists, emailRules, currency } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
 import { addManager, loadManagers, updateContractor } from '@/services/users'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 
 @Component({
   components: {

@@ -59,7 +59,7 @@ import { AvailableResult, Credentials, NativeBiometric } from 'capacitor-native-
 import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import { signIn } from '@/services/auth'
-import { showToast } from '@/util/helpers'
+import { showToast } from '@/services/app'
 import { toggleSandbox } from '@/util/axios'
 
 @Component({
