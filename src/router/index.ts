@@ -150,7 +150,7 @@ const routes = [
   {
     path: '/reset-password',
     alias: '/auth/reset',
-    name: 'resetPassword',
+    name: 'sendResetPasswordEmail',
     component: ResetPassword,
     meta: {
       landing: true,
@@ -323,7 +323,7 @@ const routes = [
   },
   {
     path: '*',
-    name: 'Not found',
+    name: 'notFound',
     component: NotFound,
     meta: {
       fullHeight: true,

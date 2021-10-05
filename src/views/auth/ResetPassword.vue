@@ -5,7 +5,7 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
   v-card.soft-shadow(width="500")
     v-form(@submit.prevent="submit", v-model="isValid")
       v-card-title.text-h5 Reset your password
-      v-card-subtitle(v-if='hasToken') For {{ $route.query.email }}
+      v-card-subtitle(v-if='hasToken && $route.query.email') For {{ $route.query.email }}
       v-card-text
         v-text-field(
           v-if='!hasToken'
