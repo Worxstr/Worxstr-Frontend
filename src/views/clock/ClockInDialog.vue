@@ -212,6 +212,7 @@ export default class ClockInDialog extends Vue {
   }
 
   async nativeCameraPermissionGranted() {
+    if (!Capacitor.isNativePlatform()) return false
     const status = await BarcodeScanner.checkPermission({ force: true })
     return !!status.granted
   }
@@ -242,7 +243,8 @@ export default class ClockInDialog extends Vue {
   }
 
   stopScan() {
-    BarcodeScanner.stopScan()
+    if (Capacitor.isNativePlatform())
+      BarcodeScanner.stopScan()
     this.toggleWebview(true)
   }
 

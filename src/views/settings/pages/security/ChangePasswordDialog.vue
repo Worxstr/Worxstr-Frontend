@@ -57,7 +57,7 @@ v-dialog(
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 import { exists, passwordRules, passwordMatches } from '@/util/inputValidation'
-import updatePassword from '@/services/auth'
+import { updatePassword } from '@/services/auth'
 import { showToast } from '@/util/helpers'
 
 export default {

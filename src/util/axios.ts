@@ -1,18 +1,26 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
 import router from '@/router'
-
-import { Capacitor } from '@capacitor/core'
 import { event } from 'vue-gtag'
 import { showToast } from './helpers'
 
-// TODO: If using capacitor production, we need to be able to determine if the user is testing or using prod database
-const webUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace(':8080', ':5000')
-const nativeUrl = process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : webUrl
-const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
+const productionUrl = 'https://api.worxstr.com'
+const sandboxUrl = 'https://dev.worxstr.com'
+const localUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace(':8080', ':5000')
+
+export function setBaseUrl(sandbox = false) {
+  const webProdUrl = sandbox ? sandboxUrl : productionUrl
+  const baseUrl = process.env.NODE_ENV === 'production' ? webProdUrl : localUrl
+
+  axios.defaults.baseURL = baseUrl
+}
+
+export function toggleSandbox(sandbox: boolean) {
+  setBaseUrl(sandbox)
+}
 
 export function configAxios({ commit }: any) {
-  axios.defaults.baseURL = baseUrl
+  setBaseUrl()
   axios.defaults.withCredentials = true
 
   axios.interceptors.request.use(config => {

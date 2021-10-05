@@ -35,7 +35,6 @@ const mutations = {
 	},
 	
 	ADD_MESSAGE(state: MessagesState, message: Message) {
-		console.log('ADD MESSAGE', state, message)
 		state.conversations.byId[message.conversation_id].messages.push(message)
 	}
 }

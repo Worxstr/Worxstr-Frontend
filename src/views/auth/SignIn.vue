@@ -27,6 +27,14 @@ div
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append='showPassword = !showPassword'
           )
+          v-alert(
+            v-if='usingSandbox'
+            border='left'
+            color='primary'
+            dense
+            text
+            type='info'
+          ) You are signing in to the sandbox environment
           v-checkbox(
             v-if='biometricsAvailable'
             v-model='form.useBiometrics'
@@ -46,12 +54,13 @@ div
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import { AvailableResult, Credentials, NativeBiometric } from 'capacitor-native-biometric'
 import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import { signIn } from '@/services/auth'
 import { showToast } from '@/util/helpers'
+import { toggleSandbox } from '@/util/axios'
 
 @Component({
   metaInfo: {
@@ -79,6 +88,15 @@ export default class SignIn extends Vue {
       this.form.email = this.$route.params.email
     }
     this.loadCredentialsFromBiometrics()
+  }
+
+  get usingSandbox() {
+    return this.form.email.includes('+test@') || this.form.email.includes('+sandbox@')
+  }
+
+  @Watch('usingSandbox')
+  sandboxToggled(sandbox: boolean) {
+    toggleSandbox(sandbox)
   }
 
   async signIn(email?: string, password?: string) {
