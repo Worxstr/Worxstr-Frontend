@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { FundingSource, Timecard, Transfer } from '@/definitions/Payments'
 
-interface PaymentsState {
+export interface PaymentsState {
   beneficialOwnersCertified: boolean;
   balance: {
     value: number;
@@ -28,7 +28,7 @@ interface PaymentsState {
   };
 }
 
-const initialState = (): PaymentsState => ({
+export const initialState = (): PaymentsState => ({
   beneficialOwnersCertified: false,
   balance: {
     value: 0,

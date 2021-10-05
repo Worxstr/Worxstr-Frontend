@@ -17,7 +17,7 @@ export interface AppState {
   };
 }
 
-const initialState = (): AppState => ({
+export const initialState = (): AppState => ({
   snackbar: {
     show: false,
     text: '',

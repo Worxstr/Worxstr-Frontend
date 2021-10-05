@@ -3,7 +3,7 @@ import Vue from 'vue'
 import { Job, Shift } from '@/definitions/Job'
 import { User } from '@/definitions/User'
 
-interface JobsState {
+export interface JobsState {
   all: number[];
   byId: {
     [key: number]: Job;
@@ -17,7 +17,7 @@ interface JobsState {
   };
 }
 
-const initialState = (): JobsState => ({
+export const initialState = (): JobsState => ({
   all: [],
   byId: {},
   shifts: {

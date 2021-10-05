@@ -3,7 +3,7 @@ import Vue from 'vue'
 import { Conversation, Message } from '@/definitions/Messages'
 import { User } from '@/definitions/User'
 
-interface MessagesState {
+export interface MessagesState {
   conversations: {
     all: number[];
     byId: {
@@ -13,7 +13,7 @@ interface MessagesState {
   contacts: User[];
 }
 
-const initialState = (): MessagesState => ({
+export const initialState = (): MessagesState => ({
   conversations: {
     all: [],
     byId: [],

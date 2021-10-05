@@ -3,38 +3,50 @@ import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 import { configAxios } from '@/util/axios'
 
-import app from './app'
-import users from './users'
-import clock from './clock'
-import jobs from './jobs'
-import payments from './payments'
-import schedule from './schedule'
-import messages from './messages'
+import * as app from './app'
+import * as users from './users'
+import * as clock from './clock'
+import * as jobs from './jobs'
+import * as payments from './payments'
+import * as schedule from './schedule'
+import * as messages from './messages'
 
 Vue.use(Vuex)
 
-// TODO: Figure out how to reset the state for all modules at once
-// https://app.clickup.com/t/1n3f09jf
-/* 
-RESET_STATE(state) {
-  Object.assign(state, initialState())
-  // Object.assign(state.messages, messagesInitialState())
+interface RootState {
+  app: app.AppState;
+  users: users.UsersState;
+  clock: clock.ClockState;
+  jobs: jobs.JobsState;
+  payments: payments.PaymentsState;
+  schedule: schedule.ScheduleState;
+  messages: messages.MessagesState;
 }
-*/
 
-const storeConfig: StoreOptions<{}> = {
+const storeConfig: StoreOptions<RootState> = {
+  mutations: {
+    RESET_STATE(state) {
+      Object.assign(state.app, app.initialState())
+      Object.assign(state.users, users.initialState())
+      Object.assign(state.clock, clock.initialState())
+      Object.assign(state.jobs, jobs.initialState())
+      Object.assign(state.payments, payments.initialState())
+      Object.assign(state.schedule, schedule.initialState())
+      Object.assign(state.messages, messages.initialState())
+    }
+  },
   modules: {
-    app,
-    users,
-    clock,
-    jobs,
-    payments,
-    schedule,
-    messages,
+    app: app.default,
+    users: users.default,
+    clock: clock.default,
+    jobs: jobs.default,
+    payments: payments.default,
+    schedule: schedule.default,
+    messages: messages.default,
   },
 }
 
-export const store = new Vuex.Store<{}>(storeConfig)
+export const store = new Vuex.Store<RootState>(storeConfig)
 
 configAxios(store)
 

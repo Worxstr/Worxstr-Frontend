@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { CalendarEvent } from '@/definitions/Schedule'
 
-interface ScheduleState {
+export interface ScheduleState {
   events: {
     all: number[];
     byId: {
@@ -10,7 +10,7 @@ interface ScheduleState {
   };
 }
 
-const initialState = (): ScheduleState => ({
+export const initialState = (): ScheduleState => ({
   events: {
     all: [],
     byId: {},

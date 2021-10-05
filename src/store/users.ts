@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { User } from '@/definitions/User'
 
-interface UsersState {
+export interface UsersState {
   authenticatedUser: User | null;
   userLocation: {
     lat: number;
@@ -20,7 +20,7 @@ interface UsersState {
   };
 }
 
-const initialState = (): UsersState => ({
+export const initialState = (): UsersState => ({
   authenticatedUser: null,
   userLocation: null,
   users: {

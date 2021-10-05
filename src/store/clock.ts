@@ -2,7 +2,7 @@ import Vue from 'vue'
 import { ClockEvent } from '@/definitions/Clock'
 import { resolveRelations } from '../util/helpers'
 
-interface ClockState {
+export interface ClockState {
   clocked: boolean;
   break: boolean;
   history: {
@@ -14,7 +14,7 @@ interface ClockState {
   };
 }
 
-const initialState = (): ClockState => ({
+export const initialState = (): ClockState => ({
   clocked: false,
   break: false,
   history: {
