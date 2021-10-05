@@ -193,7 +193,7 @@ export default class EditUserDialog extends Vue {
     try {
       if (this.editMode) {
         if (this.userIsManager) {
-          // await this.$store.dispatch('updateManager')
+          // updateManager()
         }
 
         if (this.userIsContractor) {

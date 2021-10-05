@@ -14,6 +14,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { confirmEmail, resendEmailConfirmation } from '@/services/auth'
+import { showToast } from '@/util/helpers'
 
 @Component({
   metaInfo: {
@@ -29,7 +30,7 @@ export default class ConfirmEmail extends Vue {
     this.loading = true
     try {
       if (!this.$route.query.token) {
-        return this.$store.dispatch('No token provided')
+        return showToast(this.$store, {text: 'No token provided'})
       }
       await confirmEmail(this.$store, this.$route.query.token as string)
       this.message = 'Email confirmed.'

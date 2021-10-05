@@ -41,6 +41,7 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
+import { openPlaidLink } from '@/util/plaid'
 
 import { exists } from '@/util/inputValidation'
 
@@ -69,7 +70,7 @@ export default {
     async openPlaidAuth() {
       this.loading = true
       try {
-        await this.$store.dispatch("openPlaidLink", this.accountName)
+        await openPlaidLink(this.accountName)
         this.closeDialog()
       }
       finally {

@@ -42,7 +42,7 @@ export function configAxios({ commit }: any) {
 
       if (res && (res.message || res.response.error)) {
         message = res.message || res.response.error
-      } else {
+      } else if (error.response?.data?.response?.errors) {
         const errorList = error.response.data.response.errors
         message = errorList[Object.keys(errorList)[0]][0]
       }

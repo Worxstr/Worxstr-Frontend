@@ -46,6 +46,7 @@ v-dialog(
 import { FundingSource } from '@/definitions/Payments'
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { exists } from '@/util/inputValidation'
+import { updateFundingSource } from '@/services/payments'
 
 @Component
 export default class RemoveFundingSourceDialog extends Vue {
@@ -73,7 +74,7 @@ export default class RemoveFundingSourceDialog extends Vue {
   async updateFundingSource() {
     this.loading = true
     try {
-      await this.$store.dispatch('updateFundingSource', this.editedFundingSource)
+      await updateFundingSource(this.$store, this.editedFundingSource as FundingSource)
       this.closeDialog()
     }
     finally {

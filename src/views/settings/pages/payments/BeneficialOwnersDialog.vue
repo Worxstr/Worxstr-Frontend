@@ -40,13 +40,5 @@ export default class BeneficialOwnersDialog extends Vue {
       .replace('https://api-sandbox.dwolla.com/customers/', '')
       .replace('https://api.dwolla.com/customers/', '')
   }
-
-  // async removeFundingSource() {
-  //   this.loading = true
-  //   await this.$store.dispatch('removeFundingSource', this.fundingSource._links.self.href)
-  //   this.loading = false
-  //   this.closeDialog()
-  // }
-
 }
 </script>

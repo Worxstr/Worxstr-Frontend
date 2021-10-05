@@ -52,6 +52,7 @@ import AddFundingSourceDialog from "./AddFundingSourceDialog.vue"
 import EditFundingSourceDialog from "./EditFundingSourceDialog.vue"
 import RemoveFundingSourceDialog from "./RemoveFundingSourceDialog.vue"
 import BeneficialOwnersDialog from "./BeneficialOwnersDialog.vue"
+import { loadFundingSources } from "@/services/payments"
 
 @Component({
 	components: {
@@ -95,7 +96,7 @@ export default class Payments extends Vue {
 	async loadFundingSources() {
 		this.loadingFundingSources = true
 		try {
-			await this.$store.dispatch("loadFundingSources")
+			await loadFundingSources(this.$store)
 		} finally {
 			this.loadingFundingSources = false
 		}
