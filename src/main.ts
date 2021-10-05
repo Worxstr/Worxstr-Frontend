@@ -4,7 +4,6 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './util/vuetify'
-import { io } from 'socket.io-client'
 import { App as CapacitorApp } from '@capacitor/app'
 
 import './styles/style.scss'
@@ -21,6 +20,8 @@ import VueGtag from 'vue-gtag'
 import { configureDwolla } from './util/dwolla'
 import { initDarkMode } from './util/theme'
 import { getAuthenticatedUser } from '@/services/users'
+
+console.log(process.env)
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 

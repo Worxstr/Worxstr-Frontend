@@ -170,6 +170,7 @@ import ClockEvents from '@/components/ClockEvents.vue'
 import { currentUserIs, UserRole } from '@/definitions/User'
 import { Job, Shift } from '@/definitions/Job'
 import { loadJob } from '@/services/jobs'
+import { showToast } from '@/util/helpers'
 
 @Component({
   components: {
@@ -247,12 +248,12 @@ export default class JobView extends Vue {
       await Clipboard.write({
         string: text
       })
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "Copied."
       })
     }
     catch (e) {
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "Couldn't copy to clipboard."
       })
     }

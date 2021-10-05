@@ -51,6 +51,7 @@ import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import { currentUserIs, Managers } from '@/definitions/User'
 import { loadBalance } from '@/services/payments'
+import { showToast } from '@/util/helpers'
 
 @Component({
   metaInfo: {
@@ -90,7 +91,7 @@ export default class Payments extends Vue {
 
   userHasFundingSource() {
     if (this.$store.getters.fundingSources.length === 0) {
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "You haven't added any funding sources.",
         action: {
           text: 'Add funding source',

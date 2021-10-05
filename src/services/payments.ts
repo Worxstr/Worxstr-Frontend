@@ -3,6 +3,7 @@ import axios from 'axios'
 import * as Plaid from '@/util/plaid'
 import { FundingSource, Timecard, Transfer } from '@/definitions/Payments'
 import { ClockEvent } from '@/definitions/Clock'
+import { showToast } from '@/util/helpers'
 
 export async function loadTimecards({ commit }: any) {
   const { data } = await axios({
@@ -136,18 +137,18 @@ export async function removeFundingSource({ commit }: any, fundingSourceLocation
   return data
 }
 
-export async function addToBalance({ commit, dispatch }: any, transfer: { amount: number; location: string }) {
+export async function addToBalance({ commit }: any, transfer: { amount: number; location: string }) {
   const { data } = await axios({
     method: 'POST',
     url: 'payments/balance/add',
     data: transfer,
   })
   commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
-  dispatch('showSnackbar', { text: 'Hang tight, your transfer is being processed.' })
+  showToast({ commit }, { text: 'Hang tight, your transfer is being processed.' })
   return data
 }
 
-export async function removeFromBalance({ commit, dispatch }: any, transfer: { amount: number; location: string }) {
+export async function removeFromBalance({ commit }: any, transfer: { amount: number; location: string }) {
   const { data } = await axios({
     method: 'POST',
     url: 'payments/balance/remove',
@@ -155,7 +156,7 @@ export async function removeFromBalance({ commit, dispatch }: any, transfer: { a
   })
   commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
   commit('ADD_TO_BALANCE', -transfer.amount)
-  dispatch('showSnackbar', { text: 'Hang tight, your transfer is being processed.' })
+  showToast({ commit }, { text: 'Hang tight, your transfer is being processed.' })
   return data
 }
 

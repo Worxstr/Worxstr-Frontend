@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
-import store from '@/store'
 import router from '@/router'
 
 import { Capacitor } from '@capacitor/core'
 import { event } from 'vue-gtag'
+import { showToast } from './helpers'
 
 // TODO: If using capacitor production, we need to be able to determine if the user is testing or using prod database
 const webUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace(':8080', ':5000')
 const nativeUrl = process.env.NODE_ENV === 'production' ? 'https://dev.worxstr.com' : webUrl
 const baseUrl = Capacitor.isNativePlatform() ? nativeUrl : webUrl
 
-export function configAxios() {
+export function configAxios({ commit }: any) {
   axios.defaults.baseURL = baseUrl
   axios.defaults.withCredentials = true
 
@@ -85,7 +85,7 @@ export function configAxios() {
         }
       }
 
-      store.dispatch('showSnackbar', {
+      showToast({ commit }, {
         text: message,
         action
       })

@@ -75,6 +75,7 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 
 import * as clock from '@/services/clock'
 import { getUserLocation, locationPermissionGranted } from '@/services/users'
+import { showToast } from '@/util/helpers'
 /*
   We are using two difference QR code scanner libraries here.
   vue-qrcode-reader only works on web, and @capacitor-community/barcode-scanner
@@ -139,7 +140,7 @@ export default class ClockInDialog extends Vue {
 
     if (this.allowedLocation) {
       const location = await getUserLocation(this.$store)
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: `${location.lat} ${location.lng}`,
       })
       this.closeDialog()
@@ -184,8 +185,7 @@ export default class ClockInDialog extends Vue {
           break
       }
       this.cameraFailed = true
-      console.log(error)
-      this.$store.dispatch('showSnackbar', { text: errorMessage })
+      showToast(this.$store, { text: errorMessage })
     } finally {
       this.cameraLoading = false
     }
@@ -193,7 +193,7 @@ export default class ClockInDialog extends Vue {
 
   async getUserLocation() {
     const location = await getUserLocation(this.$store)
-    this.$store.dispatch('showSnackbar', {
+    showToast(this.$store, {
       text: `${location.lat} ${location.lng}`,
     })
     this.closeDialog()
@@ -221,7 +221,7 @@ export default class ClockInDialog extends Vue {
 
       const nativeCameraPermissionGranted = await this.nativeCameraPermissionGranted()
       if (!nativeCameraPermissionGranted) {
-        this.$store.dispatch('showSnackbar', {
+        showToast(this.$store, {
           text: 'Camera permission is not granted'
         })
         return

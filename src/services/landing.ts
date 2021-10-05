@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { showSnackbar } from '@/util/helpers'
+import { showToast } from '@/util/helpers'
 
-export async function contactSales(form: {
+export async function contactSales({ commit }: any, form: {
   business_name?: string;
   contact_name: string;
   contact_title?: string;
@@ -22,7 +22,7 @@ export async function contactSales(form: {
       url: `contact/${type}`,
       data: form
     })
-    showSnackbar({ text: "Thanks! We will get back to you shortly." })
+    showToast({ commit }, { text: "Thanks! We will get back to you shortly." })
     return data
   }
   catch (err) {

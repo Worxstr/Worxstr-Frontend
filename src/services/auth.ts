@@ -2,6 +2,7 @@
 import axios from 'axios'
 import router from '@/router'
 import { getAuthenticatedUser } from './users'
+import { showToast } from '@/util/helpers'
 
 import { defaultRoute } from '@/definitions/User'
 
@@ -41,7 +42,7 @@ export async function signIn({ commit }: any, email: string, password: string) {
   dwollaCustomerUrl: Customer url returned after Dwolla account registration
   dwollaAuthToken: Auth token used for Dwolla account registration
 */
-export async function signUp({ commit, dispatch }: any, {
+export async function signUp({ commit }: any, {
   accountType,
   customer_url,
   password,
@@ -66,7 +67,7 @@ export async function signUp({ commit, dispatch }: any, {
       },
     })
     router.push({ name: 'home' })
-    dispatch('showSnackbar', {
+    showToast({ commit }, {
       text: 'Check your email to verify your account!',
     })
     return data
@@ -107,7 +108,7 @@ export async function confirmEmail(_context: any, token: string) {
   return data
 }
 
-export async function resendEmailConfirmation({ dispatch }: any, email: string) {
+export async function resendEmailConfirmation({ commit }: any, email: string) {
   const { data } = await axios({
     method: 'POST',
     url: `/auth/resend-email`,
@@ -115,7 +116,7 @@ export async function resendEmailConfirmation({ dispatch }: any, email: string) 
       email,
     },
   })
-  dispatch('showSnackbar', { text: 'Confirmation email resent.' })
+  showToast({ commit }, { text: 'Confirmation email resent.' })
   return data
 }
 

@@ -200,6 +200,7 @@ export default class ContactForm extends Vue {
     }
 
     await contactSales(
+      this.$store,
       request,
       this.type
     )

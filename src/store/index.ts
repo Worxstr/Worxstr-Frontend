@@ -13,8 +13,6 @@ import messages from './messages'
 
 Vue.use(Vuex)
 
-configAxios()
-
 // TODO: Figure out how to reset the state for all modules at once
 // https://app.clickup.com/t/1n3f09jf
 /* 
@@ -37,5 +35,7 @@ const storeConfig: StoreOptions<{}> = {
 }
 
 export const store = new Vuex.Store<{}>(storeConfig)
+
+configAxios(store)
 
 export default store

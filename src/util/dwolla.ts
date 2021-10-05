@@ -1,5 +1,6 @@
 import mitt from 'mitt'
 import store from '@/store'
+import { showToast } from './helpers'
 
 // Create an event bus for dwolla component events, eg. 'success' and 'error'
 const dwolla = mitt()
@@ -37,7 +38,7 @@ export function configureDwolla() {
       // Dwolla sdk can't fucking figure out how to handle errors properly
       // So we have to do this
       if (res._embedded && res._embedded?.errors)
-        store.dispatch('showSnackbar', { text: res._embedded?.errors[0]?.message })
+        showToast(store, { text: res._embedded?.errors[0]?.message })
       else
         await success(res)
     },

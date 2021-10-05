@@ -51,6 +51,7 @@ import { AvailableResult, Credentials, NativeBiometric } from 'capacitor-native-
 import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import { signIn } from '@/services/auth'
+import { showToast } from '@/util/helpers'
 
 @Component({
   metaInfo: {
@@ -133,7 +134,7 @@ export default class SignIn extends Vue {
         this.signIn(credentials.username, credentials.password)
       }
       catch (error) {
-        this.$store.dispatch('showSnackbar', {
+        showToast(this.$store, {
           text: "Couldn't sign in with biometrics."
         })
       }

@@ -119,7 +119,7 @@ export default class TransferHistory extends Vue {
     if (this.pageOffset == 0) this.loadingTransfers = true
     else this.loadingMore = true
 
-    const data = await loadTransfers({
+    const data = await loadTransfers(this.$store, {
       offset: this.pageOffset,
     })
 

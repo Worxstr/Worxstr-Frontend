@@ -58,6 +58,7 @@ import { Vue, Component } from "vue-property-decorator"
 import Roles from "@/components/Roles.vue"
 import { Clipboard } from '@capacitor/clipboard'
 import { signOut } from "@/services/auth"
+import { showToast } from "@/util/helpers"
 
 @Component({
   components: {
@@ -81,12 +82,12 @@ export default class Me extends Vue {
       await Clipboard.write({
         string: text
       })
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "Copied."
       })
     }
     catch (e) {
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "Couldn't copy to clipboard."
       })
     }
