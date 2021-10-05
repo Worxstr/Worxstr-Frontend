@@ -116,7 +116,7 @@ div(v-else)
     p.text-body-2.text-center.mt-3(v-if="!job.shifts || !job.shifts.length")
       | There aren't any shifts for this job.
     
-    v-expansion-panels.soft-shadow(popout tile flat)
+    v-expansion-panels.soft-shadow(tile flat)
       v-expansion-panel(v-for="shift in job.shifts", :key="shift.id")
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0

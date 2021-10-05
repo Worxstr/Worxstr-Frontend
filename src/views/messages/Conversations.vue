@@ -28,11 +28,21 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex"
 import { loadConversations } from '@/services/messages'
+import { Component, Vue } from 'vue-property-decorator'
 
-export default {
-  name: "Conversations",
+@Component()
+export default class Conversations extends Vue {
+  loading = false
+
+  get authenticatedUser() {
+    return this.$store.state.authenticatedUser
+  }
+
+  get conversations() {
+    return this.$store.getters.conversations
+  }
+
   async mounted() {
     this.loading = true
     try {
@@ -41,13 +51,6 @@ export default {
     finally {
       this.loading = false
     }
-  },
-  data: () => ({
-    loading: false,
-  }),
-  computed: {
-    ...mapState(["authenticatedUser"]),
-    ...mapGetters(["conversations"]),
-  },
-};
+  }
+}
 </script>
