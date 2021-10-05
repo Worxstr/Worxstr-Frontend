@@ -1,5 +1,6 @@
 import { DarkPreference } from "@/util/theme"
-import { miniNav, darkMode } from '@/services/app'
+import { miniNav } from '@/services/app'
+import * as theme from '@/util/theme'
 
 export interface AppState {
   snackbar: {
@@ -25,7 +26,7 @@ export const initialState = (): AppState => ({
     timeout: 5000,
   },
   preferences: {
-    darkMode: darkMode.getStoredPreference(),
+    darkMode: theme.getStoredPreference(),
     miniNav: miniNav.getStoredPreference(),
   }
 })

@@ -60,7 +60,7 @@ import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import { signIn } from '@/services/auth'
 import { showToast } from '@/services/app'
-import { toggleSandbox } from '@/util/axios'
+import { toggleSandbox } from '@/services/app'
 
 @Component({
   metaInfo: {
@@ -96,7 +96,7 @@ export default class SignIn extends Vue {
 
   @Watch('usingSandbox')
   sandboxToggled(sandbox: boolean) {
-    toggleSandbox(sandbox)
+    toggleSandbox(this.$store, sandbox)
   }
 
   async signIn(email?: string, password?: string) {

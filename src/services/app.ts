@@ -1,11 +1,40 @@
+import { configureDwolla } from '@/util/dwolla'
 import * as theme from '@/util/theme'
-
-function getStoredPreference(localStorageItem: string, defaultVal: any) {
-  return JSON.parse(window.localStorage.getItem(localStorageItem) || defaultVal)
-}
+import axios from 'axios'
 
 export function showToast({ commit }: any, snackbar: any) {
   commit('SHOW_SNACKBAR', snackbar)
+}
+
+/* 
+  Functions for setting and determining the API url to use, including sandbox environment
+*/
+const productionUrl = 'https://api.worxstr.com'
+const sandboxUrl = 'https://dev.worxstr.com'
+const localUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace(':8080', ':5000')
+
+export function setBaseUrl(sandbox = false) {
+  const webProdUrl = sandbox ? sandboxUrl : productionUrl
+  const baseUrl = process.env.NODE_ENV === 'production' ? webProdUrl : localUrl
+  
+  axios.defaults.baseURL = baseUrl
+}
+
+export function getBaseUrl() {
+  return axios.defaults.baseURL
+}
+
+export function toggleSandbox({ commit }: any, sandbox: boolean) {
+  setBaseUrl(sandbox)
+  const useDwollaSandbox = process.env.NODE_ENV === 'production' ? sandbox : true
+  configureDwolla({ commit }, useDwollaSandbox)
+}
+
+/* 
+  Functions for getting and storing user preferences in localStorage
+*/
+function getStoredPreference(localStorageItem: string, defaultVal: any) {
+  return JSON.parse(window.localStorage.getItem(localStorageItem) || defaultVal)
 }
 
 export const darkMode = {
@@ -25,9 +54,6 @@ export const miniNav = {
   },
 
   toggle({ commit }: any, mini?: boolean) {
-
-    console.log('toggling mini', mini, this.getStoredPreference())
-
     if (mini === undefined) mini = !this.getStoredPreference()
     window.localStorage.setItem('miniNav', JSON.stringify(mini))
     commit('SET_MINI_NAV', mini)
