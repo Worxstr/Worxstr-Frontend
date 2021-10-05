@@ -27,6 +27,11 @@ div
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append='showPassword = !showPassword'
           )
+          v-checkbox(
+            v-if='biometricsAvailable'
+            v-model='form.useBiometrics'
+            label='Use biometrics for future sign-ins'
+          )
           v-alert(
             v-if='usingSandbox'
             border='left'
@@ -35,11 +40,6 @@ div
             text
             type='info'
           ) You are signing in to the sandbox environment
-          v-checkbox(
-            v-if='biometricsAvailable'
-            v-model='form.useBiometrics'
-            label='Use biometrics for future sign-ins'
-          )
 
         v-card-actions
           v-btn(text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
