@@ -91,7 +91,7 @@ export default class SignIn extends Vue {
   }
 
   get usingSandbox() {
-    return this.form.email.includes('+test@') || this.form.email.includes('+sandbox@')
+    return this.form.email.includes('+test')
   }
 
   @Watch('usingSandbox')
