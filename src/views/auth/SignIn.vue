@@ -5,6 +5,14 @@ div
       v-form(@submit.prevent="signIn()", v-model="isValid")
         v-card-title.text-h5 Sign in
         v-card-text.pb-0
+          v-alert(
+            v-if='usingSandbox'
+            border='left'
+            color='primary'
+            dense
+            text
+            type='info'
+          ) You are signing in to the sandbox environment
           v-text-field(
             autofocus
             label='Email'
@@ -27,14 +35,6 @@ div
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append='showPassword = !showPassword'
           )
-          v-alert(
-            v-if='usingSandbox'
-            border='left'
-            color='primary'
-            dense
-            text
-            type='info'
-          ) You are signing in to the sandbox environment
           v-checkbox(
             v-if='biometricsAvailable'
             v-model='form.useBiometrics'
