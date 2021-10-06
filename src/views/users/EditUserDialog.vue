@@ -173,7 +173,7 @@ export default class EditUserDialog extends Vue {
   }
 
   get managers() {
-    return this.$store.state.managers
+    return this.$store.state.users.managers
   }
 
   get userIsContractor() {
