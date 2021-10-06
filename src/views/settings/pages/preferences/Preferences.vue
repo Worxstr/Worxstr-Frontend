@@ -12,7 +12,7 @@ v-list
         hide-details
       )
     
-  v-list-item(two-line)
+  v-list-item(two-line v-if='$vuetify.breakpoint.mdAndUp')
     v-list-item-content
       v-list-item-title Mini navigation
     v-list-item-action
@@ -24,7 +24,8 @@ v-list
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { DarkPreference, setTheme } from '@/util/theme'
+import { darkMode, miniNav } from '@/services/app'
+import { DarkPreference } from '@/util/theme'
 
 @Component({
   metaInfo: {
@@ -53,7 +54,11 @@ export default class Preferences extends Vue {
   ]
 
   updateDarkMode() {
-    setTheme(this.preferences.darkMode as DarkPreference)
+    darkMode.set(this.$store, this.preferences.darkMode as DarkPreference)
+  }
+
+  updateMiniNav() {
+    miniNav.toggle(this.$store, this.preferences.miniNav)
   }
 }
 </script>

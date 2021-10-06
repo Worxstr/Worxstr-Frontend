@@ -86,7 +86,7 @@ async function init() {
 
   initDarkMode()
   configureBackButtonPress()
-  configureDwolla()
+  configureDwolla(store)
 }
 
 init()

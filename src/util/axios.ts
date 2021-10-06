@@ -2,22 +2,7 @@
 import axios from 'axios'
 import router from '@/router'
 import { event } from 'vue-gtag'
-import { showToast } from '@/services/app'
-
-const productionUrl = 'https://api.worxstr.com'
-const sandboxUrl = 'https://dev.worxstr.com'
-const localUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.replace(':8080', ':5000')
-
-export function setBaseUrl(sandbox = false) {
-  const webProdUrl = sandbox ? sandboxUrl : productionUrl
-  const baseUrl = process.env.NODE_ENV === 'production' ? webProdUrl : localUrl
-
-  axios.defaults.baseURL = baseUrl
-}
-
-export function toggleSandbox(sandbox: boolean) {
-  setBaseUrl(sandbox)
-}
+import { setBaseUrl, showToast } from '@/services/app'
 
 export function configAxios({ commit }: any) {
   setBaseUrl()
