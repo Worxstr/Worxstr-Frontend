@@ -25,6 +25,7 @@ v-dialog(
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { User } from '@/definitions/User'
+import { deleteUser } from '@/services/users'
 
 @Component
 export default class DeleteUserDialog extends Vue {
@@ -38,7 +39,7 @@ export default class DeleteUserDialog extends Vue {
 
   async deleteUser() {
     this.loading = true
-    await this.$store.dispatch('deleteUser', this.user.id)
+    await deleteUser(this.$store, this.user.id)
     this.$router.push({name: 'users'})
     this.loading = false
     this.closeDialog()

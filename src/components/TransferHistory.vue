@@ -77,6 +77,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
 <script lang="ts">
 import { Transfer } from '@/definitions/Payments'
 import { Component, Vue } from 'vue-property-decorator'
+import { loadTransfers } from '@/services/payments'
 
 @Component
 export default class TransferHistory extends Vue {
@@ -106,7 +107,7 @@ export default class TransferHistory extends Vue {
 
   transferFundsAdded(transfer: Transfer): boolean {
     return transfer._links.destination.href ===
-      this.$store.state.authenticatedUser.dwolla_customer_url
+      this.$store.state.users.authenticatedUser.dwolla_customer_url
   }
 
   get transfers() {
@@ -118,7 +119,7 @@ export default class TransferHistory extends Vue {
     if (this.pageOffset == 0) this.loadingTransfers = true
     else this.loadingMore = true
 
-    const data = await this.$store.dispatch('loadTransfers', {
+    const data = await loadTransfers(this.$store, {
       offset: this.pageOffset,
     })
 

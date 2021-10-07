@@ -52,99 +52,105 @@ v-dialog(
 </template>
 
 <script>
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import TimeInput from '@/components/inputs/TimeInput.vue'
+import * as payments from '@/services/payments'
+
+// TODO: Convert this file to typescript
 
 dayjs.extend(duration)
 
-export default {
+@Component({
   components: { TimeInput },
-  name: 'approvals',
-  data: () => ({
-    loading: false,
-    form: {
-      isValid: false,
-      data: {
-        timeIn: null,
-        timeOut: null,
-        breaks: [],
-      },
+})
+export default class EditTimecardDialog extends Vue {
+  
+  loading = false
+  form = {
+    isValid: false,
+    data: {
+      timeIn: null,
+      timeOut: null,
+      breaks: [],
     },
-  }),
-  props: {
-    opened: Boolean,
-    timecardId: Object,
-  },
-  computed: {
-    timecard() {
-      return this.$store.getters.timecard(this.timecardId)
-    },
-  },
-  watch: {
-    timecardId: function() {
-      this.calculateFormValues()
-    },
-    opened(newVal) {
-      if (newVal == true) this.calculateFormValues()
-    },
-  },
-  methods: {
-    closeDialog() {
-      this.$emit('update:opened', false)
-    },
+  }
 
-    calculateFormValues() {
-      const events = this.timecard.time_clocks
+  @Prop({ default: false }) opened
+  @Prop({ type: String }) timecardId
 
-      this.form.data.timeIn = Object.assign({}, events[0])
-      this.form.data.timeOut = Object.assign({}, events[events.length - 1])
+  get timecard() {
+    return this.$store.getters.timecard(this.timecardId)
+  }
 
-      const breakEvents = events.slice(1, events.length - 1),
-            breaks = []
+  @Watch('timecardId')
+  onTimecardIdChanged() {
+    this.calculateFormValues()
+  }
 
-      for (let i = 0; i < breakEvents.length; i += 2) {
-        breaks.push({
-          start: breakEvents[i],
-          end: breakEvents[i + 1],
-        })
-      }
-      this.form.data.breaks = breaks
-    },
+  @Watch('opened')
+  onOpened(opened) {
+    if (opened) this.calculateFormValues()
+  }
 
-    timeDiff(timeIn, timeOut) {
-      timeIn = dayjs(timeIn)
-      timeOut = dayjs(timeOut)
+  closeDialog() {
+    this.$emit('update:opened', false)
+  }
 
-      const duration = dayjs.duration(timeOut.diff(timeIn)),
-        hours = duration.format('H'),
-        minutes = duration.format('m')
+  calculateFormValues() {
+    const events = this.timecard.time_clocks
 
-      return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${
-        minutes == 1 ? '' : 's'
-      }`
-    },
-    async updateTimecard() {
-      const newTimeclockEvents = []
+    this.form.data.timeIn = Object.assign({}, events[0])
+    this.form.data.timeOut = Object.assign({}, events[events.length - 1])
 
-      newTimeclockEvents.push(this.form.data.timeIn)
-      this.form.data.breaks.forEach((breakItem) => {
-        newTimeclockEvents.push(breakItem.start)
-        newTimeclockEvents.push(breakItem.end)
+    const breakEvents = events.slice(1, events.length - 1),
+          breaks = []
+
+    for (let i = 0; i < breakEvents.length; i += 2) {
+      breaks.push({
+        start: breakEvents[i],
+        end: breakEvents[i + 1],
       })
-      newTimeclockEvents.push(this.form.data.timeOut)
+    }
+    this.form.data.breaks = breaks
+  }
 
-      this.loading = true
-      try {
-        await this.$store.dispatch('updateTimecard', {
-          timecardId: this.timecard.id,
-          events: newTimeclockEvents,
-        })
-        this.closeDialog()
-      } finally {
-        this.loading = false
-      }
-    },
-  },
+  timeDiff(timeIn, timeOut) {
+    timeIn = dayjs(timeIn)
+    timeOut = dayjs(timeOut)
+
+    const duration = dayjs.duration(timeOut.diff(timeIn)),
+      hours = duration.format('H'),
+      minutes = duration.format('m')
+
+    return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${
+      minutes == 1 ? '' : 's'
+    }`
+  }
+
+  async updateTimecard() {
+    const newTimeclockEvents = []
+
+    newTimeclockEvents.push(this.form.data.timeIn)
+    this.form.data.breaks.forEach((breakItem) => {
+      newTimeclockEvents.push(breakItem.start)
+      newTimeclockEvents.push(breakItem.end)
+    })
+    newTimeclockEvents.push(this.form.data.timeOut)
+
+    this.loading = true
+
+    try {
+      await payments.updateTimecard(
+        this.$store,
+        this.timecard.id,
+        newTimeclockEvents,
+      )
+      this.closeDialog()
+    } finally {
+      this.loading = false
+    }
+  }
 }
 </script>

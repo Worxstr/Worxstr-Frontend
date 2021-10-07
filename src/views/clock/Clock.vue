@@ -88,6 +88,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import vueAwesomeCountdown from "vue-awesome-countdown"
 
+import * as clock from '@/services/clock'
 import { ClockAction, ClockEvent } from '@/definitions/Clock'
 import ClockEvents from '@/components/ClockEvents.vue'
 import ClockInDialog from './ClockInDialog.vue'
@@ -113,7 +114,7 @@ export default class Clock extends Vue {
 
   mounted() {
     if (!this.clockHistory.length) this.loadClockHistory()
-    this.$store.dispatch("loadNextShift")
+    clock.loadNextShift(this.$store)
   }
 
   get clock() {
@@ -153,14 +154,14 @@ export default class Clock extends Vue {
 
   async clockOut() {
     this.togglingClock = true
-    await this.$store.dispatch('clockOut')
+    await clock.clockOut(this.$store)
     console.log('done')
     this.togglingClock = false
   }
 
   async toggleBreak(breakState: boolean) {
     this.togglingBreak = true
-    await this.$store.dispatch('toggleBreak', breakState)
+    await clock.toggleBreak(this.$store, breakState)
     this.togglingBreak = false
   }
 
@@ -170,7 +171,7 @@ export default class Clock extends Vue {
 
   async loadClockHistory() {
     this.loadingHistory = true
-    await this.$store.dispatch("loadClockHistory")
+    await clock.loadClockHistory(this.$store)
     this.loadingHistory = false
   }
 

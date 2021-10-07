@@ -102,10 +102,11 @@ import {
   exists,
   passwordRules,
   passwordMatches,
-} from '@/plugins/inputValidation'
+} from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
-import dwolla from '@/plugins/dwolla'
+import dwolla from '@/util/dwolla'
+import { signUp } from '@/services/auth'
 
 @Component({
   metaInfo: {
@@ -159,7 +160,7 @@ export default class SignUp extends Vue {
   async signUp() {
     this.loading = true
     try {
-      await this.$store.dispatch('signUp', {
+      await signUp(this.$store, {
         ...this.form,
         accountType: this.accountType,
       })

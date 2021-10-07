@@ -50,6 +50,8 @@ import Timecards from '@/components/Timecards.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import { currentUserIs, Managers } from '@/definitions/User'
+import { loadBalance } from '@/services/payments'
+import { showToast } from '@/services/app'
 
 @Component({
   metaInfo: {
@@ -69,14 +71,14 @@ export default class Payments extends Vue {
   async mounted() {
     this.loadingBalance = true
     try {
-      await this.$store.dispatch('loadBalance')
+      await loadBalance(this.$store)
     } finally {
       this.loadingBalance = false
     }
   }
 
   get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.users.authenticatedUser
   }
 
   get payments() {
@@ -89,7 +91,7 @@ export default class Payments extends Vue {
 
   userHasFundingSource() {
     if (this.$store.getters.fundingSources.length === 0) {
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "You haven't added any funding sources.",
         action: {
           text: 'Add funding source',

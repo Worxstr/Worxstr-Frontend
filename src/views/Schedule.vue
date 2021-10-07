@@ -40,50 +40,51 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
     )
 </template>
 
-<script>
-import { mapGetters } from 'vuex'
-import {  } from '@/definitions/User'
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
 import { currentUserIs, Managers } from '@/definitions/User'
+import * as schedule from '@/services/schedule'
+import { CalendarEvent } from '@/definitions/Schedule'
 
-export default {
-  name: 'schedule',
+@Component({
   metaInfo: {
     title: 'Schedule',
   },
-  data: () => ({
-    loading: false,
-    type: 'month',
-    types: ['month', 'week', 'day', '4day'],
-    value: '',
-  }),
-  computed: {
-    ...mapGetters(['calendarEvents']),
-  },
-  methods: {
-    async getEvents({ start, end }) {
-      this.loading = true
-      try {
-        await this.$store.dispatch('loadCalendarEvents', {
-          start: new Date(`${start.date}T00:00:00`).toISOString(),
-          end: new Date(`${end.date}T23:59:59`).toISOString(),
-        })
-      } finally {
-        this.loading = false
-      }
-    },
-    getEventColor(event) {
-      return event.color
-    },
+})
+export default class Schedule extends Vue {
+  loading = false
+  type = 'month'
+  types = ['month', 'week', 'day', '4day']
+  value = ''
 
-    openEvent({ /* nativeEvent, */ event }) {
-      // nativeEvent is the browser click event, event is the calendar event data
-      // TODO: Use hasRole defined in User.ts
+  get calendarEvents() {
+    return this.$store.getters.calendarEvents
+  }
 
-      if (currentUserIs(...Managers))
-        this.$router.push({ name: 'job', params: { jobId: event.job_id } })
+  async getEvents({ start, end }: any) {
+    this.loading = true
+    try {
+      await schedule.loadCalendarEvents(
+        this.$store,
+        new Date(`${start.date}T00:00:00`).toISOString(),
+        new Date(`${end.date}T23:59:59`).toISOString(),
+      )
+    } finally {
+      this.loading = false
+    }
+  }
 
-    },
-  },
+  getEventColor(event: CalendarEvent) {
+    return event.color
+  }
+
+  openEvent({ /* nativeEvent, */ event }: { event: CalendarEvent }) {
+    // nativeEvent is the browser click event, event is the calendar event data
+    // TODO: Use hasRole defined in User.ts
+
+    if (currentUserIs(...Managers))
+      this.$router.push({ name: 'job', params: { jobId: event.job_id.toString() } })
+  }
 }
 </script>
 

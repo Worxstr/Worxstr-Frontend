@@ -1,4 +1,4 @@
-import store from "@/store"
+import usersStore from '@/store/users'
 
 export type User = {
 	id: number;
@@ -6,10 +6,13 @@ export type User = {
 	last_name: string;
 	email: string;
 	roles: Role[];
-	[key: string]: any;
 	contractor_info?: {
 		[key: string]: any;
 	};
+	manager_info?: {
+		[key: string]: any;
+	};
+	[key: string]: any;
 }
 
 export type Role = {
@@ -39,7 +42,7 @@ export const Managers = [
 ]
 
 export function isAuthenticated() {
-	return !!store.state.authenticatedUser
+	return !!usersStore.state.authenticatedUser
 }
 
 // Take a list of roles as parameters
@@ -50,12 +53,12 @@ export function userIs(user: User, ...roles: UserRole[]): boolean {
 }
 
 export function currentUserIs(...roles: UserRole[]): boolean {
-	if (!store.state.authenticatedUser) return false
-	return userIs(store.state.authenticatedUser, ...roles)
+	if (!usersStore.state.authenticatedUser) return false
+	return userIs(usersStore.state.authenticatedUser, ...roles)
 }
 
 export function defaultRoute() {
-	const user = store.state.authenticatedUser
+	const user = usersStore.state.authenticatedUser
 	if (!user || !user.roles) return 'schedule'
 
 	switch (user?.roles[0]?.id) {

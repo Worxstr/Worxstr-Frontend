@@ -22,8 +22,10 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
 </template>
 
 <script>
-import { emailRules } from '@/plugins/inputValidation'
+import { emailRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
+import { resetPassword } from '@/services/auth'
+import { showToast } from '@/services/app'
 
 export default {
   name: "resetPassword",
@@ -47,8 +49,8 @@ export default {
     async sendResetEmail() {
       this.loading = true;
       try {
-        await this.$store.dispatch("resetPassword", this.form.email);
-        this.$store.dispatch("showSnackbar", {text: 'Reset link sent'})
+        await resetPassword(this.$store, this.form.email)
+        showToast(this.$store, {text: 'Reset link sent'})
       }
       finally {
         this.loading = false;

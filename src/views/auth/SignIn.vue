@@ -2,9 +2,17 @@
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
     v-card.soft-shadow(width="500")
-      v-form(@submit.prevent="signIn", v-model="isValid")
+      v-form(@submit.prevent="signIn()", v-model="isValid")
         v-card-title.text-h5 Sign in
         v-card-text.pb-0
+          v-alert(
+            v-if='usingSandbox'
+            border='left'
+            color='primary'
+            dense
+            text
+            type='info'
+          ) You are signing in to the sandbox environment
           v-text-field(
             autofocus
             label='Email'
@@ -46,10 +54,13 @@ div
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import { AvailableResult, Credentials, NativeBiometric } from 'capacitor-native-biometric'
-import { emailRules, passwordRules } from '@/plugins/inputValidation'
+import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
+import { signIn } from '@/services/auth'
+import { showToast } from '@/services/app'
+import { toggleSandbox } from '@/services/app'
 
 @Component({
   metaInfo: {
@@ -79,13 +90,22 @@ export default class SignIn extends Vue {
     this.loadCredentialsFromBiometrics()
   }
 
+  get usingSandbox() {
+    return this.form.email.includes('+test')
+  }
+
+  @Watch('usingSandbox')
+  sandboxToggled(sandbox: boolean) {
+    toggleSandbox(this.$store, sandbox)
+  }
+
   async signIn(email?: string, password?: string) {
     this.loading = true
     try {
-      const data = await this.$store.dispatch('signIn', (email && password) ? {
-        email,
-        password,
-      } : this.form)
+      if (!email) email = this.form.email
+      if (!password) password = this.form.password
+
+      const data = await signIn(this.$store, email, password)
 
       // TODO: Find better way to determine login success
       if (data?.response?.user) {
@@ -132,7 +152,7 @@ export default class SignIn extends Vue {
         this.signIn(credentials.username, credentials.password)
       }
       catch (error) {
-        this.$store.dispatch('showSnackbar', {
+        showToast(this.$store, {
           text: "Couldn't sign in with biometrics."
         })
       }

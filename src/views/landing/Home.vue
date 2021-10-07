@@ -138,9 +138,10 @@
 
 <script>
 import { defaultRoute } from '@/definitions/User'
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import Arrows from '@/components/Arrows.vue'
 import ContactForm from '@/components/ContactForm.vue'
+import { signOut } from '@/services/auth'
 
 let timeout
 
@@ -171,7 +172,9 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['signOut']),
+    signOut() {
+      signOut(this.$store)
+    }
   },
   data: () => ({
     calculator: {

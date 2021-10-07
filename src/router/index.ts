@@ -2,11 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { Route } from 'vue-router/types';
 import Meta from 'vue-meta'
-import store from '@/store'
 import { Capacitor } from '@capacitor/core'
 
 import * as MessagesTypes from '@/definitions/Messages'
-import { fullName, groupNameList } from '@/plugins/filters'
+import { fullName, groupNameList } from '@/util/filters'
+import usersStore from '@/store/users'
 
 import Home from '@/views/landing/Home.vue'
 import NativeHome from '@/views/landing/NativeHome.vue'
@@ -54,7 +54,7 @@ const routes = [
     },
     beforeEnter(to: Route, from: Route, next: Function) {
       if (Capacitor.isNativePlatform()) {
-        if (store.state.authenticatedUser)
+        if (usersStore.state.authenticatedUser)
           next({ name: defaultRoute() })
         else
           next({ name: 'nativeHome' })
@@ -258,9 +258,9 @@ const routes = [
         meta: {
           fullHeight: true,
           paramMap: {
-            conversationId: 'conversations',
+            conversationId: 'messages.conversations',
             propBuilder(conversation: MessagesTypes.Conversation) {
-              return groupNameList(conversation, store.state.authenticatedUser)
+              return groupNameList(conversation, usersStore.state.authenticatedUser)
             },
           },
         },

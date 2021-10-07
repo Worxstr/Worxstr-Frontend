@@ -1,5 +1,5 @@
 import mitt from 'mitt'
-import store from '@/store'
+import { getBaseUrl, showToast } from '@/services/app'
 
 // Create an event bus for dwolla component events, eg. 'success' and 'error'
 const dwolla = mitt()
@@ -13,8 +13,6 @@ const success = async (res: any) => {
     
   if (!res.location) return
 
-  console.log(res)
-
   if (res.location.includes('customers')) {
     console.log('customerCreated')
     dwolla.emit('customerCreated', res)
@@ -26,18 +24,19 @@ const success = async (res: any) => {
 
 }
 
-export function configureDwolla() {
+export function configureDwolla({ commit}: any, sandbox = true) {
+  const dwollaEnv = process.env.VUE_APP_DWOLLA_HOST || (sandbox ? 'sandbox' : 'production')
+
   window.dwolla.configure({
-    environment: process.env.VUE_APP_DWOLLA_HOST || 'sandbox',
-    // styles: '/main.css',
-    tokenUrl: `${process.env.VUE_APP_API_BASE_URL}/payments/access`,
+    environment: dwollaEnv,
+    tokenUrl: `${getBaseUrl()}/payments/access`,
     styles: '/dwolla.css',
     success: async (res: any) => {
       
       // Dwolla sdk can't fucking figure out how to handle errors properly
       // So we have to do this
       if (res._embedded && res._embedded?.errors)
-        store.dispatch('showSnackbar', { text: res._embedded?.errors[0]?.message })
+        showToast({ commit }, { text: res._embedded?.errors[0]?.message })
       else
         await success(res)
     },

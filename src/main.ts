@@ -3,22 +3,25 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import vuetify from './plugins/vuetify'
-import { io } from 'socket.io-client'
+import vuetify from './util/vuetify'
 import { App as CapacitorApp } from '@capacitor/app'
 
 import './styles/style.scss'
-import './plugins/filters'
+import './util/filters'
 
 import VueMask  from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
-import VueSocketIO from 'vue-socket.io'
+import VueSocketIOExt from 'vue-socket.io-extended'
+import socket from '@/util/socket-io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
-import { configureDwolla } from './plugins/dwolla'
-import { initDarkMode } from './plugins/theme'
+import { configureDwolla } from './util/dwolla'
+import { initDarkMode } from './util/theme'
+import { getAuthenticatedUser } from '@/services/users'
+
+console.log(process.env)
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
@@ -37,19 +40,11 @@ Vue.use(VuetifyGoogleAutocomplete, {
   vueGoogleMapsCompatibility: true,
 })
 
-Vue.use(
-  new VueSocketIO({
-    debug: true,
-    connection: io(process.env.VUE_APP_API_BASE_URL, {
-      path: '/socket.io',
-    }),
-    vuex: {
-      store,
-      actionPrefix: 'SOCKET_',
-      mutationPrefix: 'SOCKET_',
-    },
-  })
-)
+Vue.use(VueSocketIOExt, socket, {
+  store,
+  actionPrefix: 'SOCKET_',
+  mutationPrefix: 'SOCKET_',
+})
 
 Vue.use(VueGtag, {
   config: { id: process.env.VUE_APP_GTAG_API },
@@ -66,29 +61,10 @@ async function getUserData() {
 
   try {
     // Load new user data
-    await store.dispatch('getAuthenticatedUser')
+    await getAuthenticatedUser(store)
   }
   catch (e) {
     console.error(e)
-  }
-}
-
-function promptSSN() {
-  // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
-  const user = store.state.authenticatedUser
-  if (user && user.contractor_info?.need_info) {
-    store.dispatch('showSnackbar', {
-      text: `You haven't set your Social Security number.`,
-      action: () => {
-        router.push({
-          name: 'settings',
-          params: {
-            openSSNDialog: 'true',
-          },
-        })
-      },
-      actionText: 'Set SSN',
-    })
   }
 }
 
@@ -109,9 +85,8 @@ async function init() {
   }).$mount('#app')
 
   initDarkMode()
-  promptSSN()
   configureBackButtonPress()
-  configureDwolla()
+  configureDwolla(store)
 }
 
 init()
