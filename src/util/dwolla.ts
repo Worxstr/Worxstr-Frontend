@@ -33,15 +33,15 @@ export function dwollaFundingSourceIdFromUrl(fundingSourceUrl: string) {
     .replace('https://api.dwolla.com/funding-sources/', '')
 }
 
-export async function getDwollaCustomer(customerUrl: string) {
+export async function getDwollaCustomerEmail(customerUrl: string) {
   const { data } = await axios({
     method: 'GET',
-    url: 'payments/dwolla/customers',
+    url: 'payments/dwolla/customers/email',
     params: {
       customer_id: customerUrl
     }
   })
-  return data
+  return data.email
 }
 
 async function success(res: any) {

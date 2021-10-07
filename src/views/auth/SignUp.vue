@@ -114,10 +114,10 @@ import {
 } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
-import dwolla, { getDwollaAccessToken } from '@/util/dwolla'
+import dwolla from '@/util/dwolla'
 import { signUp } from '@/services/auth'
 import { toggleSandbox } from '@/services/app'
-import { getDwollaCustomer } from '@/util/dwolla'
+import { getDwollaCustomerEmail } from '@/util/dwolla'
 
 @Component({
   metaInfo: {
@@ -135,7 +135,7 @@ export default class SignUp extends Vue {
   accountType = null // 'contractor' | 'org'
 
   dwollaAccessToken = ''
-  dwollaCustomer = null
+  dwollaCustomerEmail = null
   form = {
     manager_reference: '',
     password: '',
@@ -156,7 +156,7 @@ export default class SignUp extends Vue {
     dwolla.on('customerCreated', (res) => {
       this.form.customer_url = res.location
       this.step = 2
-      this.getDwollaCustomer(res.location)
+      this.getDwollaCustomerEmail(res.location)
     })
     dwolla.on('error', (err) => {
       console.error(err)
@@ -169,12 +169,12 @@ export default class SignUp extends Vue {
     }
   }
 
-  async getDwollaCustomer(customerUrl) {
-    this.dwollaCustomer = await getDwollaCustomer(customerUrl)
+  async getDwollaCustomerEmail(customerUrl) {
+    this.dwollaCustomerEmail = await getDwollaCustomerEmail(customerUrl)
   }
 
   get usingSandbox() {
-    return !!this.dwollaCustomer?.email?.includes('+test')
+    return !!this.dwollaCustomerEmail?.includes('+test')
   }
 
   @Watch('usingSandbox')
