@@ -3,7 +3,7 @@ import * as theme from '@/util/theme'
 import axios from 'axios'
 
 function getStoredPreference(localStorageItem: string, defaultVal: any) {
-  return JSON.parse(window.localStorage.getItem(localStorageItem) || defaultVal) || defaultVal
+  return JSON.parse(window.localStorage.getItem(localStorageItem) || JSON.stringify(defaultVal)) || defaultVal
 }
 
 function setStoredPreference(localStorageItem: string, val: any) {
@@ -60,12 +60,12 @@ export const darkMode = {
 
 export const miniNav = {
   getStoredPreference() {
-    return getStoredPreference('miniNav', 'false')
+    return getStoredPreference('miniNav', false)
   },
 
   toggle({ commit }: any, mini?: boolean) {
     if (mini === undefined) mini = !this.getStoredPreference()
-    window.localStorage.setItem('miniNav', JSON.stringify(mini))
+    setStoredPreference('miniNav', mini)
     commit('SET_MINI_NAV', mini)
   },
 }
