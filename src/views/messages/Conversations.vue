@@ -31,8 +31,18 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
 import { Component, Vue } from 'vue-property-decorator'
 import { loadConversations } from '@/services/messages'
 
-@Component
+@Component()
 export default class Conversations extends Vue {
+  loading = false
+
+  get authenticatedUser() {
+    return this.$store.state.authenticatedUser
+  }
+
+  get conversations() {
+    return this.$store.getters.conversations
+  }
+
   async mounted() {
     this.loading = true
     try {
@@ -41,15 +51,6 @@ export default class Conversations extends Vue {
     finally {
       this.loading = false
     }
-  }
-  loading = false
-
-  get authenticatedUser() {
-    return this.$store.state.users.authenticatedUser
-  }
-
-  get conversations() {
-    return this.$store.getters.conversations
   }
 }
 </script>

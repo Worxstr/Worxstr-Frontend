@@ -149,6 +149,7 @@ const routes = [
   },
   {
     path: '/reset-password',
+    alias: '/auth/reset',
     name: 'resetPassword',
     component: ResetPassword,
     meta: {
@@ -322,7 +323,7 @@ const routes = [
   },
   {
     path: '*',
-    name: 'Not found',
+    name: 'notFound',
     component: NotFound,
     meta: {
       fullHeight: true,
