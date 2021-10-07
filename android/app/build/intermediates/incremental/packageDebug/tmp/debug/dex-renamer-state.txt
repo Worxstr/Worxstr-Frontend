@@ -1,8 +1,10 @@
-#Mon Sep 27 15:18:54 EDT 2021
+#Tue Oct 05 16:56:21 EDT 2021
+path.4=12/classes.dex
 path.3=11/classes.dex
 path.2=0/classes.dex
 path.1=0/classes.dex
 path.0=classes.dex
+base.4=C\:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\12\\classes.dex
 base.3=C\:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
 base.2=C\:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
 base.1=C\:\\Users\\alexw\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
@@ -11,3 +13,4 @@ renamed.3=classes4.dex
 renamed.2=classes3.dex
 renamed.1=classes2.dex
 renamed.0=classes.dex
+renamed.4=classes5.dex

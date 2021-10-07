@@ -49,11 +49,28 @@ export default class Breadcrumbs extends Vue {
       let dynamicName
       try {
         // Get param mapping from route metadata
-        const paramMap = this.$route.meta.paramMap
+        const paramMap = this.$route.meta?.paramMap
         // Extract the param name
         const param = matched[i].replace(':', '')
+
+        // Get the path in the state of the object
+        const defaultStatePath = segments[0]
+        const customStatePath = paramMap[param]?.split('.') // Split the param map into an array of the nested state keys
+
         // Find the item in the store state
-        const item = this.$store.state[paramMap[param] || segments[0]].byId[pathSegment]
+        let item = this.$store.state
+        if (customStatePath) {
+          // A custom path in the store was defined, ex. 'messages.conversations'
+          customStatePath.forEach((key: string) => {
+            item = item[key]
+          })
+        }
+        else {
+          // Use the first name in the path
+          item = item[defaultStatePath]
+        }
+        item = item.byId[pathSegment]
+
         // Use the specified prop or propBuilder to get the name of the object
         dynamicName = paramMap.propBuilder ? paramMap.propBuilder(item) : item[paramMap.prop || 'name']
       }

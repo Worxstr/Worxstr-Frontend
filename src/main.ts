@@ -3,22 +3,25 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import vuetify from './plugins/vuetify'
-import socket from './plugins/socket-io'
-import { io } from 'socket.io-client'
+import vuetify from './util/vuetify'
 import { App as CapacitorApp } from '@capacitor/app'
 
 import './styles/style.scss'
-import './plugins/filters'
+import './util/filters'
 
 import VueMask  from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
-import VueSocketIO from 'vue-socket.io'
+import VueSocketIOExt from 'vue-socket.io-extended'
+import socket from '@/util/socket-io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
-import { configureDwolla } from './plugins/dwolla'
+import { configureDwolla } from './util/dwolla'
+import { initDarkMode } from './util/theme'
+import { getAuthenticatedUser } from '@/services/users'
+import { sandboxMode } from '@/services/app'
+import { shouldUseSandbox } from './services/auth'
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
@@ -37,15 +40,11 @@ Vue.use(VuetifyGoogleAutocomplete, {
   vueGoogleMapsCompatibility: true,
 })
 
-Vue.use(new VueSocketIO({
-  debug: true,
-  connection: socket,
-  vuex: {
-    store,
-    actionPrefix: 'SOCKET_',
-    mutationPrefix: 'SOCKET_'
-  },
-}))
+Vue.use(VueSocketIOExt, socket, {
+  store,
+  actionPrefix: '',
+  mutationPrefix: '',
+})
 
 Vue.use(VueGtag, {
   config: { id: process.env.VUE_APP_GTAG_API },
@@ -57,52 +56,20 @@ async function getUserData() {
   // Get local user data
   const storedUser = localStorage.getItem('authenticatedUser')
   if (storedUser) {
-    store.commit('SET_AUTHENTICATED_USER', JSON.parse(storedUser))
+    const user = JSON.parse(storedUser)
+    sandboxMode.toggle(store, shouldUseSandbox(user.email))
+    store.commit('SET_AUTHENTICATED_USER', user)
+  }
+  else {
+    sandboxMode.toggle(store, sandboxMode.getStoredPreference())
   }
 
   try {
     // Load new user data
-    await store.dispatch('getAuthenticatedUser')
+    await getAuthenticatedUser(store)
   }
   catch (e) {
     console.error(e)
-  }
-}
-
-function initDarkMode() {
-  const userPrefDarkMode = window.localStorage.getItem('darkMode')
-  const darkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-
-  if (userPrefDarkMode == 'System default') {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    darkMediaQuery.addEventListener('change', (e) => {
-      vuetify.framework.theme.dark = !vuetify.framework.theme.dark
-    })
-
-    if (darkMediaQuery.matches) {
-      setTimeout(() => (vuetify.framework.theme.dark = true), 0)
-    }
-  } else {
-    vuetify.framework.theme.dark = userPrefDarkMode == 'Dark'
-  }
-}
-
-function promptSSN() {
-  // If SSN isn't set, need_info flag will be true. Prompt user to enter SSN
-  const user = store.state.authenticatedUser
-  if (user && user.contractor_info?.need_info) {
-    store.dispatch('showSnackbar', {
-      text: `You haven't set your Social Security number.`,
-      action: () => {
-        router.push({
-          name: 'settings',
-          params: {
-            openSSNDialog: 'true',
-          },
-        })
-      },
-      actionText: 'Set SSN',
-    })
   }
 }
 
@@ -123,9 +90,8 @@ async function init() {
   }).$mount('#app')
 
   initDarkMode()
-  promptSSN()
   configureBackButtonPress()
-  configureDwolla()
+  configureDwolla(store)
 }
 
 init()

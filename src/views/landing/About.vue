@@ -102,7 +102,7 @@ export default {
         socials: [
           {
             link: 'mailto:jackson@worxstr.com',
-            icon: 'mdi-at'
+            icon: 'mdi-email-outline',
           },
           {
             link: 'https://github.com/sippejw',
@@ -122,7 +122,7 @@ export default {
         socials: [
           {
             link: 'mailto:james@worxstr.com',
-            icon: 'mdi-at'
+            icon: 'mdi-email-outline',
           },
           {
             link: 'https://www.linkedin.com/in/jameswheeler94/',
@@ -132,7 +132,7 @@ export default {
       },
       {
         name: "Alex Wohlbruck",
-        title: "Lead Frontend Developer",
+        title: "Vice President of Engineering",
         photo: "alex.jpg",
         description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He loves cats, and he is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
         socials: [
@@ -142,7 +142,7 @@ export default {
           },
           {
             link: 'mailto:alexwohlbruck@gmail.com',
-            icon: 'mdi-at'
+            icon: 'mdi-email-outline',
           },
           {
             link: 'https://github.com/alexwohlbruck',
@@ -181,7 +181,7 @@ export default {
       //   socials: [
       //     {
       //       link: 'mailto:coleylipp237@gmail.com',
-      //       icon: 'mdi-at',
+            // icon: 'mdi-email-outline',
       //     },
       //     {
       //       link: 'https://www.linkedin.com/in/coleylipp',
@@ -196,7 +196,7 @@ export default {
       //   socials: [
       //     {
       //       link: 'mailto:victoriadimarco99@gmail.com',
-      //       icon: 'mdi-at',
+            // icon: 'mdi-email-outline',
       //     },
       //     {
       //       link: 'https://www.linkedin.com/in/victoriadimarco',

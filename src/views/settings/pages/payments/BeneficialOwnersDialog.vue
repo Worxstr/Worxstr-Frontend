@@ -20,6 +20,7 @@ v-dialog(
 </template>
 
 <script lang="ts">
+import { dwollaCustomerIdFromUrl } from '@/util/dwolla'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
@@ -32,22 +33,11 @@ export default class BeneficialOwnersDialog extends Vue {
   }
 
   get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.users.authenticatedUser
   }
 
   customerId(customerUrl: string) {
-    return customerUrl.replace(
-      'https://api-sandbox.dwolla.com/customers/',
-      ''
-    )
+    return dwollaCustomerIdFromUrl(customerUrl)
   }
-
-  // async removeFundingSource() {
-  //   this.loading = true
-  //   await this.$store.dispatch('removeFundingSource', this.fundingSource._links.self.href)
-  //   this.loading = false
-  //   this.closeDialog()
-  // }
-
 }
 </script>

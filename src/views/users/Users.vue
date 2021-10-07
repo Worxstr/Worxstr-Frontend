@@ -41,6 +41,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { currentUserIs, User, UserRole } from '@/definitions/User'
 import EditUserDialog from './EditUserDialog.vue'
 import Roles from '@/components/Roles.vue'
+import { loadWorkforce } from '@/services/users'
 
 @Component({
   metaInfo: {
@@ -81,7 +82,7 @@ export default class Users extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch('loadWorkforce')
+      await loadWorkforce(this.$store)
     } finally {
       this.loading = false
     }

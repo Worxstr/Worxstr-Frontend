@@ -9,10 +9,15 @@ v-list
 
   v-list-item(two-line)
     v-list-item-content
+      v-list-item-subtitle.mb-2 Email
+      v-list-item-title {{ authenticatedUser.email }}
+
+  v-list-item(two-line)
+    v-list-item-content
       v-list-item-subtitle.mb-2 Organization
       v-list-item-title {{ authenticatedUser.organization_info.name }}
 
-  v-list-item(two-line, v-if="authenticatedUser.contractor_info")
+  v-list-item(two-line, v-if="authenticatedUser.contractor_info && authenticatedUser.contractor_info.address")
     v-list-item-content
       v-list-item-subtitle.mb-2 Address
       v-list-item-title {{ authenticatedUser.contractor_info.address }}
@@ -52,6 +57,8 @@ v-list
 import { Vue, Component } from "vue-property-decorator"
 import Roles from "@/components/Roles.vue"
 import { Clipboard } from '@capacitor/clipboard'
+import { signOut } from "@/services/auth"
+import { showToast } from '@/services/app'
 
 @Component({
   components: {
@@ -63,11 +70,11 @@ import { Clipboard } from '@capacitor/clipboard'
 })
 export default class Me extends Vue {
   get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.users.authenticatedUser
   }
 
   signOut() {
-    this.$store.dispatch("signOut")
+    signOut(this.$store)
   }
 
   async copyText(text: string) {
@@ -75,12 +82,12 @@ export default class Me extends Vue {
       await Clipboard.write({
         string: text
       })
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "Copied."
       })
     }
     catch (e) {
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "Couldn't copy to clipboard."
       })
     }

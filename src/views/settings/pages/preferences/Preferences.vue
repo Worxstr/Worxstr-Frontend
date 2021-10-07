@@ -5,16 +5,27 @@ v-list
       v-list-item-title Dark theme
     v-list-item-action
       v-select.fit(
-        v-model="preferences.darkMode",
-        :items="['System default', 'Light', 'Dark']",
-        @change="updateDarkMode",
-        dense,
+        v-model="preferences.darkMode"
+        :items="darkPreferenceOptions"
+        @change="updateDarkMode"
+        dense
         hide-details
+      )
+    
+  v-list-item(two-line v-if='$vuetify.breakpoint.mdAndUp')
+    v-list-item-content
+      v-list-item-title Mini navigation
+    v-list-item-action
+      v-switch(
+        v-model='preferences.miniNav'
+        @change='updateMiniNav'
       )
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import { darkMode, miniNav } from '@/services/app'
+import { DarkPreference } from '@/util/theme'
 
 @Component({
   metaInfo: {
@@ -23,27 +34,31 @@ import { Vue, Component } from 'vue-property-decorator'
 })
 export default class Preferences extends Vue {
 
-  preferences = {
-    darkMode: window.localStorage.getItem("darkMode") || "System default",
+  get preferences() {
+    return this.$store.state.app.preferences
   }
 
+  darkPreferenceOptions = [
+    {
+      text: 'System default',
+      value: 'default',
+    },
+    {
+      text: 'Light',
+      value: 'light',
+    },
+    {
+      text: 'Dark',
+      value: 'dark',
+    },
+  ]
+
   updateDarkMode() {
-    let dark
-    switch (this.preferences.darkMode) {
-      case "System default":
-        dark =
-          window.matchMedia &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches;
-        break;
-      case "Light":
-        dark = false;
-        break;
-      case "Dark":
-        dark = true;
-        break;
-    }
-    window.localStorage.setItem("darkMode", this.preferences.darkMode);
-    this.$vuetify.theme.dark = dark as boolean;
+    darkMode.set(this.$store, this.preferences.darkMode as DarkPreference)
+  }
+
+  updateMiniNav() {
+    miniNav.toggle(this.$store, this.preferences.miniNav)
   }
 }
 </script>

@@ -34,24 +34,25 @@ div.pa-2
       router-view
 </template>
 
-<script>
-import Conversations from './Conversations'
-import NewConversationDialog from '@/views/messages/NewConversationDialog'
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+import Conversations from './Conversations.vue'
+import NewConversationDialog from '@/views/messages/NewConversationDialog.vue'
 
-export default {
-  name: 'Messages',
+@Component({
   metaInfo: {
     title: 'Messages',
   },
-  components: { Conversations, NewConversationDialog },
-  data: () => ({
-    newConversationDialog: false,
-    transitionFinished: false,
-  }),
+  components: { Conversations, NewConversationDialog }
+})
+export default class Messages extends Vue {
+  newConversationDialog = false
+  transitionFinished = false
+
   mounted() {
     setTimeout(() => {
       this.transitionFinished = true
     }, 50)
-  },
+  }
 }
 </script>

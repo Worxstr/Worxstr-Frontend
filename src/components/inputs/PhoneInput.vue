@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { phoneRules, phoneRulesOptional } from '@/plugins/inputValidation'
+import { phoneRules, phoneRulesOptional } from '@/util/inputValidation'
 
 type PhoneObject = {
   countryCode: string;

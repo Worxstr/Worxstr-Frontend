@@ -8,7 +8,7 @@
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
-            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to widescale temp labor management
+            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to contract labor management
 
           div(v-if='authenticatedUser')
             v-btn.mr-3.black--text(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
@@ -138,9 +138,10 @@
 
 <script>
 import { defaultRoute } from '@/definitions/User'
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import Arrows from '@/components/Arrows.vue'
 import ContactForm from '@/components/ContactForm.vue'
+import { signOut } from '@/services/auth'
 
 let timeout
 
@@ -171,7 +172,9 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['signOut']),
+    signOut() {
+      signOut(this.$store)
+    }
   },
   data: () => ({
     calculator: {

@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { currency } from '@/plugins/inputValidation'
+import { currency } from '@/util/inputValidation'
 
 @Component
 export default class CurrencyInput extends Vue {

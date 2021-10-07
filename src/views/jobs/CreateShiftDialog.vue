@@ -16,7 +16,7 @@ v-dialog(
       v-model="isValid"
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 Creating shift
+        v-toolbar-title.text-h6 Assigning new shift
 
       v-divider
 
@@ -47,15 +47,15 @@ v-dialog(
                     v-spacer
                     v-chip(small v-if='!item.direct && item.id > 0') {{ !item.direct && 'Indirect' }}
 
-          template(v-slot:append-item)
-            v-divider
-            v-list-item(ripple, @click="addUnassignedContractor")
-              v-list-item-avatar(
-                :color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`"
-              )
-                v-icon mdi-plus
-              v-list-item-content
-                v-list-item-title Add unassigned
+          //- template(v-slot:append-item)
+          //-   v-divider
+          //-   v-list-item(ripple, @click="addUnassignedContractor")
+          //-     v-list-item-avatar(
+          //-       :color="`grey ${$vuetify.theme.dark ? 'darken' : 'lighten'}-3`"
+          //-     )
+          //-       v-icon mdi-plus
+          //-     v-list-item-content
+          //-       v-list-item-title Add unassigned
 
         //- Location fields
         div(v-if="shift.contractor_ids && shift.contractor_ids.length")
@@ -194,7 +194,7 @@ v-dialog(
 import dayjs from 'dayjs'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { User } from '@/definitions/User'
-import { Shift } from '@/definitions/Job'
+import { createShift } from '@/services/jobs'
 
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
@@ -349,10 +349,11 @@ export default class CreateShiftDialog extends Vue {
 
     // TODO: Validate shifts so that end time is after start time
     try {
-      await this.$store.dispatch('createShift', {
+      await createShift(
+        this.$store,
         shift,
-        jobId: this.$route.params.jobId,
-      })
+        parseInt(this.$route.params.jobId),
+      )
       this.closeDialog()
     } finally {
       this.loading = false

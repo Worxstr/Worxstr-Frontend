@@ -2,7 +2,7 @@
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
     
-    v-card.soft-shadow(width='520' style='overflow-y: auto')
+    v-card.soft-shadow(width='520' style='overflow-y: auto' light)
   
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5
@@ -10,7 +10,16 @@ div
           span(v-else) Sign up as a {{ accountType == 'org' ? 'business' : 'contractor' }}
 
         v-card-text.pb-0
-          v-window.pt-2(v-model='step' touchless :style='step == 1 && `padding-bottom: ${$vuetify.breakpoint.xs ? "60px" : "20px"}`')
+          v-alert(
+            v-if='usingSandbox'
+            border='left'
+            color='primary'
+            dense
+            text
+            type='info'
+          ) You are signing up using the sandbox environment
+
+          v-window.pt-2(v-model='step' touchless :style="step == 1 && 'padding-bottom: 20px'")
 
             v-window-item(:value='0')
               .pa-1.d-flex.flex-column.flex-sm-row.justify-center
@@ -21,7 +30,7 @@ div
                   v-icon mdi-domain
                   span.ml-3.text-h6 I have a business
 
-            v-window-item(:value='1' :style='$vuetify.breakpoint.xs && `height: calc(80vh - 70px)`')
+            v-window-item(:value='1' :style='$vuetify.breakpoint.xs && `min-height: calc(80vh - 70px)`')
               p(v-if="accountType == 'org'")
                 | Are you a contractor? Click
                 a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
@@ -55,14 +64,17 @@ div
               )
               v-text-field(
                 label='Password'
-                type='password'
+                :type="showPassword ? 'text' : 'password'"
                 v-model='form.password'
                 :rules='rules.password'
                 required
                 outlined
                 dense
+                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append='showPassword = !showPassword'
               )
               v-text-field(
+                v-if='!showPassword'
                 label='Confirm password'
                 type='password'
                 v-model='form.confirm_password'
@@ -99,10 +111,12 @@ import {
   exists,
   passwordRules,
   passwordMatches,
-} from '@/plugins/inputValidation'
+} from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
-import dwolla from '@/plugins/dwolla'
+import dwolla from '@/util/dwolla'
+import { signUp } from '@/services/auth'
+import { getDwollaCustomerEmail } from '@/util/dwolla'
 
 @Component({
   metaInfo: {
@@ -119,6 +133,8 @@ export default class SignUp extends Vue {
   isValid = false
   accountType = null // 'contractor' | 'org'
 
+  dwollaAccessToken = ''
+  dwollaCustomerEmail = null
   form = {
     manager_reference: '',
     password: '',
@@ -127,6 +143,7 @@ export default class SignUp extends Vue {
     customer_url: '',
     subscription_tier: null,
   }
+  showPassword = false
   rules = {
     managerReference: [exists('Manager reference number required')],
     password: passwordRules,
@@ -134,16 +151,15 @@ export default class SignUp extends Vue {
     passwordMatches,
   }
 
-  mounted() {
+  async mounted() {
     dwolla.on('customerCreated', (res) => {
       this.form.customer_url = res.location
       this.step = 2
+      this.getDwollaCustomerEmail(res.location)
     })
     dwolla.on('error', (err) => {
       console.error(err)
     })
-
-    
 
     if (this.$route.params.subscriptionTier) {
       this.accountType = 'org'
@@ -152,11 +168,21 @@ export default class SignUp extends Vue {
     }
   }
 
+  async getDwollaCustomerEmail(customerUrl) {
+    this.dwollaCustomerEmail = await getDwollaCustomerEmail(customerUrl)
+  }
+
+  get usingSandbox() {
+    if (!this.dwollaCustomerEmail) return false
+    return !!this.dwollaCustomerEmail?.includes('+test')
+  }
+
   async signUp() {
     this.loading = true
     try {
-      await this.$store.dispatch('signUp', {
+      await signUp(this.$store, {
         ...this.form,
+        email: this.dwollaCustomerEmail,
         accountType: this.accountType,
       })
     } finally {

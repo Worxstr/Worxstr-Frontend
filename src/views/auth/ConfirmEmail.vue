@@ -6,13 +6,16 @@
     p.text-body-1 {{ message }}
 
     .d-flex(v-if='!loading')
-      v-btn(text @click='navigateToHome' color='primary') Go to home
-      v-btn(text @click='navigateToLogin' color='primary' v-if='valid') Sign in
-      v-btn(text @click='resendEmail' color='primary' v-else) Resend email
+      //- v-btn(text @click='navigateToHome' color='primary') Go to home
+      //- v-btn(text @click='openApp' color='primary' v-if='valid') Open app
+      v-btn(text @click='resendEmail' color='primary' v-if='!valid') Resend email
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { confirmEmail, resendEmailConfirmation } from '@/services/auth'
+import { showToast } from '@/services/app'
+import { defaultRoute } from '@/definitions/User'
 
 @Component({
   metaInfo: {
@@ -27,9 +30,18 @@ export default class ConfirmEmail extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch('confirmEmail', this.$route.query.token)
+      if (!this.$route.query.token) {
+        return showToast(this.$store, {text: 'No token provided'})
+      }
+      await confirmEmail(
+        this.$store,
+        this.$route.query.token as string,
+        this.$route.query.email as string
+      )
       this.message = 'Email confirmed.'
       this.valid = true
+
+      setTimeout(this.openApp, 500)
     }
     catch (error) {
       console.log(error)
@@ -38,6 +50,18 @@ export default class ConfirmEmail extends Vue {
     }
     this.loading = false
   }
+
+  openApp() {
+    if (!this.$store.state.users.authenticatedUser) {
+      this.navigateToLogin()
+    }
+    else {
+      this.$router.push({
+        name: defaultRoute()
+      })
+    }
+  }
+
   navigateToHome() {
     this.$router.push('/')
   }
@@ -49,7 +73,7 @@ export default class ConfirmEmail extends Vue {
   }
 
   resendEmail() {
-    this.$store.dispatch('resendEmailConfirmation', this.$route.query.email)
+    resendEmailConfirmation(this.$store, this.$route.query.email as string)
   }
 }
 </script>

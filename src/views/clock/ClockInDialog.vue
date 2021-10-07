@@ -1,13 +1,28 @@
 <template lang="pug">
 v-dialog(
-  v-model='opened'
+  id='clock-in-dialog'
+  v-model='dialogOpened'
   :fullscreen='$vuetify.breakpoint.smAndDown'
   max-width='400'
   persistent
-  :class='{transparent}'
 )
+  portal(to="toolbarActions")
+    v-btn(
+      v-if='hideDialogForQr'
+      text
+      :icon='$vuetify.breakpoint.xs'
+      color="primary"
+      @click='stopScan'
+    )
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
+      span(v-if='!$vuetify.breakpoint.xs') Cancel
+
   v-card.sign-in.fill-height
-    v-form.d-flex.flex-column.fill-height(ref='form' @submit.prevent='submitCode(code)')
+    v-form.d-flex.flex-column.fill-height(
+      ref='form'
+      v-model="isValid"
+      @submit.prevent='submitCode(code)'
+    )
       v-card-title.text-h6 Verify your presence
 
       v-spacer
@@ -22,7 +37,6 @@ v-dialog(
           v-btn(text @click='startScan' x-large v-if='!allowedLocation && !webQrEnabled && !cameraFailed')
             v-icon(left) mdi-qrcode
             span Scan clock-in code
-
 
       div(v-if='opened && !allowedLocation && webQrEnabled && !cameraFailed')
 
@@ -42,13 +56,14 @@ v-dialog(
           v-model='code'
           dense
           outlined
+          maxlength='6'
           :rules='codeRules'
         )
 
       v-card-actions
         v-spacer
         v-btn(text @click='closeDialog') Cancel
-        v-btn(text color='primary' type='submit' :loading='togglingClock') Submit
+        v-btn(text color='primary' type='submit' :loading='loading' :disabled='!isValid') Submit
 
 </template>
 
@@ -58,6 +73,9 @@ import { Capacitor } from '@capacitor/core'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 
+import * as clock from '@/services/clock'
+import { getUserLocation, locationPermissionGranted } from '@/services/users'
+import { showToast } from '@/services/app'
 /*
   We are using two difference QR code scanner libraries here.
   vue-qrcode-reader only works on web, and @capacitor-community/barcode-scanner
@@ -72,20 +90,25 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 })
 export default class ClockInDialog extends Vue {
   code = ''
+  loading = false
+  isValid = false
   webQrEnabled = false
   cameraFailed = false
   allowedCamera = false
   allowedLocation = false
-  togglingClock = false
   cameraLoading = false
   hideDialogForQr = false
 
   codeRules = [
     (code: string) => !!code || 'Please enter your clock-in code',
-    (code: string) => code.length === 6 && code.match(/^-?\d+$/) || 'Please enter a valid clock-in code',
+    (code: string) => (code.length === 6 && code.match(/^-?\d+$/)) || 'Please enter a valid clock-in code',
   ]
 
   @Prop({ default: false }) readonly opened!: boolean
+
+  get dialogOpened() {
+    return this.opened && !this.hideDialogForQr
+  }
 
   closeDialog() {
     this.$emit('update:opened', false)
@@ -93,14 +116,14 @@ export default class ClockInDialog extends Vue {
 
   async submitCode(code: string) {
     // TODO: Handle incorrect code
-    await this.clockIn(code)
-    this.closeDialog()
-  }
-
-  async clockIn(code: string) {
-    this.togglingClock = true
-    await this.$store.dispatch('clockIn', code)
-    this.togglingClock = false
+    try {
+      this.loading = true
+      await clock.clockIn(this.$store, code)
+      this.closeDialog()
+    }
+    finally {
+      this.loading = false
+    }
   }
 
   @Watch('opened')
@@ -113,13 +136,11 @@ export default class ClockInDialog extends Vue {
   }
 
   async initLocation() {
-    this.allowedLocation = await this.$store.dispatch(
-      'locationPermissionGranted'
-    )
+    this.allowedLocation = await locationPermissionGranted(this.$store)
 
     if (this.allowedLocation) {
-      const location = await this.$store.dispatch('getUserLocation')
-      this.$store.dispatch('showSnackbar', {
+      const location = await getUserLocation(this.$store)
+      showToast(this.$store, {
         text: `${location.lat} ${location.lng}`,
       })
       this.closeDialog()
@@ -164,16 +185,15 @@ export default class ClockInDialog extends Vue {
           break
       }
       this.cameraFailed = true
-      console.log(error)
-      this.$store.dispatch('showSnackbar', { text: errorMessage })
+      showToast(this.$store, { text: errorMessage })
     } finally {
       this.cameraLoading = false
     }
   }
 
   async getUserLocation() {
-    const location = await this.$store.dispatch('getUserLocation')
-    this.$store.dispatch('showSnackbar', {
+    const location = await getUserLocation(this.$store)
+    showToast(this.$store, {
       text: `${location.lat} ${location.lng}`,
     })
     this.closeDialog()
@@ -192,6 +212,7 @@ export default class ClockInDialog extends Vue {
   }
 
   async nativeCameraPermissionGranted() {
+    if (!Capacitor.isNativePlatform()) return false
     const status = await BarcodeScanner.checkPermission({ force: true })
     return !!status.granted
   }
@@ -201,7 +222,7 @@ export default class ClockInDialog extends Vue {
 
       const nativeCameraPermissionGranted = await this.nativeCameraPermissionGranted()
       if (!nativeCameraPermissionGranted) {
-        this.$store.dispatch('showSnackbar', {
+        showToast(this.$store, {
           text: 'Camera permission is not granted'
         })
         return
@@ -222,12 +243,23 @@ export default class ClockInDialog extends Vue {
   }
 
   stopScan() {
-    BarcodeScanner.stopScan()
+    if (Capacitor.isNativePlatform())
+      BarcodeScanner.stopScan()
     this.toggleWebview(true)
   }
 
   toggleWebview(visible: boolean) {
-    document.body.style.display = visible ? 'block' : 'none'
+    this.hideDialogForQr = !visible
+    if (visible) {
+      document.getElementById('router-view')!.classList.remove('webview-transparent')
+      document.getElementById('main')!.classList.remove('webview-transparent')
+      document.getElementById('app')!.classList.remove('no-bg')
+    }
+    else {
+      document.getElementById('router-view')!.classList.add('webview-transparent')
+      document.getElementById('main')!.classList.add('webview-transparent')
+      document.getElementById('app')!.classList.add('no-bg')
+    }
   }
 
   deactivated() {
@@ -239,3 +271,9 @@ export default class ClockInDialog extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+  .v-main, .v-main__wrap, .v-main__wrap > container {
+    background: transparent !important;
+  }
+</style>

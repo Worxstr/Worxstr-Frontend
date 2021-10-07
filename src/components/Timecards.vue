@@ -31,7 +31,8 @@
         )
 
         v-toolbar-title.px-4.text-h6
-          span Pending payments
+          span(v-if='$vuetify.breakpoint.smAndUp') Pending payments
+          span(v-else) Pending
           v-chip.mx-3.pa-2.font-weight-bold(small) {{ timecards.length }}
 
         v-spacer
@@ -133,6 +134,7 @@ import DenyDialog from '@/views/payments/DenyDialog.vue'
 import PaymentDialog from '@/views/payments/PaymentDialog.vue'
 
 import { Timecard } from '@/definitions/Payments'
+import { loadTimecards } from '@/services/payments'
 
 dayjs.extend(relativeTime)
 
@@ -155,7 +157,7 @@ export default class Timecards extends Vue {
     async mounted() {
       this.loadingTimecards = true
       try {
-        await this.$store.dispatch('loadTimecards')
+        await loadTimecards(this.$store)
       } finally {
         this.loadingTimecards = false
       }

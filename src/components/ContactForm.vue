@@ -18,7 +18,7 @@ v-form.flex-grow-1.d-flex.flex-column(
 
   .d-flex.flex-column.flex-md-row
     v-text-field.mr-2(
-      v-if="!$store.state.authenticatedUser"
+      v-if="!$store.state.users.authenticatedUser"
       v-model="form.contact_name",
       label="Your name",
       required,
@@ -29,7 +29,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
     v-text-field(
-      :class="{'.ml-2': $store.state.authenticatedUser}"
+      :class="{'.ml-2': $store.state.users.authenticatedUser}"
       v-if="type == 'sales'"
       v-model="form.contact_title",
       label="Job title",
@@ -39,7 +39,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
 
-  .d-flex(v-if='!$store.state.authenticatedUser')
+  .d-flex(v-if='!$store.state.users.authenticatedUser')
     phone-input(
       v-if="usePhone",
       v-model="form.phone",
@@ -134,8 +134,9 @@ v-form.flex-grow-1.d-flex.flex-column(
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { emailRules, exists, url } from '@/plugins/inputValidation'
+import { emailRules, exists, url } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
+import { contactSales } from '@/services/landing'
 
 import * as UAParser from 'ua-parser-js'
 
@@ -158,7 +159,7 @@ export default class ContactForm extends Vue {
     description: [exists('Description required')],
   }
 
-  @Prop(String) readonly type!: string // 'sales' | 'support'
+  @Prop(String) readonly type!: 'sales' | 'support'
   @Prop(String) readonly color: string | undefined
   @Prop({ default: false }) readonly text!: boolean
   @Prop({ default: false }) readonly filled!: boolean
@@ -198,10 +199,11 @@ export default class ContactForm extends Vue {
       ...UAParser(navigator.userAgent)
     }
 
-    await this.$store.dispatch('contactSales', {
-      form: request,
-      type: this.type
-    })
+    await contactSales(
+      this.$store,
+      request,
+      this.type
+    )
 
     this.loading = false
     this.$emit('submitted')

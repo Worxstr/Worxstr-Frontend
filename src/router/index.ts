@@ -2,11 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { Route } from 'vue-router/types';
 import Meta from 'vue-meta'
-import store from '@/store'
 import { Capacitor } from '@capacitor/core'
 
 import * as MessagesTypes from '@/definitions/Messages'
-import { fullName, groupNameList } from '@/plugins/filters'
+import { fullName, groupNameList } from '@/util/filters'
+import usersStore from '@/store/users'
 
 import Home from '@/views/landing/Home.vue'
 import NativeHome from '@/views/landing/NativeHome.vue'
@@ -54,7 +54,7 @@ const routes = [
     },
     beforeEnter(to: Route, from: Route, next: Function) {
       if (Capacitor.isNativePlatform()) {
-        if (store.state.authenticatedUser)
+        if (usersStore.state.authenticatedUser)
           next({ name: defaultRoute() })
         else
           next({ name: 'nativeHome' })
@@ -149,6 +149,7 @@ const routes = [
   },
   {
     path: '/reset-password',
+    alias: '/auth/reset',
     name: 'resetPassword',
     component: ResetPassword,
     meta: {
@@ -258,9 +259,9 @@ const routes = [
         meta: {
           fullHeight: true,
           paramMap: {
-            conversationId: 'conversations',
+            conversationId: 'messages.conversations',
             propBuilder(conversation: MessagesTypes.Conversation) {
-              return groupNameList(conversation, store.state.authenticatedUser)
+              return groupNameList(conversation, usersStore.state.authenticatedUser)
             },
           },
         },
@@ -322,7 +323,7 @@ const routes = [
   },
   {
     path: '*',
-    name: 'Not found',
+    name: 'notFound',
     component: NotFound,
     meta: {
       fullHeight: true,
@@ -334,10 +335,17 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes,
+  scrollBehavior (_to: any, _from: any, savedPosition: any) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      window.scrollTo(0, 0)
+    }
+  }
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to: any, _from: any, next: any) => {
   if (to.meta.restrict && !currentUserIs(...to.meta.restrict)) {
     if (!isAuthenticated()) {
       next({ name: 'signIn' })

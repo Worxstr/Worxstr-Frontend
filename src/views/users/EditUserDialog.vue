@@ -109,9 +109,11 @@ v-dialog(
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import { Managers, User, userIs, UserRole, userRoles } from '@/definitions/User'
-import { exists, emailRules, currency } from '@/plugins/inputValidation'
+import { exists, emailRules, currency } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
+import { addManager, loadManagers, updateContractor } from '@/services/users'
+import { showToast } from '@/services/app'
 
 @Component({
   components: {
@@ -147,7 +149,7 @@ export default class EditUserDialog extends Vue {
     if (!opened) return
     if (!this.editMode) (this.$refs.form as HTMLFormElement)?.reset()
 
-    this.$store.dispatch('loadManagers')
+    loadManagers(this.$store)
     
     if (this.user) {
       this.editMode = true
@@ -167,11 +169,11 @@ export default class EditUserDialog extends Vue {
   }
 
   mounted() {
-    this.editedUser.manager_id = this.$store.state.authenticatedUser?.id
+    this.editedUser.manager_id = this.$store.state.users.authenticatedUser?.id
   }
 
   get managers() {
-    return this.$store.state.managers
+    return this.$store.state.users.managers
   }
 
   get userIsContractor() {
@@ -191,27 +193,26 @@ export default class EditUserDialog extends Vue {
     try {
       if (this.editMode) {
         if (this.userIsManager) {
-          // await this.$store.dispatch('updateManager')
+          // updateManager()
         }
 
         if (this.userIsContractor) {
-          await this.$store.dispatch('updateContractor', {
-            newFields: {
+          await updateContractor(
+            this.$store,
+            {
               ...this.editedUser.contractor_info,
               direct_manager: this.editedUser.manager_id
             },
-            userId: this.editedUser.id,
-          })
+            this.editedUser.id,
+          )
         }
       } else {
         if (this.userIsManager) {
-          await this.$store.dispatch('addManager', {
-            ...this.editedUser,
-          })
+          await addManager(this.$store, this.editedUser)
         }
       }
 
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: `
           ${this.editedUser.first_name}
           ${this.editedUser.last_name}

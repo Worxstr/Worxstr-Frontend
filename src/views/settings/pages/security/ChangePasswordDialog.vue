@@ -29,15 +29,18 @@ v-dialog(
           v-model="password",
           :rules="rules.password",
           required
-          type="password"
+          :type="showPassword ? 'text' : 'password'"
+          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append='showPassword = !showPassword'
         )
 
         v-text-field(
-          outlined,
-          dense,
-          label="Confirm new password",
-          v-model="confirmPassword",
-          :rules="[...rules.confirmPassword, rules.passwordMatches(password, confirmPassword)]",
+          v-if='!showPassword'
+          outlined
+          dense
+          label="Confirm new password"
+          v-model="confirmPassword"
+          :rules="[...rules.confirmPassword, rules.passwordMatches(password, confirmPassword)]"
           required
           type="password"
         )
@@ -53,7 +56,9 @@ v-dialog(
 
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
-import { exists, passwordRules, passwordMatches } from '@/plugins/inputValidation'
+import { exists, passwordRules, passwordMatches } from '@/util/inputValidation'
+import { updatePassword } from '@/services/auth'
+import { showToast } from '@/services/app'
 
 export default {
   name: "changePasswordDialog",
@@ -65,6 +70,7 @@ export default {
     loading: false,
     password: "",
     confirmPassword: "",
+    showPassword: false,
     rules: {
       password: passwordRules,
       confirmPassword: [exists('Password confirmation required')],
@@ -79,8 +85,8 @@ export default {
     async updatePassword() {
       this.loading = true
       try {
-        await this.$store.dispatch("updatePassword", this.password)
-        this.$store.dispatch("showSnackbar", { text: "Password changed" })
+        await updatePassword(this.$store, this.password)
+        showToast(this.$store, { text: "Password changed" })
         this.closeDialog()
       }
       finally {

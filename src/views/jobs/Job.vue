@@ -1,6 +1,6 @@
 <template lang="pug">
-v-container(v-if="loading")
-  v-card.pa-4
+v-container(v-if="loading && !job")
+  v-card.soft-shadow.pa-4
     v-skeleton-loader.py-2(type="image, image")
     v-skeleton-loader.py-2(type="sentences, sentences")
 
@@ -64,7 +64,9 @@ div(v-else)
             br
             | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
 
-        v-layout.px-5.flex-column.flex-sm-row.justify-space-between
+        v-layout.px-5.flex-column.flex-sm-row.justify-space-between(
+          v-if='job.organization_manager && job.contractor_manager && job.consultant_name && job.consultant_code'
+        )
           .flex-grow-1.justify-center
             p.text-subtitle-2.mb-1 Organization manager
             p {{ job.organization_manager | fullName }}
@@ -105,18 +107,19 @@ div(v-else)
                   )
                     v-icon mdi-content-copy
 
+        v-skeleton-loader(type='list-item-two-line' v-else)
 
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
       v-btn(text, @click="createShiftDialog = true")
-        v-icon(left) mdi-plus
-        span Add shift
+        v-icon(left) mdi-clipboard-plus-outline
+        span Assign shift
 
     p.text-body-2.text-center.mt-3(v-if="!job.shifts || !job.shifts.length")
       | There aren't any shifts for this job.
-
-    v-expansion-panels(popout, tile)
+    
+    v-expansion-panels.soft-shadow(tile flat)
       v-expansion-panel(v-for="shift in job.shifts", :key="shift.id")
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0
@@ -169,6 +172,8 @@ import ClockEvents from '@/components/ClockEvents.vue'
 
 import { currentUserIs, UserRole } from '@/definitions/User'
 import { Job, Shift } from '@/definitions/Job'
+import { loadJob } from '@/services/jobs'
+import { showToast } from '@/services/app'
 
 @Component({
   components: {
@@ -202,7 +207,7 @@ export default class JobView extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch('loadJob', this.$route.params.jobId)
+      await loadJob(this.$store, parseInt(this.$route.params.jobId))
     } finally {
       this.loading = false
     }
@@ -246,12 +251,12 @@ export default class JobView extends Vue {
       await Clipboard.write({
         string: text
       })
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "Copied."
       })
     }
     catch (e) {
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "Couldn't copy to clipboard."
       })
     }

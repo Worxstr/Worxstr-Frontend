@@ -52,6 +52,9 @@ import AddFundingSourceDialog from "./AddFundingSourceDialog.vue"
 import EditFundingSourceDialog from "./EditFundingSourceDialog.vue"
 import RemoveFundingSourceDialog from "./RemoveFundingSourceDialog.vue"
 import BeneficialOwnersDialog from "./BeneficialOwnersDialog.vue"
+import { loadFundingSources } from "@/services/payments"
+import { currentUserIs, UserRole } from "@/definitions/User"
+import { dwollaFundingSourceIdFromUrl } from "@/util/dwolla"
 
 @Component({
 	components: {
@@ -89,13 +92,15 @@ export default class Payments extends Vue {
 	}
 
   get showBeneficialOwnersForm() {
-    return !this.loadingFundingSources && !this.$store.state.payments.beneficialOwnersCertified
+    return currentUserIs(UserRole.OrganizationManager) &&
+      !this.loadingFundingSources && 
+      !this.$store.state.payments.beneficialOwnersCertified
   }
 
 	async loadFundingSources() {
 		this.loadingFundingSources = true
 		try {
-			await this.$store.dispatch("loadFundingSources")
+			await loadFundingSources(this.$store)
 		} finally {
 			this.loadingFundingSources = false
 		}
@@ -112,10 +117,7 @@ export default class Payments extends Vue {
 	}
 
 	fundingSourceId(fundingSourceUrl: string) {
-		return fundingSourceUrl.replace(
-			"https://api-sandbox.dwolla.com/funding-sources/",
-			""
-		)
+		return dwollaFundingSourceIdFromUrl(fundingSourceUrl)
 	}
 }
 </script>

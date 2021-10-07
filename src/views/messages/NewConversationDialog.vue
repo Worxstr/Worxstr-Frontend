@@ -43,50 +43,48 @@ v-dialog(
           v-progress-circular(indeterminate)
 </template>
 
-<script>
-import { mapState } from 'vuex'
+<script lang="ts">
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import * as messages from '@/services/messages'
 
-export default {
-  name: 'newConversationDialog',
-  props: {
-    opened: Boolean,
-  },
-  mounted() {
-    this.$store.dispatch('loadContacts')
-  },
-  computed: {
-    ...mapState(['contacts']),
-  },
-  data: () => ({
-    isValid: false,
-    loading: false,
-    selectedUsers: [],
-  }),
-  watch: {
-    opened(opened) {
-      if (opened) this.$refs.form.reset()
+@Component
+export default class NewConversationDialog extends Vue {
+
+  isValid = false
+  loading = false
+  selectedUsers = []
+  
+  @Prop({ default: false }) opened!: boolean
+
+  @Watch('opened')
+  onOpened(opened: boolean) {
+    if (opened) (this.$refs.form as HTMLFormElement).reset()
+  }
+
+  async mounted() {
+    await messages.loadContacts(this.$store)
+  }
+
+  get contacts() {
+    return this.$store.state.messages.contacts
+  }
+
+  closeDialog() {
+    this.$emit('update:opened', false)
+  }
+  
+  async createConversation() {
+    this.loading = true
+    try {
+      const conversation = await messages.createConversation(this.$store, this.selectedUsers)
+      this.$router.push({
+        name: 'conversation',
+        params: { conversationId: conversation.id },
+      })
+      this.closeDialog()
+    } finally {
+      this.loading = false
     }
-  },
-  methods: {
-    closeDialog() {
-      this.$emit('update:opened', false)
-    },
-    async createConversation() {
-      this.loading = true
-      try {
-        const conversation = await this.$store.dispatch(
-          'createConversation',
-          this.selectedUsers
-        )
-        this.$router.push({
-          name: 'conversation',
-          params: { conversationId: conversation.id },
-        })
-        this.closeDialog()
-      } finally {
-        this.loading = false
-      }
-    },
-  },
+  }
 }
 </script>

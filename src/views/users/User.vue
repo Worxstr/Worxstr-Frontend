@@ -57,6 +57,7 @@ import EditUserDialog from './EditUserDialog.vue'
 import DeleteUserDialog from './DeleteUserDialog.vue'
 import Roles from '@/components/Roles.vue'
 import { Managers, userIs, currentUserIs, UserRole } from '@/definitions/User'
+import { loadUser } from '@/services/users'
 
 @Component({
   components: {
@@ -78,15 +79,15 @@ export default class User extends Vue {
   }
 
   async mounted() {
-    await this.$store.dispatch('loadUser', this.$route.params.userId)
-  }
+		await loadUser(this.$store, parseInt(this.$route.params.userId))
+	}
 
   get user() {
     return this.$store.getters.user(this.$route.params.userId)
   }
 
 	get authenticatedUser() {
-		return this.$store.state.authenticatedUser
+		return this.$store.state.users.authenticatedUser
 	}
 
   get userIsManager() {
