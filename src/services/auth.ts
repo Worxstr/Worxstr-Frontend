@@ -5,7 +5,7 @@ import { getAuthenticatedUser } from './users'
 import { sandboxMode, showToast } from '@/services/app'
 import { defaultRoute } from '@/definitions/User'
 
-function shouldUseSandbox(email: string) {
+export function shouldUseSandbox(email: string) {
   return email.includes('+test')
 }
 
