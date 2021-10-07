@@ -2,18 +2,16 @@ import Vue from 'vue'
 import { User } from '@/definitions/User'
 
 export interface UsersState {
+  all: number[];
+  byId: {
+    [key: number]: User;
+  };
   authenticatedUser: User | null;
   userLocation: {
     lat: number;
     lng: number;
     accuracy?: number;
   } | null;
-  users: {
-    all: number[];
-    byId: {
-      [key: number]: User;
-    };
-  };
   workforce: number[];
   managers: {
     [key: string]: User[];
@@ -21,12 +19,10 @@ export interface UsersState {
 }
 
 export const initialState = (): UsersState => ({
+  all: [],
+  byId: {},
   authenticatedUser: null,
   userLocation: null,
-  users: {
-    all: [],
-    byId: {},
-  },
   workforce: [],
   managers: {
     contractor: [],
@@ -46,16 +42,16 @@ const mutations = {
   },
 
   ADD_USER(state: UsersState, user: User) {
-    Vue.set(state.users.byId, user.id, {
-      ...state.users.byId[user.id],
+    Vue.set(state.byId, user.id, {
+      ...state.byId[user.id],
       ...user,
     })
-    if (!state.users.all.includes(user.id)) state.users.all.push(user.id)
+    if (!state.all.includes(user.id)) state.all.push(user.id)
   },
 
   REMOVE_USER(state: UsersState, userId: number) {
-    Vue.delete(state.users.byId, userId)
-    state.users.all = state.users.all.filter(id => id !== userId)
+    Vue.delete(state.byId, userId)
+    state.all = state.all.filter(id => id !== userId)
     Vue.delete(state.workforce, state.workforce.indexOf(userId))
   },
 
@@ -79,11 +75,11 @@ const mutations = {
 
 const getters = {
   user: (state: UsersState) => (id: number) => {
-    return state.users.byId[id]
+    return state.byId[id]
   },
 
   workforce: (state: UsersState) => {
-    return state.workforce.map((userId: number) => state.users.byId[userId])
+    return state.workforce.map((userId: number) => state.byId[userId])
   },
 }
 export default {

@@ -258,7 +258,7 @@ const routes = [
         meta: {
           fullHeight: true,
           paramMap: {
-            conversationId: 'conversations',
+            conversationId: 'messages.conversations',
             propBuilder(conversation: MessagesTypes.Conversation) {
               return groupNameList(conversation, usersStore.state.authenticatedUser)
             },

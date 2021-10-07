@@ -65,6 +65,7 @@ Vue.filter('fullName', fullName)
 // [{first: 'Bob', last: 'Vance'}, {first: 'Ada', last: 'Lovelace'}]								-> 'Ada Lovelace'
 // [{first: 'Bob', last: 'Vance'}, {first: 'Ada', last: 'Lovelace', {first: 'Tim', last: 'Allen'}}] -> 'Bob, Tim'
 export const groupNameList = (group: Conversation, authenticatedUser: User | null) => {
+	if (!group.participants || !group.participants.length) return ''
 	return group.participants
 		.filter(u =>
 			u.id != authenticatedUser?.id
