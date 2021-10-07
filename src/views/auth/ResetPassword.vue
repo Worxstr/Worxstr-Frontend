@@ -7,6 +7,14 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
       v-card-title.text-h5 Reset your password
       v-card-subtitle(v-if='hasToken && $route.query.email') For {{ $route.query.email }}
       v-card-text
+        v-alert(
+          v-if='usingSandbox'
+          border='left'
+          color='primary'
+          dense
+          text
+          type='info'
+        ) This account uses sandbox environment
         v-text-field(
           v-if='!hasToken'
           autofocus
@@ -55,12 +63,12 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
         v-progress-circular(indeterminate)
 </template>
 
-<script>
-import { Vue, Component } from 'vue-property-decorator'
+<script lang="ts">
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import { exists, emailRules, passwordRules, passwordMatches } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import { sendResetPasswordEmail, resetPassword } from '@/services/auth'
-import { showToast } from '@/services/app'
+import { showToast, toggleSandbox } from '@/services/app'
 
 @Component({
   metaInfo: {
@@ -74,6 +82,8 @@ export default class ResetPassword extends Vue {
 
   form = {
     email: '',
+    password: '',
+    confirmPassword: '',
   }
   isValid = false
   loading = false
@@ -96,11 +106,20 @@ export default class ResetPassword extends Vue {
     }
   }
 
+  get usingSandbox() {
+    return this.form.email.includes('+test')
+  }
+
+  @Watch('usingSandbox')
+  sandboxToggled(sandbox: boolean) {
+    toggleSandbox(this.$store, sandbox)
+  }
+
   async submit() {
     this.loading = true
     try {
       if (this.hasToken) {
-        await resetPassword(this.$store, this.$route.query.token, this.form.password)
+        await resetPassword(this.$store, this.$route.query.token as string, this.form.password)
       }
       else {
         await sendResetPasswordEmail(this.$store, this.form.email)

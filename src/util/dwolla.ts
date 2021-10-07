@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/camelcase */
+import axios from 'axios'
 import mitt from 'mitt'
 import { getBaseUrl, showToast } from '@/services/app'
 
@@ -9,7 +11,40 @@ declare global {
   }
 }
 
-const success = async (res: any) => {
+const tokenUrl = 'payments/access'
+
+export async function getDwollaAccessToken() {
+  const { data } = await axios({
+    method: 'POST',
+    url: tokenUrl,
+  })
+  return data.token
+}
+
+// TODO: We may need more of these in the future. Make a builder function for these.
+export function dwollaCustomerIdFromUrl(customerUrl: string) {
+  return customerUrl
+    .replace('https://api-sandbox.dwolla.com/customers/', '')
+    .replace('https://api.dwolla.com/customers/', '')
+}
+export function dwollaFundingSourceIdFromUrl(fundingSourceUrl: string) {
+  return fundingSourceUrl
+    .replace('https://api-sandbox.dwolla.com/funding-sources/', '')
+    .replace('https://api.dwolla.com/funding-sources/', '')
+}
+
+export async function getDwollaCustomerEmail(customerUrl: string) {
+  const { data } = await axios({
+    method: 'GET',
+    url: 'payments/dwolla/customers/email',
+    params: {
+      customer_id: customerUrl
+    }
+  })
+  return data.email
+}
+
+async function success(res: any) {
     
   if (!res.location) return
 
@@ -29,10 +64,9 @@ export function configureDwolla({ commit}: any, sandbox = true) {
 
   window.dwolla.configure({
     environment: dwollaEnv,
-    tokenUrl: `${getBaseUrl()}/payments/access`,
+    tokenUrl: `${getBaseUrl()}/${tokenUrl}`,
     styles: '/dwolla.css',
-    success: async (res: any) => {
-      
+    success: async (res: any, p1: any, p2: any, p3: any) => {
       // Dwolla sdk can't fucking figure out how to handle errors properly
       // So we have to do this
       if (res._embedded && res._embedded?.errors)

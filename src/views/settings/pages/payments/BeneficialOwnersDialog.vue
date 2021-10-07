@@ -20,6 +20,7 @@ v-dialog(
 </template>
 
 <script lang="ts">
+import { dwollaCustomerIdFromUrl } from '@/util/dwolla'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
@@ -36,9 +37,7 @@ export default class BeneficialOwnersDialog extends Vue {
   }
 
   customerId(customerUrl: string) {
-    return customerUrl
-      .replace('https://api-sandbox.dwolla.com/customers/', '')
-      .replace('https://api.dwolla.com/customers/', '')
+    return dwollaCustomerIdFromUrl(customerUrl)
   }
 }
 </script>
