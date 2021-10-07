@@ -16,7 +16,7 @@ div
           v-text-field(
             autofocus
             label='Email'
-            type='emali'
+            type='email'
             required
             v-model='form.email'
             :rules='emailRules'
@@ -54,13 +54,12 @@ div
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 import { AvailableResult, Credentials, NativeBiometric } from 'capacitor-native-biometric'
 import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import { signIn } from '@/services/auth'
 import { showToast } from '@/services/app'
-import { toggleSandbox } from '@/services/app'
 
 @Component({
   metaInfo: {
@@ -92,11 +91,6 @@ export default class SignIn extends Vue {
 
   get usingSandbox() {
     return this.form.email.includes('+test')
-  }
-
-  @Watch('usingSandbox')
-  sandboxToggled(sandbox: boolean) {
-    toggleSandbox(this.$store, sandbox)
   }
 
   async signIn(email?: string, password?: string) {

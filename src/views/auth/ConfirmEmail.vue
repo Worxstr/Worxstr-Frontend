@@ -16,7 +16,6 @@ import { Component, Vue } from 'vue-property-decorator'
 import { confirmEmail, resendEmailConfirmation } from '@/services/auth'
 import { showToast } from '@/services/app'
 import { defaultRoute } from '@/definitions/User'
-import { getAuthenticatedUser } from '@/services/users'
 
 @Component({
   metaInfo: {
@@ -34,7 +33,11 @@ export default class ConfirmEmail extends Vue {
       if (!this.$route.query.token) {
         return showToast(this.$store, {text: 'No token provided'})
       }
-      await confirmEmail(this.$store, this.$route.query.token as string)
+      await confirmEmail(
+        this.$store,
+        this.$route.query.token as string,
+        this.$route.query.email as string
+      )
       this.message = 'Email confirmed.'
       this.valid = true
 

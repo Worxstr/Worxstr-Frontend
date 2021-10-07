@@ -2,11 +2,16 @@
 import axios from 'axios'
 import router from '@/router'
 import { getAuthenticatedUser } from './users'
-import { showToast } from '@/services/app'
-
+import { sandboxMode, showToast } from '@/services/app'
 import { defaultRoute } from '@/definitions/User'
 
+export function shouldUseSandbox(email: string) {
+  return email.includes('+test')
+}
+
 export async function signIn({ commit }: any, email: string, password: string) {
+  sandboxMode.toggle({ commit }, shouldUseSandbox(email))
+
   try {
     const { data } = await axios({
       method: 'POST',
@@ -43,16 +48,20 @@ export async function signIn({ commit }: any, email: string, password: string) {
   dwollaAuthToken: Auth token used for Dwolla account registration
 */
 export async function signUp({ commit }: any, {
+  email,
   accountType,
   customer_url,
   password,
   manager_reference,
 }: {
+  email: string;
   accountType: 'contractor' | 'org';
   customer_url: string;
   password: string;
   manager_reference: string;
 }) {
+  sandboxMode.toggle({ commit }, shouldUseSandbox(email))
+  
   try {
     const { data } = await axios({
       method: 'POST',
@@ -76,7 +85,9 @@ export async function signUp({ commit }: any, {
   }
 }
 
-export async function signOut({ commit }: any) {
+export async function signOut({ state, commit }: any) {
+  sandboxMode.toggle({ commit }, shouldUseSandbox(state.users.authenticatedUser.email))
+
   await axios({
     method: 'POST',
     url: `/auth/logout`,
@@ -86,7 +97,9 @@ export async function signOut({ commit }: any) {
   router.push({ name: 'home' })
 }
 
-export async function sendResetPasswordEmail(_context: any, email: string) {
+export async function sendResetPasswordEmail(context: any, email: string) {
+  sandboxMode.toggle(context, shouldUseSandbox(email))
+
   await axios({
     method: 'POST',
     url: `/auth/reset`,
@@ -96,7 +109,9 @@ export async function sendResetPasswordEmail(_context: any, email: string) {
   })
 }
 
-export async function resetPassword(context: any, token: string,newPassword: string) {
+export async function resetPassword(context: any, token: string, email: string, newPassword: string) {
+  sandboxMode.toggle(context, shouldUseSandbox(email))
+
   const response = await axios({
     method: 'POST',
     url: `auth/reset/${token}`,
@@ -116,7 +131,9 @@ export async function resetPassword(context: any, token: string,newPassword: str
   }
 }
 
-export async function confirmEmail(_context: any, token: string) {
+export async function confirmEmail(context: any, token: string, email: string) {
+  sandboxMode.toggle(context, shouldUseSandbox(email))
+
   const { data } = await axios({
     method: 'PUT',
     url: `/auth/confirm-email`,
@@ -129,6 +146,8 @@ export async function confirmEmail(_context: any, token: string) {
 }
 
 export async function resendEmailConfirmation({ commit }: any, email: string) {
+  sandboxMode.toggle({ commit }, shouldUseSandbox(email))
+
   const { data } = await axios({
     method: 'POST',
     url: `/auth/resend-email`,
@@ -140,7 +159,9 @@ export async function resendEmailConfirmation({ commit }: any, email: string) {
   return data
 }
 
-export async function updatePassword(_context: any, newPassword: string) {
+export async function updatePassword({ commit, state }: any, newPassword: string) {
+  sandboxMode.toggle({ commit }, shouldUseSandbox(state.users.authenticatedUser.email))
+
   const { data } = await axios({
     method: 'PUT',
     url: `/users/reset-password`,

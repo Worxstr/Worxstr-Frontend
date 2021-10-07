@@ -64,11 +64,11 @@ v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 import { exists, emailRules, passwordRules, passwordMatches } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import { sendResetPasswordEmail, resetPassword } from '@/services/auth'
-import { showToast, toggleSandbox } from '@/services/app'
+import { showToast } from '@/services/app'
 
 @Component({
   metaInfo: {
@@ -110,16 +110,16 @@ export default class ResetPassword extends Vue {
     return this.form.email.includes('+test')
   }
 
-  @Watch('usingSandbox')
-  sandboxToggled(sandbox: boolean) {
-    toggleSandbox(this.$store, sandbox)
-  }
-
   async submit() {
     this.loading = true
     try {
       if (this.hasToken) {
-        await resetPassword(this.$store, this.$route.query.token as string, this.form.password)
+        await resetPassword(
+          this.$store,
+          this.$route.query.token as string,
+          this.$route.query.email as string,
+          this.form.password
+        )
       }
       else {
         await sendResetPasswordEmail(this.$store, this.form.email)

@@ -20,6 +20,8 @@ import VueGtag from 'vue-gtag'
 import { configureDwolla } from './util/dwolla'
 import { initDarkMode } from './util/theme'
 import { getAuthenticatedUser } from '@/services/users'
+import { sandboxMode } from '@/services/app'
+import { shouldUseSandbox } from './services/auth'
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
@@ -54,7 +56,12 @@ async function getUserData() {
   // Get local user data
   const storedUser = localStorage.getItem('authenticatedUser')
   if (storedUser) {
-    store.commit('SET_AUTHENTICATED_USER', JSON.parse(storedUser))
+    const user = JSON.parse(storedUser)
+    sandboxMode.toggle(store, shouldUseSandbox(user.email))
+    store.commit('SET_AUTHENTICATED_USER', user)
+  }
+  else {
+    sandboxMode.toggle(store, sandboxMode.getStoredPreference())
   }
 
   try {
