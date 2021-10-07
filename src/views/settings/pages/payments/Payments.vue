@@ -54,6 +54,7 @@ import RemoveFundingSourceDialog from "./RemoveFundingSourceDialog.vue"
 import BeneficialOwnersDialog from "./BeneficialOwnersDialog.vue"
 import { loadFundingSources } from "@/services/payments"
 import { currentUserIs, UserRole } from "@/definitions/User"
+import { dwollaFundingSourceIdFromUrl } from "@/util/dwolla"
 
 @Component({
 	components: {
@@ -116,10 +117,7 @@ export default class Payments extends Vue {
 	}
 
 	fundingSourceId(fundingSourceUrl: string) {
-		return fundingSourceUrl.replace(
-			"https://api-sandbox.dwolla.com/funding-sources/",
-			""
-		)
+		return dwollaFundingSourceIdFromUrl(fundingSourceUrl)
 	}
 }
 </script>

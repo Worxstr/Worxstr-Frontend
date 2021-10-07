@@ -10,6 +10,15 @@ div
           span(v-else) Sign up as a {{ accountType == 'org' ? 'business' : 'contractor' }}
 
         v-card-text.pb-0
+          v-alert(
+            v-if='usingSandbox'
+            border='left'
+            color='primary'
+            dense
+            text
+            type='info'
+          ) You are signing up using the sandbox environment
+
           v-window.pt-2(v-model='step' touchless :style="step == 1 && 'padding-bottom: 20px'")
 
             v-window-item(:value='0')
@@ -97,7 +106,7 @@ div
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import {
   exists,
   passwordRules,
@@ -105,8 +114,10 @@ import {
 } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
-import dwolla from '@/util/dwolla'
+import dwolla, { getDwollaAccessToken } from '@/util/dwolla'
 import { signUp } from '@/services/auth'
+import { toggleSandbox } from '@/services/app'
+import { getDwollaCustomer } from '@/util/dwolla'
 
 @Component({
   metaInfo: {
@@ -123,6 +134,8 @@ export default class SignUp extends Vue {
   isValid = false
   accountType = null // 'contractor' | 'org'
 
+  dwollaAccessToken = ''
+  dwollaCustomer = null
   form = {
     manager_reference: '',
     password: '',
@@ -139,16 +152,15 @@ export default class SignUp extends Vue {
     passwordMatches,
   }
 
-  mounted() {
+  async mounted() {
     dwolla.on('customerCreated', (res) => {
       this.form.customer_url = res.location
       this.step = 2
+      this.getDwollaCustomer(res.location)
     })
     dwolla.on('error', (err) => {
       console.error(err)
     })
-
-    
 
     if (this.$route.params.subscriptionTier) {
       this.accountType = 'org'
@@ -157,8 +169,22 @@ export default class SignUp extends Vue {
     }
   }
 
+  async getDwollaCustomer(customerUrl) {
+    this.dwollaCustomer = await getDwollaCustomer(customerUrl)
+  }
+
+  get usingSandbox() {
+    return !!this.dwollaCustomer?.email?.includes('+test')
+  }
+
+  @Watch('usingSandbox')
+  sandboxToggled(sandbox) {
+    toggleSandbox(this.$store, sandbox)
+  }
+
   async signUp() {
     this.loading = true
+    if (this.form.email.includes('+test'))
     try {
       await signUp(this.$store, {
         ...this.form,
