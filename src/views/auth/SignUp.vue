@@ -106,7 +106,7 @@ div
 <script>
 /* eslint-disable @typescript-eslint/camelcase */
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import {
   exists,
   passwordRules,
@@ -116,7 +116,6 @@ import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import dwolla from '@/util/dwolla'
 import { signUp } from '@/services/auth'
-import { toggleSandbox } from '@/services/app'
 import { getDwollaCustomerEmail } from '@/util/dwolla'
 
 @Component({
@@ -178,16 +177,12 @@ export default class SignUp extends Vue {
     return !!this.dwollaCustomerEmail?.includes('+test')
   }
 
-  @Watch('usingSandbox')
-  sandboxToggled(sandbox) {
-    toggleSandbox(this.$store, sandbox)
-  }
-
   async signUp() {
     this.loading = true
     try {
       await signUp(this.$store, {
         ...this.form,
+        email: this.dwollaCustomerEmail,
         accountType: this.accountType,
       })
     } finally {

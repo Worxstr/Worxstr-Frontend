@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(v-if="loading")
+v-container(v-if="loading && !job")
   v-card.soft-shadow.pa-4
     v-skeleton-loader.py-2(type="image, image")
     v-skeleton-loader.py-2(type="sentences, sentences")
@@ -64,7 +64,9 @@ div(v-else)
             br
             | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
 
-        v-layout.px-5.flex-column.flex-sm-row.justify-space-between
+        v-layout.px-5.flex-column.flex-sm-row.justify-space-between(
+          v-if='job.organization_manager && job.contractor_manager && job.consultant_name && job.consultant_code'
+        )
           .flex-grow-1.justify-center
             p.text-subtitle-2.mb-1 Organization manager
             p {{ job.organization_manager | fullName }}
@@ -105,6 +107,7 @@ div(v-else)
                   )
                     v-icon mdi-content-copy
 
+        v-skeleton-loader(type='list-item-two-line' v-else)
 
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
