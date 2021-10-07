@@ -17,7 +17,7 @@ v-list
       v-list-item-subtitle.mb-2 Organization
       v-list-item-title {{ authenticatedUser.organization_info.name }}
 
-  v-list-item(two-line, v-if="authenticatedUser.contractor_info")
+  v-list-item(two-line, v-if="authenticatedUser.contractor_info && authenticatedUser.contractor_info.address")
     v-list-item-content
       v-list-item-subtitle.mb-2 Address
       v-list-item-title {{ authenticatedUser.contractor_info.address }}

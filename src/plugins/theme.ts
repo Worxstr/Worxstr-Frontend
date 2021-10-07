@@ -37,6 +37,10 @@ export async function setTheme(pref: DarkPreference) {
 		await StatusBar.setStyle({
 			style: dark ? Style.Dark : Style.Light
 		})
+		if (Capacitor.getPlatform() === 'android') {
+			const color = dark ? '#000000' : '#ffffff'
+			await StatusBar.setBackgroundColor({ color })
+		}
 	}
 }
 

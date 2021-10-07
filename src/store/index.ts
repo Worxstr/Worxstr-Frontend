@@ -1205,7 +1205,8 @@ axios.interceptors.response.use(
     // TODO: This can lead to unexpected results, like if they get a 401 after
     // TODO: entering an incorrect consultant code. We can remove this after we have
     // TODO: persistant auth working correctly.
-    console.log({error})
+    console.log('Error: '+ message)
+    console.log({error, response: error.response})
     if (error.response.data?.login_required) {
       router.push({
         name: 'signIn',
