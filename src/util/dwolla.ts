@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
 import mitt from 'mitt'
-import { getBaseUrl, showToast } from '@/services/app'
+import { baseUrl, showToast } from '@/services/app'
 
 // Create an event bus for dwolla component events, eg. 'success' and 'error'
 const dwolla = mitt()
@@ -64,9 +64,9 @@ export function configureDwolla({ commit}: any, sandbox = true) {
 
   window.dwolla.configure({
     environment: dwollaEnv,
-    tokenUrl: `${getBaseUrl()}/${tokenUrl}`,
+    tokenUrl: `${baseUrl.get()}/${tokenUrl}`,
     styles: '/dwolla.css',
-    success: async (res: any, p1: any, p2: any, p3: any) => {
+    success: async (res: any) => {
       // Dwolla sdk can't fucking figure out how to handle errors properly
       // So we have to do this
       if (res._embedded && res._embedded?.errors)

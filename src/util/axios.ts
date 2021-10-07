@@ -2,10 +2,10 @@
 import axios from 'axios'
 import router from '@/router'
 import { event } from 'vue-gtag'
-import { setBaseUrl, showToast } from '@/services/app'
+import { baseUrl, showToast } from '@/services/app'
 
 export function configAxios({ commit }: any) {
-  setBaseUrl()
+  baseUrl.set()
   axios.defaults.withCredentials = true
 
   axios.interceptors.request.use(config => {
