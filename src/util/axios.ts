@@ -33,8 +33,8 @@ export function configAxios({ commit }: any) {
       // TODO: this is stupid, don't keep this. use custom axios config
       if (error.request.responseURL.includes('/users/me')) return
 
-      if (res && (res.message || res.response.error)) {
-        message = res.message || res.response.error
+      if (res && (res.message || res.response?.error)) {
+        message = res.message || res.response?.error
       } else if (error.response?.data?.response?.errors) {
         const errorList = error.response.data.response.errors
         message = errorList[Object.keys(errorList)[0]][0]
