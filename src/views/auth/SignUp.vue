@@ -174,6 +174,7 @@ export default class SignUp extends Vue {
   }
 
   get usingSandbox() {
+    if (!this.dwollaCustomerEmail) return false
     return !!this.dwollaCustomerEmail?.includes('+test')
   }
 
@@ -184,7 +185,6 @@ export default class SignUp extends Vue {
 
   async signUp() {
     this.loading = true
-    if (this.form.email.includes('+test'))
     try {
       await signUp(this.$store, {
         ...this.form,

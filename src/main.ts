@@ -21,8 +21,6 @@ import { configureDwolla } from './util/dwolla'
 import { initDarkMode } from './util/theme'
 import { getAuthenticatedUser } from '@/services/users'
 
-console.log(process.env)
-
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
 Vue.use(VueMask)
