@@ -176,7 +176,7 @@ export default class EditJobDialog extends Vue {
   @Watch('opened')
   onOpened(newVal: boolean) {
     if (newVal) {
-      if (this.create) (this.$refs.form as HTMLFormElement).reset()
+      if (this.create) (this.$refs.form as HTMLFormElement)?.reset()
     }
 
     if (newVal && this.job)
@@ -188,7 +188,7 @@ export default class EditJobDialog extends Vue {
   }
 
   get managers(): User[] {
-    return this.$store.state.managers
+    return this.$store.state.users.managers
   }
 
   closeDialog() {

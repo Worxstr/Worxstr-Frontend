@@ -143,6 +143,7 @@ export default class EditTimecardDialog extends Vue {
 
     try {
       await payments.updateTimecard(
+        this.$store,
         this.timecard.id,
         newTimeclockEvents,
       )

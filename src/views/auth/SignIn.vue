@@ -5,6 +5,14 @@ div
       v-form(@submit.prevent="signIn()", v-model="isValid")
         v-card-title.text-h5 Sign in
         v-card-text.pb-0
+          v-alert(
+            v-if='usingSandbox'
+            border='left'
+            color='primary'
+            dense
+            text
+            type='info'
+          ) You are signing in to the sandbox environment
           v-text-field(
             autofocus
             label='Email'
@@ -32,14 +40,6 @@ div
             v-model='form.useBiometrics'
             label='Use biometrics for future sign-ins'
           )
-          v-alert(
-            v-if='usingSandbox'
-            border='left'
-            color='primary'
-            dense
-            text
-            type='info'
-          ) You are signing in to the sandbox environment
 
         v-card-actions
           v-btn(text :to="{name: 'resetPassword', params: {email: form.email}}") Forgot password?
@@ -91,7 +91,7 @@ export default class SignIn extends Vue {
   }
 
   get usingSandbox() {
-    return this.form.email.includes('+test@') || this.form.email.includes('+sandbox@')
+    return this.form.email.includes('+test')
   }
 
   @Watch('usingSandbox')

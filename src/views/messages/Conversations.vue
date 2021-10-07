@@ -10,8 +10,8 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
     )
       v-list-item(
         two-line
-        link,
-        active-class="primary--text",
+        link
+        active-class="primary--text"
         :to="{ name: 'conversation', params: { conversationId: conversation.id } }"
       )
         v-list-item-content
@@ -28,8 +28,8 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
 </template>
 
 <script>
-import { loadConversations } from '@/services/messages'
 import { Component, Vue } from 'vue-property-decorator'
+import { loadConversations } from '@/services/messages'
 
 @Component()
 export default class Conversations extends Vue {
