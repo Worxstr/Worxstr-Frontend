@@ -14,7 +14,7 @@
             v-btn.mr-3.black--text(
               elevation='0'
               color='accent'
-              :to='{ name: defaultRoute() }'
+              :to='{ name: defaultRoute }'
             ) Enter app
 
             v-btn.mr-3(
@@ -250,12 +250,12 @@ export default class Home extends Vue {
     return this.$store.state.users.authenticatedUser
   }
 
-  savingsEstimate() {
+  get savingsEstimate() {
     const { managers, contracts, contractors } = this.calculator
     return managers * contracts * 12 + 0.05 * (contractors / managers) * 52
   }
   
-  defaultRoute() {
+  get defaultRoute() {
     return defaultRoute(this.authenticatedUser)
   }
 

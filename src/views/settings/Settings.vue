@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container.pb-16
-  v-card.d-flex(
+  v-card.d-flex.soft-shadow(
     rounded
     :class="{'flex-column': $vuetify.breakpoint.smAndDown}"
   )

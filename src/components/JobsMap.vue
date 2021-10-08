@@ -97,7 +97,6 @@ export default class JobsMap extends Vue {
   }
 
   updatePosition(coords: any) {
-    console.log({ coords })
     this.locationAccuracy = coords.accuracy
     this.userLocation = {
       lat: coords.latitude,

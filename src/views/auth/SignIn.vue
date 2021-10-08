@@ -60,6 +60,7 @@ import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
 import { signIn } from '@/services/auth'
 import { showToast } from '@/services/app'
+import { Capacitor } from '@capacitor/core'
 
 @Component({
   metaInfo: {
@@ -82,11 +83,12 @@ export default class SignIn extends Vue {
   emailRules = emailRules
   passwordRules = passwordRules
 
-  mounted() {
+  async mounted() {
     if (this.$route.params.email) {
       this.form.email = this.$route.params.email
     }
-    this.loadCredentialsFromBiometrics()
+    if (await this.checkBiometricsAvailable())
+      this.loadCredentialsFromBiometrics()
   }
 
   get usingSandbox() {
@@ -103,9 +105,9 @@ export default class SignIn extends Vue {
 
       // TODO: Find better way to determine login success
       if (data?.response?.user) {
-        const result: AvailableResult = await NativeBiometric.isAvailable()
+        const biometricsAvailable = await this.checkBiometricsAvailable()
 
-        if (result.isAvailable)
+        if (biometricsAvailable)
           this.saveCredentials(this.form.email, this.form.password)
       }
     } finally {
@@ -123,11 +125,17 @@ export default class SignIn extends Vue {
     }
   }
 
-  async loadCredentialsFromBiometrics() {
+  async checkBiometricsAvailable() {
+    if (!Capacitor.isNativePlatform()) return false
     const result: AvailableResult = await NativeBiometric.isAvailable()
-    this.biometricsAvailable = result.isAvailable
+    return this.biometricsAvailable = result.isAvailable
+  }
 
-    if (this.biometricsAvailable) {
+  async loadCredentialsFromBiometrics() {
+
+    const biometricsAvailable = await this.checkBiometricsAvailable()
+
+    if (biometricsAvailable) {
 
       // Get user's credentials
       const credentials: Credentials = await NativeBiometric.getCredentials({
