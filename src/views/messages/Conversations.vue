@@ -36,7 +36,7 @@ export default class Conversations extends Vue {
   loading = false
 
   get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+    return this.$store.state.users.authenticatedUser
   }
 
   get conversations() {

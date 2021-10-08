@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import router from '@/router'
 import { getAuthenticatedUser } from './users'
 import { sandboxMode, showToast } from '@/services/app'
@@ -37,8 +37,15 @@ export async function signIn({ commit }: any, email: string, password: string) {
     router.push({ name: defaultRoute() })
     return data
   } catch (err) {
-    commit('UNSET_AUTHENTICATED_USER')
-    return err
+    if ((err as any).response.status === 400) {
+      // Already signed in
+      await getAuthenticatedUser({ commit })
+      router.push({ name: defaultRoute() })
+    }
+    else {
+      commit('UNSET_AUTHENTICATED_USER')
+      return err
+    }
   }
 }
 

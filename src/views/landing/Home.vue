@@ -11,20 +11,47 @@
             h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to contract labor management
 
           div(v-if='authenticatedUser')
-            v-btn.mr-3.black--text(elevation='0' color='accent', :to='{ name: defaultRoute }') Enter app
-            v-btn.mr-3(outlined, color='accent', @click='signOut')
+            v-btn.mr-3.black--text(
+              elevation='0'
+              color='accent'
+              :to='{ name: defaultRoute() }'
+            ) Enter app
+
+            v-btn.mr-3(
+              outlined
+              color='accent'
+              @click='signOut'
+            )
               span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") Sign out
 
           div(v-else)
-            v-btn.mr-3.black--text(elevation='0' color="accent", :to="{ name: `signUp` }") Start now
-            v-btn.mr-3(outlined, color="accent", :to="{ name: `signIn` }")
+            v-btn.mr-3.black--text(
+              elevation='0'
+              color="accent"
+              :to="{ name: `signUp` }"
+            ) Start now
+
+            v-btn.mr-3(
+              outlined
+              color="accent"
+              :to="{ name: `signIn` }"
+            )
               span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") Sign in
 
           .d-flex.mt-6.align-center
             p.mb-0.mr-2.font-weight-medium Get the app:
-            v-btn(icon href='https://testflight.apple.com/join/hvQXJsYe' target='_blank')
+            v-btn(
+              icon
+              href='https://testflight.apple.com/join/hvQXJsYe'
+              target='_blank'
+            )
               v-icon mdi-apple
-            v-btn(icon href='https://play.google.com/store/apps/details?id=com.worxstr.worxstr' target='_blank')
+
+            v-btn(
+              icon
+              href='https://play.google.com/store/apps/details?id=com.worxstr.worxstr'
+              target='_blank'
+            )
               v-icon mdi-google-play
 
           v-spacer(style='height: 70px')
@@ -137,16 +164,15 @@
 </template>
 
 <script>
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { defaultRoute } from '@/definitions/User'
-import { mapState } from 'vuex'
 import Arrows from '@/components/Arrows.vue'
 import ContactForm from '@/components/ContactForm.vue'
 import { signOut } from '@/services/auth'
 
 let timeout
 
-export default {
-  name: 'home',
+@Component({
   metaInfo: {
     title: 'Worxstr',
     titleTemplate: null,
@@ -155,88 +181,93 @@ export default {
     Arrows,
     ContactForm,
   },
-  computed: {
-    ...mapState(['authenticatedUser']),
-    savingsEstimate: function() {
-      const { managers, contracts, contractors } = this.calculator
-      return managers * contracts * 12 + 0.05 * (contractors / managers) * 52
-    },
-    defaultRoute: function() {
-      return defaultRoute(this.authenticatedUser)
-    },
-  },
-  watch: {
-    savingsEstimate() {
-      clearTimeout(timeout)
-      timeout = setTimeout(() => (this.calculator.promptHelpful = true), 1500)
-    },
-  },
-  methods: {
-    signOut() {
-      signOut(this.$store)
-    }
-  },
-  data: () => ({
-    calculator: {
-      managers: 10,
-      contracts: 15,
-      contractors: 20,
-      promptHelpful: false,
-      helpful: null,
-    },
-    carouselIndex: 0,
-    carousel: [
-      {
-        gradient: 'primary',
-        icon: 'mdi-clock-fast',
-        title: 'Scheduling',
-        description:
-          'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
-        image: 'schedule.svg',
-        style: {
-          md: 'transform: rotate(-2.5deg) scale(1.5) translate(20%,15%)',
-          xs: 'transform: rotate(-2.5deg) scale(3.5) translateY(50px)',
-        },
+})
+export default class Home extends Vue {
+
+  calculator = {
+    managers: 10,
+    contracts: 15,
+    contractors: 20,
+    promptHelpful: false,
+    helpful: null,
+  }
+  
+  carouselIndex = 0
+
+  carousel = [
+    {
+      gradient: 'primary',
+      icon: 'mdi-clock-fast',
+      title: 'Scheduling',
+      description:
+        'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
+      image: 'schedule.svg',
+      style: {
+        md: 'transform: rotate(-2.5deg) scale(1.5) translate(20%,15%)',
+        xs: 'transform: rotate(-2.5deg) scale(3.5) translateY(50px)',
       },
-      {
-        reverse: true,
-        gradient: 'secondary',
-        icon: 'mdi-clock-check-outline',
-        title: 'Time Approvals',
-        description:
-          'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
-        image: 'approvals.svg',
-        style: {
-          md: 'transform: scale(1) translate(0px,100px)',
-          xs: 'transform: scale(3.5) translateY(30%)',
-        },
+    },
+    {
+      reverse: true,
+      gradient: 'secondary',
+      icon: 'mdi-clock-check-outline',
+      title: 'Time Approvals',
+      description:
+        'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
+      image: 'approvals.svg',
+      style: {
+        md: 'transform: scale(1) translate(0px,100px)',
+        xs: 'transform: scale(3.5) translateY(30%)',
       },
-      {
-        gradient: 'tertiary',
-        icon: 'mdi-badge-account',
-        title: 'Onboarding',
-        description:
-          'Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.',
-        image: 'onboarding.svg',
-        style: {
-          md: 'transform: scale(1.7) translatex(20%)',
-          xs: 'transform: scale(6) translate(20px, 10%)',
-        },
+    },
+    {
+      gradient: 'tertiary',
+      icon: 'mdi-badge-account',
+      title: 'Onboarding',
+      description:
+        'Worsxtr’s onboarding process streamlines the information gathering process to increase efficiency and decrease communication errors.',
+      image: 'onboarding.svg',
+      style: {
+        md: 'transform: scale(1.7) translatex(20%)',
+        xs: 'transform: scale(6) translate(20px, 10%)',
       },
-      {
-        gradient: 'secondary',
-        icon: 'mdi-cash-lock',
-        title: 'Payments',
-        description:
-          'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
-        image: 'approvals.svg',
-        style: {
-          md: 'transform: scale(1) translate(0px,100px)',
-          xs: 'transform: scale(3.5) translateY(30%)',
-        },
+    },
+    {
+      gradient: 'secondary',
+      icon: 'mdi-cash-lock',
+      title: 'Payments',
+      description:
+        'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
+      image: 'approvals.svg',
+      style: {
+        md: 'transform: scale(1) translate(0px,100px)',
+        xs: 'transform: scale(3.5) translateY(30%)',
       },
-    ],
-  }),
+    },
+  ]
+  
+  get authenticatedUser() {
+    return this.$store.state.users.authenticatedUser
+  }
+
+  savingsEstimate() {
+    const { managers, contracts, contractors } = this.calculator
+    return managers * contracts * 12 + 0.05 * (contractors / managers) * 52
+  }
+  
+  defaultRoute() {
+    return defaultRoute(this.authenticatedUser)
+  }
+
+  @Watch('savingsEstimate')
+  savingsEstimateChanged() {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => (this.calculator.promptHelpful = true), 1500)
+  }
+
+  signOut() {
+    signOut(this.$store)
+  }
 }
 </script>
 

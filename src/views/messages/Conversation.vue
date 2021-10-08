@@ -67,18 +67,18 @@ export default class Conversation extends Vue {
     await messages.loadConversation(this.$store, parseInt(this.$route.params.conversationId))
   }
 
-  @Socket()
-  connect() {
-    console.log('Socket connected')
-  }
+  // @Socket()
+  // connect() {
+  //   console.log('Socket connected')
+  // }
 
-  @Socket('message:create')
-  messageCreated(message: Message) {
-    this.$store.commit('ADD_MESSAGE', {
-      message,
-      conversationId: message.conversation_id,
-    })
-  }
+  // @Socket('message:create')
+  // messageCreated(message: Message) {
+  //   this.$store.commit('ADD_MESSAGE', {
+  //     message,
+  //     conversationId: message.conversation_id,
+  //   })
+  // }
 
   get authenticatedUser() {
     return this.$store.state.users.authenticatedUser
