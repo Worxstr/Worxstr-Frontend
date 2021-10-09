@@ -111,14 +111,13 @@ const mutations = {
     )
   },
 
-  ADD_TRANSFER(state: PaymentsState, { transfer, prepend }: { transfer: Transfer; prepend: boolean }) {
+  ADD_TRANSFER(state: PaymentsState, transfer: Transfer) {
     Vue.set(state.transfers.byId, transfer.id, {
       ...state.transfers.byId[transfer.id],
       ...transfer
     })
     if (!state.transfers.all.includes(transfer.id))
-      if (prepend) state.transfers.all.unshift(transfer.id)
-      else state.transfers.all.push(transfer.id)
+      state.transfers.all.push(transfer.id)
   },
 }
 
@@ -148,7 +147,11 @@ const getters = {
   },
 
   transfers: (state: PaymentsState, getters: any) => {
-    return state.transfers.all.map((transferId) => getters.transfer(transferId))
+    return state.transfers.all
+      .map((transferId) => getters.transfer(transferId))
+      .sort((a: Transfer, b: Transfer) => 
+        ((new Date(b.created)).valueOf()) - ((new Date(a.created)).valueOf())
+      )
   },
 }
 

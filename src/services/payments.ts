@@ -25,7 +25,7 @@ export async function updateTimecard({ commit }: any, timecardId: number, events
       changes: events,
     },
   })
-  commit('ADD_TIMECARD', data.timecard)
+  commit('ADD_TIMECARD', data)
   return data
 }
 
@@ -55,11 +55,10 @@ export async function completePayments({ commit }: any, timecardIds: number[]) {
   timecardIds.forEach((timecardId: number) => {
     commit('REMOVE_TIMECARD', timecardId)
   })
-  data.transfers.forEach((obj: { transfer: Transfer }) => {
-    const transfer = obj.transfer
-    commit('ADD_TRANSFER', { transfer, prepend: true })
-    commit('ADD_TO_BALANCE', (-parseFloat(transfer?.amount?.value)))
+  data.transfers.forEach((transfer: Transfer) => {
+    commit('ADD_TRANSFER', transfer)
   })
+  commit('SET_BALANCE', data.balance)
 }
 
 export async function loadBalance({ commit }: any) {
@@ -143,7 +142,7 @@ export async function addToBalance({ commit }: any, transfer: { amount: number; 
     url: 'payments/balance/add',
     data: transfer,
   })
-  commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
+  commit('ADD_TRANSFER', transfer)
   showToast({ commit }, { text: 'Hang tight, your transfer is being processed.' })
   return data
 }
@@ -154,8 +153,8 @@ export async function removeFromBalance({ commit }: any, transfer: { amount: num
     url: 'payments/balance/remove',
     data: transfer,
   })
-  commit('ADD_TRANSFER', { transfer: data.transfer, prepend: true })
-  commit('ADD_TO_BALANCE', -transfer.amount)
+  commit('ADD_TRANSFER', data.transfer)
+  commit('SET_BALANCE', data.transfer.new_balance)
   showToast({ commit }, { text: 'Hang tight, your transfer is being processed.' })
   return data
 }
@@ -170,7 +169,7 @@ export async function loadTransfers({ commit }: any, { limit=10, offset=0 } = {}
     }
   })
   data.transfers.forEach((transfer: Transfer) => {
-    commit('ADD_TRANSFER', { transfer })
+    commit('ADD_TRANSFER', transfer)
   })
   return data
 }

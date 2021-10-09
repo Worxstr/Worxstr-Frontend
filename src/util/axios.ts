@@ -35,15 +35,12 @@ export function configAxios({ commit }: any) {
 
       if (res && (res.message || res.response?.error)) {
         message = res.message || res.response?.error
-      } else if (error.response?.data?.response?.errors) {
+      }
+      else if (error.response?.data?.response?.errors) {
         const errorList = error.response.data.response.errors
         message = errorList[Object.keys(errorList)[0]][0]
       }
 
-      // When we receive a 401 from the API, send them to the sign in page
-      // TODO: This can lead to unexpected results, like if they get a 401 after
-      // TODO: entering an incorrect consultant code. We can remove this after we have
-      // TODO: persistant auth working correctly.
       if (error.response.data?.login_required) {
         router.push({
           name: 'signIn',
