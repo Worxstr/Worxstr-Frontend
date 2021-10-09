@@ -11,8 +11,13 @@
       :key="message.id"
       :class="sentByMe(message) ? 'right' : 'left'"
     )
-      p.px-4.py-2.mb-2.rounded-xl.grey(
-        :class="{ 'lighten-3': !$vuetify.theme.dark, 'darken-3': $vuetify.theme.dark }"
+      p.px-4.py-2.mb-2.rounded-xl(
+        :class="{\
+          'lighten-2': !$vuetify.theme.dark,\
+          'darken-2': $vuetify.theme.dark,\
+          'grey': !sentByMe(message),\
+          'primary white--text': sentByMe(message),\
+        }"
       ) 
         | {{ message.body }}
 
