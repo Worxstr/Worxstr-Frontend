@@ -11,10 +11,7 @@ export async function loadJobs({ commit }: any) {
   })
   data.jobs.forEach((job: Job) => {
     // TODO: Normalize nested data
-    commit('ADD_JOB', {
-      job,
-      authenticatedUser: usersStore.state.authenticatedUser
-    })
+    commit('ADD_JOB', job)
   })
   return data
 }
@@ -35,10 +32,7 @@ export async function loadJob({ commit }: any, jobId: number) {
     commit('ADD_USER', c)
   })
 
-  commit('ADD_JOB', {
-    job: data.job,
-    authenticatedUser: usersStore.state.authenticatedUser,
-  })
+  commit('ADD_JOB', data.job)
   return data
 }
 
@@ -48,10 +42,7 @@ export async function createJob({ commit }: any, job: Job) {
     url: 'jobs',
     data: job,
   })
-  commit('ADD_JOB', {
-    job: data,
-    authenticatedUser: usersStore.state.authenticatedUser,
-  })
+  commit('ADD_JOB', data)
   return data
 }
 
@@ -61,10 +52,7 @@ export async function updateJob({ commit }: any, job: Job) {
     url: `jobs/${job.id}`,
     data: job,
   })
-  commit('ADD_JOB', {
-    job: data,
-    authenticatedUser: usersStore.state.authenticatedUser,
-  })
+  commit('ADD_JOB', data)
   return data
 }
 

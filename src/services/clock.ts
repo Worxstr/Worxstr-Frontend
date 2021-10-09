@@ -43,7 +43,7 @@ export async function clockIn({ commit }: any, code: string) {
       code,
     },
   })
-  commit('ADD_CLOCK_EVENT', data.event)
+  commit('ADD_CLOCK_EVENT', data)
   commit('CLOCK_IN')
   return data
 }
@@ -56,7 +56,7 @@ export async function clockOut({ commit }: any) {
       shift_id: jobsStore.state.shifts.next?.id,
     },
   })
-  commit('ADD_CLOCK_EVENT', data.event)
+  commit('ADD_CLOCK_EVENT', data)
   commit('CLOCK_OUT')
 }
 
@@ -67,6 +67,6 @@ export async function toggleBreak({ commit }: any, breakState: boolean) {
     method: 'POST',
     url: `clock/${action}-break`,
   })
-  commit('ADD_CLOCK_EVENT', data.data)
+  commit('ADD_CLOCK_EVENT', data)
   commit(`${action.toUpperCase()}_BREAK`)
 }

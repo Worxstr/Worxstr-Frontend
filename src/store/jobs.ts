@@ -29,14 +29,10 @@ export const initialState = (): JobsState => ({
 })
 
 const mutations = {
-  ADD_JOB(state: JobsState, { job, authenticatedUser }: { job: Job; authenticatedUser: User }) {
+  ADD_JOB(state: JobsState, job: Job) {
     Vue.set(state.byId, job.id, {
       ...state.byId[job.id],
       ...job,
-      direct: (
-        authenticatedUser?.id === job.organization_manager_id ||
-        authenticatedUser?.id === job.contractor_manager_id
-      )
     })
     if (!state.all.includes(job.id)) state.all.push(job.id)
   },
