@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
+import socket from '@/util/socket-io'
 import { Geolocation } from '@capacitor/geolocation'
 import { User } from '@/definitions/User'
 import usersStore from '@/store/users'
@@ -10,6 +11,11 @@ export async function getAuthenticatedUser({ commit }: any) {
     url: '/users/me',
   })
   commit('SET_AUTHENTICATED_USER', data.authenticated_user)
+  const { fs_uniquifier } = data.authenticated_user
+  console.log(data)
+  socket.emit('sign-in', {
+    fs_uniquifier
+  })
   return data.authenticated_user
 }
 

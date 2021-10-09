@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import router from '@/router'
 import { getAuthenticatedUser } from './users'
 import { sandboxMode, showToast } from '@/services/app'

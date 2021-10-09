@@ -49,7 +49,7 @@ export async function createJob({ commit }: any, job: Job) {
     data: job,
   })
   commit('ADD_JOB', {
-    job: data.job,
+    job: data,
     authenticatedUser: usersStore.state.authenticatedUser,
   })
   return data
@@ -62,8 +62,8 @@ export async function updateJob({ commit }: any, job: Job) {
     data: job,
   })
   commit('ADD_JOB', {
-    job: data.job,
-    uthenticatedUser: usersStore.state.authenticatedUser,
+    job: data,
+    authenticatedUser: usersStore.state.authenticatedUser,
   })
   return data
 }

@@ -53,6 +53,6 @@ export async function sendMessage({ commit }: any, message: { body: string }, co
 		url: `conversations/${conversationId}/messages`,
 		data: message,
 	})
-	commit('ADD_MESSAGE', data.message)
+	// commit('ADD_MESSAGE', data.message)
 	return data.message
 }
