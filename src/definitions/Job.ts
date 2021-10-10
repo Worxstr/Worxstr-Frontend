@@ -21,7 +21,7 @@ export type Job = {
 	organization_id: number;
 	organization_manager_id: number;
 	contractor_manager_id: number;
-	shifts: Shift[];
+	shifts?: Shift[];
 	contractors: User[];
 	managers: User[];
 }

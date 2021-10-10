@@ -22,12 +22,6 @@ export async function loadJob({ commit }: any, jobId: number) {
     url: `jobs/${jobId}`,
   })
 
-  // Flatten shift data
-  // data.job.shifts = data.job.shifts.map(shift => {
-  //   commit('ADD_SHIFT', shift)
-  //   return shift.id
-  // })
-
   data.job.contractors.forEach((c: User) => {
     commit('ADD_USER', c)
   })
