@@ -2,7 +2,6 @@
 import axios from 'axios'
 import { Job, Shift } from '@/definitions/Job'
 import { User } from '@/definitions/User'
-import usersStore from '@/store/users'
 
 export async function loadJobs({ commit }: any) {
   const { data } = await axios({
@@ -83,7 +82,6 @@ export async function updateShift({ commit }: any, shift: {
     url: `shifts/${shift.id}`,
     data: { shift },
   })
-  commit('REMOVE_SHIFT', { shiftId: shift.id, jobId: data.shift.job_id })
   commit('ADD_SHIFT', { shift: data.shift, jobId: data.shift.job_id })
   return data
 }

@@ -1,14 +1,15 @@
 <template lang="pug">
   v-text-field(
-    type="datetime-local",
+    type="datetime-local"
     @input='updateValue'
     dense
     :value='raw'
-    :label="label",
-    :required='required',
-    :color="color",
+    :label="label"
+    :required='required'
+    :color="color"
     :filled="filled"
-    :outlined='outlined',
+    :outlined='outlined'
+    :hide-details='hideDetails'
   )
 </template>
 
@@ -25,6 +26,7 @@ export default class DatetimeInput extends Vue {
   @Prop({ default: false }) readonly required!: boolean
   @Prop({ default: false }) readonly filled!: boolean
   @Prop({ default: false }) readonly outlined!: boolean
+  @Prop({ default: false }) readonly hideDetails!: boolean
 
 
   get raw() {
