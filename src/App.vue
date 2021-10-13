@@ -12,17 +12,17 @@ v-app
   )
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
 
-      //- transition(
-      //-   appear
-      //-   name='slide-y-reverse-transition'
-      //- )
-      v-alert.offline-alert.soft-shadow(
-        v-if='!offline'
-        dense
-        type='error'
-        :class='{center: $vuetify.breakpoint.mdAndUp}'
-        :style="`bottom: ${bottomMargin}px`"
-      ) You are offline. Some features may not be available until you reconnect.
+      transition(
+        appear
+        name='slide-y-reverse-transition'
+      )
+        v-alert.offline-alert.soft-shadow(
+          v-if='offline'
+          dense
+          type='error'
+          :class='{center: $vuetify.breakpoint.mdAndUp}'
+          :style="`bottom: ${bottomMargin}px`"
+        ) You are offline. Some features may not be available until you reconnect.
       
       transition(
         appear,
