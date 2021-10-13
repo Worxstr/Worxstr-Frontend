@@ -20,6 +20,7 @@ MERGED from [:capacitor-app] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\nod
 MERGED from [:capacitor-clipboard] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\clipboard\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:capacitor-dialog] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\dialog\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:capacitor-geolocation] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\geolocation\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
+MERGED from [:capacitor-network] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\network\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-11:12
 MERGED from [:capacitor-status-bar] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\status-bar\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-16:12
 MERGED from [:capacitor-android] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\android\capacitor\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
@@ -169,6 +170,8 @@ MERGED from [:capacitor-dialog] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\
 MERGED from [:capacitor-dialog] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\dialog\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:capacitor-geolocation] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\geolocation\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:capacitor-geolocation] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\geolocation\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
+MERGED from [:capacitor-network] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\network\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
+MERGED from [:capacitor-network] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\network\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:capacitor-status-bar] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\status-bar\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:capacitor-status-bar] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\status-bar\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
@@ -287,6 +290,10 @@ ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\
 		ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:34:17-51
 	android:name
 		ADDED from C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:33:17-67
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from [:capacitor-network] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\network\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-79
+	android:name
+		ADDED from [:capacitor-network] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\network\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:9:22-76
 activity#com.epicshaggy.biometric.AuthAcitivy
 ADDED from [:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-13:59
 	android:label

@@ -21,7 +21,7 @@ v-app
           dense
           type='error'
           :class='{center: $vuetify.breakpoint.mdAndUp}'
-          :style="`bottom: ${bottomMargin}px`"
+          :style="`margin-bottom: ${bottomMargin}px`"
         ) You are offline. Some features may not be available until you reconnect.
       
       transition(
@@ -49,6 +49,9 @@ import Toolbar from '@/layouts/Toolbar.vue'
 import NavDrawer from '@/layouts/NavDrawer.vue'
 import WorxstrFooter from '@/layouts/Footer.vue'
 import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
+import { Network } from '@capacitor/network';
+
+
 
 @Component({
   metaInfo: {
@@ -87,12 +90,8 @@ export default class App extends Vue {
       }, 2 ** i)
     }
 
-    window.addEventListener('online', () => {
-      this.offline = false
-    })
-
-    window.addEventListener('offline', () => {
-      this.offline = true
+    Network.addListener('networkStatusChange', status => {
+      this.offline = !status.connected
     })
   }
 
@@ -190,7 +189,7 @@ $halfnavwidth: $navwidth / 2;
   position: fixed !important;
   z-index: 5;
   bottom: 0;
-  margin: 0 10px;
+  margin: 10px;
   width: 580px;
   left: 50%;
   transform: translateX(calc(-50% - 10px));

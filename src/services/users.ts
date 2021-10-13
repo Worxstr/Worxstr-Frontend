@@ -12,7 +12,6 @@ export async function getAuthenticatedUser({ commit }: any) {
   })
   commit('SET_AUTHENTICATED_USER', data.authenticated_user)
   const { fs_uniquifier } = data.authenticated_user
-  console.log(data)
   socket.emit('sign-in', {
     fs_uniquifier
   })

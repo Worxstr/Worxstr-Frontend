@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
-import { configAxios } from '@/util/axios'
 
 import * as app from './app'
 import * as users from './users'
@@ -47,7 +46,5 @@ const storeConfig: StoreOptions<RootState> = {
 }
 
 export const store = new Vuex.Store<RootState>(storeConfig)
-
-configAxios(store)
 
 export default store

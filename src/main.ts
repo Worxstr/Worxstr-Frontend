@@ -18,6 +18,7 @@ import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
 import { configureDwolla } from './util/dwolla'
+import { configureAxios } from './util/axios'
 import { initDarkMode } from './util/theme'
 import { getAuthenticatedUser } from '@/services/users'
 import { sandboxMode } from '@/services/app'
@@ -80,6 +81,7 @@ function configureBackButtonPress() {
 }
 
 async function init() {
+  await configureAxios(store)
   await getUserData()
 
   new Vue({
