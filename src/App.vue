@@ -10,7 +10,15 @@ v-app
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
     :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
+    v-alert.offline-alert.soft-shadow(
+      v-if='offline'
+      dense
+      type='error'
+      :style="`bottom: ${bottomMargin}px`"
+    ) You are offline. Some features may not be available until you reconnect.
+
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
+      
       transition(
         appear,
         name="fade-transition",
@@ -25,6 +33,7 @@ v-app
   worxstr-footer(v-if="isLanding")
 
   message-snackbar(:bottom-offset='bottomMargin')
+
 </template>
 
 <script lang="ts">
@@ -38,12 +47,12 @@ import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 
 @Component({
   metaInfo: {
-    titleTemplate: "%s | Worxstr",
+    titleTemplate: '%s | Worxstr',
     meta: [
-      { charset: "utf-8" },
+      { charset: 'utf-8' },
       {
-        name: "description",
-        content: "The adaptive solution to wide-scale temp labor management.",
+        name: 'description',
+        content: 'The adaptive solution to wide-scale temp labor management.',
       },
     ],
   },
@@ -55,9 +64,9 @@ import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
   },
 })
 export default class App extends Vue {
-
   drawer = false
   stylesLoaded = false
+  offline = false
 
   // Wait for external styles to load to compute safe areas
   created() {
@@ -72,10 +81,18 @@ export default class App extends Vue {
         this.stylesLoaded = true
       }, 2 ** i)
     }
+
+    window.addEventListener('online', () => {
+      this.offline = false
+    })
+
+    window.addEventListener('offline', () => {
+      this.offline = true
+    })
   }
 
   get authenticatedUser(): User {
-    return this.$store.state.users.authenticatedUser;
+    return this.$store.state.users.authenticatedUser
   }
 
   get showNavDrawer() {
@@ -92,17 +109,21 @@ export default class App extends Vue {
 
   get headerHeight() {
     if (!this.showHeader) return 0
-    return !this.mobileLayout ? 64 : 56;
+    return !this.mobileLayout ? 64 : 56
   }
-  footerHeight = 56;
+  footerHeight = 56
 
   get pageHeight() {
     // Normal view
-    if (!this.$route.meta?.fullHeight || this.$route.meta?.noSkeleton) return "100%";
+    if (!this.$route.meta?.fullHeight || this.$route.meta?.noSkeleton)
+      return '100%'
     // Full height, bottom nav hidden
-    else return `calc(100vh - ${this.headerHeight + this.safeAreaTop + this.safeAreaBottom}px)`;
+    else
+      return `calc(100vh - ${this.headerHeight +
+        this.safeAreaTop +
+        this.safeAreaBottom}px)`
   }
-  
+
   get mobileLayout() {
     return this.$vuetify.breakpoint.smAndDown
   }
@@ -112,7 +133,7 @@ export default class App extends Vue {
     if (!this.stylesLoaded) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
-        .getPropertyValue("--sat")
+        .getPropertyValue('--sat')
         .replace('px', '')
     )
   }
@@ -120,7 +141,7 @@ export default class App extends Vue {
     if (!this.stylesLoaded || this.$route.meta?.bleedSafeAreaBottom) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
-        .getPropertyValue("--sab")
+        .getPropertyValue('--sab')
         .replace('px', '')
     )
   }
@@ -129,7 +150,7 @@ export default class App extends Vue {
     if (!this.mobileLayout || this.isLanding) {
       return this.headerHeight + this.safeAreaTop
     }
-    
+
     return this.safeAreaTop
   }
 
@@ -155,5 +176,13 @@ export default class App extends Vue {
 }
 .no-bg {
   background-color: transparent !important;
+}
+
+.offline-alert {
+  z-index: 5;
+  margin: 10px;
+  width: calc(100% - 20px);
+  position: fixed !important;
+  bottom: 0;
 }
 </style>

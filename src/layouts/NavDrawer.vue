@@ -8,6 +8,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
   mini-variant-width="68",
   :permanent='$vuetify.breakpoint.mdAndUp'
   :temporary='$vuetify.breakpoint.smAndDown'
+  :bottom='$vuetify.breakpoint.smAndDown'
   touchless
   v-touch='{down: () => { value = false }}'
 )
