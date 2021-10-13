@@ -9,13 +9,17 @@ export function configAxios({ commit }: any) {
   axios.defaults.withCredentials = true
 
   axios.interceptors.request.use(config => {
+
+    // Send Gtag event for each request
     const url = config.url?.replace(/^.*\/\/[^/]+/, '') || '' // Get url without domain
     event(url, {
       event_category: 'API request',
       event_label: url,
       value: config.url
     })
+
     return config
+
   }, error => {
     return Promise.reject(error)
   })
@@ -27,10 +31,17 @@ export function configAxios({ commit }: any) {
     (error) => {
       // if (error.config.hideErrorMessage) return
 
+      if (!navigator.onLine) {
+        showToast({commit}, { text: 'You are offline.' })
+        return
+      }
+
       let message
       const res = error.response?.data
 
       // TODO: this is stupid, don't keep this. use custom axios config
+      // We are ignoring an error message if we are trying to access /users/me without being logged in.
+      // This request is made on app load.
       if (error.request.responseURL.includes('/users/me')) return
 
       if (res && (res.message || res.response?.error)) {

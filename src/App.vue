@@ -10,14 +10,19 @@ v-app
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
     :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
-    v-alert.offline-alert.soft-shadow(
-      v-if='offline'
-      dense
-      type='error'
-      :style="`bottom: ${bottomMargin}px`"
-    ) You are offline. Some features may not be available until you reconnect.
-
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
+
+      //- transition(
+      //-   appear
+      //-   name='slide-y-reverse-transition'
+      //- )
+      v-alert.offline-alert.soft-shadow(
+        v-if='!offline'
+        dense
+        type='error'
+        :class='{center: $vuetify.breakpoint.mdAndUp}'
+        :style="`bottom: ${bottomMargin}px`"
+      ) You are offline. Some features may not be available until you reconnect.
       
       transition(
         appear,
@@ -178,11 +183,23 @@ export default class App extends Vue {
   background-color: transparent !important;
 }
 
+$navwidth: 256px;
+$halfnavwidth: $navwidth / 2;
+
 .offline-alert {
-  z-index: 5;
-  margin: 10px;
-  width: calc(100% - 20px);
   position: fixed !important;
+  z-index: 5;
   bottom: 0;
+  margin: 0 10px;
+  width: 580px;
+  left: 50%;
+  transform: translateX(calc(-50% - 10px));
+  max-width: calc(100% - 20px);
+
+  // Center, accounting for nav drawer width
+  &.center {
+    left: calc(50% + #{$navwidth});
+    transform: translateX(calc(-50% - 10px - #{$halfnavwidth}));
+  }
 }
 </style>
