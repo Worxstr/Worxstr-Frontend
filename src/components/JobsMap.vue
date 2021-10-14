@@ -48,12 +48,9 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Job } from '@/definitions/Job'
 import * as geolocation from '@/services/geolocation'
 
-
-
 @Component
 export default class JobsMap extends Vue {
   locationAccuracy: number | null = null
-
   infoWindowPos: geolocation.Position | null = null
   infoWinOpen = false
   currentMidx = null

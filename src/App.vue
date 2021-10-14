@@ -10,30 +10,31 @@ v-app
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
     :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
-    v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
+    pull-to(:top-load-method='refresh' :top-config='pullToConfig')
+      v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
 
-      transition(
-        appear
-        name='slide-y-reverse-transition'
-      )
-        v-alert.offline-alert.soft-shadow(
-          v-if='offline'
-          dense
-          type='error'
-          :class='{center: $vuetify.breakpoint.mdAndUp}'
-          :style="`margin-bottom: ${bottomMargin}px`"
-        ) You are offline. Some features may not be available until you reconnect.
-      
-      transition(
-        appear,
-        name="fade-transition",
-        mode="out-in",
-        :duration="{ enter: 150, leave: 50 }"
-      )
-        router-view#router-view(:style="`height: ${pageHeight};`")
+        transition(
+          appear
+          name='slide-y-reverse-transition'
+        )
+          v-alert.offline-alert.soft-shadow(
+            v-if='offline'
+            dense
+            type='error'
+            :class='{center: $vuetify.breakpoint.mdAndUp}'
+            :style="`margin-bottom: ${bottomMargin}px`"
+          ) You are offline. Some features may not be available until you reconnect.
         
-      //- For some dumbass reason this computed value won't recalculate unless I have this here
-      div(style='display: none') {{ safeAreaTop }}
+        transition(
+          appear,
+          name="fade-transition",
+          mode="out-in",
+          :duration="{ enter: 150, leave: 50 }"
+        )
+          router-view#router-view(:style="`height: ${pageHeight};`" :key='$route.fullPath')
+          
+        //- For some dumbass reason this computed value won't recalculate unless I have this here
+        div(style='display: none') {{ safeAreaTop }}
 
   worxstr-footer(v-if="isLanding")
 
@@ -45,13 +46,12 @@ v-app
 import { Component, Vue } from 'vue-property-decorator'
 import { User } from './definitions/User'
 
+import PullTo from 'vue-pull-to'
 import Toolbar from '@/layouts/Toolbar.vue'
 import NavDrawer from '@/layouts/NavDrawer.vue'
 import WorxstrFooter from '@/layouts/Footer.vue'
 import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 import { Network } from '@capacitor/network';
-
-
 
 @Component({
   metaInfo: {
@@ -69,6 +69,7 @@ import { Network } from '@capacitor/network';
     NavDrawer,
     WorxstrFooter,
     MessageSnackbar,
+    PullTo,
   },
 })
 export default class App extends Vue {
@@ -93,6 +94,21 @@ export default class App extends Vue {
     Network.addListener('networkStatusChange', status => {
       this.offline = !status.connected
     })
+  }
+
+  refresh(loaded: any) {
+    const path = this.$route.fullPath
+    this.$router.push(path + '#')
+    this.$router.push(path)
+    loaded('done')
+  }
+
+  pullToConfig = {
+    pullText: 'Keep pulling to refresh',
+    triggerText: 'Release to refresh',
+    loadingText: 'Refreshing...',
+    doneText: 'Refreshing...',
+    failText: 'Failed to refresh',
   }
 
   get authenticatedUser(): User {
