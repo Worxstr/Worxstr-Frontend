@@ -45,20 +45,16 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Geolocation } from '@capacitor/geolocation'
 import { Job } from '@/definitions/Job'
+import * as geolocation from '@/services/geolocation'
 
-type LatLng = {
-  lat: number;
-  lng: number;
-}
+
 
 @Component
 export default class JobsMap extends Vue {
-  userLocation: LatLng | null = null
   locationAccuracy: number | null = null
 
-  infoWindowPos: LatLng | null = null
+  infoWindowPos: geolocation.Position | null = null
   infoWinOpen = false
   currentMidx = null
   infoContent: Job | null = null
@@ -74,34 +70,11 @@ export default class JobsMap extends Vue {
   @Prop({ default: false }) showUserLocation!: boolean
 
   async mounted() {
-    this.getUserLocation()
+    await geolocation.init(this.$store)
   }
 
-  async getUserLocation() {
-    if (!this.showUserLocation) return
-
-    // TODO: Keep track of user location in global app state
-
-    const { coords /* , timestamp */ } = await Geolocation.getCurrentPosition({
-      enableHighAccuracy: true,
-    })
-
-    // Watch position changes
-    /* Geolocation.watchPosition({
-      enableHighAccuracy: true,
-    }, ({coords}) => {
-      this.updatePosition(coords)
-    }) */
-
-    this.updatePosition(coords)
-  }
-
-  updatePosition(coords: any) {
-    this.locationAccuracy = coords.accuracy
-    this.userLocation = {
-      lat: coords.latitude,
-      lng: coords.longitude,
-    }
+  get userLocation() {
+    return this.$store.state.users.userLocation
   }
 
   // Calculate appropriate zoom level to display user location and job location

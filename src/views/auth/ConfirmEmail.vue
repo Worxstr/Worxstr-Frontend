@@ -44,7 +44,6 @@ export default class ConfirmEmail extends Vue {
       setTimeout(this.openApp, 500)
     }
     catch (error) {
-      console.log(error)
       this.message = 'Could not confirm email.'
       this.valid = false
     }

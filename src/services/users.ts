@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
 import socket from '@/util/socket-io'
-import { Geolocation } from '@capacitor/geolocation'
 import { User } from '@/definitions/User'
 import usersStore from '@/store/users'
 
@@ -26,20 +25,6 @@ export async function loadUser({ commit }: any, userId: number) {
   commit('ADD_USER', data)
 }
 
-export async function getUserLocation({ commit }: any) {
-  const { coords } = await Geolocation.getCurrentPosition()
-  const userLocation = {
-    lat: coords.latitude,
-    lng: coords.longitude,
-  }
-  commit('SET_USER_LOCATION', userLocation)
-  return userLocation
-}
-
-export async function locationPermissionGranted({ commit }: any) {
-  const permissions = await Geolocation.checkPermissions()
-  return permissions.location === 'granted'
-}
 
 export async function updateContractor({ commit }: any, newFields: any, userId: number) {
   const { data } = await axios({
