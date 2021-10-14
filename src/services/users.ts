@@ -52,18 +52,6 @@ export async function loadManagers({ commit }: any) {
   return data
 }
 
-export async function loadWorkforce({ commit }: any) {
-  const { data } = await axios({
-    method: 'GET',
-    url: '/organizations/me/users',
-  })
-  data.users.forEach((u: User) => {
-    commit('ADD_USER', u)
-    commit('ADD_WORKFORCE_MEMBER', u.id)
-  })
-  return data
-}
-
 export async function addManager({ commit }: any, manager: User) {
   const { data } = await axios({
     method: 'POST',
