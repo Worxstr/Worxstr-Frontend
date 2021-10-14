@@ -41,7 +41,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { currentUserIs, User, UserRole } from '@/types/Users'
 import EditUserDialog from './EditUserDialog.vue'
 import Roles from '@/components/Roles.vue'
-import { loadWorkforce } from '@/services/organizations'
+import { loadWorkforce } from '@/services/users'
 
 @Component({
   metaInfo: {

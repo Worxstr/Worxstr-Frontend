@@ -25,6 +25,17 @@ export async function loadUser({ commit }: any, userId: number) {
   commit('ADD_USER', data)
 }
 
+export async function loadWorkforce({ commit }: any) {
+  const { data } = await axios({
+    method: 'GET',
+    url: '/users/organizations/me',
+  })
+  data.users.forEach((u: User) => {
+    commit('ADD_USER', u)
+    commit('ADD_WORKFORCE_MEMBER', u.id)
+  })
+  return data
+}
 
 export async function updateContractor({ commit }: any, newFields: any, userId: number) {
   const { data } = await axios({

@@ -28,6 +28,10 @@ const mutations = {
 }
 
 const getters = {
+  organization: (state: OrganizationsState) => (organizationId: number) => {
+    return state.byId[organizationId]
+  },
+
   myOrganization: (state: OrganizationsState) => {
     if (!state.myOrganization) return null
     return state.byId[state.myOrganization]
