@@ -3,6 +3,7 @@
     :center="centerLocation",
     :zoom="zoomLevel",
     :style='`height: ${height}`'
+    :options='mapOptions'
   )
     GmapCircle(
       v-if='userLocation && showUserLocation'
@@ -47,6 +48,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Job } from '@/types/Jobs'
 import * as geolocation from '@/services/geolocation'
+import { light, dark } from '@/assets/mapStyles'
 
 @Component
 export default class JobsMap extends Vue {
@@ -68,6 +70,12 @@ export default class JobsMap extends Vue {
 
   get userLocation() {
     return this.$store.state.users.userLocation
+  }
+
+  get mapOptions() {
+    return {
+      styles: this.$vuetify.theme.dark ? dark : light
+    }
   }
 
   // Calculate appropriate zoom level to display user location and job location

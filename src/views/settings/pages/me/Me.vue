@@ -16,6 +16,8 @@ v-list
     v-list-item-content
       v-list-item-subtitle.mb-2 Organization
       v-list-item-title {{ authenticatedUser.organization_info.name }}
+    v-list-item-action(v-if='userIsOrganizationManager')
+      v-btn(text, color="primary", :to="{name: 'settings/organization'}") Go to settings
 
   v-list-item(two-line, v-if="authenticatedUser.contractor_info && authenticatedUser.contractor_info.address")
     v-list-item-content
@@ -59,6 +61,7 @@ import Roles from "@/components/Roles.vue"
 import { Clipboard } from '@capacitor/clipboard'
 import { signOut } from "@/services/auth"
 import { showToast } from '@/services/app'
+import { currentUserIs, UserRole } from "@/types/Users"
 
 @Component({
   components: {
@@ -71,6 +74,10 @@ import { showToast } from '@/services/app'
 export default class Me extends Vue {
   get authenticatedUser() {
     return this.$store.state.users.authenticatedUser
+  }
+
+  get userIsOrganizationManager() {
+    return currentUserIs(UserRole.OrganizationManager)
   }
 
   signOut() {
