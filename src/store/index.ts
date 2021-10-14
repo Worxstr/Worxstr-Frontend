@@ -12,6 +12,9 @@ import * as messages from './messages'
 
 Vue.use(Vuex)
 
+// TODO: Find standardized way to normalize data, perhaps with this library:
+// https://github.com/paularmstrong/normalizr
+
 interface RootState {
   app: app.AppState;
   users: users.UsersState;
