@@ -5,13 +5,13 @@
     :style='`height: ${height}`'
   )
     GmapCircle(
-      v-if='userLocation'
+      v-if='userLocation && showUserLocation'
       :center='userLocation'
-      :radius='locationAccuracy'
+      :radius='userLocation.accuracy'
       :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
     )
     GmapMarker(
-      v-if='userLocation'
+      v-if='userLocation && showUserLocation'
       :position="userLocation"
       :icon="{ url: require('@/assets/icons/current-location-marker.svg')}"
     )
@@ -66,10 +66,6 @@ export default class JobsMap extends Vue {
   @Prop({ default: '40vh' }) height!: string
   @Prop({ default: false }) showUserLocation!: boolean
 
-  async mounted() {
-    await geolocation.init(this.$store)
-  }
-
   get userLocation() {
     return this.$store.state.users.userLocation
   }
@@ -94,7 +90,7 @@ export default class JobsMap extends Vue {
         max = Math.max(max, this.distanceBetweenPoints(jobs[i], jobs[j]))
       }
 
-      if (this.userLocation) {
+      if (this.showUserLocation && this.userLocation) {
         // Compare each job to user location
         max = Math.max(
           max,
@@ -119,12 +115,12 @@ export default class JobsMap extends Vue {
   get centerLocation() {
     const sumLats =
       this.jobs.reduce((acc, job) => acc + job.latitude, 0) +
-      (this.userLocation?.lat || 0)
+      (this.showUserLocation && this.userLocation?.lat || 0)
     const sumLngs =
       this.jobs.reduce((acc, job) => acc + job.longitude, 0) +
-      (this.userLocation?.lng || 0)
-    const avgLats = sumLats / (this.jobs.length + (this.userLocation ? 1 : 0))
-    const avgLngs = sumLngs / (this.jobs.length + (this.userLocation ? 1 : 0))
+      (this.showUserLocation && this.userLocation?.lng || 0)
+    const avgLats = sumLats / (this.jobs.length + (this.showUserLocation && this.userLocation ? 1 : 0))
+    const avgLngs = sumLngs / (this.jobs.length + (this.showUserLocation && this.userLocation ? 1 : 0))
 
     return {
       lat: avgLats,

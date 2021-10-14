@@ -174,6 +174,7 @@ import { currentUserIs, UserRole } from '@/definitions/User'
 import { Job, Shift } from '@/definitions/Job'
 import { loadJob } from '@/services/jobs'
 import { showToast } from '@/services/app'
+import * as geolocation from '@/services/geolocation'
 
 @Component({
   components: {
@@ -211,6 +212,7 @@ export default class JobView extends Vue {
     } finally {
       this.loading = false
     }
+    await geolocation.init(this.$store)
   }
 
   get job(): Job {
