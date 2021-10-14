@@ -258,6 +258,7 @@ const routes = [
         component: Conversation,
         meta: {
           fullHeight: true,
+          disablePullToRefresh: true,
           paramMap: {
             conversationId: 'messages.conversations',
             propBuilder(conversation: MessagesTypes.Conversation) {

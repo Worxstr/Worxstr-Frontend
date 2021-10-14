@@ -10,7 +10,12 @@ v-app
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
     :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
-    pull-to(:top-load-method='refresh' :top-config='pullToConfig')
+    pull-to(
+      :top-load-method='pullToRefreshEnabled ? refresh : undefined'
+      :top-config='pullToRefreshEnabled ? pullToConfig : undefined'
+      :is-top-bounce='pullToRefreshEnabled'
+      :is-bottom-bounce='false'
+    )
       v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
 
         transition(
@@ -52,6 +57,7 @@ import NavDrawer from '@/layouts/NavDrawer.vue'
 import WorxstrFooter from '@/layouts/Footer.vue'
 import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 import { Network } from '@capacitor/network';
+import { Capacitor } from '@capacitor/core'
 
 @Component({
   metaInfo: {
@@ -94,6 +100,10 @@ export default class App extends Vue {
     Network.addListener('networkStatusChange', status => {
       this.offline = !status.connected
     })
+  }
+
+  get pullToRefreshEnabled() {
+    return Capacitor.isNativePlatform() && !this.$route.meta?.disablePullToRefresh
   }
 
   refresh(loaded: any) {
