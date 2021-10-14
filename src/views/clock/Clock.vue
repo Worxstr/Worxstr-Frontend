@@ -4,6 +4,8 @@
     clock-in-dialog(:opened.sync='clockInDialog')
 
     .clock-display.mx-15.d-flex.align-center.align-md-start.flex-column.justify-center
+
+
       div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
         h6.text-h6.text-center.text-md-left
           | Your shift at
@@ -65,8 +67,14 @@
               )
                 | {{ onBreak ? "End" : "Start" }} break
 
-      div(v-else)
+      div(v-else-if='!loadingNextShift')
         h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
+      
+      div(
+        v-else
+        style='width: 300px'
+      )
+        v-skeleton-loader(type='sentences')
 
     v-card.clock-history.soft-shadow.align-self-center(width='100%' max-width='500px' rounded='lg')
 
@@ -79,6 +87,9 @@
           v-btn(text color='primary' @click='loadClockHistory' :loading='loadingHistory')
             v-icon(left dark)  mdi-arrow-down 
             span View {{ clockHistoryCurrentWeek }}
+
+      .px-4(v-else-if='loadingHistory')
+        v-skeleton-loader.py-2(v-for='i in 10' key='item' type="sentences")
 
       v-card-text(v-else)
         | No history yet
@@ -111,10 +122,11 @@ export default class Clock extends Vue {
   togglingClock = false
   togglingBreak = false
   loadingHistory = false
+  loadingNextShift = false
 
   mounted() {
-    if (!this.clockHistory.length) this.loadClockHistory()
-    clock.loadNextShift(this.$store)
+    this.loadClockHistory()
+    this.loadNextShift()
   }
 
   get clock() {
@@ -171,8 +183,22 @@ export default class Clock extends Vue {
 
   async loadClockHistory() {
     this.loadingHistory = true
-    await clock.loadClockHistory(this.$store)
-    this.loadingHistory = false
+    try {
+      await clock.loadClockHistory(this.$store)
+    }
+    finally {
+      this.loadingHistory = false
+    }
+  }
+
+  async loadNextShift() {
+    this.loadingNextShift = true
+    try {
+      await clock.loadNextShift(this.$store)
+    }
+    finally {
+      this.loadingNextShift = false
+    }
   }
 
 }
