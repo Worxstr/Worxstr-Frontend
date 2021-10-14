@@ -36,7 +36,7 @@ v-app
           mode="out-in",
           :duration="{ enter: 150, leave: 50 }"
         )
-          router-view#router-view(:style="`height: ${pageHeight};`" :key='$route.fullPath')
+          router-view#router-view(:style="`height: ${pageHeight};`")
           
         //- For some dumbass reason this computed value won't recalculate unless I have this here
         div(style='display: none') {{ safeAreaTop }}
@@ -107,9 +107,7 @@ export default class App extends Vue {
   }
 
   refresh(loaded: any) {
-    const path = this.$route.fullPath
-    this.$router.push(path + '#')
-    this.$router.push(path)
+    this.$router.go(0)
     loaded('done')
   }
 
