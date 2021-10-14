@@ -23,6 +23,7 @@ MERGED from [:capacitor-geolocation] C:\Users\alexw\Desktop\Worxstr\Worxstr-Fron
 MERGED from [:capacitor-network] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\network\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-11:12
 MERGED from [:capacitor-status-bar] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\status-bar\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-16:12
+MERGED from [:capacitor-secure-storage-plugin] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-secure-storage-plugin\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:capacitor-android] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\android\capacitor\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:17:1-34:12
 MERGED from [androidx.navigation:navigation-ui:2.0.0] C:\Users\alexw\.gradle\caches\transforms-3\918ac7f348c5b27871d532ff97b4f949\transformed\navigation-ui-2.0.0\AndroidManifest.xml:17:1-22:12
@@ -176,6 +177,8 @@ MERGED from [:capacitor-status-bar] C:\Users\alexw\Desktop\Worxstr\Worxstr-Front
 MERGED from [:capacitor-status-bar] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\status-bar\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
+MERGED from [:capacitor-secure-storage-plugin] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-secure-storage-plugin\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
+MERGED from [:capacitor-secure-storage-plugin] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-secure-storage-plugin\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:capacitor-android] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\android\capacitor\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:capacitor-android] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\android\capacitor\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:20:5-22:41
