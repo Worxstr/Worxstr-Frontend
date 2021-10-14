@@ -1,13 +1,13 @@
 import axios from 'axios'
 import { User } from '@/types/Users'
 
-export async function getMyOrganizaion(_context: any) {
+export async function getMyOrganization({ commit }: any) {
   const { data } = await axios({
     method: 'GET',
     url: '/organizations/me',
   })
-  // TODO:
-  // commit('ADD_ORGANIZATION', data)
+  commit('ADD_ORGANIZATION', data)
+  commit('SET_MY_ORGANIZATION', data.id)
 }
 
 export async function updateMyOrganization({ commit }: any) {
@@ -15,8 +15,7 @@ export async function updateMyOrganization({ commit }: any) {
     method: 'PATCH',
     url: '/organizations/me',
   })
-  // TODO:
-  // commit('ADD_ORGANIZATION', data)
+  commit('ADD_ORGANIZATION', data)
 }
 
 export async function loadWorkforce({ commit }: any) {
@@ -24,7 +23,7 @@ export async function loadWorkforce({ commit }: any) {
     method: 'GET',
     url: '/organizations/me/users',
   })
-  data.users.forEach((u: User) => {
+  data.forEach((u: User) => {
     commit('ADD_USER', u)
     commit('ADD_WORKFORCE_MEMBER', u.id)
   })
