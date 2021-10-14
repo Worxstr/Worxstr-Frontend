@@ -165,7 +165,7 @@
 
 <script>
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { defaultRoute } from '@/definitions/User'
+import { defaultRoute } from '@/types/Users'
 import Arrows from '@/components/Arrows.vue'
 import ContactForm from '@/components/ContactForm.vue'
 import { signOut } from '@/services/auth'

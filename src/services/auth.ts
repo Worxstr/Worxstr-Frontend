@@ -3,7 +3,7 @@ import axios from 'axios'
 import router from '@/router'
 import { getAuthenticatedUser } from './users'
 import { sandboxMode, showToast } from '@/services/app'
-import { defaultRoute } from '@/definitions/User'
+import { defaultRoute } from '@/types/Users'
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
 

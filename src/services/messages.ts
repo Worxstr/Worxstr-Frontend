@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Conversation } from '@/definitions/Messages'
+import { Conversation } from '@/types/Messages'
 
 export async function loadConversations({ commit }: any) {
 	const { data } = await axios({

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
-import { Job, Shift } from '@/definitions/Job'
+import { Job, Shift } from '@/types/Jobs'
 
 export interface JobsState {
   all: number[];

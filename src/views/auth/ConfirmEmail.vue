@@ -15,7 +15,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { confirmEmail, resendEmailConfirmation } from '@/services/auth'
 import { showToast } from '@/services/app'
-import { defaultRoute } from '@/definitions/User'
+import { defaultRoute } from '@/types/Users'
 
 @Component({
   metaInfo: {

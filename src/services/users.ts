@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
 import socket from '@/util/socket-io'
-import { User } from '@/definitions/User'
+import { User } from '@/types/Users'
 import usersStore from '@/store/users'
 
 export async function getAuthenticatedUser({ commit }: any) {

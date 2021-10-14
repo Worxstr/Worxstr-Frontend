@@ -2,7 +2,7 @@
 import axios from 'axios'
 import clockStore from '@/store/clock'
 import jobsStore from '@/store/jobs'
-import { ClockEvent } from '@/definitions/Clock'
+import { ClockEvent } from '@/types/Clock'
 
 export async function loadClockHistory({ commit }: any) {
   const { data } = await axios.get(`clock/history`, {

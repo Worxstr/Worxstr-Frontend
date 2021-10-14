@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { CalendarEvent } from '@/definitions/Schedule'
+import { CalendarEvent } from '@/types/Schedule'
 
 export interface ScheduleState {
   events: {

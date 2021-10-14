@@ -27,7 +27,7 @@ v-container(v-touch='onSwipe')
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator"
-import { currentUserIs } from "@/definitions/User"
+import { currentUserIs } from "@/types/Users"
 
 @Component({
 	metaInfo: {

@@ -49,7 +49,7 @@ v-app
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { User } from './definitions/User'
+import { User } from './types/Users'
 
 import PullTo from 'vue-pull-to'
 import Toolbar from '@/layouts/Toolbar.vue'

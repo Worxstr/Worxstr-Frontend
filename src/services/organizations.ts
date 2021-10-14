@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { User } from '@/definitions/User'
+import { User } from '@/types/Users'
 
 export async function getMyOrganizaion(_context: any) {
   const { data } = await axios({

@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import dayjs from 'dayjs'
 
-import { User } from '@/definitions/User'
-import { Conversation } from '@/definitions/Messages'
+import { User } from '@/types/Users'
+import { Conversation } from '@/types/Messages'
 
 Vue.filter('capitalize', (value: string) => {
 	if (!value) return ''

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { FundingSource, Timecard, Transfer } from '@/definitions/Payments'
+import { FundingSource, Timecard, Transfer } from '@/types/Payments'
 
 export interface PaymentsState {
   beneficialOwnersCertified: boolean;

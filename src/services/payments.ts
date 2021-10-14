@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
 import * as Plaid from '@/util/plaid'
-import { FundingSource, Timecard, Transfer } from '@/definitions/Payments'
-import { ClockEvent } from '@/definitions/Clock'
+import { FundingSource, Timecard, Transfer } from '@/types/Payments'
+import { ClockEvent } from '@/types/Clock'
 import { showToast } from '@/services/app'
 
 export async function loadTimecards({ commit }: any) {

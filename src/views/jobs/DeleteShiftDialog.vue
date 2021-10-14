@@ -23,7 +23,7 @@ v-dialog(
 </template>
 
 <script lang="ts">
-import { Shift } from '@/definitions/Job';
+import { Shift } from '@/types/Jobs';
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { deleteShift } from '@/services/jobs'
 

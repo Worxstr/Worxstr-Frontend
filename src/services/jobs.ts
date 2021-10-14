@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
-import { Job, Shift } from '@/definitions/Job'
-import { User } from '@/definitions/User'
+import { Job, Shift } from '@/types/Jobs'
+import { User } from '@/types/Users'
 
 export async function loadJobs({ commit }: any) {
   const { data } = await axios({

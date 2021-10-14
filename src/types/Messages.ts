@@ -1,4 +1,4 @@
-import { User } from '@/definitions/User'
+import { User } from '@/types/Users'
 
 export type Message = {
 	body: string;

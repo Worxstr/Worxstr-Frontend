@@ -4,7 +4,7 @@ import { Route } from 'vue-router/types';
 import Meta from 'vue-meta'
 import { Capacitor } from '@capacitor/core'
 
-import * as MessagesTypes from '@/definitions/Messages'
+import * as MessagesTypes from '@/types/Messages'
 import { fullName, groupNameList } from '@/util/filters'
 import usersStore from '@/store/users'
 
@@ -42,7 +42,7 @@ import NotFound from '@/views/errors/NotFound.vue'
 Vue.use(VueRouter)
 Vue.use(Meta)
 
-import { UserRole, Managers, defaultRoute, currentUserIs, isAuthenticated } from '@/definitions/User'
+import { UserRole, Managers, defaultRoute, currentUserIs, isAuthenticated } from '@/types/Users'
 
 const routes = [
   {

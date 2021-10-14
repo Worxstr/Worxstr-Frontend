@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { User } from '@/definitions/User'
+import { User } from '@/types/Users'
 import { Position } from '@/services/geolocation'
 
 export interface UsersState {

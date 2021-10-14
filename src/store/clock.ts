@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { ClockEvent } from '@/definitions/Clock'
+import { ClockEvent } from '@/types/Clock'
 import { resolveRelations } from '../util/helpers'
 
 export interface ClockState {

@@ -100,7 +100,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import vueAwesomeCountdown from "vue-awesome-countdown"
 
 import * as clock from '@/services/clock'
-import { ClockAction, ClockEvent } from '@/definitions/Clock'
+import { ClockAction, ClockEvent } from '@/types/Clock'
 import ClockEvents from '@/components/ClockEvents.vue'
 import ClockInDialog from './ClockInDialog.vue'
 import dayjs from 'dayjs'

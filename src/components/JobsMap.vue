@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Job } from '@/definitions/Job'
+import { Job } from '@/types/Jobs'
 import * as geolocation from '@/services/geolocation'
 
 @Component

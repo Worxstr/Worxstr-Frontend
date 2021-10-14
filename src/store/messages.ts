@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
-import { Conversation, Message } from '@/definitions/Messages'
-import { User } from '@/definitions/User'
+import { Conversation, Message } from '@/types/Messages'
+import { User } from '@/types/Users'
 
 export interface MessagesState {
   conversations: {

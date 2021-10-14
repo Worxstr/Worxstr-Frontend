@@ -24,7 +24,7 @@ v-dialog(
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { User } from '@/definitions/User'
+import { User } from '@/types/Users'
 import { deleteUser } from '@/services/users'
 
 @Component

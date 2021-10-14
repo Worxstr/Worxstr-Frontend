@@ -47,9 +47,8 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { Component, Vue } from 'vue-property-decorator'
 import * as messages from '@/services/messages'
-import { Socket } from 'vue-socket.io-extended'
-import { Message } from '@/definitions/Messages'
-import { User } from '@/definitions/User'
+import { Message } from '@/types/Messages'
+import { User } from '@/types/Users'
 
 @Component
 export default class Conversation extends Vue {

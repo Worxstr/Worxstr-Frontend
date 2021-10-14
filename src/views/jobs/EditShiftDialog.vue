@@ -74,8 +74,8 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { User } from '@/definitions/User'
-import { Shift } from '@/definitions/Job'
+import { User } from '@/types/Users'
+import { Shift } from '@/types/Jobs'
 import { exists } from '@/util/inputValidation'
 import { updateShift } from '@/services/jobs'
 
