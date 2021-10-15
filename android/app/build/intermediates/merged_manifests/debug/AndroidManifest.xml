@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.worxstr.worxstr"
-    android:versionCode="6"
+    android:versionCode="9"
     android:versionName="0.2.0" >
 
     <uses-sdk
@@ -49,6 +49,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
             android:label="@string/title_activity_main"
             android:launchMode="singleTask"
+            android:screenOrientation="userPortrait"
             android:theme="@style/AppTheme.NoActionBarLaunch" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
