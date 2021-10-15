@@ -5,6 +5,7 @@ import router from './router'
 import store from './store'
 import vuetify from './util/vuetify'
 import { App as CapacitorApp } from '@capacitor/app'
+import { SplashScreen } from '@capacitor/splash-screen'
 
 import './styles/style.scss'
 import './util/filters'
@@ -92,6 +93,7 @@ async function init() {
   }).$mount('#app')
 
   initDarkMode()
+  await SplashScreen.hide()
   configureBackButtonPress()
   configureDwolla(store)
 }

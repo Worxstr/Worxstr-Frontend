@@ -5,11 +5,13 @@
 	"bundledWebRuntime": false,
 	"plugins": {
 		"SplashScreen": {
-			"launchShowDuration": 0
+			"launchAutoHide": false
 		}
 	},
 	"cordova": {},
 	"server": {
-		"hostname": "worxstr.com"
+		"hostname": "worxstr.com",
+		"url": "http://192.168.86.25:8080",
+		"cleartext": true
 	}
 }

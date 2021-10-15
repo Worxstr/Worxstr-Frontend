@@ -19,6 +19,7 @@
     "@capacitor/geolocation": "^1.0.0",
     "@capacitor/ios": "^3.2.3",
     "@capacitor/network": "^1.0.3",
+    "@capacitor/splash-screen": "^1.1.5",
     "@capacitor/status-bar": "^1.0.3",
     "@chenfengyuan/vue-qrcode": "1",
     "@types/socket.io": "^2.1.13",
