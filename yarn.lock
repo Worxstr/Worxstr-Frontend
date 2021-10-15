@@ -10033,11 +10033,6 @@ vue-property-decorator@^9.1.2:
   resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-9.1.2.tgz#266a2eac61ba6527e2e68a6933cfb98fddab5457"
   integrity sha512-xYA8MkZynPBGd/w5QFJ2d/NM0z/YeegMqYTphy7NJQXbZcuU6FC6AOdUAcy4SXP+YnkerC6AfH+ldg7PDk9ESQ==
 
-vue-pull-to@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/vue-pull-to/-/vue-pull-to-0.1.8.tgz#00914cf32951230564a05549577f2cd18cd0e56e"
-  integrity sha512-mANDhY4xpK6FCpStz7oAkeKCw8K1SNu+DSvXLjLdj/oTiapKPqS2RmK+vv4d2z6wJ1VaL5ZWyp6O0Vuugus1Qg==
-
 vue-qrcode-reader@^2.3.16:
   version "2.3.16"
   resolved "https://registry.npmjs.org/vue-qrcode-reader/-/vue-qrcode-reader-2.3.16.tgz"

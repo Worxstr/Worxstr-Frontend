@@ -45,7 +45,6 @@
     "vue-markdown": "^2.2.4",
     "vue-meta": "^2.4.0",
     "vue-property-decorator": "^9.1.2",
-    "vue-pull-to": "^0.1.8",
     "vue-qrcode-reader": "^2.3.16",
     "vue-router": "^3.5.2",
     "vue-socket.io-extended": "^4.2.0",
