@@ -10,6 +10,7 @@ const config: CapacitorConfig = {
       launchAutoHide: false,
       androidScaleType: 'CENTER_INSIDE',
       // showSpinner: true,
+      backgroundColor: '#e7edf7'
     }
   },
   cordova: {},
