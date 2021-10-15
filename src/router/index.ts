@@ -243,7 +243,7 @@ const routes = [
       },
     }
   },
-  {
+{
     path: '/messages',
     name: 'messages',
     component: Messages,
@@ -258,7 +258,6 @@ const routes = [
         component: Conversation,
         meta: {
           fullHeight: true,
-          disablePullToRefresh: true,
           paramMap: {
             conversationId: 'messages.conversations',
             propBuilder(conversation: MessagesTypes.Conversation) {

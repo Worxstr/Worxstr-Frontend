@@ -55,7 +55,6 @@ import { Network } from '@capacitor/network';
   metaInfo: {
     titleTemplate: '%s | Worxstr',
     meta: [
-      { charset: 'utf-8' },
       {
         name: 'description',
         content: 'The adaptive solution to wide-scale temp labor management.',
