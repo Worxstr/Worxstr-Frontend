@@ -16,6 +16,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
 
 @Component
 export default class DatetimeInput extends Vue {
@@ -35,7 +38,7 @@ export default class DatetimeInput extends Vue {
 
   updateValue(value: string) {
     if (!value) return
-    this.$emit('input', dayjs(value).format('YYYY-MM-DDTHH:mm:ssZ'))
+    this.$emit('input', dayjs(value).utc().format('YYYY-MM-DDTHH:mm:ssZ'))
   }
 }
 </script>
