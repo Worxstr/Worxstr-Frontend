@@ -118,7 +118,7 @@ export default class ClockInDialog extends Vue {
     // TODO: Handle incorrect code
     try {
       this.loading = true
-      await clock.clockIn(this.$store, code)
+      await clock.clockIn(this.$store, code, this.$store.getters.nextShift?.id)
       this.closeDialog()
     }
     finally {

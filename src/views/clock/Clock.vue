@@ -17,7 +17,7 @@
 
         h3.text-h3.py-2.font-weight-bold.text-center.text-md-left
           | {{
-          | (nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin)
+          | (nextShift.shiftActive ? (new Date(nextShift.time_end)) : (new Date(nextShift.time_begin)))
           | .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
           | .replace(/^0(?:0:0?)?/, "")
           | }}
@@ -166,7 +166,7 @@ export default class Clock extends Vue {
 
   async clockOut() {
     this.togglingClock = true
-    await clock.clockOut(this.$store)
+    await clock.clockOut(this.$store, this.$store.getters.nextShift?.id)
     this.togglingClock = false
   }
 

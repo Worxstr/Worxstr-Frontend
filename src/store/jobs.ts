@@ -13,7 +13,7 @@ export interface JobsState {
     [key: number]: Job;
   };
   shifts: {
-    next: Shift | null;
+    next: number | null;
     all: number[];
     byId: {
       [key: number]: Shift;
@@ -96,8 +96,8 @@ const mutations = {
     )
   },
 
-  SET_NEXT_SHIFT(state: JobsState, shift: Shift) {
-    state.shifts.next = shift
+  SET_NEXT_SHIFT(state: JobsState, shiftId: number) {
+    state.shifts.next = shiftId
   },
 
   ADD_SHIFT(state: JobsState, shift: Shift) {
@@ -159,20 +159,22 @@ const getters = {
     return state.shifts.byId[id]
   },
 
-  nextShift: (state: JobsState) => {
+  nextShift: (state: JobsState, getters: any) => {
     if (!state.shifts.next) return {}
 
-    const begin = new Date(state.shifts.next.time_begin),
-      end = new Date(state.shifts.next.time_end),
+    const nextShift = state.shifts.byId[state.shifts.next]
+
+    const begin = new Date(nextShift.time_begin),
+      end = new Date(nextShift.time_end),
       now = new Date()
 
     const shiftActive = begin <= now && now <= end
 
+    console.log(nextShift)
+
     return {
-      ...state.shifts.next,
-      time_begin: begin,
-      time_end: end,
       shiftActive,
+      ...nextShift,
     }
   },
 }

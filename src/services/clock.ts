@@ -29,15 +29,16 @@ export async function loadClockHistory({ commit }: any) {
 
 export async function loadNextShift({ commit }: any) {
   const { data } = await axios.get(`shifts/next`)
-  commit('SET_NEXT_SHIFT', data.shift)
+  commit('ADD_SHIFT', data.shift)
+  commit('SET_NEXT_SHIFT', data.shift.id)
 }
 
-export async function clockIn({ commit }: any, code: string) {
+export async function clockIn({ commit }: any, code: string, shiftId: number) {
   const { data } = await axios({
     method: 'POST',
     url: `clock/clock-in`,
     params: {
-      shift_id: jobsStore.state.shifts.next?.id,
+      shift_id: shiftId,
     },
     data: {
       code,
@@ -48,12 +49,12 @@ export async function clockIn({ commit }: any, code: string) {
   return data
 }
 
-export async function clockOut({ commit }: any) {
+export async function clockOut({ commit }: any, shiftId: number) {
   const { data } = await axios({
     method: 'POST',
     url: `clock/clock-out`,
     params: {
-      shift_id: jobsStore.state.shifts.next?.id,
+      shift_id: shiftId,
     },
   })
   commit('ADD_CLOCK_EVENT', data)

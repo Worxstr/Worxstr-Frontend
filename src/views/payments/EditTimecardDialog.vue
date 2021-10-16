@@ -63,6 +63,7 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import * as payments from '@/services/payments'
+import { ClockAction } from '@/types/Clock'
 
 // TODO: Convert this file to typescript
 // TODO: Add chronology validation
@@ -107,19 +108,34 @@ export default class EditTimecardDialog extends Vue {
 
   calculateFormValues() {
     const events = this.timecard.time_clocks
-
-    this.form.data.timeIn = Object.assign({}, events[0])
-    this.form.data.timeOut = Object.assign({}, events[events.length - 1])
-
-    const breakEvents = events.slice(1, events.length - 1),
-          breaks = []
-
-    for (let i = 0; i < breakEvents.length; i += 2) {
-      breaks.push({
-        start: breakEvents[i],
-        end: breakEvents[i + 1],
+      .sort((a, b) => {
+        return new Date(b.time).getTime() - new Date(a.time).getTime()
       })
-    }
+
+    this.form.data.timeIn = events.find(event => event.action === ClockAction.ClockIn)
+    this.form.data.timeOut = events.find(event => event.action === ClockAction.ClockOut)
+
+    const breakStarts = events.filter(event => event.action === ClockAction.StartBreak)
+    const breakEnds = events.filter(event => event.action === ClockAction.EndBreak)
+    /*
+      We will group the start and end breaks into pairs, eg:
+      breaks = [{
+        start: ClockEvent,
+        end: ClockEvent,
+      },
+      ...
+      ]
+    */
+   const breaks = []
+
+    if (breakStarts.length != breakEnds.length) return console.error('Malformed data.')
+
+    breakStarts.forEach((start, index) => {
+      breaks.push({
+        start,
+        end: breakEnds[index]
+      })
+    })
     this.form.data.breaks = breaks
   }
 
