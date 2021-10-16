@@ -55,19 +55,21 @@ const mutations = {
 }
 
 const getters = {
-  clockEvent: (state: ClockState, _: any, __: any, rootGetters: any) => (id: number) => {
-    return resolveRelations(
-      state.events.byId[id],
-      [
-        /*'user'*/
-      ],
-      rootGetters
-    )
+  clockEvent: (state: ClockState/*, _: any, __: any, rootGetters: any*/) => (id: number) => {
+    return state.events.byId[id]
+    // return resolveRelations(
+    //   state.events.byId[id],
+    //   [
+    //     /*'user'*/
+    //   ],
+    //   rootGetters
+    // )
   },
 
   clockHistoryByJobAndContractor: (state: ClockState, getters: any) => (jobId: number, contractorId: number) => {
+    // TODO: The clockEvent getter isn't working for some reason
     return state.events.all
-      .map((eventId) => getters.clockEvent(eventId))
+      .map((eventId: number) => state.events.byId[eventId])
       .filter((event: ClockEvent) => {
         return event.contractor_id === contractorId && event.job_id === jobId
       })

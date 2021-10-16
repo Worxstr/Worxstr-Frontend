@@ -6,6 +6,7 @@ import { sandboxMode, showToast } from '@/services/app'
 import { defaultRoute } from '@/types/Users'
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
+import socket from '@/util/socket-io'
 
 export function shouldUseSandbox(email: string) {
   return email.includes('+test')
@@ -140,6 +141,7 @@ export async function signOut({ state, commit }: any) {
   commit('UNSET_AUTHENTICATED_USER')
   commit('RESET_STATE')
   unsetAuthToken()
+  socket.emit('sign-out')
   router.push({ name: 'home' })
 }
 

@@ -3,7 +3,9 @@ import Vue from 'vue'
 import { Job, Shift } from '@/types/Jobs'
 import { addContractor } from '@/services/users'
 import usersStore from '@/store/users'
+import clockStore from '@/store/clock'
 import { User } from '@/types/Users'
+import { ClockEvent } from '@/types/Clock'
 
 export interface JobsState {
   all: number[];
@@ -33,6 +35,15 @@ function addShift(state: JobsState, shift: Shift) {
   Vue.set(state.shifts.byId, shift.id, shift)
   if (!state.shifts.all.includes(shift.id))
     state.shifts.all.push(shift.id)
+
+  // Normalize clock events
+  if (shift.timeclock_actions) {
+    shift.timeclock_actions.forEach((event: ClockEvent) => {
+      Vue.set(clockStore.state.events.byId, event.id, event)
+      if (!clockStore.state.events.all.includes(event.id))
+        clockStore.state.events.all.push(event.id)
+    })
+  }
 }
 
 const mutations = {
@@ -108,9 +119,18 @@ const getters = {
     const job = state.byId[jobId]
 
     if (job) {
+      // Get shifts associated with the job
       job.shifts = state.shifts.all
         .map((shiftId: number) => {
-          return getters.shift(shiftId)
+          const shift = getters.shift(shiftId)
+
+          // Get timeclock actions associated with the shift
+          shift.timeclock_actions = clockStore.getters.clockHistoryByJobAndContractor(
+            clockStore.state,
+            clockStore.getters
+          )(jobId, shift.contractor_id)
+          
+          return shift
         })
         .filter((shift: Shift) => {
           return shift.job_id === jobId
