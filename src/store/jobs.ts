@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
 import { Job, Shift } from '@/types/Jobs'
+import { addContractor } from '@/services/users'
+import usersStore from '@/store/users'
+import { User } from '@/types/Users'
 
 export interface JobsState {
   all: number[];
@@ -40,6 +43,32 @@ const mutations = {
     })
     delete job.shifts
 
+    if (job.contractor_manager) {
+      usersStore.mutations.ADD_USER(usersStore.state, job.contractor_manager)
+    }
+    delete job.contractor_manager
+    
+    if (job.organization_manager) {
+      usersStore.mutations.ADD_USER(usersStore.state, job.organization_manager)
+    }
+    delete job.organization_manager
+
+    if (job.contractors) {
+      job.contractors.forEach((contractor: User) => {
+        usersStore.mutations.ADD_USER(usersStore.state, contractor)
+      })
+    }
+    if (job?.managers?.contractor_managers) {
+      job.managers.contractor_managers.forEach((manager: User) => {
+        usersStore.mutations.ADD_USER(usersStore.state, manager)
+      })
+    }
+    if (job?.managers?.organization_managers) {
+      job.managers.organization_managers.forEach((manager: User) => {
+        usersStore.mutations.ADD_USER(usersStore.state, manager)
+      })
+    }
+
     Vue.set(state.byId, job.id, {
       ...state.byId[job.id],
       ...job,
@@ -74,10 +103,9 @@ const mutations = {
 }
 
 const getters = {
-  job: (state: JobsState, getters: any) => (jobId: number) => {
+  // TODO: Get type for rootState
+  job: (state: JobsState, getters: any, rootState: any) => (jobId: number) => {
     const job = state.byId[jobId]
-
-    console.log({job, state, getters, jobId})
 
     if (job) {
       job.shifts = state.shifts.all
@@ -87,6 +115,9 @@ const getters = {
         .filter((shift: Shift) => {
           return shift.job_id === jobId
         })
+      
+      job.contractor_manager = rootState.users.byId[job.contractor_manager_id]
+      job.organization_manager = rootState.users.byId[job.organization_manager_id]
     }
 
     return job

@@ -65,7 +65,7 @@ export async function createShift({ commit }: any, shift: Shift, jobId: number) 
     params: { job_id: jobId },
   })
   data.shifts.forEach((shift: Shift) => {
-    commit('ADD_SHIFT', { shift, jobId })
+    commit('ADD_SHIFT', shift)
   })
   return data
 }
@@ -82,14 +82,14 @@ export async function updateShift({ commit }: any, shift: {
     url: `shifts/${shift.id}`,
     data: { shift },
   })
-  commit('ADD_SHIFT', { shift: data.shift, jobId: data.shift.job_id })
+  commit('ADD_SHIFT', data.shift)
   return data
 }
 
-export async function deleteShift({ commit }: any, shiftId: number, jobId: number) {
+export async function deleteShift({ commit }: any, shiftId: number) {
   await axios({
     method: 'DELETE',
     url: `shifts/${shiftId}`,
   })
-  commit('REMOVE_SHIFT', { shiftId, jobId })
+  commit('REMOVE_SHIFT', shiftId)
 }
