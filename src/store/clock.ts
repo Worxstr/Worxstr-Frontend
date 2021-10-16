@@ -1,12 +1,14 @@
+
 import Vue from 'vue'
 import { ClockEvent } from '@/types/Clock'
 import { resolveRelations } from '../util/helpers'
+import usersStore from '@/store/users'
 
 export interface ClockState {
   clocked: boolean;
   break: boolean;
-  history: {
-    lastLoadedOffset: number;
+  events: {
+    historyPaginationOffset: number;
     all: number[];
     byId: {
       [key: number]: ClockEvent;
@@ -17,8 +19,8 @@ export interface ClockState {
 export const initialState = (): ClockState => ({
   clocked: false,
   break: false,
-  history: {
-    lastLoadedOffset: 0,
+  events: {
+    historyPaginationOffset: 0,
     all: [],
     byId: {},
   },
@@ -26,13 +28,13 @@ export const initialState = (): ClockState => ({
 
 const mutations = {
   ADD_CLOCK_EVENT(state: ClockState, event: ClockEvent) {
-    Vue.set(state.history.byId, event.id, event)
-    if (!state.history.all.includes(event.id))
-      state.history.all.push(event.id)
+    Vue.set(state.events.byId, event.id, event)
+    if (!state.events.all.includes(event.id))
+      state.events.all.push(event.id)
   },
 
   INCREMENT_CLOCK_HISTORY_OFFSET(state: ClockState) {
-    state.history.lastLoadedOffset++
+    state.events.historyPaginationOffset++
   },
 
   CLOCK_IN(state: ClockState) {
@@ -55,7 +57,7 @@ const mutations = {
 const getters = {
   clockEvent: (state: ClockState, _: any, __: any, rootGetters: any) => (id: number) => {
     return resolveRelations(
-      state.history.byId[id],
+      state.events.byId[id],
       [
         /*'user'*/
       ],
@@ -63,15 +65,28 @@ const getters = {
     )
   },
 
-  clockHistory: (state: ClockState, getters: any) => {
-    let events = state.history.all.map((eventId) =>
-      getters.clockEvent(eventId)
-    )
-    events = events.sort((a, b) => {
-      return new Date(b.time).getTime() - new Date(a.time).getTime()
-    })
+  clockHistoryByJobAndContractor: (state: ClockState, getters: any) => (jobId: number, contractorId: number) => {
+    return state.events.all
+      .map((eventId) => getters.clockEvent(eventId))
+      .filter((event: ClockEvent) => {
+        return event.contractor_id === contractorId && event.job_id === jobId
+      })
+      .sort((a, b) => {
+        return new Date(b.time).getTime() - new Date(a.time).getTime()
+      })
+  },
 
-    return events
+  clockHistory: (state: ClockState, getters: any) => {
+    return state.events.all
+      .map((eventId) =>
+        getters.clockEvent(eventId)
+      )
+      .filter((event: ClockEvent) => {
+        return event.contractor_id === usersStore.state.authenticatedUser?.id
+      })
+      .sort((a, b) => {
+        return new Date(b.time).getTime() - new Date(a.time).getTime()
+      })
   },
 }
 

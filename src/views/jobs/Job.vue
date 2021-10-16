@@ -224,7 +224,7 @@ export default class JobView extends Vue {
   }
 
   get job(): Job {
-    return this.$store.getters.job(this.$route.params.jobId)
+    return this.$store.getters.job(parseInt(this.$route.params.jobId))
   }
 
   get userIsOrgManager() {

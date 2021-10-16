@@ -138,7 +138,7 @@ export default class Clock extends Vue {
   }
 
   get clockHistoryCurrentWeek() {
-    const nextOffset = this.$store.state.clock.history.lastLoadedOffset + 1
+    const nextOffset = this.$store.state.clock.events.historyPaginationOffset + 1
     const start = new Date()
     const end = new Date()
     start.setDate(start.getDate() - nextOffset * 7)
@@ -167,7 +167,6 @@ export default class Clock extends Vue {
   async clockOut() {
     this.togglingClock = true
     await clock.clockOut(this.$store)
-    console.log('done')
     this.togglingClock = false
   }
 

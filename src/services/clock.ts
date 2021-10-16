@@ -7,7 +7,7 @@ import { ClockEvent } from '@/types/Clock'
 export async function loadClockHistory({ commit }: any) {
   const { data } = await axios.get(`clock/history`, {
     params: {
-      week_offset: clockStore.state.history.lastLoadedOffset,
+      week_offset: clockStore.state.events.historyPaginationOffset,
     },
   })
   data.history.forEach((event: ClockEvent) => {

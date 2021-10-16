@@ -1,3 +1,4 @@
+import { ClockEvent } from './Clock'
 import { User } from './Users'
 
 export type Job = {
@@ -28,10 +29,13 @@ export type Job = {
 
 export type Shift = {
 	id: number;
+	active: boolean;
+	job_id: number;
 	contractor: User;
 	contractor_id: number;
 	site_location: string;
 	time_begin: string;
 	time_end: string;
 	timecard_id: number;
+	timeclock_actions: ClockEvent[];
 }

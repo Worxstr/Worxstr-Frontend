@@ -9,9 +9,7 @@ export interface JobsState {
   };
   shifts: {
     next: Shift | null;
-    byJobId: {
-      [key: number]: number[];
-    };
+    all: number[];
     byId: {
       [key: number]: Shift;
     };
@@ -23,24 +21,22 @@ export const initialState = (): JobsState => ({
   byId: {},
   shifts: {
     next: null,
-    byJobId: {},
+    all: [],
     byId: {},
   },
 })
+
+function addShift(state: JobsState, shift: Shift) {
+  Vue.set(state.shifts.byId, shift.id, shift)
+  if (!state.shifts.all.includes(shift.id))
+    state.shifts.all.push(shift.id)
+}
 
 const mutations = {
 
   ADD_JOB(state: JobsState, job: Job) {
     job.shifts?.forEach(shift => {
-      Vue.set(state.shifts.byId, shift.id, shift)
-      if (state.shifts.byJobId[job.id]) {
-        if (!state.shifts.byJobId[job.id]?.includes(shift.id))
-        state.shifts.byJobId[job.id].push(shift.id)
-      }
-      else {
-        state.shifts.byJobId[job.id] = [shift.id]
-      }
-      
+      addShift(state, shift)
     })
     delete job.shifts
 
@@ -64,36 +60,16 @@ const mutations = {
     state.shifts.next = shift
   },
 
-  ADD_SHIFT(state: JobsState, {shift, jobId}: {
-    shift: Shift; jobId: number;
-  }) {
-    Vue.set(state.shifts.byId, shift.id, shift)
-    if (state.shifts.byJobId[jobId]) {
-      if (!state.shifts.byJobId[jobId].includes(shift.id))
-        state.shifts.byJobId[jobId].push(shift.id)
-    }
-    else {
-      state.shifts.byJobId[jobId] = [shift.id]
-    }
+  ADD_SHIFT(state: JobsState, shift: Shift) {
+    addShift(state, shift)
   },
 
-  REMOVE_SHIFT(state: JobsState, { shiftId, jobId }: {
-    shiftId: number; jobId: number;
-  }) {
+  REMOVE_SHIFT(state: JobsState, shiftId: number) {
     Vue.delete(state.shifts.byId, shiftId)
-    if (state.shifts.byJobId[jobId]) {
-      const index = state.shifts.byJobId[jobId].indexOf(shiftId)
-      if (index >= 0) {
-        if (state.shifts.byJobId[jobId].length == 1) {
-          delete state.shifts.byJobId[jobId]
-        } else {
-          Vue.delete(
-            state.shifts.byJobId[jobId],
-            index
-          )
-        }
-      }
-    }
+    Vue.delete(
+      state.shifts.all,
+      state.shifts.all.indexOf(shiftId)
+    )
   },
 }
 
@@ -101,9 +77,16 @@ const getters = {
   job: (state: JobsState, getters: any) => (jobId: number) => {
     const job = state.byId[jobId]
 
+    console.log({job, state, getters, jobId})
+
     if (job) {
-      job.shifts = state.shifts.byJobId[jobId]
-        ?.map((shiftId: number) => getters.shift(shiftId))
+      job.shifts = state.shifts.all
+        .map((shiftId: number) => {
+          return getters.shift(shiftId)
+        })
+        .filter((shift: Shift) => {
+          return shift.job_id === jobId
+        })
     }
 
     return job
