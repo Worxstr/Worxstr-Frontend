@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import axios from 'axios'
+import { api } from '@/util/axios'
 import { CalendarEvent } from '@/types/Schedule'
 
 export async function loadCalendarEvents({ commit }: any, start: string, end: string) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: 'calendar',
     params: {

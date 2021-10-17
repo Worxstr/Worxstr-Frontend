@@ -6,6 +6,10 @@ import { baseUrl, showToast } from '@/services/app'
 import { Network } from '@capacitor/network'
 import * as auth from '@/services/auth'
 
+export const api = axios.create({
+  withCredentials: true,
+})
+
 async function checkOnline(config: any) {
   // If user tries to perform action while offline, send a toast
   if (config.method !== 'get') {
@@ -26,6 +30,8 @@ function sendGtagEvent(config: any) {
 }
 
 function getErrorMessage(error: any): string {
+
+  console.log(error)
 
   const res = error?.response?.data
 
@@ -86,16 +92,11 @@ function getAction(error: any) {
 }
 
 export async function configureAxios(store: any) {
+  
   baseUrl.set()
-  axios.defaults.withCredentials = true
 
-  const authToken = await auth.getAuthToken()
-  if (authToken) {
-    auth.setAuthToken(authToken)
-  }
-
-  axios.interceptors.request.use(
-    async (config) => {
+  api.interceptors.request.use(
+    async (config: any) => {
       if (!checkOnline(config)) {
         showToast(store, { text: 'You are offline.' })
         return false
@@ -103,19 +104,19 @@ export async function configureAxios(store: any) {
       sendGtagEvent(config)
       return config
     },
-    (error) => {
+    (error: any) => {
       return Promise.reject(error)
     }
   )
 
-  axios.interceptors.response.use(
-    (response) => {
+  api.interceptors.response.use(
+    (response: any) => {
       return response
     },
-    (error) => {
+    (error: any) => {
       // if (error.config.hideErrorMessage) return
 
-      // TODO: this is stupid, don't keep this. use custom axios config
+      // TODO: this is stupid, don't keep this. use custom api config
       // We are ignoring an error message if we are trying to access /users/me without being logged in.
       // This request is made on app load.
       if (error.request.responseURL.includes('/users/me')) return
@@ -132,6 +133,11 @@ export async function configureAxios(store: any) {
       return Promise.reject(error)
     }
   )
+
+  const authToken = await auth.getAuthToken()
+  if (authToken) {
+    auth.setAuthToken(authToken)
+  }
 }
 
 

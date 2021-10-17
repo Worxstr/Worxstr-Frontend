@@ -1,8 +1,8 @@
-import axios from 'axios'
+import { api } from '@/util/axios'
 import { User } from '@/types/Users'
 
 export async function getMyOrganization({ commit }: any) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: '/organizations/me',
   })
@@ -11,7 +11,7 @@ export async function getMyOrganization({ commit }: any) {
 }
 
 export async function updateMyOrganization({ commit }: any, newData: any) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'PATCH',
     url: '/organizations/me',
     data: newData,

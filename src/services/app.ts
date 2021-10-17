@@ -1,6 +1,6 @@
 import { configureDwolla } from '@/util/dwolla'
 import * as theme from '@/util/theme'
-import axios from 'axios'
+import { api } from '@/util/axios'
 
 function getStoredPreference(localStorageItem: string, defaultVal: any) {
   return JSON.parse(window.localStorage.getItem(localStorageItem) || JSON.stringify(defaultVal)) || defaultVal
@@ -26,11 +26,12 @@ export const baseUrl = {
     const webProdUrl = sandbox ? sandboxUrl : productionUrl
     const baseUrl = process.env.NODE_ENV === 'production' ? webProdUrl : localUrl
     
-    axios.defaults.baseURL = baseUrl
+    api.defaults.baseURL = baseUrl
+    return baseUrl
   },
   
   get() {
-    return axios.defaults.baseURL
+    return api.defaults.baseURL
   },
 }
 

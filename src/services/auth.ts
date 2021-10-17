@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import axios from 'axios'
+import { api } from '@/util/axios'
 import router from '@/router'
 import { getAuthenticatedUser } from './users'
 import { sandboxMode, showToast } from '@/services/app'
@@ -23,7 +23,7 @@ export async function getAuthToken() {
 
 export async function setAuthToken(authToken: string) {
   if (!Capacitor.isNativePlatform()) return
-  axios.defaults.headers.common['Authentication-Token'] = authToken
+  api.defaults.headers.common['Authentication-Token'] = authToken
 
   await SecureStoragePlugin.set({
     key: 'authToken',
@@ -33,7 +33,7 @@ export async function setAuthToken(authToken: string) {
 
 export async function unsetAuthToken() {
   if (!Capacitor.isNativePlatform()) return
-  axios.defaults.headers.common['Authentication-Token'] = null
+  api.defaults.headers.common['Authentication-Token'] = null
   return await SecureStoragePlugin.remove({ key: 'authToken' })
 }
 
@@ -41,7 +41,7 @@ export async function signIn({ commit }: any, email: string, password: string) {
   sandboxMode.toggle({ commit }, shouldUseSandbox(email))
 
   try {
-    const { data } = await axios({
+    const { data } = await api({
       method: 'POST',
       url: '/auth/login',
       params: {
@@ -103,7 +103,7 @@ export async function signUp(
   sandboxMode.toggle({ commit }, shouldUseSandbox(email))
 
   try {
-    const { data } = await axios({
+    const { data } = await api({
       method: 'POST',
       url: `/auth/sign-up/${accountType}`,
       // headers: {
@@ -134,7 +134,7 @@ export async function signOut({ state, commit }: any) {
     shouldUseSandbox(state.users.authenticatedUser.email)
   )
 
-  await axios({
+  await api({
     method: 'POST',
     url: `/auth/logout`,
   })
@@ -148,7 +148,7 @@ export async function signOut({ state, commit }: any) {
 export async function sendResetPasswordEmail(context: any, email: string) {
   sandboxMode.toggle(context, shouldUseSandbox(email))
 
-  await axios({
+  await api({
     method: 'POST',
     url: `/auth/reset`,
     data: {
@@ -165,7 +165,7 @@ export async function resetPassword(
 ) {
   sandboxMode.toggle(context, shouldUseSandbox(email))
 
-  const response = await axios({
+  const response = await api({
     method: 'POST',
     url: `auth/reset/${token}`,
     data: {
@@ -186,7 +186,7 @@ export async function resetPassword(
 export async function confirmEmail(context: any, token: string, email: string) {
   sandboxMode.toggle(context, shouldUseSandbox(email))
 
-  const { data } = await axios({
+  const { data } = await api({
     method: 'PUT',
     url: `/auth/confirm-email`,
     data: {
@@ -200,7 +200,7 @@ export async function confirmEmail(context: any, token: string, email: string) {
 export async function resendEmailConfirmation({ commit }: any, email: string) {
   sandboxMode.toggle({ commit }, shouldUseSandbox(email))
 
-  const { data } = await axios({
+  const { data } = await api({
     method: 'POST',
     url: `/auth/resend-email`,
     data: {
@@ -220,7 +220,7 @@ export async function updatePassword(
     shouldUseSandbox(state.users.authenticatedUser.email)
   )
 
-  const { data } = await axios({
+  const { data } = await api({
     method: 'PUT',
     url: `/users/reset-password`,
     data: {

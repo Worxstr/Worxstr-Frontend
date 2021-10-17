@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import axios from 'axios'
+import { api } from '@/util/axios'
 import { Job, Shift } from '@/types/Jobs'
 import { User } from '@/types/Users'
 
 export async function loadJobs({ commit }: any) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: 'jobs',
   })
@@ -16,7 +16,7 @@ export async function loadJobs({ commit }: any) {
 }
 
 export async function loadJob({ commit }: any, jobId: number) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: `jobs/${jobId}`,
   })
@@ -30,7 +30,7 @@ export async function loadJob({ commit }: any, jobId: number) {
 }
 
 export async function createJob({ commit }: any, job: Job) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'POST',
     url: 'jobs',
     data: job,
@@ -40,7 +40,7 @@ export async function createJob({ commit }: any, job: Job) {
 }
 
 export async function updateJob({ commit }: any, job: Job) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'PUT',
     url: `jobs/${job.id}`,
     data: job,
@@ -50,7 +50,7 @@ export async function updateJob({ commit }: any, job: Job) {
 }
 
 export async function closeJob({ commit }: any, jobId: number) {
-  await axios({
+  await api({
     method: 'PUT',
     url: `jobs/${jobId}/close`,
   })
@@ -58,7 +58,7 @@ export async function closeJob({ commit }: any, jobId: number) {
 }
 
 export async function createShift({ commit }: any, shift: Shift, jobId: number) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'POST',
     url: 'shifts',
     data: shift,
@@ -77,7 +77,7 @@ export async function updateShift({ commit }: any, shift: {
   time_begin: string;
   time_end: string;
 }) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'PUT',
     url: `shifts/${shift.id}`,
     data: { shift },
@@ -87,7 +87,7 @@ export async function updateShift({ commit }: any, shift: {
 }
 
 export async function deleteShift({ commit }: any, shiftId: number) {
-  await axios({
+  await api({
     method: 'DELETE',
     url: `shifts/${shiftId}`,
   })

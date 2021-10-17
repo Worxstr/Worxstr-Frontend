@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import axios from 'axios'
+import { api } from '@/util/axios'
 import socket from '@/util/socket-io'
 import { User } from '@/types/Users'
 import usersStore from '@/store/users'
 
 export async function getAuthenticatedUser({ commit }: any) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: '/users/me',
   })
@@ -18,7 +18,7 @@ export async function getAuthenticatedUser({ commit }: any) {
 }
 
 export async function loadUser({ commit }: any, userId: number) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: `/users/${userId}`,
   })
@@ -26,7 +26,7 @@ export async function loadUser({ commit }: any, userId: number) {
 }
 
 export async function loadWorkforce({ commit }: any) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: '/users/organizations/me',
   })
@@ -38,7 +38,7 @@ export async function loadWorkforce({ commit }: any) {
 }
 
 export async function updateContractor({ commit }: any, newFields: any, userId: number) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'PATCH',
     url: `/users/contractors/${userId}`,
     data: newFields,
@@ -47,7 +47,7 @@ export async function updateContractor({ commit }: any, newFields: any, userId: 
 }
 
 export async function loadManagers({ commit }: any) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: `/jobs/managers`,
     params: {
@@ -64,7 +64,7 @@ export async function loadManagers({ commit }: any) {
 }
 
 export async function addManager({ commit }: any, manager: User) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'POST',
     url: '/users/add-manager',
     data: manager,
@@ -75,7 +75,7 @@ export async function addManager({ commit }: any, manager: User) {
 }
 
 export async function deleteUser({ commit }: any, userId: number) {
-  await axios({
+  await api({
     method: 'DELETE',
     url: `/users/${userId}`,
   })
@@ -83,7 +83,7 @@ export async function deleteUser({ commit }: any, userId: number) {
 }
 
 export async function addContractor({ commit }: any, contractor: User) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'POST',
     url: '/users/add-contractor',
     data: contractor,

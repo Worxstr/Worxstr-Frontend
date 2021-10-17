@@ -1,8 +1,8 @@
-import axios from 'axios'
+import { api } from '@/util/axios'
 import { Conversation } from '@/types/Messages'
 
 export async function loadConversations({ commit }: any) {
-	const { data } = await axios({
+	const { data } = await api({
 		method: 'GET',
 		url: 'conversations',
 	})
@@ -13,7 +13,7 @@ export async function loadConversations({ commit }: any) {
 }
 
 export async function loadConversation({ commit }: any, conversationId: number) {
-	const { data } = await axios({
+	const { data } = await api({
 		method: 'GET',
 		url: `conversations/${conversationId}`,
 	})
@@ -22,7 +22,7 @@ export async function loadConversation({ commit }: any, conversationId: number) 
 }
 
 export async function createConversation({ commit }: any, userIds: number[]) {
-	const { data } = await axios({
+	const { data } = await api({
 		method: 'POST',
 		url: `conversations`,
 		data: {
@@ -36,7 +36,7 @@ export async function createConversation({ commit }: any, userIds: number[]) {
 export async function loadContacts({ commit }: any) {
 	// TODO: Flatten contacts data into users store
 
-	const { data } = await axios({
+	const { data } = await api({
 		method: 'GET',
 		url: `conversations/contacts`,
 	})
@@ -45,7 +45,7 @@ export async function loadContacts({ commit }: any) {
 }
 
 export async function sendMessage({ commit }: any, message: { body: string }, conversationId: number) {
-	const { data } = await axios({
+	const { data } = await api({
 		method: 'POST',
 		url: `conversations/${conversationId}/messages`,
 		data: message,
