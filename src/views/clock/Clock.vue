@@ -5,7 +5,6 @@
 
     .clock-display.mx-15.d-flex.align-center.align-md-start.flex-column.justify-center
 
-
       div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
         h6.text-h6.text-center.text-md-left
           | Your shift at
@@ -104,6 +103,7 @@ import { ClockAction, ClockEvent } from '@/types/Clock'
 import ClockEvents from '@/components/ClockEvents.vue'
 import ClockInDialog from './ClockInDialog.vue'
 import dayjs from 'dayjs'
+import { Socket } from 'vue-socket.io-extended'
 
 Vue.use(vueAwesomeCountdown, "vac");
 
@@ -127,6 +127,13 @@ export default class Clock extends Vue {
   mounted() {
     this.loadClockHistory()
     this.loadNextShift()
+  }
+
+  // For some fucking reason the view won't rerender when we delete a shift and socket.io pushes the new next shift.
+  // This forces the view to rerender when that mutation occurs.
+  @Socket('SET_NEXT_SHIFT')
+  update() {
+    this.$forceUpdate()
   }
 
   get clock() {

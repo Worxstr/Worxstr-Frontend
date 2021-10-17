@@ -101,6 +101,7 @@ const mutations = {
   },
 
   ADD_SHIFT(state: JobsState, shift: Shift) {
+    console.log('performing mutation: ADD_SHIFT', {shift})
     addShift(state, shift)
   },
 

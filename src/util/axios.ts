@@ -26,16 +26,23 @@ function sendGtagEvent(config: any) {
 }
 
 function getErrorMessage(error: any): string {
-  let message
-  const res = error.response?.data
 
-  if (res && (res.message || res.response?.error)) {
-    message = res.message || res.response?.error
-  } else if (error.response?.data?.response?.errors) {
-    const errorList = error.response.data.response.errors
-    message = errorList[Object.keys(errorList)[0]][0]
+  const res = error?.response?.data
+
+  if (res?.message) {
+    return res.message
   }
-  return message
+
+  if (res?.response?.error) {
+    return res.response?.error
+  }
+
+  if (error.response?.data?.response?.errors) {
+    const errorList = error.response.data.response.errors
+    return errorList[Object.keys(errorList)[0]][0]
+  }
+
+  return 'An error has occurred.'
 }
 
 function checkLoggedIn(error: any) {

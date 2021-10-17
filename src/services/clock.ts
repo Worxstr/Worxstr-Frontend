@@ -29,7 +29,7 @@ export async function loadClockHistory({ commit }: any) {
 
 export async function loadNextShift({ commit }: any) {
   const { data } = await axios.get(`shifts/next`)
-  commit('ADD_SHIFT', data.shift)
+  if (data.shift) commit('ADD_SHIFT', data.shift)
   commit('SET_NEXT_SHIFT', data.shift.id)
 }
 
