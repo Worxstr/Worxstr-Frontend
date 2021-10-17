@@ -25,7 +25,7 @@ v-dialog(
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { Job } from '@/definitions/Job'
+import { Job } from '@/types/Jobs'
 import { closeJob } from '@/services/jobs'
 
 @Component

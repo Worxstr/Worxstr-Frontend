@@ -23,7 +23,7 @@ v-dialog(
 </template>
 
 <script lang="ts">
-import { FundingSource } from '@/definitions/Payments'
+import { FundingSource } from '@/types/Payments'
 import { removeFundingSource } from '@/services/payments'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 

@@ -11,8 +11,13 @@
       :key="message.id"
       :class="sentByMe(message) ? 'right' : 'left'"
     )
-      p.px-4.py-2.mb-2.rounded-xl.grey(
-        :class="{ 'lighten-3': !$vuetify.theme.dark, 'darken-3': $vuetify.theme.dark }"
+      p.px-4.py-2.mb-2.rounded-xl(
+        :class="{\
+          'lighten-2': !$vuetify.theme.dark,\
+          'darken-2': $vuetify.theme.dark,\
+          'grey': !sentByMe(message),\
+          'primary white--text': sentByMe(message),\
+        }"
       ) 
         | {{ message.body }}
 
@@ -42,9 +47,8 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { Component, Vue } from 'vue-property-decorator'
 import * as messages from '@/services/messages'
-import { Socket } from 'vue-socket.io-extended'
-import { Message } from '@/definitions/Messages'
-import { User } from '@/definitions/User'
+import { Message } from '@/types/Messages'
+import { User } from '@/types/Users'
 
 @Component
 export default class Conversation extends Vue {
@@ -67,18 +71,18 @@ export default class Conversation extends Vue {
     await messages.loadConversation(this.$store, parseInt(this.$route.params.conversationId))
   }
 
-  @Socket()
-  connect() {
-    console.log('Socket connected')
-  }
+  // @Socket()
+  // connect() {
+  //   console.log('Socket connected')
+  // }
 
-  @Socket('message:create')
-  messageCreated(message: Message) {
-    this.$store.commit('ADD_MESSAGE', {
-      message,
-      conversationId: message.conversation_id,
-    })
-  }
+  // @Socket('message:create')
+  // messageCreated(message: Message) {
+  //   this.$store.commit('ADD_MESSAGE', {
+  //     message,
+  //     conversationId: message.conversation_id,
+  //   })
+  // }
 
   get authenticatedUser() {
     return this.$store.state.users.authenticatedUser

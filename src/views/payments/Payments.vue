@@ -49,7 +49,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import Timecards from '@/components/Timecards.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
-import { currentUserIs, Managers } from '@/definitions/User'
+import { currentUserIs, Managers } from '@/types/Users'
 import { loadBalance } from '@/services/payments'
 import { showToast } from '@/services/app'
 

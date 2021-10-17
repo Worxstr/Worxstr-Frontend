@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
-import { configAxios } from '@/util/axios'
 
 import * as app from './app'
 import * as users from './users'
+import * as organizations from './organizations'
 import * as clock from './clock'
 import * as jobs from './jobs'
 import * as payments from './payments'
@@ -13,9 +13,13 @@ import * as messages from './messages'
 
 Vue.use(Vuex)
 
+// TODO: Find standardized way to normalize data, perhaps with this library:
+// https://github.com/paularmstrong/normalizr
+
 interface RootState {
   app: app.AppState;
   users: users.UsersState;
+  organizations: organizations.OrganizationsState;
   clock: clock.ClockState;
   jobs: jobs.JobsState;
   payments: payments.PaymentsState;
@@ -28,6 +32,7 @@ const storeConfig: StoreOptions<RootState> = {
     RESET_STATE(state) {
       Object.assign(state.app, app.initialState())
       Object.assign(state.users, users.initialState())
+      Object.assign(state.organizations, organizations.initialState())
       Object.assign(state.clock, clock.initialState())
       Object.assign(state.jobs, jobs.initialState())
       Object.assign(state.payments, payments.initialState())
@@ -38,6 +43,7 @@ const storeConfig: StoreOptions<RootState> = {
   modules: {
     app: app.default,
     users: users.default,
+    organizations: organizations.default,
     clock: clock.default,
     jobs: jobs.default,
     payments: payments.default,
@@ -47,7 +53,5 @@ const storeConfig: StoreOptions<RootState> = {
 }
 
 export const store = new Vuex.Store<RootState>(storeConfig)
-
-configAxios(store)
 
 export default store

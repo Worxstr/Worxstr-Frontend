@@ -75,7 +75,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
 </template>
 
 <script lang="ts">
-import { Transfer } from '@/definitions/Payments'
+import { Transfer } from '@/types/Payments'
 import { Component, Vue } from 'vue-property-decorator'
 import { loadTransfers } from '@/services/payments'
 

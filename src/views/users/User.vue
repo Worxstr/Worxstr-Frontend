@@ -56,7 +56,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import EditUserDialog from './EditUserDialog.vue'
 import DeleteUserDialog from './DeleteUserDialog.vue'
 import Roles from '@/components/Roles.vue'
-import { Managers, userIs, currentUserIs, UserRole } from '@/definitions/User'
+import { Managers, userIs, currentUserIs, UserRole } from '@/types/Users'
 import { loadUser } from '@/services/users'
 
 @Component({

@@ -133,8 +133,8 @@ v-dialog(
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import colors from 'vuetify/lib/util/colors'
-import { User } from '@/definitions/User'
-import { Job } from '@/definitions/Job';
+import { User } from '@/types/Users'
+import { Job } from '@/types/Jobs';
 import { exists, phoneRules, emailRules } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import JobsMap from '@/components/JobsMap.vue'

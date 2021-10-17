@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import axios from 'axios'
+import { api } from '@/util/axios'
 import mitt from 'mitt'
 import { baseUrl, showToast } from '@/services/app'
 
@@ -14,7 +14,7 @@ declare global {
 const tokenUrl = 'payments/access'
 
 export async function getDwollaAccessToken() {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'POST',
     url: tokenUrl,
   })
@@ -34,7 +34,7 @@ export function dwollaFundingSourceIdFromUrl(fundingSourceUrl: string) {
 }
 
 export async function getDwollaCustomerEmail(customerUrl: string) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: 'payments/dwolla/customers/email',
     params: {

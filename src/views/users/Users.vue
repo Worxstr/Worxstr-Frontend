@@ -38,7 +38,7 @@ v-container
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { currentUserIs, User, UserRole } from '@/definitions/User'
+import { currentUserIs, User, UserRole } from '@/types/Users'
 import EditUserDialog from './EditUserDialog.vue'
 import Roles from '@/components/Roles.vue'
 import { loadWorkforce } from '@/services/users'

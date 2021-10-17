@@ -4,6 +4,7 @@
     clock-in-dialog(:opened.sync='clockInDialog')
 
     .clock-display.mx-15.d-flex.align-center.align-md-start.flex-column.justify-center
+
       div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
         h6.text-h6.text-center.text-md-left
           | Your shift at
@@ -15,7 +16,7 @@
 
         h3.text-h3.py-2.font-weight-bold.text-center.text-md-left
           | {{
-          | (nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin)
+          | (nextShift.shiftActive ? (new Date(nextShift.time_end)) : (new Date(nextShift.time_begin)))
           | .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
           | .replace(/^0(?:0:0?)?/, "")
           | }}
@@ -65,8 +66,14 @@
               )
                 | {{ onBreak ? "End" : "Start" }} break
 
-      div(v-else)
+      div(v-else-if='!loadingNextShift')
         h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
+      
+      div(
+        v-else
+        style='width: 300px'
+      )
+        v-skeleton-loader(type='sentences')
 
     v-card.clock-history.soft-shadow.align-self-center(width='100%' max-width='500px' rounded='lg')
 
@@ -80,6 +87,9 @@
             v-icon(left dark)  mdi-arrow-down 
             span View {{ clockHistoryCurrentWeek }}
 
+      .px-4(v-else-if='loadingHistory')
+        v-skeleton-loader.py-2(v-for='i in 10' key='item' type="sentences")
+
       v-card-text(v-else)
         | No history yet
 </template>
@@ -89,10 +99,11 @@ import { Vue, Component } from 'vue-property-decorator'
 import vueAwesomeCountdown from "vue-awesome-countdown"
 
 import * as clock from '@/services/clock'
-import { ClockAction, ClockEvent } from '@/definitions/Clock'
+import { ClockAction, ClockEvent } from '@/types/Clock'
 import ClockEvents from '@/components/ClockEvents.vue'
 import ClockInDialog from './ClockInDialog.vue'
 import dayjs from 'dayjs'
+import { Socket } from 'vue-socket.io-extended'
 
 Vue.use(vueAwesomeCountdown, "vac");
 
@@ -111,10 +122,18 @@ export default class Clock extends Vue {
   togglingClock = false
   togglingBreak = false
   loadingHistory = false
+  loadingNextShift = false
 
   mounted() {
-    if (!this.clockHistory.length) this.loadClockHistory()
-    clock.loadNextShift(this.$store)
+    this.loadClockHistory()
+    this.loadNextShift()
+  }
+
+  // For some fucking reason the view won't rerender when we delete a shift and socket.io pushes the new next shift.
+  // This forces the view to rerender when that mutation occurs.
+  @Socket('SET_NEXT_SHIFT')
+  update() {
+    this.$forceUpdate()
   }
 
   get clock() {
@@ -126,7 +145,7 @@ export default class Clock extends Vue {
   }
 
   get clockHistoryCurrentWeek() {
-    const nextOffset = this.$store.state.clock.history.lastLoadedOffset + 1
+    const nextOffset = this.$store.state.clock.events.historyPaginationOffset + 1
     const start = new Date()
     const end = new Date()
     start.setDate(start.getDate() - nextOffset * 7)
@@ -154,8 +173,7 @@ export default class Clock extends Vue {
 
   async clockOut() {
     this.togglingClock = true
-    await clock.clockOut(this.$store)
-    console.log('done')
+    await clock.clockOut(this.$store, this.$store.getters.nextShift?.id)
     this.togglingClock = false
   }
 
@@ -171,8 +189,22 @@ export default class Clock extends Vue {
 
   async loadClockHistory() {
     this.loadingHistory = true
-    await clock.loadClockHistory(this.$store)
-    this.loadingHistory = false
+    try {
+      await clock.loadClockHistory(this.$store)
+    }
+    finally {
+      this.loadingHistory = false
+    }
+  }
+
+  async loadNextShift() {
+    this.loadingNextShift = true
+    try {
+      await clock.loadNextShift(this.$store)
+    }
+    finally {
+      this.loadingNextShift = false
+    }
   }
 
 }

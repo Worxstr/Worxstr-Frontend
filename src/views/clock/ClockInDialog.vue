@@ -72,9 +72,9 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { Capacitor } from '@capacitor/core'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
+import * as geolocation from '@/services/geolocation'
 
 import * as clock from '@/services/clock'
-import { getUserLocation, locationPermissionGranted } from '@/services/users'
 import { showToast } from '@/services/app'
 /*
   We are using two difference QR code scanner libraries here.
@@ -118,7 +118,7 @@ export default class ClockInDialog extends Vue {
     // TODO: Handle incorrect code
     try {
       this.loading = true
-      await clock.clockIn(this.$store, code)
+      await clock.clockIn(this.$store, code, this.$store.getters.nextShift?.id)
       this.closeDialog()
     }
     finally {
@@ -130,21 +130,7 @@ export default class ClockInDialog extends Vue {
   async onOpened(opened: boolean) {
     if (opened) {
       (this.$refs.form as HTMLFormElement)?.reset()
-      // this.initLocation()
       this.initQr()
-    }
-  }
-
-  async initLocation() {
-    this.allowedLocation = await locationPermissionGranted(this.$store)
-
-    if (this.allowedLocation) {
-      const location = await getUserLocation(this.$store)
-      showToast(this.$store, {
-        text: `${location.lat} ${location.lng}`,
-      })
-      this.closeDialog()
-      // TODO: Fire clock in request with user location
     }
   }
 
@@ -192,7 +178,7 @@ export default class ClockInDialog extends Vue {
   }
 
   async getUserLocation() {
-    const location = await getUserLocation(this.$store)
+    const location = await geolocation.get(this.$store)
     showToast(this.$store, {
       text: `${location.lat} ${location.lng}`,
     })

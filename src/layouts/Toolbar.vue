@@ -23,7 +23,7 @@
       )
         v-avatar(tile, size="130")
           img(
-            :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
+            :src="require(`@/assets/logos/${logo}.svg`)"
             alt="Worxstr logo"
           )
 
@@ -60,6 +60,12 @@ export default class Toolbar extends Vue {
   
   get bottomToolbar() {
     return this.$vuetify.breakpoint.smAndDown && !this.$route.meta?.landing
+  }
+
+  get logo() {
+    const mini = this.$store.state.app.preferences.miniNav
+    const logotype = (this.$vuetify.theme.dark ? 'logotype-dark' : 'logotype')
+    return (mini && !this.$route.meta?.landing) ? 'icon' : logotype
   }
 
   menu = false

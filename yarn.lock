@@ -909,6 +909,13 @@
   dependencies:
     tslib "^2.1.0"
 
+"@capacitor/core@^3.0.0":
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-3.2.5.tgz#3aee6d68d113f5c043593c2327b0fc827f64e1f4"
+  integrity sha512-sr5ZhbdCUL6FAiyNEDpSKDEzjHCOsCA5R32inRergcPFRpOArsQi/NfhoMLHaZwZ78HAn9bfFV7JkoSr46NDDw==
+  dependencies:
+    tslib "^2.1.0"
+
 "@capacitor/core@^3.0.0-rc.4":
   version "3.0.0-rc.4"
   resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-3.0.0-rc.4.tgz#d2980a6d54f9692e5632093b21205bbaf0c2f3c2"
@@ -930,6 +937,16 @@
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/@capacitor/ios/-/ios-3.2.3.tgz#e8b9a34361ace5ef870b4852d690e04f6afd14da"
   integrity sha512-HGuCf9CnHdpeCBU8grgaPxlF20gIs6R5UhngdLbUKc1ULj6EtfOFxfH6ptbdJ/rIuZ9a8ADlszFaN4CGl5P8Mg==
+
+"@capacitor/network@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@capacitor/network/-/network-1.0.3.tgz#b85436848cc564ce1dbd024ed602bf2f481825db"
+  integrity sha512-DgRusTC0UkTJE9IQIAMgqBnRnTaj8nFeGH7dwRldfVBZAtHBTkU8wCK/tU1oWtaY2Wam+iyVKXUAhYDO7yeD9Q==
+
+"@capacitor/splash-screen@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@capacitor/splash-screen/-/splash-screen-1.1.5.tgz#3c67870656d3db53b7e0c732ad4eafaf142d3a7e"
+  integrity sha512-8hllDeHZkefb3R7sIWR0oRDXG/8FCXaHlh2OndeKxubeiRQhhTZk88vFIfPMphylxOsrWS3ExTZbbl3x6HdqGQ==
 
 "@capacitor/status-bar@^1.0.3":
   version "1.0.3"
@@ -2737,6 +2754,13 @@ capacitor-native-biometric@^3.0.3:
   integrity sha512-ewMxvMPZPAJH/5CFmezNUDOTS0pSP9sMLkM7bhxUBeSomYOdWiz42dN+gETCFSz7XrCfg+xPkN5tDHZekgy5lw==
   dependencies:
     "@capacitor/core" "3.0.0"
+
+capacitor-secure-storage-plugin@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/capacitor-secure-storage-plugin/-/capacitor-secure-storage-plugin-0.6.2.tgz#6044222607f0469d30ebf3cfd6a72723e1480d2b"
+  integrity sha512-f05BLb98TG5qqxN8FvTOLPNvtoebdZyrWAueoyw25Xip7nJBkFqrGxZtcFDMONi4DZRz/z9DMz1Bw8F/8fPAJA==
+  dependencies:
+    "@capacitor/core" "^3.0.0"
 
 case-sensitive-paths-webpack-plugin@^2.3.0:
   version "2.3.0"
@@ -10064,11 +10088,6 @@ vue2-google-maps@^0.10.7:
   dependencies:
     babel-runtime "^6.26.0"
     marker-clusterer-plus "^2.1.4"
-
-vue2-leaflet@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/vue2-leaflet/-/vue2-leaflet-2.6.0.tgz#c83c60a745fbc2a74d9dbd0f75b2a5ae07d220a9"
-  integrity sha512-JG+w9TtNuk1yRpPta+RjzH6J+opdRUPzSo8UuBnwk+a/6XD0f2tsaB6g3D6ZpBgIE4wZA2dbZ0dZFz2ulYMj3A==
 
 vue@^2.6.11:
   version "2.6.12"

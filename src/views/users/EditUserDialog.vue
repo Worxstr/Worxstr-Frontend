@@ -108,7 +108,7 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
-import { Managers, User, userIs, UserRole, userRoles } from '@/definitions/User'
+import { Managers, User, userIs, UserRole, userRoles } from '@/types/Users'
 import { exists, emailRules, currency } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import CurrencyInput from '@/components/inputs/CurrencyInput.vue'

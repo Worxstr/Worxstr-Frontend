@@ -43,7 +43,7 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 
-import { FundingSource } from '@/definitions/Payments'
+import { FundingSource } from '@/types/Payments'
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { exists } from '@/util/inputValidation'
 import { updateFundingSource } from '@/services/payments'

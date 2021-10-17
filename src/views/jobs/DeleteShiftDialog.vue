@@ -23,7 +23,7 @@ v-dialog(
 </template>
 
 <script lang="ts">
-import { Shift } from '@/definitions/Job';
+import { Shift } from '@/types/Jobs';
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { deleteShift } from '@/services/jobs'
 
@@ -45,8 +45,7 @@ export default class DeleteShiftDialog extends Vue {
       try {
         await deleteShift(
           this.$store,
-          this.shift.id,
-          parseInt(this.$route.params.jobId)
+          this.shift.id
         )
         this.closeDialog()
       }

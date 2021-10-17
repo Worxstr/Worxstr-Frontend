@@ -1,6 +1,6 @@
 {
   "name": "worxstr",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -18,11 +18,14 @@
     "@capacitor/dialog": "^1.0.3",
     "@capacitor/geolocation": "^1.0.0",
     "@capacitor/ios": "^3.2.3",
+    "@capacitor/network": "^1.0.3",
+    "@capacitor/splash-screen": "^1.1.5",
     "@capacitor/status-bar": "^1.0.3",
     "@chenfengyuan/vue-qrcode": "1",
     "@types/socket.io": "^2.1.13",
     "axios": "^0.21.2",
     "capacitor-native-biometric": "^3.0.3",
+    "capacitor-secure-storage-plugin": "^0.6.2",
     "core-js": "^3.8.2",
     "dayjs": "^1.10.1",
     "dwolla-v2": "^3.2.0",
@@ -47,7 +50,6 @@
     "vue-router": "^3.5.2",
     "vue-socket.io-extended": "^4.2.0",
     "vue2-google-maps": "^0.10.7",
-    "vue2-leaflet": "^2.6.0",
     "vuetify": "^2.2.11",
     "vuetify-google-autocomplete": "^2.0.4",
     "vuex": "^3.4.0"

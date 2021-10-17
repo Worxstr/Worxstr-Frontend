@@ -11,6 +11,19 @@ v-app
     :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
+
+      transition(
+        appear
+        name='slide-y-reverse-transition'
+      )
+        v-alert.offline-alert.soft-shadow(
+          v-if='offline'
+          dense
+          type='error'
+          :class='{center: $vuetify.breakpoint.mdAndUp}'
+          :style="`margin-bottom: ${bottomMargin}px`"
+        ) You are offline. Some features may not be available until you reconnect.
+      
       transition(
         appear,
         name="fade-transition",
@@ -25,25 +38,26 @@ v-app
   worxstr-footer(v-if="isLanding")
 
   message-snackbar(:bottom-offset='bottomMargin')
+
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { User } from './definitions/User'
+import { User } from './types/Users'
 
 import Toolbar from '@/layouts/Toolbar.vue'
 import NavDrawer from '@/layouts/NavDrawer.vue'
 import WorxstrFooter from '@/layouts/Footer.vue'
 import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
+import { Network } from '@capacitor/network';
 
 @Component({
   metaInfo: {
-    titleTemplate: "%s | Worxstr",
+    titleTemplate: '%s | Worxstr',
     meta: [
-      { charset: "utf-8" },
       {
-        name: "description",
-        content: "The adaptive solution to wide-scale temp labor management.",
+        name: 'description',
+        content: 'The adaptive solution to wide-scale temp labor management.',
       },
     ],
   },
@@ -55,9 +69,9 @@ import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
   },
 })
 export default class App extends Vue {
-
   drawer = false
   stylesLoaded = false
+  offline = false
 
   // Wait for external styles to load to compute safe areas
   created() {
@@ -72,10 +86,14 @@ export default class App extends Vue {
         this.stylesLoaded = true
       }, 2 ** i)
     }
+
+    Network.addListener('networkStatusChange', status => {
+      this.offline = !status.connected
+    })
   }
 
   get authenticatedUser(): User {
-    return this.$store.state.users.authenticatedUser;
+    return this.$store.state.users.authenticatedUser
   }
 
   get showNavDrawer() {
@@ -92,17 +110,21 @@ export default class App extends Vue {
 
   get headerHeight() {
     if (!this.showHeader) return 0
-    return !this.mobileLayout ? 64 : 56;
+    return !this.mobileLayout ? 64 : 56
   }
-  footerHeight = 56;
+  footerHeight = 56
 
   get pageHeight() {
     // Normal view
-    if (!this.$route.meta?.fullHeight || this.$route.meta?.noSkeleton) return "100%";
+    if (!this.$route.meta?.fullHeight || this.$route.meta?.noSkeleton)
+      return '100%'
     // Full height, bottom nav hidden
-    else return `calc(100vh - ${this.headerHeight + this.safeAreaTop + this.safeAreaBottom}px)`;
+    else
+      return `calc(100vh - ${this.headerHeight +
+        this.safeAreaTop +
+        this.safeAreaBottom}px)`
   }
-  
+
   get mobileLayout() {
     return this.$vuetify.breakpoint.smAndDown
   }
@@ -112,7 +134,7 @@ export default class App extends Vue {
     if (!this.stylesLoaded) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
-        .getPropertyValue("--sat")
+        .getPropertyValue('--sat')
         .replace('px', '')
     )
   }
@@ -120,7 +142,7 @@ export default class App extends Vue {
     if (!this.stylesLoaded || this.$route.meta?.bleedSafeAreaBottom) return 0
     return parseInt(
       getComputedStyle(document.documentElement)
-        .getPropertyValue("--sab")
+        .getPropertyValue('--sab')
         .replace('px', '')
     )
   }
@@ -129,7 +151,7 @@ export default class App extends Vue {
     if (!this.mobileLayout || this.isLanding) {
       return this.headerHeight + this.safeAreaTop
     }
-    
+
     return this.safeAreaTop
   }
 
@@ -155,5 +177,25 @@ export default class App extends Vue {
 }
 .no-bg {
   background-color: transparent !important;
+}
+
+$navwidth: 256px;
+$halfnavwidth: $navwidth / 2;
+
+.offline-alert {
+  position: fixed !important;
+  z-index: 5;
+  bottom: 0;
+  margin: 10px;
+  width: 580px;
+  left: 50%;
+  transform: translateX(calc(-50% - 10px));
+  max-width: calc(100% - 20px);
+
+  // Center, accounting for nav drawer width
+  &.center {
+    left: calc(50% + #{$navwidth});
+    transform: translateX(calc(-50% - 10px - #{$halfnavwidth}));
+  }
 }
 </style>

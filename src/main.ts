@@ -5,6 +5,7 @@ import router from './router'
 import store from './store'
 import vuetify from './util/vuetify'
 import { App as CapacitorApp } from '@capacitor/app'
+import { SplashScreen } from '@capacitor/splash-screen'
 
 import './styles/style.scss'
 import './util/filters'
@@ -18,6 +19,7 @@ import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
 import { configureDwolla } from './util/dwolla'
+import { configureAxios } from './util/axios'
 import { initDarkMode } from './util/theme'
 import { getAuthenticatedUser } from '@/services/users'
 import { sandboxMode } from '@/services/app'
@@ -42,8 +44,8 @@ Vue.use(VuetifyGoogleAutocomplete, {
 
 Vue.use(VueSocketIOExt, socket, {
   store,
-  actionPrefix: 'SOCKET_',
-  mutationPrefix: 'SOCKET_',
+  actionPrefix: '',
+  mutationPrefix: '',
 })
 
 Vue.use(VueGtag, {
@@ -69,7 +71,7 @@ async function getUserData() {
     await getAuthenticatedUser(store)
   }
   catch (e) {
-    console.error(e)
+    // console.error(e)
   }
 }
 
@@ -80,6 +82,7 @@ function configureBackButtonPress() {
 }
 
 async function init() {
+  await configureAxios(store)
   await getUserData()
 
   new Vue({
@@ -90,6 +93,7 @@ async function init() {
   }).$mount('#app')
 
   initDarkMode()
+  await SplashScreen.hide()
   configureBackButtonPress()
   configureDwolla(store)
 }

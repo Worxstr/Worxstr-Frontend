@@ -46,14 +46,14 @@ div
 </template>
 
 <script lang="ts">
-import { FundingSource } from "@/definitions/Payments"
+import { FundingSource } from "@/types/Payments"
 import { Vue, Component } from "vue-property-decorator"
 import AddFundingSourceDialog from "./AddFundingSourceDialog.vue"
 import EditFundingSourceDialog from "./EditFundingSourceDialog.vue"
 import RemoveFundingSourceDialog from "./RemoveFundingSourceDialog.vue"
 import BeneficialOwnersDialog from "./BeneficialOwnersDialog.vue"
 import { loadFundingSources } from "@/services/payments"
-import { currentUserIs, UserRole } from "@/definitions/User"
+import { currentUserIs, UserRole } from "@/types/Users"
 import { dwollaFundingSourceIdFromUrl } from "@/util/dwolla"
 
 @Component({
