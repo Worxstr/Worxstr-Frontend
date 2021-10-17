@@ -133,7 +133,7 @@ import EditTimecardDialog from '@/views/payments/EditTimecardDialog.vue'
 import DenyDialog from '@/views/payments/DenyDialog.vue'
 import PaymentDialog from '@/views/payments/PaymentDialog.vue'
 
-import { Timecard } from '@/definitions/Payments'
+import { Timecard } from '@/types/Payments'
 import { loadTimecards } from '@/services/payments'
 
 dayjs.extend(relativeTime)

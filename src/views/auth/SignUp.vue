@@ -49,6 +49,13 @@ div
 
             v-window-item(:value="2")
               v-text-field(
+                type='email'
+                name='email'
+                v-model='dwollaCustomerEmail'
+                disabled
+                style='display: none'
+              )
+              v-text-field(
                 label='Manager reference number'
                 v-model='form.manager_reference'
                 :rules='rules.managerReference'

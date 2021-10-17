@@ -7,14 +7,17 @@ const config: CapacitorConfig = {
   bundledWebRuntime: false,
   plugins: {
     SplashScreen: {
-      launchShowDuration: 0
+      launchAutoHide: false,
+      androidScaleType: 'CENTER_INSIDE',
+      // showSpinner: true,
+      backgroundColor: '#e7edf7'
     }
   },
   cordova: {},
   server: {
     hostname: "worxstr.com",
-    // "url": "http://192.168.86.249:8080",
-    // "cleartext": true
+    "url": "http://192.168.86.25:8080",
+    "cleartext": true
   }
 };
 

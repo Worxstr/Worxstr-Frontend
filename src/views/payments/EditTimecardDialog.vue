@@ -2,7 +2,7 @@
 v-dialog(
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  max-width="600",
   persistent
 )
   v-card.d-flex.flex-column
@@ -13,29 +13,35 @@ v-dialog(
       v-divider
           
       v-card-text
-        time-input(v-model="form.data.timeIn.time", label="Time in")
+        datetime-input(
+          outlined
+          v-model="form.data.timeIn.time"
+          label="Time in"
+        )
 
         .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
           v-row
             v-col
-              //- TODO: Use datetime-local instead
-              time-input(
-                required,
-                hide-details,
-                v-model="breakItem.start.time",
+              datetime-input(
+                outlined
+                required
+                hide-details
+                v-model="breakItem.start.time"
                 :label="`Break ${index + 1} start`"
               )
             v-col
-              time-input(
-                required,
-                hide-details,
-                v-model="breakItem.end.time",
+              datetime-input(
+                outlined
+                required
+                hide-details
+                v-model="breakItem.end.time"
                 :label="`Break ${index + 1} end`"
               )
 
-        time-input(
-          required,
-          v-model="form.data.timeOut.time",
+        datetime-input(
+          outlined
+          required
+          v-model="form.data.timeOut.time"
           label="Time out"
         )
 
@@ -55,15 +61,17 @@ v-dialog(
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import TimeInput from '@/components/inputs/TimeInput.vue'
+import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import * as payments from '@/services/payments'
+import { ClockAction } from '@/types/Clock'
 
 // TODO: Convert this file to typescript
+// TODO: Add chronology validation
 
 dayjs.extend(duration)
 
 @Component({
-  components: { TimeInput },
+  components: { DatetimeInput },
 })
 export default class EditTimecardDialog extends Vue {
   
@@ -78,7 +86,7 @@ export default class EditTimecardDialog extends Vue {
   }
 
   @Prop({ default: false }) opened
-  @Prop({ type: String }) timecardId
+  @Prop({ type: Number }) timecardId
 
   get timecard() {
     return this.$store.getters.timecard(this.timecardId)
@@ -100,19 +108,34 @@ export default class EditTimecardDialog extends Vue {
 
   calculateFormValues() {
     const events = this.timecard.time_clocks
-
-    this.form.data.timeIn = Object.assign({}, events[0])
-    this.form.data.timeOut = Object.assign({}, events[events.length - 1])
-
-    const breakEvents = events.slice(1, events.length - 1),
-          breaks = []
-
-    for (let i = 0; i < breakEvents.length; i += 2) {
-      breaks.push({
-        start: breakEvents[i],
-        end: breakEvents[i + 1],
+      .sort((a, b) => {
+        return new Date(b.time).getTime() - new Date(a.time).getTime()
       })
-    }
+
+    this.form.data.timeIn = events.find(event => event.action === ClockAction.ClockIn)
+    this.form.data.timeOut = events.find(event => event.action === ClockAction.ClockOut)
+
+    const breakStarts = events.filter(event => event.action === ClockAction.StartBreak)
+    const breakEnds = events.filter(event => event.action === ClockAction.EndBreak)
+    /*
+      We will group the start and end breaks into pairs, eg:
+      breaks = [{
+        start: ClockEvent,
+        end: ClockEvent,
+      },
+      ...
+      ]
+    */
+   const breaks = []
+
+    if (breakStarts.length != breakEnds.length) return console.error('Malformed data.')
+
+    breakStarts.forEach((start, index) => {
+      breaks.push({
+        start,
+        end: breakEnds[index]
+      })
+    })
     this.form.data.breaks = breaks
   }
 

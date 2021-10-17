@@ -1,43 +1,44 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import axios from 'axios'
-import { Geolocation } from '@capacitor/geolocation'
-import { User } from '@/definitions/User'
+import { api } from '@/util/axios'
+import socket from '@/util/socket-io'
+import { User } from '@/types/Users'
 import usersStore from '@/store/users'
 
 export async function getAuthenticatedUser({ commit }: any) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: '/users/me',
   })
   commit('SET_AUTHENTICATED_USER', data.authenticated_user)
+  const { fs_uniquifier } = data.authenticated_user
+  socket.emit('sign-in', {
+    fs_uniquifier
+  })
   return data.authenticated_user
 }
 
 export async function loadUser({ commit }: any, userId: number) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: `/users/${userId}`,
   })
   commit('ADD_USER', data)
 }
 
-export async function getUserLocation({ commit }: any) {
-  const { coords } = await Geolocation.getCurrentPosition()
-  const userLocation = {
-    lat: coords.latitude,
-    lng: coords.longitude,
-  }
-  commit('SET_USER_LOCATION', userLocation)
-  return userLocation
-}
-
-export async function locationPermissionGranted({ commit }: any) {
-  const permissions = await Geolocation.checkPermissions()
-  return permissions.location === 'granted'
+export async function loadWorkforce({ commit }: any) {
+  const { data } = await api({
+    method: 'GET',
+    url: '/users/organizations/me',
+  })
+  data.users.forEach((u: User) => {
+    commit('ADD_USER', u)
+    commit('ADD_WORKFORCE_MEMBER', u.id)
+  })
+  return data
 }
 
 export async function updateContractor({ commit }: any, newFields: any, userId: number) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'PATCH',
     url: `/users/contractors/${userId}`,
     data: newFields,
@@ -46,7 +47,7 @@ export async function updateContractor({ commit }: any, newFields: any, userId: 
 }
 
 export async function loadManagers({ commit }: any) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'GET',
     url: `/jobs/managers`,
     params: {
@@ -62,20 +63,8 @@ export async function loadManagers({ commit }: any) {
   return data
 }
 
-export async function loadWorkforce({ commit }: any) {
-  const { data } = await axios({
-    method: 'GET',
-    url: '/organizations/me/users',
-  })
-  data.users.forEach((u: User) => {
-    commit('ADD_USER', u)
-    commit('ADD_WORKFORCE_MEMBER', u.id)
-  })
-  return data
-}
-
 export async function addManager({ commit }: any, manager: User) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'POST',
     url: '/users/add-manager',
     data: manager,
@@ -86,7 +75,7 @@ export async function addManager({ commit }: any, manager: User) {
 }
 
 export async function deleteUser({ commit }: any, userId: number) {
-  await axios({
+  await api({
     method: 'DELETE',
     url: `/users/${userId}`,
   })
@@ -94,7 +83,7 @@ export async function deleteUser({ commit }: any, userId: number) {
 }
 
 export async function addContractor({ commit }: any, contractor: User) {
-  const { data } = await axios({
+  const { data } = await api({
     method: 'POST',
     url: '/users/add-contractor',
     data: contractor,

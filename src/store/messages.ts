@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
-import { Conversation, Message } from '@/definitions/Messages'
-import { User } from '@/definitions/User'
+import { Conversation, Message } from '@/types/Messages'
+import { User } from '@/types/Users'
 
 export interface MessagesState {
   conversations: {
@@ -22,12 +22,10 @@ export const initialState = (): MessagesState => ({
 })
 
 const mutations = {
-	ADD_CONVERSATION(state: MessagesState, { conversation, prepend }: { conversation: Conversation; prepend: boolean }) {
+	ADD_CONVERSATION(state: MessagesState, conversation: Conversation) {
 		Vue.set(state.conversations.byId, conversation.id, conversation)
 		if (!state.conversations.all.includes(conversation.id))
-			prepend
-				? state.conversations.all.unshift(conversation.id)
-				: state.conversations.all.push(conversation.id)
+			state.conversations.all.push(conversation.id)
 	},
 
 	UPDATE_CONTACTS(state: MessagesState, contacts: User[]) {

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { api } from '@/util/axios'
 import { showToast } from '@/services/app'
 
 export async function contactSales({ commit }: any, form: {
@@ -17,7 +17,7 @@ export async function contactSales({ commit }: any, form: {
   notes?: string;
 }, type: 'sales' | 'support') {
   try {
-    const { data } = await axios({
+    const { data } = await api({
       method: 'POST',
       url: `contact/${type}`,
       data: form

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { CalendarEvent } from '@/definitions/Schedule'
+import { CalendarEvent } from '@/types/Schedule'
 
 export interface ScheduleState {
   events: {
@@ -22,6 +22,14 @@ const mutations = {
     Vue.set(state.events.byId, event.id, event)
     if (!state.events.all.includes(event.id)) state.events.all.push(event.id)
   },
+  
+  REMOVE_EVENT(state: ScheduleState, eventId: number) {
+    Vue.delete(state.events.byId, eventId)
+    Vue.delete(
+      state.events.all,
+      state.events.all.indexOf(eventId)
+    )
+  }
 }
 
 const getters = {

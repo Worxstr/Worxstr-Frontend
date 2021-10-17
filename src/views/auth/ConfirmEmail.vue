@@ -15,7 +15,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { confirmEmail, resendEmailConfirmation } from '@/services/auth'
 import { showToast } from '@/services/app'
-import { defaultRoute } from '@/definitions/User'
+import { defaultRoute } from '@/types/Users'
 
 @Component({
   metaInfo: {
@@ -44,7 +44,6 @@ export default class ConfirmEmail extends Vue {
       setTimeout(this.openApp, 500)
     }
     catch (error) {
-      console.log(error)
       this.message = 'Could not confirm email.'
       this.valid = false
     }

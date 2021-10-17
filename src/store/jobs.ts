@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
-import { Job, Shift } from '@/definitions/Job'
-import { User } from '@/definitions/User'
+import { Job, Shift } from '@/types/Jobs'
+import { addContractor } from '@/services/users'
+import usersStore from '@/store/users'
+import clockStore from '@/store/clock'
+import { User } from '@/types/Users'
+import { ClockEvent } from '@/types/Clock'
 
 export interface JobsState {
   all: number[];
@@ -9,7 +13,7 @@ export interface JobsState {
     [key: number]: Job;
   };
   shifts: {
-    next: Shift | null;
+    next: number | null;
     all: number[];
     byId: {
       [key: number]: Shift;
@@ -22,23 +26,66 @@ export const initialState = (): JobsState => ({
   byId: {},
   shifts: {
     next: null,
-    // TODO: Flatten shift data from jobs
     all: [],
     byId: {},
   },
 })
 
+function addShift(state: JobsState, shift: Shift) {
+  Vue.set(state.shifts.byId, shift.id, shift)
+  if (!state.shifts.all.includes(shift.id))
+    state.shifts.all.push(shift.id)
+
+  // Normalize clock events
+  if (shift.timeclock_actions) {
+    shift.timeclock_actions.forEach((event: ClockEvent) => {
+      Vue.set(clockStore.state.events.byId, event.id, event)
+      if (!clockStore.state.events.all.includes(event.id))
+        clockStore.state.events.all.push(event.id)
+    })
+  }
+}
+
 const mutations = {
-  ADD_JOB(state: JobsState, { job, authenticatedUser }: { job: Job; authenticatedUser: User }) {
+
+  ADD_JOB(state: JobsState, job: Job) {
+    job.shifts?.forEach(shift => {
+      addShift(state, shift)
+    })
+    delete job.shifts
+
+    if (job.contractor_manager) {
+      usersStore.mutations.ADD_USER(usersStore.state, job.contractor_manager)
+    }
+    delete job.contractor_manager
+    
+    if (job.organization_manager) {
+      usersStore.mutations.ADD_USER(usersStore.state, job.organization_manager)
+    }
+    delete job.organization_manager
+
+    if (job.contractors) {
+      job.contractors.forEach((contractor: User) => {
+        usersStore.mutations.ADD_USER(usersStore.state, contractor)
+      })
+    }
+    if (job?.managers?.contractor_managers) {
+      job.managers.contractor_managers.forEach((manager: User) => {
+        usersStore.mutations.ADD_USER(usersStore.state, manager)
+      })
+    }
+    if (job?.managers?.organization_managers) {
+      job.managers.organization_managers.forEach((manager: User) => {
+        usersStore.mutations.ADD_USER(usersStore.state, manager)
+      })
+    }
+
     Vue.set(state.byId, job.id, {
       ...state.byId[job.id],
       ...job,
-      direct: (
-        authenticatedUser?.id === job.organization_manager_id ||
-        authenticatedUser?.id === job.contractor_manager_id
-      )
     })
-    if (!state.all.includes(job.id)) state.all.push(job.id)
+    if (!state.all.includes(job.id))
+      state.all.push(job.id)
   },
 
   REMOVE_JOB(state: JobsState, jobId: number) {
@@ -49,33 +96,50 @@ const mutations = {
     )
   },
 
-  SET_NEXT_SHIFT(state: JobsState, shift: Shift) {
-    state.shifts.next = shift
+  SET_NEXT_SHIFT(state: JobsState, shiftId: number) {
+    state.shifts.next = shiftId
   },
 
-  ADD_SHIFT(state: JobsState, { shift, jobId }: { shift: Shift; jobId: number }) {
-    state.byId[jobId].shifts.push(shift)
-    // TODO: Flatten shift data from jobs
-    // Vue.set(state.shifts.byId, shift.id, shift)
-    // if (!state.shifts.all.includes(shift.id))
-    //   state.shifts.all.push(shift.id)
+  ADD_SHIFT(state: JobsState, shift: Shift) {
+    console.log('performing mutation: ADD_SHIFT', {shift})
+    addShift(state, shift)
   },
 
-  REMOVE_SHIFT(state: JobsState, { jobId, shiftId }: { jobId: number; shiftId: number }) {
-    state.byId[jobId].shifts = state.byId[jobId].shifts.filter(
-      (shift: Shift) => shift.id != shiftId
+  REMOVE_SHIFT(state: JobsState, shiftId: number) {
+    Vue.delete(state.shifts.byId, shiftId)
+    Vue.delete(
+      state.shifts.all,
+      state.shifts.all.indexOf(shiftId)
     )
   },
 }
 
 const getters = {
-  job: (state: JobsState) => (id: number) => {
-    const job = state.byId[id]
+  // TODO: Get type for rootState
+  job: (state: JobsState, getters: any, rootState: any) => (jobId: number) => {
+    const job = state.byId[jobId]
 
-    // if (job && job.shifts)
-    //   job.shifts = job.shifts.map(shiftId => {
-    //     return getters.shift(shiftId)
-    //   })
+    if (job) {
+      // Get shifts associated with the job
+      job.shifts = state.shifts.all
+        .map((shiftId: number) => {
+          const shift = getters.shift(shiftId)
+
+          // Get timeclock actions associated with the shift
+          shift.timeclock_actions = clockStore.getters.clockHistoryByJobAndContractor(
+            clockStore.state,
+            clockStore.getters
+          )(jobId, shift.contractor_id)
+          
+          return shift
+        })
+        .filter((shift: Shift) => {
+          return shift.job_id === jobId
+        })
+      
+      job.contractor_manager = rootState.users.byId[job.contractor_manager_id]
+      job.organization_manager = rootState.users.byId[job.organization_manager_id]
+    }
 
     return job
   },
@@ -96,24 +160,22 @@ const getters = {
     return state.shifts.byId[id]
   },
 
-  shifts: (state: JobsState, getters: any) => {
-    return state.shifts.all.map((id: number) => getters.shift(id))
-  },
-
-  nextShift: (state: JobsState) => {
+  nextShift: (state: JobsState, getters: any) => {
     if (!state.shifts.next) return {}
 
-    const begin = new Date(state.shifts.next.time_begin),
-      end = new Date(state.shifts.next.time_end),
+    const nextShift = state.shifts.byId[state.shifts.next]
+
+    const begin = new Date(nextShift.time_begin),
+      end = new Date(nextShift.time_end),
       now = new Date()
 
     const shiftActive = begin <= now && now <= end
 
+    console.log(nextShift)
+
     return {
-      ...state.shifts.next,
-      time_begin: begin,
-      time_end: end,
       shiftActive,
+      ...nextShift,
     }
   },
 }

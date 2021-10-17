@@ -193,7 +193,7 @@ v-dialog(
 /* eslint-disable @typescript-eslint/camelcase */
 import dayjs from 'dayjs'
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { User } from '@/definitions/User'
+import { User } from '@/types/Users'
 import { createShift } from '@/services/jobs'
 
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'

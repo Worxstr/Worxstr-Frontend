@@ -5,7 +5,9 @@
 	"bundledWebRuntime": false,
 	"plugins": {
 		"SplashScreen": {
-			"launchShowDuration": 0
+			"launchAutoHide": false,
+			"androidScaleType": "CENTER_INSIDE",
+			"backgroundColor": "#e7edf7"
 		}
 	},
 	"cordova": {},

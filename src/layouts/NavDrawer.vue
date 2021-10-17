@@ -83,7 +83,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { User, Role, UserRole } from '@/definitions/User'
+import { User, Role, UserRole } from '@/types/Users'
 import { signOut } from '@/services/auth'
 import { miniNav } from '@/services/app'
 

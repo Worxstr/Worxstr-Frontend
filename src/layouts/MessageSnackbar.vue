@@ -1,5 +1,4 @@
 <template lang="pug">
-  //- TODO: Update padding-bottom to be safeAreaBottom + headerHeight from App.vue
   v-snackbar(
     app
     bottom

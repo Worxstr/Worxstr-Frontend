@@ -54,17 +54,25 @@ div(v-else)
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
         span(v-if='!$vuetify.breakpoint.xs') Close
 
-    v-card.mb-3.d-flex.flex-column.soft-shadow(:style='`border-top: 3px solid ${job.color}`')
+    v-card.mb-3.d-flex.flex-column.flex-lg-row.soft-shadow(
+      :style='`border-top: 3px solid ${job.color}`'
+    )
       
-      jobs-map(:jobs='[job]' :show-user-location='true')
+      jobs-map(
+        :jobs='[job]'
+        :show-user-location='true'
+        :style='$vuetify.breakpoint.lgAndUp && `width: 50%`'
+      )
 
       div
+        //- Address
         v-card-text
           p {{ job.address }}
             br
             | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
 
-        v-layout.px-5.flex-column.flex-sm-row.justify-space-between(
+        //- Job info fields
+        v-layout.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between(
           v-if='job.organization_manager && job.contractor_manager && job.consultant_name && job.consultant_code'
         )
           .flex-grow-1.justify-center
@@ -170,10 +178,11 @@ import QrCodeDialog from './QrCodeDialog.vue'
 import JobsMap from '@/components/JobsMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
 
-import { currentUserIs, UserRole } from '@/definitions/User'
-import { Job, Shift } from '@/definitions/Job'
+import { currentUserIs, UserRole } from '@/types/Users'
+import { Job, Shift } from '@/types/Jobs'
 import { loadJob } from '@/services/jobs'
 import { showToast } from '@/services/app'
+import * as geolocation from '@/services/geolocation'
 
 @Component({
   components: {
@@ -211,10 +220,11 @@ export default class JobView extends Vue {
     } finally {
       this.loading = false
     }
+    await geolocation.init(this.$store)
   }
 
   get job(): Job {
-    return this.$store.getters.job(this.$route.params.jobId)
+    return this.$store.getters.job(parseInt(this.$route.params.jobId))
   }
 
   get userIsOrgManager() {

@@ -42,9 +42,9 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { currentUserIs, Managers } from '@/definitions/User'
+import { currentUserIs, Managers } from '@/types/Users'
 import * as schedule from '@/services/schedule'
-import { CalendarEvent } from '@/definitions/Schedule'
+import { CalendarEvent } from '@/types/Schedule'
 
 @Component({
   metaInfo: {

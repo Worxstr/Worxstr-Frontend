@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { Role } from '@/definitions/User'
+import { Role } from '@/types/Users'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component

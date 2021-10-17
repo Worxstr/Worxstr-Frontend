@@ -35,7 +35,7 @@ v-dialog(
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Timecard } from '@/definitions/Payments'
+import { Timecard } from '@/types/Payments'
 import { completePayments } from '@/services/payments'
 
 @Component

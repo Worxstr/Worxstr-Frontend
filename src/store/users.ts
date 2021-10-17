@@ -1,17 +1,16 @@
 import Vue from 'vue'
-import { User } from '@/definitions/User'
+import { User } from '@/types/Users'
+import { Position } from '@/services/geolocation'
 
 export interface UsersState {
   all: number[];
   byId: {
     [key: number]: User;
   };
+  
   authenticatedUser: User | null;
-  userLocation: {
-    lat: number;
-    lng: number;
-    accuracy?: number;
-  } | null;
+  userLocation: Position | null;
+
   workforce: number[];
   managers: {
     [key: string]: User[];
@@ -55,8 +54,8 @@ const mutations = {
     Vue.delete(state.workforce, state.workforce.indexOf(userId))
   },
 
-  SET_USER_LOCATION(state: UsersState, { lat, lng, accuracy }: any) {
-    state.userLocation = { lat, lng, accuracy }
+  SET_USER_LOCATION(state: UsersState, location: Position) {
+    state.userLocation = location
   },
 
   ADD_WORKFORCE_MEMBER(state: UsersState, userId: number) {

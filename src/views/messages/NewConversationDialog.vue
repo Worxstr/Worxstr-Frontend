@@ -46,6 +46,7 @@ v-dialog(
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import * as messages from '@/services/messages'
+import { User } from '@/types/Users'
 
 @Component
 export default class NewConversationDialog extends Vue {
@@ -67,6 +68,9 @@ export default class NewConversationDialog extends Vue {
 
   get contacts() {
     return this.$store.state.messages.contacts
+      .filter((user: User) => {
+        return user.id !== this.$store.state.users.authenticatedUser?.id
+      })
   }
 
   closeDialog() {
