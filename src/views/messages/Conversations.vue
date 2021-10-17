@@ -2,7 +2,7 @@
 
 v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line')
 
-.conversations(v-else)
+.conversations(v-else-if='conversations')
   v-list(color="transparent")
     div(
       v-for="(conversation, i) in conversations",

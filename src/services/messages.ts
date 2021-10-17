@@ -7,7 +7,7 @@ export async function loadConversations({ commit }: any) {
 		url: 'conversations',
 	})
 	data.conversations.forEach((conversation: Conversation) => {
-		commit('ADD_CONVERSATION', { conversation })
+		commit('ADD_CONVERSATION', conversation)
 	})
 	return data
 }
@@ -17,7 +17,7 @@ export async function loadConversation({ commit }: any, conversationId: number) 
 		method: 'GET',
 		url: `conversations/${conversationId}`,
 	})
-	commit('ADD_CONVERSATION', { conversation: data.conversation })
+	commit('ADD_CONVERSATION', data.conversation)
 	return data
 }
 
@@ -29,10 +29,7 @@ export async function createConversation({ commit }: any, userIds: number[]) {
 			users: userIds,
 		},
 	})
-	commit('ADD_CONVERSATION', {
-		conversation: data.conversation,
-		prepend: true,
-	})
+	commit('ADD_CONVERSATION', data.conversation)
 	return data.conversation
 }
 
