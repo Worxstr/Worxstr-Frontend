@@ -14,7 +14,7 @@ v-container(v-touch='onSwipe')
         v-for='(route, i) in childRoutes'
         :key='i'
         :to='route.path'
-        v-if='shouldShowRoute(route)'
+        v-if='!routeIsRestricted(route)'
       )
         v-icon(left) {{ route.meta.icon }}
         | {{ route.path | capitalize }}
@@ -41,21 +41,34 @@ export default class Settings extends Vue {
     left: this.prevTab,
     right: this.nextTab,
   }
+
+  navigateToRoute(routeName: string) {
+    const route = this.childRoutes?.find(r => r.name === routeName)
+    if (this.routeIsRestricted(route)) return false
+    this.$router.push({
+      name: routeName,
+    })
+    return true
+  }
+  
   nextTab() {
     let index = this.tabs.indexOf(this.tab) - 1
     if (index < 0) index = 0
     this.tab = this.tabs[index]
-    this.$router.push({
-      name: `settings/${this.tab}`
-    })
+    if (!this.navigateToRoute(`settings/${this.tab}`)) {
+      // Try again if the attempted route is restricted
+      this.nextTab()
+    }
   }
+
   prevTab() {
     let index = this.tabs.indexOf(this.tab) + 1
     if (index > this.tabs.length - 1) index = this.tabs.length - 1
     this.tab = this.tabs[index]
-    this.$router.push({
-      name: `settings/${this.tab}`
-    })
+    if (!this.navigateToRoute(`settings/${this.tab}`)) {
+      // Try again if the attempted route is restricted
+      this.prevTab()
+    }
   }
 
   get childRoutes() {
@@ -66,9 +79,9 @@ export default class Settings extends Vue {
     return this.childRoutes?.map(r => r.path) || []
   }
 
-  shouldShowRoute(route: any) {
-    if (!route.meta.restrict) return true
-    return currentUserIs(...route.meta.restrict)
+  routeIsRestricted(route: any) {
+    if (!route.meta.restrict) return false
+    return !currentUserIs(...route.meta.restrict)
   }
 }
 
