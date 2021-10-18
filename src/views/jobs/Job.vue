@@ -89,7 +89,7 @@ div(v-else)
 
           .flex-grow-1.justify-sm-center.d-flex.flex-row.align-center
             .d-flex.flex-column
-              p.text-subtitle-2.mb-1 Consultant code
+              p.text-subtitle-2.mb-1 Clock-in code
               p {{ job.consultant_code }}
             .mb-3.ml-3
               v-tooltip(bottom)
