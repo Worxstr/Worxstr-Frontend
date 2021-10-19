@@ -31,6 +31,7 @@ div(v-else)
     qr-code-dialog(
       :opened.sync='qrCodeDialog'
       :code='job.consultant_code'
+      :color='job.color'
     )
 
     portal(to="toolbarActions")
