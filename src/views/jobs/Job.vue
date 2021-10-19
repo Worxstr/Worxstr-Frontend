@@ -45,10 +45,10 @@ div(v-else)
         span(v-if='!$vuetify.breakpoint.xs') Edit
 
       v-btn(
-        v-if="userIsOrgManager",
-        text,
+        v-if="userIsOrgManager"
+        text
         :icon='$vuetify.breakpoint.xs'
-        color="red",
+        color="red"
         @click="closeJobDialog = true"
       ) 
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
@@ -66,7 +66,10 @@ div(v-else)
 
       div
         //- Address
-        v-card-text
+        v-card-text.d-flex
+          .mt-1.mr-1
+            v-btn(icon @click='openNavigation' color='primary')
+              v-icon mdi-map-search
           p {{ job.address }}
             br
             | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
@@ -75,19 +78,19 @@ div(v-else)
         v-layout.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between(
           v-if='job.organization_manager && job.contractor_manager && job.consultant_name && job.consultant_code'
         )
-          .flex-grow-1.justify-center
+          .flex-grow-1
             p.text-subtitle-2.mb-1 Organization manager
             p {{ job.organization_manager | fullName }}
 
-          .flex-grow-1.justify-center
+          .flex-grow-1
             p.text-subtitle-2.mb-1 Contractor manager
             p {{ job.contractor_manager | fullName }}
 
-          .flex-grow-1.justify-center
+          .flex-grow-1
             p.text-subtitle-2.mb-1 Consultant
             p {{ job.consultant_name }}
 
-          .flex-grow-1.justify-sm-center.d-flex.flex-row.align-center
+          .flex-grow-1.d-flex.flex-row.align-center
             .d-flex.flex-column
               p.text-subtitle-2.mb-1 Consultant code
               p {{ job.consultant_code }}
@@ -120,7 +123,7 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text, @click="createShiftDialog = true")
+      v-btn(text color='primary' @click="createShiftDialog = true")
         v-icon(left) mdi-clipboard-plus-outline
         span Assign shift
 
@@ -247,6 +250,16 @@ export default class JobView extends Vue {
 
   openQrCodeDialog() {
     this.qrCodeDialog = true
+  }
+
+  get userLocation() {
+    return this.$store.state.users.userLocation
+  }
+
+  openNavigation() {
+    const position = `${this.userLocation.lat},${this.userLocation.lng}`
+    const address = `${this.job.address}, ${this.job.city}, ${this.job.state} ${this.job.zip_code}`
+    window.open(`https://www.google.com/maps/dir/?api=1&origin=${position}&destination=${address}`)
   }
 
   contractorName(contractorId: number) {
