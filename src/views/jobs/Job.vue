@@ -68,8 +68,18 @@ div(v-else)
         //- Address
         v-card-text.d-flex
           .mt-1.mr-1
-            v-btn(icon @click='openNavigation' color='primary')
-              v-icon mdi-map-search
+            v-tooltip(bottom)
+              span Navigate to job
+              template(v-slot:activator='{ on, attrs }')
+                v-btn(
+                  icon
+                  color='primary'
+                  v-bind='attrs'
+                  v-on='on'
+                  @click='openNavigation'
+                )
+                  v-icon mdi-map-search
+
           p {{ job.address }}
             br
             | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
@@ -106,6 +116,7 @@ div(v-else)
                     @click='openQrCodeDialog'
                   )
                     v-icon mdi-qrcode
+
               v-tooltip(bottom)
                 span Copy to clipboard
                 template(v-slot:activator='{ on, attrs }')
@@ -257,9 +268,9 @@ export default class JobView extends Vue {
   }
 
   openNavigation() {
-    const position = `${this.userLocation.lat},${this.userLocation.lng}`
+    const position = this.userLocation && `${this.userLocation.lat},${this.userLocation.lng}`
     const address = `${this.job.address}, ${this.job.city}, ${this.job.state} ${this.job.zip_code}`
-    window.open(`https://www.google.com/maps/dir/?api=1&origin=${position}&destination=${address}`)
+    window.open(`https://www.google.com/maps/dir/?api=1${position ? `&origin=${position}` : ''}&destination=${address}`)
   }
 
   contractorName(contractorId: number) {
