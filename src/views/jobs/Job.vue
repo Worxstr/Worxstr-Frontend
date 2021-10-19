@@ -38,7 +38,7 @@ div(v-else)
         v-if="userIsOrgManager",
         text,
         :icon='$vuetify.breakpoint.xs'
-        color="primary",
+        :color='jobColor'
         @click="editJobDialog = true"
       )
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
@@ -48,7 +48,7 @@ div(v-else)
         v-if="userIsOrgManager"
         text
         :icon='$vuetify.breakpoint.xs'
-        color="red"
+        color="error"
         @click="closeJobDialog = true"
       ) 
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
@@ -73,7 +73,7 @@ div(v-else)
               template(v-slot:activator='{ on, attrs }')
                 v-btn(
                   icon
-                  color='primary'
+                  :color='jobColor'
                   v-bind='attrs'
                   v-on='on'
                   @click='openNavigation'
@@ -110,7 +110,7 @@ div(v-else)
                 template(v-slot:activator='{ on, attrs }')
                   v-btn(
                     icon
-                    color='primary'
+                    :color='jobColor'
                     v-bind='attrs'
                     v-on='on'
                     @click='openQrCodeDialog'
@@ -122,7 +122,7 @@ div(v-else)
                 template(v-slot:activator='{ on, attrs }')
                   v-btn(
                     icon
-                    color='primary'
+                    :color='jobColor'
                     v-bind='attrs'
                     v-on='on'
                     @click='copyText(job.consultant_code)'
@@ -134,7 +134,7 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text color='primary' @click="createShiftDialog = true")
+      v-btn(text :color='jobColor' @click="createShiftDialog = true")
         v-icon(left) mdi-clipboard-plus-outline
         span Assign shift
 
@@ -174,7 +174,7 @@ div(v-else)
           v-card-actions
             v-spacer
             v-btn(text, @click="openEditShiftDialog(shift)") Edit
-            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Delete
+            v-btn(text, color="error", @click="openDeleteShiftDialog(shift)") Delete
 </template>
 
 <script lang="ts">
@@ -239,6 +239,10 @@ export default class JobView extends Vue {
 
   get job(): Job {
     return this.$store.getters.job(parseInt(this.$route.params.jobId))
+  }
+
+  get jobColor() {
+    return this.job?.color || 'primary'
   }
 
   get userIsOrgManager() {
