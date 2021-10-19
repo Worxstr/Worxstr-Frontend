@@ -2,7 +2,7 @@
   GmapMap(
     :center="centerLocation",
     :zoom="zoomLevel",
-    :style='`height: ${height}`'
+    :style='`min-height: ${height}`'
     :options='mapOptions'
   )
     GmapCircle(
