@@ -1,4 +1,4 @@
-<template lang="pug">
+`<template lang="pug">
 v-dialog(
   id='clock-in-dialog'
   v-model='dialogOpened'
@@ -101,7 +101,7 @@ export default class ClockInDialog extends Vue {
 
   codeRules = [
     (code: string) => !!code || 'Please enter your clock-in code',
-    (code: string) => (code.length === 6 && code.match(/^-?\d+$/)) || 'Please enter a valid clock-in code',
+    (code: string) => ((code.length === 6 || code.length === 5) && code.match(/^-?\d+$/)) || 'Please enter a valid clock-in code',
   ]
 
   @Prop({ default: false }) readonly opened!: boolean
