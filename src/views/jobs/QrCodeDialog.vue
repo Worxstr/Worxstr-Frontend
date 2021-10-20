@@ -7,7 +7,7 @@ v-dialog(
   v-toolbar.flex-grow-0(flat)
     v-toolbar-title.text-h6 Clock-in code
     v-spacer
-    v-btn(icon :color='color' @click='print()')
+    v-btn(v-if='showPrint' icon :color='color' @click='print()')
       v-icon mdi-printer
     v-btn(
       icon
