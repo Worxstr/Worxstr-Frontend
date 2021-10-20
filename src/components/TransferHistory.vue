@@ -34,6 +34,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
             )
               | {{ transfer.status | capitalize }}
 
+          //- TODO: This looks like shit
           span.mt-1
             | {{ transferFundsAdded(transfer) ? 'From' : 'To' }}&nbsp;
             span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'business'")

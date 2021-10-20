@@ -90,11 +90,17 @@ div(v-else)
         )
           .flex-grow-1
             p.text-subtitle-2.mb-1 Organization manager
-            p {{ job.organization_manager | fullName }}
+            router-link.alt-style(
+              :to="{name: 'user', params: {userId: job.organization_manager.id}}"
+            )
+              | {{ job.organization_manager | fullName }}
 
           .flex-grow-1
             p.text-subtitle-2.mb-1 Contractor manager
-            p {{ job.contractor_manager | fullName }}
+            router-link.alt-style(
+              :to="{name: 'user', params: {userId: job.contractor_manager.id}}"
+            )
+              | {{ job.contractor_manager | fullName }}
 
           .flex-grow-1
             p.text-subtitle-2.mb-1 Consultant
@@ -146,7 +152,11 @@ div(v-else)
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0
           p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ (shift.contractor ? shift.contractor : getContractor(shift.contractor_id)) | fullName }}
+            router-link.alt-style.my-1.font-weight-medium(
+              v-if="shift.contractor_id"
+              :to="{name: 'user', params: {userId: shift.contractor_id}}"
+            )
+              | {{ getContractor(shift.contractor_id) | fullName }}
             span.my-1.font-weight-medium(v-else) Unassigned
             span.my-1 {{ shift.site_location }}
 
