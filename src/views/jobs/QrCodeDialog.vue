@@ -7,7 +7,7 @@ v-dialog(
   v-toolbar.flex-grow-0(flat)
     v-toolbar-title.text-h6 Clock-in code
     v-spacer
-    v-btn(v-if='showPrint' icon :color='color' @click='print()')
+    v-btn(v-if='showPrint' icon color='primary' @click='print()')
       v-icon mdi-printer
     v-btn(
       icon
@@ -43,7 +43,6 @@ export default class QrCodeDialog extends Vue {
 
   @Prop({ default: false }) readonly opened!: boolean
   @Prop(String) readonly code!: string
-  @Prop(String) readonly color!: string
 
   closeDialog() {
     this.$emit('update:opened', false)

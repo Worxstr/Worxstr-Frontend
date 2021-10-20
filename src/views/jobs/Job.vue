@@ -31,7 +31,6 @@ div(v-else)
     qr-code-dialog(
       :opened.sync='qrCodeDialog'
       :code='job.consultant_code'
-      :color='job.color'
     )
 
     portal(to="toolbarActions")
@@ -39,7 +38,7 @@ div(v-else)
         v-if="userIsOrgManager",
         text,
         :icon='$vuetify.breakpoint.xs'
-        :color='jobColor'
+        color='primary'
         @click="editJobDialog = true"
       )
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
@@ -74,7 +73,7 @@ div(v-else)
               template(v-slot:activator='{ on, attrs }')
                 v-btn(
                   icon
-                  :color='jobColor'
+                  color='primary'
                   v-bind='attrs'
                   v-on='on'
                   @click='openNavigation'
@@ -111,7 +110,7 @@ div(v-else)
                 template(v-slot:activator='{ on, attrs }')
                   v-btn(
                     icon
-                    :color='jobColor'
+                    color='primary'
                     v-bind='attrs'
                     v-on='on'
                     @click='openQrCodeDialog'
@@ -123,7 +122,7 @@ div(v-else)
                 template(v-slot:activator='{ on, attrs }')
                   v-btn(
                     icon
-                    :color='jobColor'
+                    color='primary'
                     v-bind='attrs'
                     v-on='on'
                     @click='copyText(job.consultant_code)'
@@ -135,7 +134,7 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text :color='jobColor' @click="createShiftDialog = true")
+      v-btn(text color='primary' @click="createShiftDialog = true")
         v-icon(left) mdi-clipboard-plus-outline
         span Assign shift
 
@@ -240,10 +239,6 @@ export default class JobView extends Vue {
 
   get job(): Job {
     return this.$store.getters.job(parseInt(this.$route.params.jobId))
-  }
-
-  get jobColor() {
-    return this.job?.color || 'primary'
   }
 
   get userIsOrgManager() {
