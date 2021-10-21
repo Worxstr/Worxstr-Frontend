@@ -15,7 +15,7 @@ v-dialog(
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="red", @click="closeJob") Yes, Close
+      v-btn(text, color="red", @click="closeJob") Yes, close
       
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")

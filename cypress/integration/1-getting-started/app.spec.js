@@ -26,7 +26,7 @@ describe('jobs', () => {
   before(() => {
     cy.login()
     cy.visit('localhost:8080/jobs')
-    cy.logout
+    cy.logout()
   })
 
   it('should create job', () => {
