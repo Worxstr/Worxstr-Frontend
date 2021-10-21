@@ -14,8 +14,12 @@
 
 describe('App', () => {
 
-  beforeEach(() => {
+  before(() => {
     cy.visit('localhost:8080')
+  })
+
+  it('will load', () => {
+    cy.get('main').contains('The adaptive solution').should('be.visible')
   })
 
   it('should sign in', () => {
@@ -34,6 +38,11 @@ describe('App', () => {
 
     cy.get('main').contains('button', 'Sign in').click()
   })
+
+  it('should sign out', () => {
+    cy.contains('Sign out').click()
+  })
+
 })
 
 /* describe('example to-do app', () => {
