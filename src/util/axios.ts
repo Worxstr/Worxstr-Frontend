@@ -96,12 +96,12 @@ export async function configureAxios(store: any) {
   baseUrl.set()
 
   api.interceptors.request.use(
-    async (config: any) => {
-      if (!checkOnline(config)) {
-        showToast(store, { text: 'You are offline.' })
-        return false
-      }
-      sendGtagEvent(config)
+    (config: any) => {
+      // if (!checkOnline(config)) {
+      //   showToast(store, { text: 'You are offline.' })
+      //   return false
+      // }
+      // sendGtagEvent(config)
       return config
     },
     (error: any) => {
@@ -111,24 +111,27 @@ export async function configureAxios(store: any) {
 
   api.interceptors.response.use(
     (response: any) => {
+      console.log('oiqwerqoweiruqw')
       return response
     },
     (error: any) => {
-      // if (error.config.hideErrorMessage) return
+      // // if (error.config.hideErrorMessage) return
 
-      // TODO: this is stupid, don't keep this. use custom api config
-      // We are ignoring an error message if we are trying to access /users/me without being logged in.
-      // This request is made on app load.
-      if (error.request.responseURL.includes('/users/me')) return
+      // // TODO: this is stupid, don't keep this. use custom api config
+      // // We are ignoring an error message if we are trying to access /users/me without being logged in.
+      // // This request is made on app load.
+      // if (error.request.responseURL.includes('/users/me')) return
 
-      checkLoggedIn(error)
-      const message = getErrorMessage(error)
-      const action = getAction(error)
+      // checkLoggedIn(error)
+      // const message = getErrorMessage(error)
+      // const action = getAction(error)
 
-      showToast(store, {
-        text: message,
-        action,
-      })
+      // showToast(store, {
+      //   text: message,
+      //   action,
+      // })
+      console.log('asdflkjasdflkjasdflkj')
+      console.log(error)
 
       return Promise.reject(error)
     }

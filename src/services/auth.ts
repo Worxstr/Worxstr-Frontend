@@ -40,7 +40,7 @@ export async function unsetAuthToken() {
 export async function signIn({ commit }: any, email: string, password: string) {
   sandboxMode.toggle({ commit }, shouldUseSandbox(email))
 
-  try {
+  // try {
     const { data } = await api({
       method: 'POST',
       url: '/auth/login',
@@ -67,16 +67,16 @@ export async function signIn({ commit }: any, email: string, password: string) {
     await getAuthenticatedUser({ commit })
     router.push({ name: defaultRoute() })
     return data
-  } catch (err) {
-    if ((err as any).response.status === 400) {
-      // Already signed in
-      await getAuthenticatedUser({ commit })
-      router.push({ name: defaultRoute() })
-    } else {
-      commit('UNSET_AUTHENTICATED_USER')
-      return err
-    }
-  }
+  // } catch (err) {
+  //   if ((err as any).response.status === 400) {
+  //     // Already signed in
+  //     await getAuthenticatedUser({ commit })
+  //     router.push({ name: defaultRoute() })
+  //   } else {
+  //     commit('UNSET_AUTHENTICATED_USER')
+  //     return err
+  //   }
+  // }
 }
 
 /*
