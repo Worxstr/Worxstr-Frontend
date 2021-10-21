@@ -45,7 +45,8 @@ export default class CloseJobDialog extends Vue {
     try {
       await closeJob(this.$store, this.job.id)
       this.closeDialog()
-      this.$router.push({name: 'jobs'})
+      if (this.$route.name !== 'jobs')
+        this.$router.push({name: 'jobs'})
     }
     finally {
       this.loading = false
