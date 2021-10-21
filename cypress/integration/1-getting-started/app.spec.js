@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /// <reference types="cypress" />
 
 // Welcome to Cypress!
@@ -11,7 +12,31 @@
 // please read our getting started guide:
 // https://on.cypress.io/introduction-to-cypress
 
-describe('example to-do app', () => {
+describe('App', () => {
+
+  beforeEach(() => {
+    cy.visit('localhost:8080')
+  })
+
+  it('should sign in', () => {
+    cy.get('main').contains('Sign in').click()
+
+    const email = 'alex+test1@worxstr.com'
+    const password = 'password'
+
+    cy.get('input[type=email]')
+      .type(email)
+      .should('have.value', email)
+      
+    cy.get('input[type=password]')
+    .type(password)
+    .should('have.value', password)
+
+    cy.get('main').contains('button', 'Sign in').click()
+  })
+})
+
+/* describe('example to-do app', () => {
   beforeEach(() => {
     // Cypress starts out with a blank slate for each test
     // so we must tell it to visit our website with the `cy.visit()` command.
@@ -141,3 +166,4 @@ describe('example to-do app', () => {
     })
   })
 })
+ */
