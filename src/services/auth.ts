@@ -76,8 +76,7 @@ export async function signIn({ commit }: any, email: string, password: string) {
       commit('UNSET_AUTHENTICATED_USER')
       return err
     }
-  }
-}
+  }}
 
 /*
   accountType: 'contractor' | 'org'
@@ -128,6 +127,13 @@ export async function signUp(
   }
 }
 
+export async function clearUserData({ commit }: any) {
+  commit('UNSET_AUTHENTICATED_USER')
+  commit('RESET_STATE')
+  unsetAuthToken()
+  socket.emit('sign-out')
+}
+
 export async function signOut({ state, commit }: any) {
   sandboxMode.toggle(
     { commit },
@@ -138,10 +144,7 @@ export async function signOut({ state, commit }: any) {
     method: 'POST',
     url: `/auth/logout`,
   })
-  commit('UNSET_AUTHENTICATED_USER')
-  commit('RESET_STATE')
-  unsetAuthToken()
-  socket.emit('sign-out')
+  clearUserData({ commit })
   router.push({ name: 'home' })
 }
 

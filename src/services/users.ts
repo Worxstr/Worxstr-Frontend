@@ -3,18 +3,27 @@ import { api } from '@/util/axios'
 import socket from '@/util/socket-io'
 import { User } from '@/types/Users'
 import usersStore from '@/store/users'
-
+import { clearUserData } from './auth'
 export async function getAuthenticatedUser({ commit }: any) {
-  const { data } = await api({
-    method: 'GET',
-    url: '/users/me',
-  })
-  commit('SET_AUTHENTICATED_USER', data.authenticated_user)
-  const { fs_uniquifier } = data.authenticated_user
-  socket.emit('sign-in', {
-    fs_uniquifier
-  })
-  return data.authenticated_user
+  try {
+    const { data } = await api({
+      method: 'GET',
+      url: '/users/me',
+    })
+    commit('SET_AUTHENTICATED_USER', data.authenticated_user)
+    const { fs_uniquifier } = data.authenticated_user
+    socket.emit('sign-in', {
+      fs_uniquifier
+    })
+    return data.authenticated_user
+  }
+  catch (error) {
+    if (error.response.status === 401) {
+      
+      clearUserData({ commit })
+      return {}
+    }
+  }
 }
 
 export async function loadUser({ commit }: any, userId: number) {
