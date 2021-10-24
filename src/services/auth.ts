@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
 import router from '@/router'
-import { getAuthenticatedUser } from './users'
+import { getMe } from './users'
 import { sandboxMode, showToast } from '@/services/app'
 import { defaultRoute } from '@/types/Users'
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
+import usersStore from '@/store/users'
 import socket from '@/util/socket-io'
 
 export function shouldUseSandbox(email: string) {
@@ -64,13 +65,13 @@ export async function signIn({ commit }: any, email: string, password: string, r
     //   value: authToken
     // })
 
-    await getAuthenticatedUser({ commit })
+    await getMe({ commit })
     router.push({ name: defaultRoute() })
     return data
   } catch (err) {
     if ((err as any).response.status === 400) {
       // Already signed in
-      await getAuthenticatedUser({ commit })
+      await getMe({ commit })
       router.push({ name: defaultRoute() })
     } else {
       commit('UNSET_AUTHENTICATED_USER')
@@ -137,7 +138,7 @@ export async function clearUserData({ commit }: any) {
 export async function signOut({ state, commit }: any) {
   sandboxMode.toggle(
     { commit },
-    shouldUseSandbox(state.users.authenticatedUser.email)
+    shouldUseSandbox(state.getters.me(usersStore.state).email)
   )
 
   await api({
@@ -177,7 +178,7 @@ export async function resetPassword(
     },
   })
   if (response.status === 200) {
-    await getAuthenticatedUser(context)
+    await getMe(context)
     router.push({
       name: defaultRoute(),
     })
@@ -220,7 +221,7 @@ export async function updatePassword(
 ) {
   sandboxMode.toggle(
     { commit },
-    shouldUseSandbox(state.users.authenticatedUser.email)
+    shouldUseSandbox(state.getters.me(usersStore.state).email)
   )
 
   const { data } = await api({

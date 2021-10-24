@@ -4,7 +4,8 @@ import socket from '@/util/socket-io'
 import { User } from '@/types/Users'
 import usersStore from '@/store/users'
 import { clearUserData } from './auth'
-export async function getAuthenticatedUser({ commit }: any) {
+
+export async function getMe({ commit }: any) {
   try {
     const { data } = await api({
       method: 'GET',
@@ -60,7 +61,7 @@ export async function loadManagers({ commit }: any) {
     method: 'GET',
     url: `/jobs/managers`,
     params: {
-      manager_id: usersStore.state.authenticatedUser?.manager_id || usersStore.state.authenticatedUser?.id,
+      manager_id: usersStore.state.me?.manager_id || usersStore.state.me?.id,
     },
   })
   data.contractor_managers.forEach((m: User) => {

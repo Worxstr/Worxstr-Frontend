@@ -69,8 +69,12 @@ export default class NewConversationDialog extends Vue {
   get contacts() {
     return this.$store.state.messages.contacts
       .filter((user: User) => {
-        return user.id !== this.$store.state.users.authenticatedUser?.id
+        return user.id !== this.me?.id
       })
+  }
+
+  get me() {
+    return this.$store.getters.me
   }
 
   closeDialog() {

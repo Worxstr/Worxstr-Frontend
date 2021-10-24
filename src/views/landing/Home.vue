@@ -10,7 +10,7 @@
           .my-8
             h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to contract labor management
 
-          div(v-if='authenticatedUser')
+          div(v-if='me')
             v-btn.mr-3.black--text(
               elevation='0'
               color='accent'
@@ -245,9 +245,9 @@ export default class Home extends Vue {
       },
     },
   ]
-  
-  get authenticatedUser() {
-    return this.$store.state.users.authenticatedUser
+
+  get me() {
+    return this.$store.getters.me
   }
 
   get savingsEstimate() {
@@ -256,7 +256,7 @@ export default class Home extends Vue {
   }
   
   get defaultRoute() {
-    return defaultRoute(this.authenticatedUser)
+    return defaultRoute(this.me)
   }
 
   @Watch('savingsEstimate')

@@ -16,6 +16,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { confirmEmail, resendEmailConfirmation } from '@/services/auth'
 import { showToast } from '@/services/app'
 import { defaultRoute } from '@/types/Users'
+import usersStore from '@/store/users'
 
 @Component({
   metaInfo: {
@@ -50,8 +51,12 @@ export default class ConfirmEmail extends Vue {
     this.loading = false
   }
 
+  get me() {
+    return this.$store.getters.me
+  }
+
   openApp() {
-    if (!this.$store.state.users.authenticatedUser) {
+    if (!this.me) {
       this.navigateToLogin()
     }
     else {

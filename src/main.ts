@@ -21,7 +21,7 @@ import VueGtag from 'vue-gtag'
 import { configureDwolla } from './util/dwolla'
 import { configureAxios } from './util/axios'
 import { initDarkMode } from './util/theme'
-import { getAuthenticatedUser } from '@/services/users'
+import { getMe } from '@/services/users'
 import { sandboxMode } from '@/services/app'
 import { shouldUseSandbox } from './services/auth'
 
@@ -57,7 +57,7 @@ Vue.config.productionTip = false
 
 async function getUserData() {
   // Get local user data
-  const storedUser = localStorage.getItem('authenticatedUser')
+  const storedUser = localStorage.getItem('me')
   if (storedUser) {
     const user = JSON.parse(storedUser)
     sandboxMode.toggle(store, shouldUseSandbox(user.email))
@@ -69,7 +69,7 @@ async function getUserData() {
 
   try {
     // Load new user data
-    await getAuthenticatedUser(store)
+    await getMe(store)
   }
   catch (e) {
     // console.error(e)

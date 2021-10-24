@@ -96,8 +96,8 @@ export default class NavDrawer extends Vue {
     signOut(this.$store)
   }
 
-  get authenticatedUser(): User {
-    return this.$store.state.users.authenticatedUser
+  get me(): User {
+    return this.$store.getters.me
   }
   
   get mini() {
@@ -121,7 +121,7 @@ export default class NavDrawer extends Vue {
         const restrict = !!meta.restrict;
 
         const userHasRequiredRole = !!meta.restrict?.some((role: UserRole) =>
-          this.authenticatedUser?.roles?.map((r: Role) => r.id).includes(role)
+          this.me?.roles?.map((r: Role) => r.id).includes(role)
         );
 
         return (icon && !restrict) || (icon && userHasRequiredRole);

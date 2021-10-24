@@ -21,7 +21,7 @@
 				span(v-if='!$vuetify.breakpoint.xs') Edit
 
 			v-btn(
-				v-if='userIsOrgManager && user.id != authenticatedUser.id'
+				v-if='userIsOrgManager && user.id != me.id'
 				text
 				color='error'
 				@click='deleteUserDialog = true'
@@ -107,9 +107,9 @@ export default class User extends Vue {
     return this.$store.getters.user(this.$route.params.userId)
   }
 
-	get authenticatedUser() {
-		return this.$store.state.users.authenticatedUser
-	}
+  get me() {
+    return this.$store.getters.me
+  }
 
   get userIsManager() {
     return userIs(this.user, ...Managers)

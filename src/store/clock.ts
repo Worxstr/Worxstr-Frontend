@@ -84,7 +84,7 @@ const getters = {
         getters.clockEvent(eventId)
       )
       .filter((event: ClockEvent) => {
-        return event.contractor_id === usersStore.state.authenticatedUser?.id
+        return event.contractor_id === usersStore.getters.me(usersStore.state)?.id
       })
       .sort((a, b) => {
         return new Date(b.time).getTime() - new Date(a.time).getTime()

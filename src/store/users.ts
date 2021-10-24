@@ -8,7 +8,7 @@ export interface UsersState {
     [key: number]: User;
   };
   
-  authenticatedUser: User | null;
+  me: number | null;
   userLocation: Position | null;
 
   workforce: number[];
@@ -20,7 +20,7 @@ export interface UsersState {
 export const initialState = (): UsersState => ({
   all: [],
   byId: {},
-  authenticatedUser: null,
+  me: null,
   userLocation: null,
   workforce: [],
   managers: {
@@ -29,23 +29,28 @@ export const initialState = (): UsersState => ({
   },
 })
 
+function addUser(state: UsersState, user: User) {
+  Vue.set(state.byId, user.id, {
+    ...state.byId[user.id],
+    ...user,
+  })
+  if (!state.all.includes(user.id)) state.all.push(user.id)
+}
+
 const mutations = {
   SET_AUTHENTICATED_USER(state: UsersState, user: User) {
-    state.authenticatedUser = user
-    localStorage.setItem('authenticatedUser', JSON.stringify(user))
+    addUser(state, user)
+    state.me = user.id
+    localStorage.setItem('me', JSON.stringify(user))
   },
 
   UNSET_AUTHENTICATED_USER(state: UsersState) {
-    state.authenticatedUser = null
-    localStorage.removeItem('authenticatedUser')
+    state.me = null
+    localStorage.removeItem('me')
   },
 
   ADD_USER(state: UsersState, user: User) {
-    Vue.set(state.byId, user.id, {
-      ...state.byId[user.id],
-      ...user,
-    })
-    if (!state.all.includes(user.id)) state.all.push(user.id)
+    addUser(state, user)
   },
 
   REMOVE_USER(state: UsersState, userId: number) {
@@ -75,6 +80,11 @@ const mutations = {
 const getters = {
   user: (state: UsersState) => (id: number) => {
     return state.byId[id]
+  },
+
+  me: (state: UsersState) => {
+    if (!state.me) return null
+    return state.byId[state.me]
   },
 
   workforce: (state: UsersState) => {

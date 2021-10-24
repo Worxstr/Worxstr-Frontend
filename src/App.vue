@@ -92,8 +92,8 @@ export default class App extends Vue {
     })
   }
 
-  get authenticatedUser(): User {
-    return this.$store.state.users.authenticatedUser
+  get me(): User {
+    return this.$store.getters.me
   }
 
   get showNavDrawer() {
