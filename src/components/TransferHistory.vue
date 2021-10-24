@@ -106,9 +106,13 @@ export default class TransferHistory extends Vue {
     }
   }
 
+  get me() {
+    return this.$store.getters.me
+  }
+
   transferFundsAdded(transfer: Transfer): boolean {
     return transfer._links.destination.href ===
-      this.$store.state.getters.me().dwolla_customer_url
+      this.me.dwolla_customer_url
   }
 
   get transfers() {
