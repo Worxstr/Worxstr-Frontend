@@ -31,7 +31,7 @@
 				span(v-if='!$vuetify.breakpoint.xs') Delete
 
 		v-container.d-flex.flex-column.justify-center
-			.py-5
+			.py-5.px-4
 				h4.text-h4 {{ user | fullName }}
 				h6.text-h6
 					a(:href='`mailto:${user.email}`' target="_blank") {{ user.email }}
@@ -40,14 +40,33 @@
 
 				roles.mt-3(:roles='user.roles')
 
-			//- div(v-if='user.contractor_info')
-			//- 	p Makes {{ user.contractor_info.hourly_rate | currency }}/hour
-
 			v-list(color='transparent')
-				v-list-item(v-for='key in Object.keys(user).sort()')
+				v-list-item(v-if='user.manager_id')
 					v-list-item-content
-						v-list-item-title {{ key | snakeToSpace | capitalize }}
-						v-list-item-subtitle {{ user[key] }}
+						v-list-item-subtitle Manager
+						v-list-item-title {{ user.manager_id }}
+
+				v-list-item(v-if='user.manager_info')
+					v-list-item-content
+						v-list-item-subtitle Manager reference number
+						v-list-item-title {{ user.manager_info.reference_number }}
+					v-list-item-actions
+						v-tooltip(bottom)
+							span Copy to clipboard
+							template(v-slot:activator='{ on, attrs }')
+								v-btn(
+									icon
+									color='primary'
+									v-bind='attrs'
+									v-on='on'
+									@click='copyText(user.manager_info.reference_number)'
+								)
+									v-icon mdi-content-copy
+
+				v-list-item(v-if='user.contractor_info')
+					v-list-item-content
+						v-list-item-subtitle Hourly wage
+						v-list-item-title {{ user.contractor_info.hourly_rate | currency }} / hour
 
 </template>
 
@@ -58,6 +77,8 @@ import DeleteUserDialog from './DeleteUserDialog.vue'
 import Roles from '@/components/Roles.vue'
 import { Managers, userIs, currentUserIs, UserRole } from '@/types/Users'
 import { loadUser } from '@/services/users'
+import { Clipboard } from '@capacitor/clipboard'
+import { showToast } from '@/services/app'
 
 @Component({
   components: {
@@ -97,5 +118,22 @@ export default class User extends Vue {
 	get userIsOrgManager() {
 		return currentUserIs(UserRole.OrganizationManager)
 	}
+
+	// TODO: Move this to util, it is duplicated in other files
+  async copyText(text: string) {
+    try {
+      await Clipboard.write({
+        string: text
+      })
+      showToast(this.$store, {
+        text: "Copied."
+      })
+    }
+    catch (e) {
+      showToast(this.$store, {
+        text: "Couldn't copy to clipboard."
+      })
+    }
+  }
 }
 </script>

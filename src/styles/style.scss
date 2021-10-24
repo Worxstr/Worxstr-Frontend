@@ -19,6 +19,13 @@ html {
 }
 a {
   text-decoration: none;
+  
+  &.alt-style {
+    color: unset !important;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 .v-btn__content, .v-tabs * {
   text-transform: none !important;

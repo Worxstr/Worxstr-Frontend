@@ -11,7 +11,7 @@
       :key="message.id"
       :class="sentByMe(message) ? 'right' : 'left'"
     )
-      p.px-4.py-2.mb-2.rounded-xl(
+      p.px-4.py-2.mb-1.rounded-xl(
         :class="{\
           'lighten-2': !$vuetify.theme.dark,\
           'darken-2': $vuetify.theme.dark,\
@@ -36,6 +36,7 @@
       hide-details
       rounded
       solo
+      dense
       placeholder="Type a message..."
     )
 
@@ -70,19 +71,6 @@ export default class Conversation extends Vue {
     // console.log(this.$refs.message) //.$el.focus();
     await messages.loadConversation(this.$store, parseInt(this.$route.params.conversationId))
   }
-
-  // @Socket()
-  // connect() {
-  //   console.log('Socket connected')
-  // }
-
-  // @Socket('message:create')
-  // messageCreated(message: Message) {
-  //   this.$store.commit('ADD_MESSAGE', {
-  //     message,
-  //     conversationId: message.conversation_id,
-  //   })
-  // }
 
   get authenticatedUser() {
     return this.$store.state.users.authenticatedUser

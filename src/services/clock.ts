@@ -28,8 +28,10 @@ export async function loadClockHistory({ commit }: any) {
 
 export async function loadNextShift({ commit }: any) {
   const { data } = await api.get(`shifts/next`)
-  if (data.shift) commit('ADD_SHIFT', data.shift)
-  commit('SET_NEXT_SHIFT', data.shift.id)
+  if (data.shift){
+    commit('ADD_SHIFT', data.shift)
+    commit('SET_NEXT_SHIFT', data.shift.id)
+  }
 }
 
 export async function clockIn({ commit }: any, code: string, shiftId: number) {

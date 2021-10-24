@@ -14,6 +14,12 @@ yarn install
 yarn serve
 ```
 
+## E2E Testing (Cypress)
+
+```
+yarn run e2e
+```
+
 ## Production
 ```bash
 yarn build

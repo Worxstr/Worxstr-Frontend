@@ -38,17 +38,17 @@ div(v-else)
         v-if="userIsOrgManager",
         text,
         :icon='$vuetify.breakpoint.xs'
-        color="primary",
+        color='primary'
         @click="editJobDialog = true"
       )
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
         span(v-if='!$vuetify.breakpoint.xs') Edit
 
       v-btn(
-        v-if="userIsOrgManager",
-        text,
+        v-if="userIsOrgManager"
+        text
         :icon='$vuetify.breakpoint.xs'
-        color="red",
+        color="error"
         @click="closeJobDialog = true"
       ) 
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
@@ -66,7 +66,20 @@ div(v-else)
 
       div
         //- Address
-        v-card-text
+        v-card-text.d-flex
+          .mt-1.mr-1
+            v-tooltip(bottom)
+              span Navigate to job
+              template(v-slot:activator='{ on, attrs }')
+                v-btn(
+                  icon
+                  color='primary'
+                  v-bind='attrs'
+                  v-on='on'
+                  @click='openNavigation'
+                )
+                  v-icon mdi-map-search
+
           p {{ job.address }}
             br
             | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
@@ -75,19 +88,25 @@ div(v-else)
         v-layout.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between(
           v-if='job.organization_manager && job.contractor_manager && job.consultant_name && job.consultant_code'
         )
-          .flex-grow-1.justify-center
+          .flex-grow-1
             p.text-subtitle-2.mb-1 Organization manager
-            p {{ job.organization_manager | fullName }}
+            router-link.alt-style(
+              :to="{name: 'user', params: {userId: job.organization_manager.id}}"
+            )
+              | {{ job.organization_manager | fullName }}
 
-          .flex-grow-1.justify-center
+          .flex-grow-1
             p.text-subtitle-2.mb-1 Contractor manager
-            p {{ job.contractor_manager | fullName }}
+            router-link.alt-style(
+              :to="{name: 'user', params: {userId: job.contractor_manager.id}}"
+            )
+              | {{ job.contractor_manager | fullName }}
 
-          .flex-grow-1.justify-center
+          .flex-grow-1
             p.text-subtitle-2.mb-1 Consultant
             p {{ job.consultant_name }}
 
-          .flex-grow-1.justify-sm-center.d-flex.flex-row.align-center
+          .flex-grow-1.d-flex.flex-row.align-center
             .d-flex.flex-column
               p.text-subtitle-2.mb-1 Clock-in code
               p {{ job.consultant_code }}
@@ -103,6 +122,7 @@ div(v-else)
                     @click='openQrCodeDialog'
                   )
                     v-icon mdi-qrcode
+
               v-tooltip(bottom)
                 span Copy to clipboard
                 template(v-slot:activator='{ on, attrs }')
@@ -120,19 +140,23 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text, @click="createShiftDialog = true")
+      v-btn(text color='primary' @click="createShiftDialog = true")
         v-icon(left) mdi-clipboard-plus-outline
         span Assign shift
 
     p.text-body-2.text-center.mt-3(v-if="!job.shifts || !job.shifts.length")
       | There aren't any shifts for this job.
     
-    v-expansion-panels.soft-shadow(tile flat)
+    v-expansion-panels.soft-shadow(v-else tile flat)
       v-expansion-panel(v-for="shift in job.shifts", :key="shift.id")
         v-expansion-panel-header.d-flex
           //- span.text-subtitle-1.flex-grow-0
           p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-            span.my-1.font-weight-medium(v-if="shift.contractor_id") {{ (shift.contractor ? shift.contractor : getContractor(shift.contractor_id)) | fullName }}
+            router-link.alt-style.my-1.font-weight-medium(
+              v-if="shift.contractor_id"
+              :to="{name: 'user', params: {userId: shift.contractor_id}}"
+            )
+              | {{ getContractor(shift.contractor_id) | fullName }}
             span.my-1.font-weight-medium(v-else) Unassigned
             span.my-1 {{ shift.site_location }}
 
@@ -160,7 +184,7 @@ div(v-else)
           v-card-actions
             v-spacer
             v-btn(text, @click="openEditShiftDialog(shift)") Edit
-            v-btn(text, color="red", @click="openDeleteShiftDialog(shift)") Delete
+            v-btn(text, color="error", @click="openDeleteShiftDialog(shift)") Delete
 </template>
 
 <script lang="ts">
@@ -247,6 +271,16 @@ export default class JobView extends Vue {
 
   openQrCodeDialog() {
     this.qrCodeDialog = true
+  }
+
+  get userLocation() {
+    return this.$store.state.users.userLocation
+  }
+
+  openNavigation() {
+    const position = this.userLocation && `${this.userLocation.lat},${this.userLocation.lng}`
+    const address = `${this.job.address}, ${this.job.city}, ${this.job.state} ${this.job.zip_code}`
+    window.open(`https://www.google.com/maps/dir/?api=1${position ? `&origin=${position}` : ''}&destination=${address}`)
   }
 
   contractorName(contractorId: number) {

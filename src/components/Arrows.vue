@@ -225,7 +225,9 @@ export default class Arrows extends Vue {
   }
 
   mounted() {
-    this.beginning = false
+    setTimeout(() => {
+      this.beginning = false
+    }, 1)
   }
 }
 </script>

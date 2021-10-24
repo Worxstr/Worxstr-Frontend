@@ -25,6 +25,7 @@ import { getAuthenticatedUser } from '@/services/users'
 import { sandboxMode } from '@/services/app'
 import { shouldUseSandbox } from './services/auth'
 
+// TODO: Move this to environment variable
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
 Vue.use(VueMask)
