@@ -138,7 +138,7 @@ export async function clearUserData({ commit }: any) {
 export async function signOut({ state, commit }: any) {
   sandboxMode.toggle(
     { commit },
-    shouldUseSandbox(state.getters.me(usersStore.state).email)
+    shouldUseSandbox(usersStore.getters.me(usersStore.state)?.email as string)
   )
 
   await api({
