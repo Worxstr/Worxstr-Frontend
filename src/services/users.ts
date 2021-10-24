@@ -57,11 +57,12 @@ export async function updateContractor({ commit }: any, newFields: any, userId: 
 }
 
 export async function loadManagers({ commit }: any) {
+  const me = usersStore.getters.me(usersStore.state)
   const { data } = await api({
     method: 'GET',
     url: `/jobs/managers`,
     params: {
-      manager_id: usersStore.state.me?.manager_id || usersStore.state.me?.id,
+      manager_id: me?.manager_id || me?.id,
     },
   })
   data.contractor_managers.forEach((m: User) => {
