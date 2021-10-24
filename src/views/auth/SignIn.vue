@@ -28,10 +28,10 @@ div
             :type="showPassword ? 'text' : 'password'"
             v-model='form.password'
             :rules='passwordRules'
+            hide-details
             required
             outlined
             dense
-            :hide-details='biometricsAvailable'
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append='showPassword = !showPassword'
           )
@@ -39,6 +39,11 @@ div
             v-if='biometricsAvailable'
             v-model='form.useBiometrics'
             label='Use biometrics for future sign-ins'
+          )
+          v-checkbox(
+            v-else
+            v-model='form.rememberMe'
+            label='Remember me'
           )
 
         v-card-actions
@@ -75,6 +80,7 @@ export default class SignIn extends Vue {
     email: '',
     password: '',
     useBiometrics: false,
+    rememberMe: false,
   }
   showPassword = false
   isValid = false
@@ -95,13 +101,14 @@ export default class SignIn extends Vue {
     return this.form.email.includes('+test')
   }
 
-  async signIn(email?: string, password?: string) {
+  async signIn(email?: string, password?: string, rememberMe?: boolean) {
     this.loading = true
     try {
       if (!email) email = this.form.email
       if (!password) password = this.form.password
+      if (rememberMe === undefined) rememberMe = this.form.rememberMe
 
-      const data = await signIn(this.$store, email, password)
+      const data = await signIn(this.$store, email, password, rememberMe)
 
       // TODO: Find better way to determine login success
       if (data?.response?.user) {

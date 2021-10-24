@@ -37,7 +37,7 @@ export async function unsetAuthToken() {
   return await SecureStoragePlugin.remove({ key: 'authToken' })
 }
 
-export async function signIn({ commit }: any, email: string, password: string) {
+export async function signIn({ commit }: any, email: string, password: string, rememberMe = false) {
   sandboxMode.toggle({ commit }, shouldUseSandbox(email))
 
   try {
@@ -50,7 +50,7 @@ export async function signIn({ commit }: any, email: string, password: string) {
       data: {
         email,
         password,
-        remember_me: true,
+        remember_me: rememberMe,
       },
     })
     const authToken = data?.response?.user?.authentication_token
