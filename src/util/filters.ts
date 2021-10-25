@@ -64,11 +64,11 @@ Vue.filter('fullName', fullName)
 // Create a string that lists users names from an array of users, filtering the authenticated user
 // [{first: 'Bob', last: 'Vance'}, {first: 'Ada', last: 'Lovelace'}]								-> 'Ada Lovelace'
 // [{first: 'Bob', last: 'Vance'}, {first: 'Ada', last: 'Lovelace', {first: 'Tim', last: 'Allen'}}] -> 'Bob, Tim'
-export const groupNameList = (group: Conversation, authenticatedUser: User | null) => {
+export const groupNameList = (group: Conversation, me: User | null) => {
 	if (!group.participants || !group.participants.length) return ''
 	return group.participants
 		.filter(u =>
-			u.id != authenticatedUser?.id
+			u.id != me?.id
 		)
 		.map(u =>
 			(group.participants.length == 2) ? Vue.filter('fullName')(u) : u.first_name

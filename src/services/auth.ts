@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
 import router from '@/router'
-import { getAuthenticatedUser } from './users'
+import { getMe } from './users'
 import { sandboxMode, showToast } from '@/services/app'
 import { defaultRoute } from '@/types/Users'
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
+import usersStore from '@/store/users'
 import socket from '@/util/socket-io'
 
 export function shouldUseSandbox(email: string) {
@@ -37,7 +38,7 @@ export async function unsetAuthToken() {
   return await SecureStoragePlugin.remove({ key: 'authToken' })
 }
 
-export async function signIn({ commit }: any, email: string, password: string) {
+export async function signIn({ commit }: any, email: string, password: string, rememberMe = false) {
   sandboxMode.toggle({ commit }, shouldUseSandbox(email))
 
   try {
@@ -50,7 +51,7 @@ export async function signIn({ commit }: any, email: string, password: string) {
       data: {
         email,
         password,
-        remember_me: true,
+        remember_me: rememberMe,
       },
     })
     const authToken = data?.response?.user?.authentication_token
@@ -64,20 +65,19 @@ export async function signIn({ commit }: any, email: string, password: string) {
     //   value: authToken
     // })
 
-    await getAuthenticatedUser({ commit })
+    await getMe({ commit })
     router.push({ name: defaultRoute() })
     return data
   } catch (err) {
     if ((err as any).response.status === 400) {
       // Already signed in
-      await getAuthenticatedUser({ commit })
+      await getMe({ commit })
       router.push({ name: defaultRoute() })
     } else {
       commit('UNSET_AUTHENTICATED_USER')
       return err
     }
-  }
-}
+  }}
 
 /*
   accountType: 'contractor' | 'org'
@@ -128,20 +128,24 @@ export async function signUp(
   }
 }
 
+export async function clearUserData({ commit }: any) {
+  commit('UNSET_AUTHENTICATED_USER')
+  commit('RESET_STATE')
+  unsetAuthToken()
+  socket.emit('sign-out')
+}
+
 export async function signOut({ state, commit }: any) {
   sandboxMode.toggle(
     { commit },
-    shouldUseSandbox(state.users.authenticatedUser.email)
+    shouldUseSandbox(usersStore.getters.me(usersStore.state)?.email as string)
   )
 
   await api({
     method: 'POST',
     url: `/auth/logout`,
   })
-  commit('UNSET_AUTHENTICATED_USER')
-  commit('RESET_STATE')
-  unsetAuthToken()
-  socket.emit('sign-out')
+  clearUserData({ commit })
   router.push({ name: 'home' })
 }
 
@@ -174,7 +178,7 @@ export async function resetPassword(
     },
   })
   if (response.status === 200) {
-    await getAuthenticatedUser(context)
+    await getMe(context)
     router.push({
       name: defaultRoute(),
     })
@@ -217,7 +221,7 @@ export async function updatePassword(
 ) {
   sandboxMode.toggle(
     { commit },
-    shouldUseSandbox(state.users.authenticatedUser.email)
+    shouldUseSandbox(state.getters.me(usersStore.state).email)
   )
 
   const { data } = await api({

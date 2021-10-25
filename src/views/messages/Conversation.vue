@@ -60,7 +60,7 @@ export default class Conversation extends Vue {
       title: this.conversation
         ? this.$options.filters?.groupNameList(
             this.conversation,
-            this.authenticatedUser
+            this.me
           )
         : 'Conversation',
     }
@@ -72,8 +72,8 @@ export default class Conversation extends Vue {
     await messages.loadConversation(this.$store, parseInt(this.$route.params.conversationId))
   }
 
-  get authenticatedUser() {
-    return this.$store.state.users.authenticatedUser
+  get me() {
+    return this.$store.getters.me
   }
 
   get conversation() {
@@ -84,7 +84,7 @@ export default class Conversation extends Vue {
   }
 
   sentByMe(message: Message) {
-    return message.sender_id == this.authenticatedUser.id
+    return message.sender_id == this.me.id
   }
 
   // Determine if the message info should be shown

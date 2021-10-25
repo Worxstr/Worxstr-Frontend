@@ -3,44 +3,44 @@ v-list
   v-list-item(two-line)
     v-list-item-content
       v-list-item-subtitle.mb-2 Name
-      v-list-item-title {{ authenticatedUser | fullName }}
+      v-list-item-title {{ me | fullName }}
     v-list-item-action
       v-btn(text, color="primary", @click="signOut") Sign out
 
   v-list-item(two-line)
     v-list-item-content
       v-list-item-subtitle.mb-2 Email
-      v-list-item-title {{ authenticatedUser.email }}
+      v-list-item-title {{ me.email }}
 
   v-list-item(two-line)
     v-list-item-content
       v-list-item-subtitle.mb-2 Organization
-      v-list-item-title {{ authenticatedUser.organization_info.name }}
+      v-list-item-title {{ me.organization_info.name }}
     v-list-item-action(v-if='userIsOrganizationManager')
       v-btn(text, color="primary", :to="{name: 'settings/organization'}") Go to settings
 
-  v-list-item(two-line, v-if="authenticatedUser.contractor_info && authenticatedUser.contractor_info.address")
+  v-list-item(two-line, v-if="me.contractor_info && me.contractor_info.address")
     v-list-item-content
       v-list-item-subtitle.mb-2 Address
-      v-list-item-title {{ authenticatedUser.contractor_info.address }}
+      v-list-item-title {{ me.contractor_info.address }}
 
   v-list-item(two-line)
     v-list-item-content
       v-list-item-subtitle.mb-2 Roles
       v-list-item-title
-        roles(:roles="authenticatedUser.roles")
+        roles(:roles="me.roles")
 
-  v-list-item(two-line, v-if="authenticatedUser.contractor_info")
+  v-list-item(two-line, v-if="me.contractor_info")
     v-list-item-content
       v-list-item-subtitle.mb-2 Hourly wage
       v-list-item-title
-        span(v-if="authenticatedUser.contractor_info.hourly_rate") {{ authenticatedUser.contractor_info.hourly_rate | currency }}
+        span(v-if="me.contractor_info.hourly_rate") {{ me.contractor_info.hourly_rate | currency }}
         span(v-else) Not set
 
-  v-list-item(two-line, v-if="authenticatedUser.manager_info")
+  v-list-item(two-line, v-if="me.manager_info")
     v-list-item-content
       v-list-item-subtitle.mb-2 Manager reference number
-      v-list-item-title {{ authenticatedUser.manager_info.reference_number }}
+      v-list-item-title {{ me.manager_info.reference_number }}
     v-list-item-action
       v-tooltip(bottom)
         span Copy to clipboard
@@ -50,7 +50,7 @@ v-list
             color='primary'
             v-bind='attrs'
             v-on='on'
-            @click='copyText(authenticatedUser.manager_info.reference_number)'
+            @click='copyText(me.manager_info.reference_number)'
           )
             v-icon mdi-content-copy
 </template>
@@ -72,8 +72,8 @@ import { currentUserIs, UserRole } from "@/types/Users"
   }
 })
 export default class Me extends Vue {
-  get authenticatedUser() {
-    return this.$store.state.users.authenticatedUser
+  get me() {
+    return this.$store.getters.me
   }
 
   get userIsOrganizationManager() {

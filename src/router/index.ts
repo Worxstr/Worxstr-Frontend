@@ -54,7 +54,7 @@ const routes = [
     },
     beforeEnter(to: Route, from: Route, next: Function) {
       if (Capacitor.isNativePlatform()) {
-        if (usersStore.state.authenticatedUser)
+        if (usersStore.getters.me(usersStore.state))
           next({ name: defaultRoute() })
         else
           next({ name: 'nativeHome' })
@@ -261,7 +261,7 @@ const routes = [
           paramMap: {
             conversationId: 'messages.conversations',
             propBuilder(conversation: MessagesTypes.Conversation) {
-              return groupNameList(conversation, usersStore.state.authenticatedUser)
+              return groupNameList(conversation, usersStore.getters.me(usersStore.state))
             },
           },
         },
