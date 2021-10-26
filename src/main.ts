@@ -20,11 +20,8 @@ import { configureDwolla } from './util/dwolla'
 import { configureAxios } from './util/axios'
 import { initDarkMode } from './util/theme'
 import { getMe } from '@/services/users'
-import { baseUrl, sandboxMode } from '@/services/app'
+import { sandboxMode } from '@/services/app'
 import { shouldUseSandbox } from './services/auth'
-
-import * as socketio from '@/util/socket-io'
-import VueSocketIOExt from 'vue-socket.io-extended'
 
 // TODO: Move this to environment variable
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
