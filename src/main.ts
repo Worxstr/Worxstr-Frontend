@@ -13,8 +13,7 @@ import './util/filters'
 import VueMask  from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
-import VueSocketIOExt from 'vue-socket.io-extended'
-import socket from '@/util/socket-io'
+import * as socketio from '@/util/socket-io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
@@ -28,32 +27,27 @@ import { shouldUseSandbox } from './services/auth'
 // TODO: Move this to environment variable
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
-Vue.use(VueMask)
-Vue.use(PortalVue)
-Vue.use(VueChatScroll)
+function configurePlugins() {
+  Vue.use(VueMask)
+  Vue.use(PortalVue)
+  Vue.use(VueChatScroll)
 
-Vue.use(VueGoogleMaps, {
-  load: {
-    key: GOOGLE_MAPS_API_KEY,
-    libraries: 'places',
-  },
-})
-Vue.use(VuetifyGoogleAutocomplete, {
-  apiKey: GOOGLE_MAPS_API_KEY,
-  vueGoogleMapsCompatibility: true,
-})
+  Vue.use(VueGoogleMaps, {
+    load: {
+      key: GOOGLE_MAPS_API_KEY,
+      libraries: 'places',
+    },
+  })
+  Vue.use(VuetifyGoogleAutocomplete, {
+    apiKey: GOOGLE_MAPS_API_KEY,
+    vueGoogleMapsCompatibility: true,
+  })
 
-Vue.use(VueSocketIOExt, socket, {
-  store,
-  actionPrefix: '',
-  mutationPrefix: '',
-})
 
-Vue.use(VueGtag, {
-  config: { id: process.env.VUE_APP_GTAG_API },
-})
-
-Vue.config.productionTip = false
+  Vue.use(VueGtag, {
+    config: { id: process.env.VUE_APP_GTAG_API },
+  })
+}
 
 async function getUserData() {
   // Get local user data
@@ -83,7 +77,10 @@ function configureBackButtonPress() {
 }
 
 async function init() {
+
   await configureAxios(store)
+  Vue.config.productionTip = false
+  configurePlugins()
   await getUserData()
 
   new Vue({
@@ -92,6 +89,7 @@ async function init() {
     vuetify,
     render: (h) => h(App),
   }).$mount('#app')
+
 
   initDarkMode()
   await SplashScreen.hide()

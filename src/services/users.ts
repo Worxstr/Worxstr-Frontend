@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
-import socket from '@/util/socket-io'
+import { socket } from '@/util/socket-io'
 import { User } from '@/types/Users'
 import usersStore from '@/store/users'
 import { clearUserData } from './auth'

@@ -1,6 +1,9 @@
 import { configureDwolla } from '@/util/dwolla'
 import * as theme from '@/util/theme'
 import { api } from '@/util/axios'
+import mitt from 'mitt'
+
+export const environment = mitt()
 
 function getStoredPreference(localStorageItem: string, defaultVal: any) {
   return JSON.parse(window.localStorage.getItem(localStorageItem) || JSON.stringify(defaultVal)) || defaultVal
@@ -23,10 +26,12 @@ const localUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.repl
 
 export const baseUrl = {
   set(sandbox = false) {
+    const oldBaseUrl = this.get()
     const webProdUrl = sandbox ? sandboxUrl : productionUrl
     const baseUrl = process.env.NODE_ENV === 'production' ? webProdUrl : localUrl
     
     api.defaults.baseURL = baseUrl
+    if (baseUrl != oldBaseUrl) environment.emit('baseUrlChanged', baseUrl)
     return baseUrl
   },
   
