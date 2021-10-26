@@ -20,8 +20,11 @@ import { configureDwolla } from './util/dwolla'
 import { configureAxios } from './util/axios'
 import { initDarkMode } from './util/theme'
 import { getMe } from '@/services/users'
-import { sandboxMode } from '@/services/app'
+import { baseUrl, sandboxMode } from '@/services/app'
 import { shouldUseSandbox } from './services/auth'
+
+import * as socketio from '@/util/socket-io'
+import VueSocketIOExt from 'vue-socket.io-extended'
 
 // TODO: Move this to environment variable
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
@@ -41,7 +44,6 @@ function configurePlugins() {
     apiKey: GOOGLE_MAPS_API_KEY,
     vueGoogleMapsCompatibility: true,
   })
-
 
   Vue.use(VueGtag, {
     config: { id: process.env.VUE_APP_GTAG_API },
@@ -76,10 +78,10 @@ function configureBackButtonPress() {
 }
 
 async function init() {
-
-  await configureAxios(store)
   Vue.config.productionTip = false
+  
   configurePlugins()
+  await configureAxios(store)
   await getUserData()
 
   new Vue({
