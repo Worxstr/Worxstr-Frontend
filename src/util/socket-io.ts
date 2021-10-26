@@ -2,12 +2,11 @@ import Vue from 'vue'
 import VueSocketIOExt from 'vue-socket.io-extended'
 import store from '@/store'
 import { io } from 'socket.io-client'
-import { baseUrl, environment } from '@/services/app'
+import { environment } from '@/services/app'
 
 // Initialize a new websocket connection
 function createSocket(url: string) {
-  url = url.replace('https', 'wss')
-  url = url.replace('http', 'ws')  
+  console.log('creating socket at', url)
   const socket =  io(url, {
     path: '/socket.io'
   })
