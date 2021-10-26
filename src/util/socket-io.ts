@@ -6,7 +6,8 @@ import { baseUrl, environment } from '@/services/app'
 
 // Initialize a new websocket connection
 function createSocket(url: string) {
-  console.log('initializing new connection: ', url)
+  url = url.replace('https', 'wss')
+  url = url.replace('http', 'ws')  
   const socket =  io(url, {
     path: '/socket.io'
   })
