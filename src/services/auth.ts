@@ -7,7 +7,7 @@ import { defaultRoute } from '@/types/Users'
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
 import usersStore from '@/store/users'
-import socket from '@/util/socket-io'
+import { socket } from '@/util/socket-io'
 
 export function shouldUseSandbox(email: string) {
   return email.includes('+test')
@@ -69,7 +69,7 @@ export async function signIn({ commit }: any, email: string, password: string, r
     router.push({ name: defaultRoute() })
     return data
   } catch (err) {
-    if ((err as any).response.status === 400) {
+    if ((err as any).response?.status === 400) {
       // Already signed in
       await getMe({ commit })
       router.push({ name: defaultRoute() })
