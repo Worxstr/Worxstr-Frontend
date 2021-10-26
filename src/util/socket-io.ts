@@ -24,6 +24,7 @@ function configureVueSocketio() {
     actionPrefix: '',
     mutationPrefix: '',
   })
+  console.log(Vue.prototype.$socket)
 }
 
 // When the sandbox environment changes, create a new socket connection
