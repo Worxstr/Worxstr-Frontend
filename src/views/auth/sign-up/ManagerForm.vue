@@ -2488,7 +2488,17 @@ export default class ManagerForm extends Vue {
 
   @Watch('form')
   onFormChange() {
-    this.$emit('update', this.form)
+    const form = this.form
+
+    if (this.isSoleProprieter) {
+      delete form.controller
+    }
+    if (this.isCompanyController && form?.controller) {
+      form.controller.firstName = form.firstName
+      form.controller.lastName = form.lastName
+    }
+
+    this.$emit('update', form)
   }
 
   get classifications() {
