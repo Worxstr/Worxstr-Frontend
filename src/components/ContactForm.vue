@@ -17,7 +17,7 @@ v-form.flex-grow-1.d-flex.flex-column(
   )
 
   .d-flex.flex-column.flex-md-row
-    v-text-field.mr-2(
+    v-text-field.mr-4(
       v-if="!me"
       v-model="form.contact_name",
       label="Your name",
