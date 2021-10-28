@@ -41,14 +41,14 @@ div
 
 
               div(v-if="accountType == 'org'")
-                manager-form(@update='managerFormUpdate')
+                manager-form(@update='managerFormUpdate' :isValid='isValid' ref='managerForm')
 
               div(v-if="accountType == 'contractor'")
-                contractor-form(@update='contractorFormUpdate')
+                contractor-form(@update='contractorFormUpdate' :isValid='isValid')
 
               v-checkbox.mt-0(
-                v-if='isValid'
                 v-model='form.terms'
+                :rules='rules.terms'
                 required
               )
                 template(v-slot:label)
@@ -106,7 +106,11 @@ export default class SignUp extends Vue {
 
   form = {
     terms: false,
-    // customer_url: '',
+  }
+  rules = {
+    terms: [
+      (v) => !!v || 'You must agree to the terms and conditions',
+    ],
   }
 
   contractorForm = {}

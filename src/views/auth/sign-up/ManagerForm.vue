@@ -42,6 +42,28 @@
         outlined
         dense
       )
+    
+    v-text-field(
+      label='Password'
+      :type="showPassword ? 'text' : 'password'"
+      v-model='form.password'
+      :rules='rules.password'
+      required
+      outlined
+      dense
+      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+      @click:append='showPassword = !showPassword'
+    )
+    v-text-field(
+      v-if='!showPassword'
+      label='Confirm password'
+      type='password'
+      v-model='form.confirm_password'
+      :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
+      required
+      outlined
+      dense
+    )
 
     .d-flex.flex-column.flex-sm-row
       v-text-field.mr-sm-4(
@@ -62,125 +84,250 @@
         dense
       )
   
-  div(v-if='form.businessType')
-    v-subheader Business information
+  v-slide-y-transition
+    div(v-if='form.businessType')
+      v-subheader Business information
 
-    v-text-field.mr-sm-4(
-      label='Doing business as'
-      placeholder='My name'
-      v-model='form.doingBusinessAs'
-      required
-      outlined
-      dense
-    )
-
-    .d-flex.flex-column.flex-sm-row
       v-text-field.mr-sm-4(
-        label='Address 1'
-        placeholder='1234 Main St.'
-        v-model='form.address1'
-        :rules='rules.address1'
-        required
-        outlined
-        dense
-      )
-      v-text-field(
-        label='Address 2'
-        placeholder='Apt. 123'
-        v-model='form.address2'
+        label='Doing business as'
+        placeholder='My name'
+        v-model='form.doingBusinessAs'
         required
         outlined
         dense
       )
 
-    .d-flex.flex-column.flex-sm-row
-      v-text-field.mr-sm-4(
-        label='City'
-        placeholder='City'
-        v-model='form.city'
-        :rules='rules.city'
-        required
-        outlined
-        dense
-      )
-      v-select.mr-sm-4(
-        label='State'
-        :items='states'
-        v-model='form.state'
-        :rules='rules.state'
-        outlined
-        dense
-        required
-      )
+      .d-flex.flex-column.flex-sm-row
+        v-text-field.mr-sm-4(
+          label='Address 1'
+          placeholder='1234 Main St.'
+          v-model='form.address1'
+          :rules='rules.address1'
+          required
+          outlined
+          dense
+        )
+        v-text-field(
+          label='Address 2'
+          placeholder='Apt. 123'
+          v-model='form.address2'
+          required
+          outlined
+          dense
+        )
+
+      .d-flex.flex-column.flex-sm-row
+        v-text-field.mr-sm-4(
+          label='City'
+          placeholder='City'
+          v-model='form.city'
+          :rules='rules.city'
+          required
+          outlined
+          dense
+        )
+        v-select.mr-sm-4(
+          label='State'
+          :items='states'
+          v-model='form.state'
+          :rules='rules.state'
+          outlined
+          dense
+          required
+        )
+        v-text-field(
+          label='Postal code'
+          placeholder='12345'
+          v-model='form.postalCode'
+          :rules='rules.postalCode'
+          maxlength='5'
+          required
+          outlined
+          dense
+        )
+        
+      .d-flex.flex-column.flex-sm-row
+        v-select.mr-sm-4(
+          label='Business type'
+          v-model='form.businessClassificationCategory'
+          :rules='rules.businessClassificationCategory'
+          :items='classifications'
+          outlined
+          dense
+        )
+        v-select(
+          :disabled='!form.businessClassificationCategory'
+          label='Industry'
+          v-model='form.businessClassification'
+          :rules='rules.industry'
+          :items='getIndustries(form.businessClassificationCategory)'
+          item-text='name'
+          item-value='id'
+          outlined
+          dense
+        )
+
       v-text-field(
-        label='Postal code'
-        placeholder='12345'
-        v-model='form.postalCode'
-        :rules='rules.postalCode'
-        maxlength='5'
+        label='Employer identification number'
+        placeholder='00-0000000'
+        v-mask="'##-#######'"
+        v-model='form.ein'
+        :rules='rules.ein'
         required
         outlined
         dense
       )
       
-    .d-flex.flex-column.flex-sm-row
-      v-select.mr-sm-4(
-        label='Business type'
-        v-model='form.businessClassificationCategory'
-        :rules='rules.businessClassificationCategory'
-        :items='classifications'
-        outlined
-        dense
+      v-checkbox.mt-0(
+        v-if='!isSoleProprieter'
+        v-model='isCompanyController'
+        required
       )
-      v-select(
-        :disabled='!form.businessClassificationCategory'
-        label='Industry'
-        v-model='form.businessClassification'
-        :rules='rules.industry'
-        :items='getIndustries(form.businessClassificationCategory)'
-        item-text='name'
-        item-value='id'
-        outlined
-        dense
-      )
+        template(v-slot:label)
+          span.mr-2 I am also a company controller
+          v-tooltip(bottom max-width='300')
+            | A person significant responsibility (e.g., CEO, CFO, VP, Treasurer) for managing the business on this account.
+            template(v-slot:activator='{on}')
+              v-icon(v-on='on') mdi-help-circle-outline
 
-    v-text-field(
-      label='Employer identification number'
-      placeholder='00-0000000'
-      v-mask="'##-#######'"
-      v-model='form.ein'
-      :rules='rules.ein'
-      required
-      outlined
-      dense
-    )
-    
-    v-checkbox.mt-0(
-      v-if='!isSoleProprieter'
-      v-model='isCompanyController'
-      required
-    )
-      template(v-slot:label)
-        span.mr-2 I am also a company controller
-        v-tooltip(bottom max-width='300')
-          | A person significant responsibility (e.g., CEO, CFO, VP, Treasurer) for managing the business on this account.
-          template(v-slot:activator='{on}')
-            v-icon(v-on='on') mdi-help-circle-outline
-    
-  div(v-if='true')
-    div(v-if='isSoleProprieter')
-      v-subheader Sole proprietor verification
+  v-slide-y-transition
+    div(v-if='form.ein')
+      div(v-if='isSoleProprieter')
+        v-subheader Sole proprietor verification
 
-      .d-flex.flex-column.flex-sm-row
-        v-text-field.mr-sm-4(
-          label='Date of birth'
-          type="date",
-          v-model='form.dateOfBirth'
-          :rules='rules.dateOfBirth'
+        .d-flex.flex-column.flex-sm-row
+          v-text-field.mr-sm-4(
+            label='Date of birth'
+            type="date",
+            v-model='form.dateOfBirth'
+            :rules='rules.dateOfBirth'
+            outlined
+            dense
+            required
+          )
+          v-text-field(
+            label='SSN (Last 4 digits)'
+            v-model='form.ssn'
+            :rules='rules.ssn'
+            maxlength='4'
+            placeholder='1234'
+            required
+            outlined
+            dense
+          )
+      
+      div(v-else)
+        v-subheader {{ isCompanyController ? 'User' : 'Controller' }} verification
+
+        .d-flex.flex-column.flex-sm-row(v-if='!isCompanyController')
+          v-text-field.mr-sm-4(
+            autofocus
+            label='First name'
+            placeholder='Bobby'
+            v-model='form.controller.firstName'
+            :rules='rules.firstName'
+            required
+            outlined
+            dense
+          )
+          v-text-field(
+            label='Last name'
+            placeholder='Tables'
+            v-model='form.controller.lastName'
+            :rules='rules.lastName'
+            required
+            outlined
+            dense
+          )
+
+        .d-flex.flex-column.flex-sm-row
+          v-text-field.mr-sm-4(
+            label='Title'
+            placeholder='CEO'
+            v-model='form.controller.title'
+            :rules='rules.title'
+            required
+            outlined
+            dense
+          )
+          v-text-field(
+            label='Date of birth'
+            type="date",
+            v-model='form.controller.dateOfBirth'
+            :rules='rules.dateOfBirth'
+            outlined
+            dense
+            required
+          )
+        
+        v-text-field(
+          label='Address 1'
+          placeholder='1234 Main St.'
+          v-model='form.controller.address.address1'
+          :rules='rules.address1'
+          required
           outlined
           dense
-          required
         )
+        .d-flex.flex-column.flex-sm-row
+          v-text-field.mr-sm-4(
+            label='Address 2'
+            placeholder='Apt. 123'
+            v-model='form.controller.address.address2'
+            required
+            outlined
+            dense
+          )
+          v-text-field(
+            label='Address 3'
+            v-model='form.controller.address.address3'
+            required
+            outlined
+            dense
+          )
+
+        .d-flex.flex-column.flex-sm-row
+          v-text-field.mr-sm-4(
+            label='City'
+            placeholder='City'
+            v-model='form.controller.address.city'
+            :rules='rules.city'
+            required
+            outlined
+            dense
+          )
+          v-select.mr-sm-4(
+            label='Country'
+            :items='countries'
+            v-model='form.controller.address.country'
+            :rules='rules.country'
+            outlined
+            dense
+            required
+          )
+          
+        .d-flex.flex-column.flex-sm-row
+          v-select.mr-sm-4(
+            label='State'
+            :items='states'
+            v-model='form.controller.address.state'
+            :rules='rules.state'
+            outlined
+            dense
+            required
+          )
+
+          v-text-field(
+            label='Postal code'
+            placeholder='12345'
+            v-model='form.controller.address.postalCode'
+            :rules='rules.postalCode'
+            maxlength='5'
+            required
+            outlined
+            dense
+          )
+
         v-text-field(
           label='SSN (Last 4 digits)'
           v-model='form.ssn'
@@ -191,141 +338,20 @@
           outlined
           dense
         )
-    
-    div
-      v-subheader {{ isCompanyController ? 'User verification' : 'Controller verification' }}
-
-      .d-flex.flex-column.flex-sm-row(v-if='!isCompanyController')
-        v-text-field.mr-sm-4(
-          autofocus
-          label='First name'
-          placeholder='Bobby'
-          v-model='form.controller.firstName'
-          :rules='rules.firstName'
-          required
-          outlined
-          dense
-        )
-        v-text-field(
-          label='Last name'
-          placeholder='Tables'
-          v-model='form.controller.lastName'
-          :rules='rules.lastName'
-          required
-          outlined
-          dense
-        )
-
-      .d-flex.flex-column.flex-sm-row
-        v-text-field.mr-sm-4(
-          label='Title'
-          placeholder='CEO'
-          v-model='form.controller.title'
-          :rules='rules.title'
-          required
-          outlined
-          dense
-        )
-        v-text-field(
-          label='Date of birth'
-          type="date",
-          v-model='form.controller.dateOfBirth'
-          :rules='rules.dateOfBirth'
-          outlined
-          dense
-          required
-        )
-      
-      v-text-field(
-        label='Address 1'
-        placeholder='1234 Main St.'
-        v-model='form.controller.address.address1'
-        :rules='rules.address1'
-        required
-        outlined
-        dense
-      )
-      .d-flex.flex-column.flex-sm-row
-        v-text-field.mr-sm-4(
-          label='Address 2'
-          placeholder='Apt. 123'
-          v-model='form.controller.address.address2'
-          required
-          outlined
-          dense
-        )
-        v-text-field(
-          label='Address 3'
-          v-model='form.controller.address.address3'
-          required
-          outlined
-          dense
-        )
-
-      .d-flex.flex-column.flex-sm-row
-        v-text-field.mr-sm-4(
-          label='City'
-          placeholder='City'
-          v-model='form.controller.address.city'
-          :rules='rules.city'
-          required
-          outlined
-          dense
-        )
-        v-select.mr-sm-4(
-          label='Country'
-          :items='countries'
-          v-model='form.controller.address.country'
-          :rules='rules.country'
-          outlined
-          dense
-          required
-        )
-        
-      .d-flex.flex-column.flex-sm-row
-        v-select.mr-sm-4(
-          label='State'
-          :items='states'
-          v-model='form.controller.address.state'
-          :rules='rules.state'
-          outlined
-          dense
-          required
-        )
-
-        v-text-field(
-          label='Postal code'
-          placeholder='12345'
-          v-model='form.controller.address.postalCode'
-          :rules='rules.postalCode'
-          maxlength='5'
-          required
-          outlined
-          dense
-        )
-
-      v-text-field(
-        label='SSN (Last 4 digits)'
-        v-model='form.ssn'
-        :rules='rules.ssn'
-        maxlength='4'
-        placeholder='1234'
-        required
-        outlined
-        dense
-      )
 
 
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import {
   exists,
   emailRules,
+  passwordRules,
+  passwordMatches,
   postalCodeRules,
   einRules,
   ssnRules,
@@ -345,6 +371,7 @@ export default class ManagerForm extends Vue {
   }
   showPassword = false
   isCompanyController = false
+
   states = [
     'AL',
     'AK',
@@ -2440,6 +2467,9 @@ export default class ManagerForm extends Vue {
     lastName: [exists('Last name required')],
     phone: [exists('Phone number required')],
     email: emailRules,
+    password: passwordRules,
+    passwordMatches,
+    confirmPassword: [exists('Password confirmation required')],
     businessName: [exists('Business name required')],
     businessType: [exists('Business type required')],
     address1: [exists('Address 1 required')],
@@ -2453,6 +2483,8 @@ export default class ManagerForm extends Vue {
     title: [exists('Title required')],
     ssn: ssnRules,
   }
+
+  @Prop({ default: false }) isValid!: boolean
 
   @Watch('form')
   onFormChange() {
