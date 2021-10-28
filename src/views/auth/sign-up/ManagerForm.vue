@@ -369,7 +369,9 @@ import {
 export default class ManagerForm extends Vue {
   form: any = {
     controller: {
-      address: {},
+      address: {
+        country: 'US',
+      },
     },
   }
   showPassword = false
@@ -3243,12 +3245,12 @@ export default class ManagerForm extends Vue {
     if (this.isSoleProprieter) {
       delete form.controller
     }
-    console.log(form, this.isCompanyController)
-    if (this.isCompanyController && form?.controller) {
+
+    if (this.isCompanyController && form && form?.controller) {
+      // TODO: This might uhhh result in a feedback loop. Fix soon
       form.controller.firstName = form.firstName
       form.controller.lastName = form.lastName
     }
-    console.log(form, this.isCompanyController)
 
     this.$emit('update', form)
   }
