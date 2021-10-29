@@ -137,7 +137,7 @@
           dense
           required
         )
-        v-text-field(
+        v-text-field.hide-arrow-buttons(
           label='Postal code'
           placeholder='12345'
           type='number'
@@ -208,7 +208,7 @@
             dense
             required
           )
-          v-text-field(
+          v-text-field.hide-arrow-buttons(
             label='SSN'
             v-mask="'####'"
             type='number'
@@ -313,6 +313,7 @@
           
         .d-flex.flex-column.flex-sm-row
           v-select.mr-sm-4(
+            v-if="form.controller.address.country == 'US'"
             label='State'
             :items='states'
             v-model='form.controller.address.stateProvinceRegion'
@@ -322,7 +323,18 @@
             required
           )
 
-          v-text-field(
+          v-text-field.mr-sm-4(
+            v-else
+            label='State or province'
+            placeholder='Quebec'
+            v-model='form.controller.address.stateProvinceRegion'
+            :rules='rules.state'
+            outlined
+            dense
+            required
+          )
+
+          v-text-field.hide-arrow-buttons(
             label='Postal code'
             placeholder='12345'
             type='number'
@@ -334,13 +346,26 @@
             dense
           )
 
-        v-text-field(
+        v-text-field.hide-arrow-buttons(
+          v-if="form.controller.address.country == 'US'"
           label='SSN'
           v-mask="'####'"
           type='number'
           v-model='form.controller.ssn'
           :rules='rules.ssn'
           placeholder='1234'
+          required
+          outlined
+          dense
+        )
+
+        v-text-field.hide-arrow-buttons(
+          v-else
+          type='number'
+          label='Passport number'
+          v-model='form.controller.passport.number'
+          :rules='rules.passportNum'
+          placeholder='123456'
           required
           outlined
           dense
@@ -376,6 +401,10 @@ export default class ManagerForm extends Vue {
       address: {
         country: 'US',
       },
+      passport: {
+        country: '',
+        number: '',
+      }
     },
   }
   showPassword = false
@@ -3230,7 +3259,7 @@ export default class ManagerForm extends Vue {
     businessType: [exists('Business type required')],
     address1: [exists('Address 1 required')],
     city: [exists('City required')],
-    state: [exists('State required')],
+    state: [exists('State or province required')],
     country: [exists('Country required')],
     postalCode: postalCodeRules,
     businessClassificationCategory: [exists('Category required')],
@@ -3238,6 +3267,7 @@ export default class ManagerForm extends Vue {
     ein: einRules,
     title: [exists('Title required')],
     ssn: ssnRules,
+    passportNum: [exists('Passport number required')],
   }
 
   @Prop({ default: false }) isValid!: boolean
@@ -3259,6 +3289,11 @@ export default class ManagerForm extends Vue {
     this.$emit('update', form)
   }
 
+  @Watch('form.controller.address.country')
+  onCountryChanged() {
+    this.form.controller.passport.country = this.form.controller.address.country
+  }
+
   get classifications() {
     return this.businessClassifications.map((classification: any) => {
       return classification.name
@@ -3276,3 +3311,18 @@ export default class ManagerForm extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+  .hide-arrow-buttons {
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  }
+</style>
