@@ -89,9 +89,10 @@
     v-text-field(
       label='Postal code'
       placeholder='12345'
+      type='number'
+      v-mask="'#####'"
       v-model='form.postalCode'
       :rules='rules.postalCode'
-      maxlength='5'
       required
       outlined
       dense
@@ -108,10 +109,11 @@
       required
     )
     v-text-field(
-      label='SSN (Last 4 digits)'
+      label='SSN'
+      v-mask="'####'"
+      type='number'
       v-model='form.ssn'
       :rules='rules.ssn'
-      maxlength='4'
       placeholder='1234'
       required
       outlined
