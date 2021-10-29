@@ -338,9 +338,8 @@
             label='Postal code'
             placeholder='12345'
             type='number'
-            v-mask="'#####'"
             v-model='form.controller.address.postalCode'
-            :rules='rules.postalCode'
+            :rules='rules.postalCodeInternational'
             required
             outlined
             dense
@@ -3262,6 +3261,7 @@ export default class ManagerForm extends Vue {
     state: [exists('State or province required')],
     country: [exists('Country required')],
     postalCode: postalCodeRules,
+    postalCodeInternational: [exists('Postal code required')],
     businessClassificationCategory: [exists('Category required')],
     businessClassification: [exists('Business classification required')],
     ein: einRules,
