@@ -70,9 +70,11 @@ export async function signIn({ commit }: any, email: string, password: string, r
     return data
   } catch (err) {
     if ((err as any).response?.status === 400) {
-      // Already signed in
-      await getMe({ commit })
-      router.push({ name: defaultRoute() })
+      // Maybe already signed in
+      const me = await getMe({ commit })
+      if (me && me.id) {
+        router.push({ name: defaultRoute() })
+      }
     } else {
       commit('UNSET_AUTHENTICATED_USER')
       return err
