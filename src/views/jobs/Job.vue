@@ -123,17 +123,7 @@ div(v-else)
                   )
                     v-icon mdi-qrcode
 
-              v-tooltip(bottom)
-                span Copy to clipboard
-                template(v-slot:activator='{ on, attrs }')
-                  v-btn(
-                    icon
-                    color='primary'
-                    v-bind='attrs'
-                    v-on='on'
-                    @click='copyText(job.consultant_code)'
-                  )
-                    v-icon mdi-content-copy
+              clipboard-copy(:text='job.consultant_code')
 
         v-skeleton-loader(type='list-item-two-line' v-else)
 
@@ -190,7 +180,6 @@ div(v-else)
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component } from 'vue-property-decorator'
-import { Clipboard } from '@capacitor/clipboard'
 
 import EditJobDialog from './EditJobDialog.vue'
 import CloseJobDialog from './CloseJobDialog.vue'
@@ -201,11 +190,11 @@ import QrCodeDialog from './QrCodeDialog.vue'
 
 import JobsMap from '@/components/JobsMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
+import ClipboardCopy from '@/components/ClipboardCopy.vue'
 
 import { currentUserIs, UserRole } from '@/types/Users'
 import { Job, Shift } from '@/types/Jobs'
 import { loadJob } from '@/services/jobs'
-import { showToast } from '@/services/app'
 import * as geolocation from '@/services/geolocation'
 
 @Component({
@@ -218,6 +207,7 @@ import * as geolocation from '@/services/geolocation'
     QrCodeDialog,
     JobsMap,
     ClockEvents,
+    ClipboardCopy,
   },
 })
 export default class JobView extends Vue {
@@ -288,22 +278,6 @@ export default class JobView extends Vue {
     const contractor = this.job.contractors.find((e) => e.id == contractorId)
     if (!contractor) return 'Unknown contractor'
     return `${contractor.first_name} ${contractor.last_name}`
-  }
-
-  async copyText(text: string) {
-    try {
-      await Clipboard.write({
-        string: text
-      })
-      showToast(this.$store, {
-        text: "Copied."
-      })
-    }
-    catch (e) {
-      showToast(this.$store, {
-        text: "Couldn't copy to clipboard."
-      })
-    }
   }
 }
 </script>

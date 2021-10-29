@@ -1,5 +1,8 @@
 <template lang="pug">
 v-list
+
+  v-subheader.text-subtitle-2 My profile
+
   v-list-item(two-line)
     v-list-item-content
       v-list-item-subtitle.mb-2 Name
@@ -41,31 +44,23 @@ v-list
     v-list-item-content
       v-list-item-subtitle.mb-2 Manager reference number
       v-list-item-title {{ me.manager_info.reference_number }}
+
     v-list-item-action
-      v-tooltip(bottom)
-        span Copy to clipboard
-        template(v-slot:activator='{ on, attrs }')
-          v-btn(
-            icon
-            color='primary'
-            v-bind='attrs'
-            v-on='on'
-            @click='copyText(me.manager_info.reference_number)'
-          )
-            v-icon mdi-content-copy
+      clipboard-copy(:text='me.manager_info.reference_number')
+
 </template>
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator"
 import Roles from "@/components/Roles.vue"
-import { Clipboard } from '@capacitor/clipboard'
 import { signOut } from "@/services/auth"
-import { showToast } from '@/services/app'
 import { currentUserIs, UserRole } from "@/types/Users"
+import ClipboardCopy from '@/components/ClipboardCopy.vue'
 
 @Component({
   components: {
     Roles,
+    ClipboardCopy
   },
   metaInfo: {
     title: 'Settings - Me'
@@ -84,20 +79,5 @@ export default class Me extends Vue {
     signOut(this.$store)
   }
 
-  async copyText(text: string) {
-    try {
-      await Clipboard.write({
-        string: text
-      })
-      showToast(this.$store, {
-        text: "Copied."
-      })
-    }
-    catch (e) {
-      showToast(this.$store, {
-        text: "Couldn't copy to clipboard."
-      })
-    }
-  }
 }
 </script>
