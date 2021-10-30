@@ -90,17 +90,19 @@ div(v-else)
         )
           .flex-grow-1
             p.text-subtitle-2.mb-1 Organization manager
-            router-link.alt-style(
-              :to="{name: 'user', params: {userId: job.organization_manager.id}}"
-            )
-              | {{ job.organization_manager | fullName }}
+            p
+              router-link.alt-style(
+                :to="{name: 'user', params: {userId: job.organization_manager.id}}"
+              )
+                | {{ job.organization_manager | fullName }}
 
           .flex-grow-1
             p.text-subtitle-2.mb-1 Contractor manager
-            router-link.alt-style(
-              :to="{name: 'user', params: {userId: job.contractor_manager.id}}"
-            )
-              | {{ job.contractor_manager | fullName }}
+            p
+              router-link.alt-style(
+                :to="{name: 'user', params: {userId: job.contractor_manager.id}}"
+              )
+                | {{ job.contractor_manager | fullName }}
 
           .flex-grow-1
             p.text-subtitle-2.mb-1 Consultant

@@ -22,15 +22,15 @@ div
 
       v-list-item-action
         clipboard-copy(:text='customerId(me.dwolla_customer_url)')
-
-    v-list-item
+    
+    v-list-item(v-if='verificationStatus')
       v-list-item-content
         v-list-item-subtitle.mb-2 Identity verification status
         v-list-item-title
-          v-chip(label :color='verificationStatuses[me.organization_info.dwolla_customer_status].color')
-            | {{ verificationStatuses[me.organization_info.dwolla_customer_status].text }}
+          v-chip(label :color='verificationStatus.color')
+            | {{ verificationStatus.text }}
       
-      v-list-item-action(v-if="me.organization_info.dwolla_customer_status != 'verified'")
+      v-list-item-action(v-if="verificationStatus.status != 'verified'")
         v-btn(text color='primary') Verify
 
     v-list-item(two-line, v-if="showBeneficialOwnersForm")
@@ -99,7 +99,12 @@ export default class Payments extends Vue {
 	beneficialOwnersDialog = false
 	selectedFundingSource: any = null
 
-  verificationStatuses = {
+  verificationStatuses: {
+    [key: string]: {
+      color: string;
+      text: string;
+    };
+  } = {
     verified: {
       color: 'success',
       text: 'Verified',
@@ -149,6 +154,14 @@ export default class Payments extends Vue {
     return currentUserIs(UserRole.OrganizationManager) &&
       !this.loadingFundingSources && 
       !this.$store.state.payments.beneficialOwnersCertified
+  }
+
+  get verificationStatus() {
+    const status = this.me.organization_info.dwolla_customer_status
+    return status ? {
+      ...this.verificationStatuses[status],
+      status
+    } : null
   }
 
   customerId(customerUrl: string) {

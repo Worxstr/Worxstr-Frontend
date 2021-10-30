@@ -80,6 +80,8 @@
         v-model='form.businessType'
         :rules='rules.businessType'
         :items='businessTypes'
+        item-text='text'
+        item-value='value'
         outlined
         dense
       )
@@ -182,7 +184,7 @@
       )
       
       v-checkbox.mt-0(
-        v-if='!isSoleProprieter'
+        v-if="form.businessType != 'soleProprietorship'"
         v-model='isCompanyController'
         required
       )
@@ -195,7 +197,7 @@
 
   v-slide-y-transition
     div(v-if='form.ein')
-      div(v-if='isSoleProprieter')
+      div(v-if="form.businessType == 'soleProprietorship'")
         v-subheader Sole proprietor verification
 
         .d-flex.flex-column.flex-sm-row
@@ -1469,7 +1471,24 @@ export default class ManagerForm extends Vue {
       value: 'XK',
     },
   ]
-  businessTypes = ['Sole Proprietorship', 'Corporation', 'LLC', 'Partnership']
+  businessTypes = [
+    {
+      text: 'Sole Proprietorship',
+      value: 'soleProprietorship',
+    },
+    {
+      text: 'Corporation',
+      value: 'corporation',
+    },
+        {
+      text: 'LLC',
+      value: 'llc',
+    },
+    {
+      text: 'Partnership',
+      value: 'partnership',
+    },
+  ]
   // TODO: Use Dwolla API to fetch these categories
   businessClassifications = [
     {
@@ -3276,12 +3295,11 @@ export default class ManagerForm extends Vue {
   onFormChange() {
     const form = this.form
 
-    if (this.isSoleProprieter) {
-      delete form.controller
+    if (this.form.businessType == 'soleProprietorship') {
+      delete this.form.controller
     }
 
     if (this.isCompanyController && form && form?.controller) {
-      // TODO: This might uhhh result in a feedback loop. Fix soon
       form.controller.firstName = form.firstName
       form.controller.lastName = form.lastName
     }
@@ -3291,7 +3309,8 @@ export default class ManagerForm extends Vue {
 
   @Watch('form.controller.address.country')
   onCountryChanged() {
-    this.form.controller.passport.country = this.form.controller.address.country
+    if (this.form.controller)
+      this.form.controller.passport.country = this.form.controller.address.country
   }
 
   get classifications() {
@@ -3304,10 +3323,6 @@ export default class ManagerForm extends Vue {
     return this.businessClassifications.find((classification: any) => {
       return classification.name === classificationName
     })?._embedded['industry-classifications']
-  }
-
-  get isSoleProprieter() {
-    return this.form.businessType === 'Sole Proprietorship'
   }
 }
 </script>
