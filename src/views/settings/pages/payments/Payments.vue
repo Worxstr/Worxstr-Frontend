@@ -1,5 +1,7 @@
 <template lang="pug">
 div
+  retry-verification-dialog(:opened.sync='retryVerificationDialog')
+  document-upload-dialog(:opened.sync='documentUploadDialog')
   add-funding-source-dialog(:opened.sync="addFundingSourceDialog")
   edit-funding-source-dialog(
     :opened.sync="editFundingSourceDialog",
@@ -31,7 +33,7 @@ div
             | {{ verificationStatus.text }}
       
       v-list-item-action(v-if="verificationStatus.status != 'verified'")
-        v-btn(text color='primary') Verify
+        v-btn(text color='primary' @click='openVerifyDialog') Verify
 
     v-list-item(two-line, v-if="showBeneficialOwnersForm")
       v-list-item-content
@@ -73,6 +75,8 @@ div
 <script lang="ts">
 import { FundingSource } from "@/types/Payments"
 import { Vue, Component } from "vue-property-decorator"
+import RetryVerificationDialog from "./RetryVerificationDialog.vue"
+import DocumentUploadDialog from "./DocumentUploadDialog.vue"
 import AddFundingSourceDialog from "./AddFundingSourceDialog.vue"
 import EditFundingSourceDialog from "./EditFundingSourceDialog.vue"
 import RemoveFundingSourceDialog from "./RemoveFundingSourceDialog.vue"
@@ -84,6 +88,8 @@ import { dwollaCustomerIdFromUrl, dwollaFundingSourceIdFromUrl } from "@/util/dw
 
 @Component({
 	components: {
+    RetryVerificationDialog,
+    DocumentUploadDialog,
     AddFundingSourceDialog,
     EditFundingSourceDialog,
     RemoveFundingSourceDialog,
@@ -96,12 +102,17 @@ import { dwollaCustomerIdFromUrl, dwollaFundingSourceIdFromUrl } from "@/util/dw
 })
 export default class Payments extends Vue {
 
-	loadingFundingSources = false
-	addFundingSourceDialog = false
+
+  loadingFundingSources = false
+	selectedFundingSource: any = null
+	
+  retryVerificationDialog = false
+  documentUploadDialog = false
+
+  addFundingSourceDialog = false
 	editFundingSourceDialog = false
 	removeFundingSourceDialog = false
 	beneficialOwnersDialog = false
-	selectedFundingSource: any = null
 
   verificationStatuses: {
     [key: string]: {
@@ -123,7 +134,7 @@ export default class Payments extends Vue {
     },
     document: {
       color: 'blue',
-      text: 'Documents needed',
+      text: 'Document upload needed',
     },
     suspended: {
       color: 'error',
@@ -166,6 +177,18 @@ export default class Payments extends Vue {
       ...this.verificationStatuses[status],
       status
     } : null
+  }
+
+  openVerifyDialog() {
+    if (!this.verificationStatus) return
+    switch (this.verificationStatus.status) {
+      case 'retry':
+        this.retryVerificationDialog = true
+        break
+      case 'document':
+        this.documentUploadDialog = true
+        break
+    }
   }
 
   customerId(customerUrl: string) {
