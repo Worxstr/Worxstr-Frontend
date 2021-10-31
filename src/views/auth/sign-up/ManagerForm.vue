@@ -1,8 +1,6 @@
 <template lang="pug">
 .manager-form
   div
-    v-subheader General info
-
     .d-flex.flex-column.flex-sm-row
       v-text-field.mr-sm-4(
         autofocus
@@ -65,6 +63,8 @@
       dense
     )
 
+    v-subheader Business information
+
     .d-flex.flex-column.flex-sm-row
       v-text-field.mr-sm-4(
         label='Legal business name'
@@ -88,7 +88,6 @@
   
   v-slide-y-transition
     div(v-if='form.businessType')
-      v-subheader Business information
 
       v-text-field.mr-sm-4(
         label='Doing business as'
