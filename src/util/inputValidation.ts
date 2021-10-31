@@ -55,12 +55,29 @@ export const url = (value: string) => {
 export const ssnRules = [
   exists("SSN required"),
   (value: string) => {
-    const pattern = /^\d{3}-\d{2}-\d{4}|\d{9}$/
+    const pattern = /^\d{4}$/
     return pattern.test(value) || "Invalid SSN"
   }
 ]
 
+
 export const ssnMatches = matches('SSNs must match')
+
+export const einRules = [
+  exists("EIN required"),
+  (value: string) => {
+    const pattern = /^\d{2}-\d{7}$/
+    return pattern.test(value) || "Invalid EIN"
+  }
+]
+
+export const postalCodeRules = [
+  exists("Postal code required"),
+  (value: string) => {
+    const pattern = /^\d{5}(-\d{4})?$/
+    return pattern.test(value) || "Invalid postal code"
+  }
+]
 
 export const currency = (value: string) => {
   // https://regexlib.com/Search.aspx?k=currency&c=-1&m=5&ps=20

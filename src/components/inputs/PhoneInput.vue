@@ -6,6 +6,7 @@
     type="tel"
     maxlength='14'
     label="Phone number"
+    placeholder='(123) 456-7890'
     dense
     :required='required'
     :color="color"
@@ -72,8 +73,10 @@ export default class PhoneInput extends Vue {
     const number1 = this.value.phoneNumber.slice(0, 3)
     const number2 = this.value.phoneNumber.slice(3, 7)
 
-    let formatted = '('
-    formatted += this.value.areaCode
+    let formatted = ''
+
+    if (this.value.areaCode)
+      formatted += '(' + this.value.areaCode
 
     if (this.value.areaCode.length >= 3) formatted += ') '
 

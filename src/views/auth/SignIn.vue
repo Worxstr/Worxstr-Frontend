@@ -19,7 +19,7 @@ div
             type='email'
             required
             v-model='form.email'
-            :rules='emailRules'
+            :rules='rules.email'
             outlined
             dense
           )
@@ -27,7 +27,7 @@ div
             label='Password'
             :type="showPassword ? 'text' : 'password'"
             v-model='form.password'
-            :rules='passwordRules'
+            :rules='rules.password'
             hide-details
             required
             outlined
@@ -86,8 +86,10 @@ export default class SignIn extends Vue {
   isValid = false
   loading = false
   biometricsAvailable = false
-  emailRules = emailRules
-  passwordRules = passwordRules
+  rules = {
+    email: emailRules,
+    password: passwordRules,
+  }
 
   async mounted() {
     if (this.$route.params.email) {

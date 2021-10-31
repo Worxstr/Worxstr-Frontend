@@ -10,7 +10,7 @@ import usersStore from '@/store/users'
 import { socket } from '@/util/socket-io'
 
 export function shouldUseSandbox(email: string) {
-  return email.includes('+test')
+  return email?.includes('+test')
 }
 
 export async function getAuthToken() {
@@ -70,9 +70,11 @@ export async function signIn({ commit }: any, email: string, password: string, r
     return data
   } catch (err) {
     if ((err as any).response?.status === 400) {
-      // Already signed in
-      await getMe({ commit })
-      router.push({ name: defaultRoute() })
+      // Maybe already signed in
+      const me = await getMe({ commit })
+      if (me && me.id) {
+        router.push({ name: defaultRoute() })
+      }
     } else {
       commit('UNSET_AUTHENTICATED_USER')
       return err
@@ -84,36 +86,14 @@ export async function signIn({ commit }: any, email: string, password: string, r
   dwollaCustomerUrl: Customer url returned after Dwolla account registration
   dwollaAuthToken: Auth token used for Dwolla account registration
 */
-export async function signUp(
-  { commit }: any,
-  {
-    email,
-    accountType,
-    customer_url,
-    password,
-    manager_reference,
-  }: {
-    email: string;
-    accountType: 'contractor' | 'org';
-    customer_url: string;
-    password: string;
-    manager_reference: string;
-  }
-) {
-  sandboxMode.toggle({ commit }, shouldUseSandbox(email))
+export async function signUp({ commit }: any, form: any) {
+  sandboxMode.toggle({ commit }, shouldUseSandbox(form.email))
 
   try {
     const { data } = await api({
       method: 'POST',
-      url: `/auth/sign-up/${accountType}`,
-      // headers: {
-      //   'Authorization': `Bearer ${dwollaAuthToken}`
-      // },
-      data: {
-        customer_url,
-        password,
-        manager_reference,
-      },
+      url: `/auth/sign-up/${form.accountType}`,
+      data: form,
     })
     router.push({ name: 'home' })
     showToast(

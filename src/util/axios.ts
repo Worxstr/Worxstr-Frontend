@@ -114,6 +114,7 @@ export async function configureAxios(store: any) {
       return response
     },
     (error: any) => {
+      console.log('network error', error)
       // if (error.config.hideErrorMessage) return
 
       // TODO: this is stupid, don't keep this. use custom api config
