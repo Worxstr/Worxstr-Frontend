@@ -1,7 +1,7 @@
 <template lang="pug">
 v-list
 
-  v-subheader.text-subtitle-2 My profile
+  v-subheader.text-subtitle-1 My profile
 
   v-list-item(two-line)
     v-list-item-content

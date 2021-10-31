@@ -13,7 +13,7 @@ div
 
   v-list
 
-    v-subheader.text-subtitle-2 Dwolla account
+    v-subheader.text-subtitle-1 Dwolla account
     
     v-list-item
       v-list-item-content
@@ -39,26 +39,30 @@ div
       v-list-item-action
         v-btn(text, color="primary", @click="beneficialOwnersDialog = true") Certify
 
-    v-subheader.text-subtitle-2 Funding sources
+    v-subheader.text-subtitle-1 Funding sources
 
     v-skeleton-loader(
       v-if="loadingFundingSources && !fundingSources.length",
       type="list-item-two-line"
     )
 
-    div(v-else)
-      v-list-item(
-        two-line,
-        v-for="fundingSource in fundingSources",
-        :key="fundingSource.id"
-      )
-        v-list-item-content
-          v-list-item-title {{ fundingSource.name }}
-          v-list-item-subtitle {{ fundingSourceId(fundingSource._links.self.href) }}
-        v-list-item-action
-          v-btn(text, color="primary", @click="editFundingSource(fundingSource)") Edit
-        v-list-item-action.ml-0
-          v-btn(text, color="error", @click="removeFundingSource(fundingSource)") Remove
+    v-list-item(v-else-if='!fundingSources.length')
+      v-list-item-content
+        v-list-item-subtitle No funding sources linked
+
+    v-list-item(
+      v-else
+      two-line,
+      v-for="fundingSource in fundingSources",
+      :key="fundingSource.id"
+    )
+      v-list-item-content
+        v-list-item-title {{ fundingSource.name }}
+        v-list-item-subtitle {{ fundingSourceId(fundingSource._links.self.href) }}
+      v-list-item-action
+        v-btn(text, color="primary", @click="editFundingSource(fundingSource)") Edit
+      v-list-item-action.ml-0
+        v-btn(text, color="error", @click="removeFundingSource(fundingSource)") Remove
 
     v-list-item
       v-btn(text, color="primary", @click="addFundingSourceDialog = true")
