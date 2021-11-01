@@ -52,10 +52,18 @@ export const url = (value: string) => {
   return pattern.test(value) || "Invalid url"
 }
 
-export const ssnRules = [
+export const shortSsnRules = [
   exists("SSN required"),
   (value: string) => {
     const pattern = /^\d{4}$/
+    return pattern.test(value) || "Invalid SSN"
+  }
+]
+
+export const ssnRules = [
+  exists("SSN required"),
+  (value: string) => {
+    const pattern = /^\d{9}$/
     return pattern.test(value) || "Invalid SSN"
   }
 ]

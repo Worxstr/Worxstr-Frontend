@@ -22,7 +22,7 @@
         dense
       )
 
-    .d-flex.flex-column.flex-sm-row
+    .d-flex.flex-column.flex-sm-row(v-if='!retry')
       phone-input.mr-sm-4(
         v-model="form.phone"
         :required='true'
@@ -41,27 +41,28 @@
         dense
       )
     
-    v-text-field(
-      label='Password'
-      :type="showPassword ? 'text' : 'password'"
-      v-model='form.password'
-      :rules='rules.password'
-      required
-      outlined
-      dense
-      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-      @click:append='showPassword = !showPassword'
-    )
-    v-text-field(
-      v-if='!showPassword'
-      label='Confirm password'
-      type='password'
-      v-model='form.confirm_password'
-      :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
-      required
-      outlined
-      dense
-    )
+    div(v-if='!retry')
+      v-text-field(
+        label='Password'
+        :type="showPassword ? 'text' : 'password'"
+        v-model='form.password'
+        :rules='rules.password'
+        required
+        outlined
+        dense
+        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+        @click:append='showPassword = !showPassword'
+      )
+      v-text-field(
+        v-if='!showPassword'
+        label='Confirm password'
+        type='password'
+        v-model='form.confirm_password'
+        :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
+        required
+        outlined
+        dense
+      )
 
     v-subheader Business information
 
@@ -209,17 +210,7 @@
             dense
             required
           )
-          v-text-field.hide-arrow-buttons(
-            label='SSN'
-            v-mask="'####'"
-            type='number'
-            v-model='form.ssn'
-            :rules='rules.ssn'
-            placeholder='1234'
-            required
-            outlined
-            dense
-          )
+          ssn-input(:short='!retry' v-model='form.ssn')
       
       div(v-else)
         v-subheader {{ isCompanyController ? 'User' : 'Controller' }} verification
@@ -346,17 +337,10 @@
             dense
           )
 
-        v-text-field.hide-arrow-buttons(
+        ssn-input(
           v-if="form.controller.address.country == 'US'"
-          label='SSN'
-          v-mask="'####'"
-          type='number'
+          :short='!retry'
           v-model='form.controller.ssn'
-          :rules='rules.ssn'
-          placeholder='1234'
-          required
-          outlined
-          dense
         )
 
         v-text-field.hide-arrow-buttons(
@@ -379,6 +363,7 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
+import SsnInput from '@/components/inputs/SsnInput.vue'
 import {
   exists,
   emailRules,
@@ -386,16 +371,19 @@ import {
   passwordMatches,
   postalCodeRules,
   einRules,
-  ssnRules,
 } from '@/util/inputValidation'
 
 @Component({
   components: {
     Arrows,
     PhoneInput,
+    SsnInput,
   },
 })
 export default class ManagerForm extends Vue {
+
+  @Prop({ default: false }) retry!: boolean
+
   form: any = {
     controller: {
       address: {
@@ -3264,28 +3252,29 @@ export default class ManagerForm extends Vue {
     },
   ]
 
-  rules = {
-    firstName: [exists('First name required')],
-    lastName: [exists('Last name required')],
-    phone: [exists('Phone number required')],
-    email: emailRules,
-    password: passwordRules,
-    passwordMatches,
-    confirmPassword: [exists('Password confirmation required')],
-    businessName: [exists('Business name required')],
-    businessType: [exists('Business type required')],
-    address1: [exists('Address 1 required')],
-    city: [exists('City required')],
-    state: [exists('State or province required')],
-    country: [exists('Country required')],
-    postalCode: postalCodeRules,
-    postalCodeInternational: [exists('Postal code required')],
-    businessClassificationCategory: [exists('Category required')],
-    businessClassification: [exists('Business classification required')],
-    ein: einRules,
-    title: [exists('Title required')],
-    ssn: ssnRules,
-    passportNum: [exists('Passport number required')],
+  get rules() {
+    return {
+      firstName: [exists('First name required')],
+      lastName: [exists('Last name required')],
+      phone: [exists('Phone number required')],
+      email: emailRules,
+      password: passwordRules,
+      passwordMatches,
+      confirmPassword: [exists('Password confirmation required')],
+      businessName: [exists('Business name required')],
+      businessType: [exists('Business type required')],
+      address1: [exists('Address 1 required')],
+      city: [exists('City required')],
+      state: [exists('State or province required')],
+      country: [exists('Country required')],
+      postalCode: postalCodeRules,
+      postalCodeInternational: [exists('Postal code required')],
+      businessClassificationCategory: [exists('Category required')],
+      businessClassification: [exists('Business classification required')],
+      ein: einRules,
+      title: [exists('Title required')],
+      passportNum: [exists('Passport number required')],
+    }
   }
 
   @Prop({ default: false }) isValid!: boolean
@@ -3293,10 +3282,6 @@ export default class ManagerForm extends Vue {
   @Watch('form')
   onFormChange() {
     const form = this.form
-
-    if (this.form.businessType == 'soleProprietorship') {
-      delete this.form.controller
-    }
 
     if (this.isCompanyController && form && form?.controller) {
       form.controller.firstName = form.firstName

@@ -83,7 +83,7 @@ import RemoveFundingSourceDialog from "./RemoveFundingSourceDialog.vue"
 import BeneficialOwnersDialog from "./BeneficialOwnersDialog.vue"
 import ClipboardCopy from '@/components/ClipboardCopy.vue'
 import { loadFundingSources } from "@/services/payments"
-import { currentUserIs, UserRole } from "@/types/Users"
+import { currentUserIs, Managers, UserRole } from "@/types/Users"
 import { dwollaCustomerIdFromUrl, dwollaFundingSourceIdFromUrl } from "@/util/dwolla"
 
 @Component({
@@ -172,11 +172,21 @@ export default class Payments extends Vue {
   }
 
   get verificationStatus() {
-    const status = this.me.organization_info.dwolla_customer_status
+    const field = this.userIsManager ? 'organization_info' : (this.userIsContractor ? 'contractor_info' : null)
+    if (!field) return null
+    const status = this.me[field].dwolla_customer_status
     return status ? {
       ...this.verificationStatuses[status],
       status
     } : null
+  }
+  
+  get userIsManager() {
+    return currentUserIs(...Managers)
+  }
+
+  get userIsContractor() {
+    return currentUserIs(UserRole.Contractor)
   }
 
   openVerifyDialog() {

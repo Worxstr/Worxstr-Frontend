@@ -2,8 +2,9 @@
 v-dialog(
   v-model='opened'
   :fullscreen='$vuetify.breakpoint.smAndDown'
-  max-width='800'
+  max-width='520'
   persistent
+  light
 )
   v-card
 
