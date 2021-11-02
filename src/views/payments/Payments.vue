@@ -11,6 +11,7 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
       @click='openAddFundsDialog'
+      :disabled='!iAmVerified'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-cash-plus
       span(v-if='!$vuetify.breakpoint.xs') Add funds to wallet
@@ -20,13 +21,25 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
       @click='openTransferToBankDialog'
-      :disabled='payments.balance.value == 0'
+      :disabled='!iAmVerified || payments.balance.value == 0'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
 
 
   v-container.d-flex.flex-column.justify-center
+
+    v-alert(
+      v-if='!iAmVerified'
+      dense
+      prominent
+      type='warning'
+      color='warning'
+      icon='mdi-alert'
+    )
+      .d-flex.align-center
+        span.flex-grow-1 You have not completed your identity verification.
+        v-btn(text :to="{name: 'settings/payments', params: { verifyIdentity: 'true' }}") Complete verification
   
     //- Balance display
     div(v-if="loadingBalance && !payments.balance.value")
@@ -87,6 +100,10 @@ export default class Payments extends Vue {
 
   get userIsManager() {
     return currentUserIs(...Managers)
+  }
+
+  get iAmVerified() {
+    return this.$store.getters.iAmVerified
   }
 
   userHasFundingSource() {

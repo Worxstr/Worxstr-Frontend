@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { User } from '@/types/Users'
+import { currentUserIs, Managers, User, UserRole } from '@/types/Users'
 import { Position } from '@/services/geolocation'
 
 export interface UsersState {
@@ -90,6 +90,15 @@ const getters = {
   workforce: (state: UsersState) => {
     return state.workforce.map((userId: number) => state.byId[userId])
   },
+
+  // Check if the current user has a verified status in dwolla
+  iAmVerified: (state: UsersState, getters: any) => {
+    const field = currentUserIs(UserRole.Contractor) ? 'contractor_info' : (currentUserIs(...Managers) ? 'organization_info' : null)
+    const user = getters.me
+    console.log({field, user})
+    if (!field || !user) return false
+    return user[field]?.dwolla_customer_status === 'verified'
+  }
 }
 export default {
   state: initialState(),

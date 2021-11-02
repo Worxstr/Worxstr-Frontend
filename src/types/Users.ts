@@ -7,9 +7,17 @@ export type User = {
 	email: string;
 	roles: Role[];
 	contractor_info?: {
+		dwolla_customer_url: string;
+		dwolla_customer_status: string;
+		[key: string]: any;
+	};
+	organization_info?: {
+		dwolla_customer_url: string;
+		dwolla_customer_status: string;
 		[key: string]: any;
 	};
 	manager_info?: {
+		reference_number: string;
 		[key: string]: any;
 	};
 	[key: string]: any;

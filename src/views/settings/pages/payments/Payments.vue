@@ -153,6 +153,9 @@ export default class Payments extends Vue {
     if (this.$route.params.addFundingSource == "true") {
       this.addFundingSourceDialog = true
     }
+    if (this.$route.params.verifyIdentity == "true") {
+      this.openVerifyDialog()
+    }
 
     this.loadFundingSources()
   }
