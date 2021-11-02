@@ -56,6 +56,15 @@ export async function updateContractor({ commit }: any, newFields: any, userId: 
   commit('ADD_USER', data.event)
 }
 
+export async function retryDwollaPersonalVerification({ commit }: any, newData: any) {
+  const { data } = await api({
+    method: 'PUT',
+    url: '/users/retry',
+    data: newData,
+  })
+  commit('ADD_USER', data)
+}
+
 export async function loadManagers({ commit }: any) {
   const me = usersStore.getters.me(usersStore.state)
   const { data } = await api({

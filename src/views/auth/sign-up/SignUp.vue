@@ -41,10 +41,10 @@ div
 
 
               div(v-if="accountType == 'org'")
-                manager-form(@update='managerFormUpdate' :isValid='isValid' ref='managerForm')
+                manager-form(@update='managerFormUpdate')
 
               div(v-if="accountType == 'contractor'")
-                contractor-form(@update='contractorFormUpdate' :isValid='isValid')
+                contractor-form(@update='contractorFormUpdate')
 
               v-checkbox.mt-0(
                 v-model='form.terms'

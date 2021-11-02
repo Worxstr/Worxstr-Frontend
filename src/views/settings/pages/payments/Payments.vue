@@ -1,5 +1,7 @@
 <template lang="pug">
 div
+  retry-verification-dialog(:opened.sync='retryVerificationDialog')
+  document-upload-dialog(:opened.sync='documentUploadDialog')
   add-funding-source-dialog(:opened.sync="addFundingSourceDialog")
   edit-funding-source-dialog(
     :opened.sync="editFundingSourceDialog",
@@ -31,7 +33,8 @@ div
             | {{ verificationStatus.text }}
       
       v-list-item-action(v-if="verificationStatus.status != 'verified'")
-        v-btn(text color='primary') Verify
+        v-btn(text color='primary' @click='openVerifyDialog')
+          | {{ verificationStatus.status == 'suspended' ? 'Contact support' : 'Verify' }}
 
     v-list-item(two-line, v-if="showBeneficialOwnersForm")
       v-list-item-content
@@ -73,17 +76,21 @@ div
 <script lang="ts">
 import { FundingSource } from "@/types/Payments"
 import { Vue, Component } from "vue-property-decorator"
+import RetryVerificationDialog from "./RetryVerificationDialog.vue"
+import DocumentUploadDialog from "./DocumentUploadDialog.vue"
 import AddFundingSourceDialog from "./AddFundingSourceDialog.vue"
 import EditFundingSourceDialog from "./EditFundingSourceDialog.vue"
 import RemoveFundingSourceDialog from "./RemoveFundingSourceDialog.vue"
 import BeneficialOwnersDialog from "./BeneficialOwnersDialog.vue"
 import ClipboardCopy from '@/components/ClipboardCopy.vue'
 import { loadFundingSources } from "@/services/payments"
-import { currentUserIs, UserRole } from "@/types/Users"
+import { currentUserIs, Managers, UserRole } from "@/types/Users"
 import { dwollaCustomerIdFromUrl, dwollaFundingSourceIdFromUrl } from "@/util/dwolla"
 
 @Component({
 	components: {
+    RetryVerificationDialog,
+    DocumentUploadDialog,
     AddFundingSourceDialog,
     EditFundingSourceDialog,
     RemoveFundingSourceDialog,
@@ -96,12 +103,17 @@ import { dwollaCustomerIdFromUrl, dwollaFundingSourceIdFromUrl } from "@/util/dw
 })
 export default class Payments extends Vue {
 
-	loadingFundingSources = false
-	addFundingSourceDialog = false
+
+  loadingFundingSources = false
+	selectedFundingSource: any = null
+	
+  retryVerificationDialog = false
+  documentUploadDialog = false
+
+  addFundingSourceDialog = false
 	editFundingSourceDialog = false
 	removeFundingSourceDialog = false
 	beneficialOwnersDialog = false
-	selectedFundingSource: any = null
 
   verificationStatuses: {
     [key: string]: {
@@ -123,7 +135,7 @@ export default class Payments extends Vue {
     },
     document: {
       color: 'blue',
-      text: 'Documents needed',
+      text: 'Document upload needed',
     },
     suspended: {
       color: 'error',
@@ -141,6 +153,9 @@ export default class Payments extends Vue {
     }
     if (this.$route.params.addFundingSource == "true") {
       this.addFundingSourceDialog = true
+    }
+    if (this.$route.params.verifyIdentity == "true") {
+      this.openVerifyDialog()
     }
 
     this.loadFundingSources()
@@ -161,11 +176,39 @@ export default class Payments extends Vue {
   }
 
   get verificationStatus() {
-    const status = this.me.organization_info.dwolla_customer_status
+    const field = this.userIsManager ? 'organization_info' : (this.userIsContractor ? 'contractor_info' : null)
+    if (!field) return null
+    const status = this.me[field].dwolla_customer_status
     return status ? {
       ...this.verificationStatuses[status],
       status
     } : null
+  }
+  
+  get userIsManager() {
+    return currentUserIs(...Managers)
+  }
+
+  get userIsContractor() {
+    return currentUserIs(UserRole.Contractor)
+  }
+
+  openVerifyDialog() {
+    if (!this.verificationStatus) return
+    switch (this.verificationStatus.status) {
+      case 'retry':
+        this.retryVerificationDialog = true
+        break
+      case 'document':
+        this.documentUploadDialog = true
+        break
+      case 'suspended':
+        this.$router.push({ name: 'contact', params: {
+          option: 'support',
+          description: 'My account has been suspended.\n',
+        }})
+        break
+    }
   }
 
   customerId(customerUrl: string) {

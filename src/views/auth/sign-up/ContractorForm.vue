@@ -22,6 +22,7 @@
     )
 
   v-text-field(
+    v-if='!retry'
     label='Email'
     type='email'
     placeholder='bobby@example.com'
@@ -32,7 +33,7 @@
     dense
   )
 
-  .d-flex.flex-column.flex-sm-row
+  .d-flex.flex-column.flex-sm-row(v-if='!retry')
     v-text-field.mr-sm-4(
       label='Manager reference number'
       placeholder='123456789'
@@ -108,51 +109,42 @@
       dense
       required
     )
+    ssn-input(:short='!retry' v-model='form.ssn')
+    
+  div(v-if='!retry')
     v-text-field(
-      label='SSN'
-      v-mask="'####'"
-      type='number'
-      v-model='form.ssn'
-      :rules='rules.ssn'
-      placeholder='1234'
+      label='Password'
+      :type="showPassword ? 'text' : 'password'"
+      v-model='form.password'
+      :rules='rules.password'
+      required
+      outlined
+      dense
+      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+      @click:append='showPassword = !showPassword'
+    )
+    v-text-field(
+      v-if='!showPassword'
+      label='Confirm password'
+      type='password'
+      v-model='form.confirm_password'
+      :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
       required
       outlined
       dense
     )
-    
-  v-text-field(
-    label='Password'
-    :type="showPassword ? 'text' : 'password'"
-    v-model='form.password'
-    :rules='rules.password'
-    required
-    outlined
-    dense
-    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-    @click:append='showPassword = !showPassword'
-  )
-  v-text-field(
-    v-if='!showPassword'
-    label='Confirm password'
-    type='password'
-    v-model='form.confirm_password'
-    :rules="[...rules.confirmPassword, rules.passwordMatches(form.password, form.confirm_password)]"
-    required
-    outlined
-    dense
-  )
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Arrows from '@/components/Arrows.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
+import SsnInput from '@/components/inputs/SsnInput.vue'
 import {
   exists,
   emailRules,
   postalCodeRules,
-  ssnRules,
   passwordRules,
   passwordMatches,
 } from '@/util/inputValidation'
@@ -161,29 +153,33 @@ import {
   components: {
     Arrows,
     PhoneInput,
+    SsnInput,
   }
 })
 export default class ContractorForm extends Vue {
+
+  @Prop({ default: false }) retry!: boolean
   
   form = {}
   showPassword = false
   states = ['AL','AK','AS','AZ','AR','CA','CO','CT','DE','DC','FM','FL','GA','GU','HI','ID','IL','IN','IA','KS','KY','LA','ME','MH','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','MP','OH','OK','OR','PW','PA','PR','RI','SC','SD','TN','TX','UT','VT','VI','VA','WA','WV','WI','WY']
 
-  rules = {
-    firstName: [exists('First name required')],
-    lastName: [exists('Last name required')],
-    phone: [exists('Phone number required')],
-    email: emailRules,
-    managerReference: [exists('Manager reference number required')],
-    address1: [exists('Address 1 required')],
-    city: [exists('City required')],
-    state: [exists('State required')],
-    postalCode: postalCodeRules,
-    dateOfBirth: [exists('Date of birth required')],
-    ssn: ssnRules,
-    password: passwordRules,
-    confirmPassword: [exists('Password confirmation required')],
-    passwordMatches,
+  get rules() {
+    return {
+      firstName: [exists('First name required')],
+      lastName: [exists('Last name required')],
+      phone: [exists('Phone number required')],
+      email: emailRules,
+      managerReference: [exists('Manager reference number required')],
+      address1: [exists('Address 1 required')],
+      city: [exists('City required')],
+      state: [exists('State required')],
+      postalCode: postalCodeRules,
+      dateOfBirth: [exists('Date of birth required')],
+      password: passwordRules,
+      confirmPassword: [exists('Password confirmation required')],
+      passwordMatches,
+    }
   }
 
   @Watch('form')
