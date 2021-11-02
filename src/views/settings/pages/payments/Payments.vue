@@ -33,7 +33,8 @@ div
             | {{ verificationStatus.text }}
       
       v-list-item-action(v-if="verificationStatus.status != 'verified'")
-        v-btn(text color='primary' @click='openVerifyDialog') Verify
+        v-btn(text color='primary' @click='openVerifyDialog')
+          | {{ verificationStatus.status == 'suspended' ? 'Contact support' : 'Verify' }}
 
     v-list-item(two-line, v-if="showBeneficialOwnersForm")
       v-list-item-content
@@ -200,6 +201,12 @@ export default class Payments extends Vue {
         break
       case 'document':
         this.documentUploadDialog = true
+        break
+      case 'suspended':
+        this.$router.push({ name: 'contact', params: {
+          option: 'support',
+          description: 'My account has been suspended.\n',
+        }})
         break
     }
   }

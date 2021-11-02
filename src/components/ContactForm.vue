@@ -175,6 +175,10 @@ export default class ContactForm extends Vue {
         ...this.dataSupplement
       }
     }
+    
+    if (this.$route.params.description) {
+      this.form.description = this.$route.params.description
+    }
   }
 
   get me() {
