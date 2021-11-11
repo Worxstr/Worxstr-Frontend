@@ -3280,10 +3280,12 @@ export default class ManagerForm extends Vue {
   @Prop({ default: false }) isValid!: boolean
 
   @Watch('form')
+  @Watch('form.controller')
   onFormChange() {
     const form = this.form
 
     if (this.isCompanyController && form && form?.controller) {
+
       form.controller.firstName = form.firstName
       form.controller.lastName = form.lastName
     }

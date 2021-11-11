@@ -102,32 +102,35 @@
         v-col(cols="12", md="6")
           p.text-h6.mb-4.pl-2 My company has:
           v-text-field.pb-4(
-            v-model.number="calculator.managers",
-            suffix="managers",
-            outlined,
-            color="accent",
-            hide-details,
-            type="number",
+            v-model.number="calculator.managers"
+            suffix="managers"
+            outlined
+            color="accent"
+            hide-details
+            type="number"
+            pattern="\d*"
             min="1"
             filled
           )
           v-text-field.pb-4(
-            v-model.number="calculator.contracts",
-            suffix="contracts / year",
-            outlined,
-            color="accent",
-            hide-details,
-            type="number",
+            v-model.number="calculator.contracts"
+            suffix="contracts / year"
+            outlined
+            color="accent"
+            hide-details
+            type="number"
+            pattern="\d*"
             min="1"
             filled
           )
           v-text-field.pb-4(
-            v-model.number="calculator.contractors",
-            suffix="contractors",
-            outlined,
-            color="accent",
-            hide-details,
-            type="number",
+            v-model.number="calculator.contractors"
+            suffix="contractors"
+            outlined
+            color="accent"
+            hide-details
+            type="number"
+            pattern="\d*"
             min="1"
             filled
           )
