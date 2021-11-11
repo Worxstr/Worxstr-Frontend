@@ -68,6 +68,7 @@ const mutations = {
   },
 
   ADD_TIMECARD(state: PaymentsState, timecard: Timecard) {
+    // TODO: Normalize contractor data
     Vue.set(state.timecards.byId, timecard.id, timecard)
     if (!state.timecards.all.includes(timecard.id))
       state.timecards.all.push(timecard.id)

@@ -12,7 +12,7 @@ v-dialog(
   )
     v-card
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 Retry {{ userIsManager ? 'business' : (userIsContractor ? 'personal' : '')}} identity verification
+        v-toolbar-title.text-h6 {{ userIsManager ? 'Business' : (userIsContractor ? 'Personal' : '')}} identity reverification
 
       v-card-text.pt-4
         //- v-alert(
