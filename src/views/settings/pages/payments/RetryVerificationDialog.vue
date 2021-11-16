@@ -87,6 +87,7 @@ export default class RetryVerificationDialog extends Vue {
       }
     } finally {
       this.loading = false
+      this.closeDialog()
     }
   }
 }
