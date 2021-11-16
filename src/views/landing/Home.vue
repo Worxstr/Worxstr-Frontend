@@ -8,7 +8,10 @@
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
-            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to contract labor management
+            h3.text-h3.text-md-h2.font-weight-black.mb-2
+              | The&nbsp;
+              span.gradient-text(:class="$vuetify.theme.dark ? 'gradient-secondary' : 'gradient-tertiary'") adaptive
+              | &nbsp;solution to contract labor management
 
           div(v-if='me')
             v-btn.mr-3.black--text(
