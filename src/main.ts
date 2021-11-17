@@ -10,7 +10,7 @@ import { SplashScreen } from '@capacitor/splash-screen'
 import './styles/style.scss'
 import './util/filters'
 
-import VueMask  from 'v-mask'
+import VueMask from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
 import * as VueGoogleMaps from 'vue2-google-maps'
@@ -76,7 +76,7 @@ function configureBackButtonPress() {
 
 async function init() {
   Vue.config.productionTip = false
-  
+
   configurePlugins()
   await configureAxios(store)
   await getUserData()
