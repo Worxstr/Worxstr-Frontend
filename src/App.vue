@@ -11,7 +11,21 @@ v-app
     :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
   )
     v-container.pa-0.align-start(fluid :style="`height: ${pageHeight}`")
-
+      
+      //- Identity verification alert
+      v-container.pb-0(v-if='showUnverifiedWarning')
+        v-alert.mb-0(
+          dense
+          prominent
+          type='warning'
+          color='warning'
+          icon='mdi-alert'
+        )
+          .d-flex.align-center
+            span.flex-grow-1 You have not completed your identity verification.
+            v-btn(text :to="{name: 'settings/payments', params: { verifyIdentity: 'true' }}") Verify
+      
+      //- Offline state alert
       transition(
         appear
         name='slide-y-reverse-transition'
@@ -24,6 +38,7 @@ v-app
           :style="`margin-bottom: ${bottomMargin}px`"
         ) You are offline. Some features may not be available until you reconnect.
       
+      //- Main view
       transition(
         appear,
         name="fade-transition",
@@ -94,6 +109,10 @@ export default class App extends Vue {
 
   get me(): User {
     return this.$store.getters.me
+  }
+
+  get showUnverifiedWarning() {
+    return !this.$store.getters.iAmVerified && this.$store.getters.me && !this.$route.meta?.landing
   }
 
   get showNavDrawer() {

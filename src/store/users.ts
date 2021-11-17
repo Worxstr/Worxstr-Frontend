@@ -96,7 +96,7 @@ const getters = {
   userIsVerified: (state: UsersState, getters: any) => (userId: number) => {
     const user = getters.user(userId)
     const field = userIs(user, UserRole.Contractor) ? 'contractor_info' : (userIs(user, ...Managers) ? 'organization_info' : null)
-    if (!field || !user) return false
+    if (!field || !user) return true // Don't change the app behavior if not authed
     return user[field]?.dwolla_customer_status === 'verified'
   },
 

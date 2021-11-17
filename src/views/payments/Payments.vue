@@ -28,19 +28,6 @@ div
 
 
   v-container.d-flex.flex-column.justify-center
-
-    v-alert(
-      v-if='!iAmVerified'
-      dense
-      prominent
-      type='warning'
-      color='warning'
-      icon='mdi-alert'
-    )
-      .d-flex.align-center
-        span.flex-grow-1 You have not completed your identity verification.
-        v-btn(text :to="{name: 'settings/payments', params: { verifyIdentity: 'true' }}") Complete verification
-  
     //- Balance display
     div(v-if="loadingBalance && !payments.balance.value")
       v-skeleton-loader.my-4(type="heading")
