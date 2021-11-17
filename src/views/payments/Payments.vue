@@ -49,7 +49,6 @@ div
       .text-h6 Available balance
       .text-h2 {{ payments.balance.value | currency }}
 
-
     timecards.mb-5(v-if='userIsManager')
 
     transfer-history

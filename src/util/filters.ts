@@ -35,7 +35,8 @@ Vue.filter('dateOrTime', (value: (string|number|Date)) => {
 })
 
 Vue.filter('currency', (value: string) => {
-	return '$' + parseFloat(value).toFixed(2)
+	const parsed = parseFloat(value)
+	return '$' + (isNaN(parsed) ? '0.00' : parsed.toFixed(2))
 })
 
 // 1234567890 -> (123) 456-7890
