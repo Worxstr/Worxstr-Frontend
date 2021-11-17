@@ -1,17 +1,33 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
+import VueSocketIOExt from 'vue-socket.io-extended'
 import { io } from 'socket.io-client'
 import { environment } from '@/services/app'
 import store from '@/store'
-import VueSocketIOExt from 'vue-socket.io-extended'
+import usersStore from '@/store/users'
 
 export let socket: any
 
 // Initialize a new websocket connection
 export function createSocket(url = process.env.VUE_APP_API_BASE_URL) {
   if (socket) socket.disconnect()
-  return socket = io(url, {
-    path: '/socket.io'
+  socket = io(url, {
+    path: '/socket.io',
+    reconnection: true,
+    reconnectionDelay: 1000,
   })
+  
+  // Authenticate the socket connection when reconnecting
+  socket.on('connect', () => {
+    const user = usersStore.getters.me(usersStore.state)
+    if (user) {
+      socket.emit('sign-in', {
+        fs_uniquifier: user.fs_uniquifier,
+      })
+    }
+  })
+
+  return socket
 }
 
 function configVueSocketIO(socket: any) {
@@ -26,11 +42,4 @@ function configVueSocketIO(socket: any) {
 environment.on('baseUrlChanged', (baseUrl: any) => {
   socket = createSocket(baseUrl)
   configVueSocketIO(socket)
-})
-
-// Create new socket connection if disconnected
-window.addEventListener('focus', () => {
-  if (!socket.connected) {
-    configVueSocketIO(socket)
-  }
 })
