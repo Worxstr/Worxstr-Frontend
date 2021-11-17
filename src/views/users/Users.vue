@@ -31,6 +31,9 @@ v-container
       template(v-slot:item.roles="{ item }")
         roles(:roles='item.roles' small)
 
+      template(v-slot:item.dwolla_status="{ item }")
+        roles(:roles='item.roles' small)
+
       //- template(v-slot:item.phone="{ item }")
       //- 	v-icon(small class="mr-2" @click="editUser(item)") mdi-pencil
       //- 	v-icon(small @click="deleteItem(item)") mdi-delete
