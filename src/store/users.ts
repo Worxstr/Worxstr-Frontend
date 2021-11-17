@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { currentUserIs, Managers, User, UserRole } from '@/types/Users'
+import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
 import { Position } from '@/services/geolocation'
 
 export interface UsersState {
@@ -91,14 +91,19 @@ const getters = {
     return state.workforce.map((userId: number) => state.byId[userId])
   },
 
-  // Check if the current user has a verified status in dwolla
-  iAmVerified: (state: UsersState, getters: any) => {
-    const field = currentUserIs(UserRole.Contractor) ? 'contractor_info' : (currentUserIs(...Managers) ? 'organization_info' : null)
-    const user = getters.me
-    console.log({field, user})
+  // TODO: These two methods could go in types/Users.ts. Or maybe those functions should go here? Idk
+  // Check if a user has a verified status in dwolla
+  userIsVerified: (state: UsersState, getters: any) => (userId: number) => {
+    const user = getters.user(userId)
+    const field = userIs(user, UserRole.Contractor) ? 'contractor_info' : (userIs(user, ...Managers) ? 'organization_info' : null)
     if (!field || !user) return false
     return user[field]?.dwolla_customer_status === 'verified'
-  }
+  },
+
+  iAmVerified: (state: UsersState, getters: any) => {
+    if (!getters.me) return false
+    return getters.userIsVerified(getters.me.id)
+  },
 }
 export default {
   state: initialState(),

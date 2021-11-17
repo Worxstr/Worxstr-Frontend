@@ -27,3 +27,10 @@ environment.on('baseUrlChanged', (baseUrl: any) => {
   socket = createSocket(baseUrl)
   configVueSocketIO(socket)
 })
+
+// Create new socket connection if disconnected
+window.addEventListener('focus', () => {
+  if (!socket.connected) {
+    configVueSocketIO(socket)
+  }
+})
