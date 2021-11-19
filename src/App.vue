@@ -50,7 +50,7 @@ v-app
       //- For some dumbass reason this computed value won't recalculate unless I have this here
       div(style='display: none') {{ safeAreaTop }}
 
-  worxstr-footer(v-if="isLanding")
+  worxstr-footer(v-if="showFooter")
 
   message-snackbar(:bottom-offset='bottomMargin')
 
@@ -64,7 +64,8 @@ import Toolbar from '@/layouts/Toolbar.vue'
 import NavDrawer from '@/layouts/NavDrawer.vue'
 import WorxstrFooter from '@/layouts/Footer.vue'
 import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
-import { Network } from '@capacitor/network';
+import { Capacitor } from '@capacitor/core'
+import { Network } from '@capacitor/network'
 
 @Component({
   metaInfo: {
@@ -121,6 +122,10 @@ export default class App extends Vue {
 
   get showHeader() {
     return !this.$route.meta?.noSkeleton
+  }
+
+  get showFooter() {
+    return this.isLanding && !Capacitor.isNativePlatform()
   }
 
   get isLanding() {

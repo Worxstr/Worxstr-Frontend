@@ -12,7 +12,7 @@
       v-btn(
         icon
         @click="$emit('toggleDrawer')"
-        v-if='$vuetify.breakpoint.smAndDown && !$route.meta.landing'
+        v-if='mediumLayout && !$route.meta.landing'
       )
         v-icon mdi-menu
       
@@ -34,14 +34,14 @@
       portal-target.d-flex(name="toolbarActions")
 
       div(v-if="$route.meta.landing")
-        v-btn(v-if='$vuetify.breakpoint.xs' icon @click='menu = true')
+        v-btn(v-if='mobileLayout' icon @click='menu = true')
           v-icon mdi-menu
         div(v-else)
-          v-btn(v-for="(link, i) in links" :key='i' text :to="link.to" v-if='!link.mobileOnly') {{ link.text }}
+          v-btn(v-for="(link, i) in links" :key='i' text :to="link.to" v-if='!link.hide') {{ link.text }}
 
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
       v-list.mobile-nav-items(nav)
-        v-list-item(v-for="(link, i) in links" :key='i' text :to="link.to" link)
+        v-list-item(v-for="(link, i) in links" :key='i' text :to="link.to" link v-if='!link.hide')
           v-list-item-content
             v-list-item-title {{ link.text }}
 </template>
@@ -49,6 +49,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
+import { Capacitor } from '@capacitor/core'
 
 @Component({
   components: {
@@ -58,8 +59,10 @@ import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
 export default class Toolbar extends Vue {
   @Prop({ default: false }) drawer!: boolean
   
+  menu = false
+  
   get bottomToolbar() {
-    return this.$vuetify.breakpoint.smAndDown && !this.$route.meta?.landing
+    return this.mediumLayout && !this.$route.meta?.landing
   }
 
   get logo() {
@@ -68,41 +71,54 @@ export default class Toolbar extends Vue {
     return (mini && !this.$route.meta?.landing) ? 'icon' : logotype
   }
 
-  menu = false
+  get mediumLayout() {
+    return this.$vuetify.breakpoint.smAndDown
+  }
 
-  links = [
-    {
-      text: 'Home',
-      to: '/',
-      mobileOnly: true,
-    },
-    {
-      text: 'About',
-      to: 'about',
-    },
-    {
-      text: 'Contact us',
-      to: 'contact',
-    },
-    // {
-    //   text: "Support",
-    //   to: "support",
-    // },
-    {
-      text: 'Pricing',
-      to: 'pricing',
-    },
-    {
-      text: 'Sign in',
-      to: 'sign-in',
-      mobileOnly: true,
-    },
-    {
-      text: 'Sign up',
-      to: 'sign-up',
-      mobileOnly: true,
-    },
-  ]
+  get mobileLayout() {
+    return this.$vuetify.breakpoint.xs
+  }
+
+  get authenticated() {
+    return !!this.$store.getters.me
+  }
+
+  get links() {
+    return [
+      {
+        text: 'Home',
+        to: '/',
+        hide: !this.mobileLayout,
+      },
+      {
+        text: 'About',
+        to: 'about',
+      },
+      {
+        text: 'Contact us',
+        to: 'contact',
+      },
+      // {
+      //   text: "Support",
+      //   to: "support",
+      // },
+      {
+        text: 'Pricing',
+        to: 'pricing',
+        hide: Capacitor.isNativePlatform(),
+      },
+      {
+        text: 'Sign in',
+        to: 'sign-in',
+        hide: !this.mobileLayout || this.authenticated,
+      },
+      {
+        text: 'Sign up',
+        to: 'sign-up',
+        hide: !this.mobileLayout || this.authenticated,
+      },
+    ]
+  }
 }
 </script>
 
