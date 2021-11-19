@@ -53,9 +53,9 @@ div
               )
                 template(v-slot:label)
                   .text-caption By checking this box you agree to&nbsp;
-                    a(href='/terms' target='_blank' @click.stop) our Terms of Service
+                    a(href='https://worxstr.com/terms' target='_blank' @click.stop) our Terms of Service
                     | &nbsp;and&nbsp;
-                    a(href='/privacy' target='_blank' @click.stop) Privacy Policy
+                    a(href='https://worxstr.com/privacy' target='_blank' @click.stop) Privacy Policy
                     | &nbsp;as well as our Vendor&nbsp;
                     a(href='https://www.dwolla.com/legal/tos/' target='_blank' @click.stop) Dwolla's Terms of Service
                     | &nbsp;and&nbsp;
@@ -116,6 +116,10 @@ export default class SignUp extends Vue {
   contractorForm = {}
   managerForm = {}
 
+  get isNativePlatform() {
+    return Capacitor.isNativePlatform()
+  }
+
   async mounted() {
     if (this.$route.params.subscriptionTier) {
       this.accountType = 'org'
@@ -123,7 +127,7 @@ export default class SignUp extends Vue {
       this.form.subscription_tier = this.$route.params.subscriptionTier
     }
 
-    if (Capacitor.isNativePlatform()) {
+    if (this.isNativePlatform) {
       this.accountType = 'contractor'
       this.step = 1
     }

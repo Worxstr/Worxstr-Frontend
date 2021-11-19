@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import { Route } from 'vue-router/types';
 import Meta from 'vue-meta'
 import { Capacitor } from '@capacitor/core'
+import { App, URLOpenListenerEvent } from '@capacitor/app'
+
 
 import * as MessagesTypes from '@/types/Messages'
 import { fullName, groupNameList } from '@/util/filters'
@@ -243,7 +245,7 @@ const routes = [
       },
     }
   },
-{
+  {
     path: '/messages',
     name: 'messages',
     component: Messages,
@@ -355,6 +357,19 @@ router.beforeEach((to: any, _from: any, next: any) => {
     }
   }
   else next()
+})
+
+App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
+  // Example url: https://beerswift.app/tabs/tabs2
+  // slug = /tabs/tabs2
+  const slug = event.url.split('.app').pop()
+
+  // We only push to the route if there is a slug present
+  if (slug) {
+    router.push({
+      path: slug,
+    })
+  }
 })
 
 export default router
