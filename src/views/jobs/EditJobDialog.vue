@@ -133,11 +133,13 @@ v-dialog(
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import colors from 'vuetify/lib/util/colors'
-import { User } from '@/definitions/User'
-import { Job } from '@/definitions/Job';
-import { exists, phoneRules, emailRules } from '@/plugins/inputValidation'
+import { User } from '@/types/Users'
+import { Job } from '@/types/Jobs';
+import { exists, phoneRules, emailRules } from '@/util/inputValidation'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import JobsMap from '@/components/JobsMap.vue'
+import { loadManagers } from '@/services/users'
+import { createJob, updateJob } from '@/services/jobs'
 
 @Component({
   components: {
@@ -167,14 +169,14 @@ export default class EditJobDialog extends Vue {
     consultantEmail: emailRules,
   }
 
-  mounted() {
-    this.$store.dispatch('loadManagers')
+  async mounted() {
+    await loadManagers(this.$store)
   }
 
   @Watch('opened')
   onOpened(newVal: boolean) {
     if (newVal) {
-      if (this.create) (this.$refs.form as HTMLFormElement).reset()
+      if (this.create) (this.$refs.form as HTMLFormElement)?.reset()
     }
 
     if (newVal && this.job)
@@ -186,7 +188,7 @@ export default class EditJobDialog extends Vue {
   }
 
   get managers(): User[] {
-    return this.$store.state.managers
+    return this.$store.state.users.managers
   }
 
   closeDialog() {
@@ -207,8 +209,8 @@ export default class EditJobDialog extends Vue {
   async updateJob() {
     this.loading = true
     try {
-      if (this.create) await this.$store.dispatch("createJob", this.editedJob)
-      else await this.$store.dispatch("updateJob", this.editedJob)
+      if (this.create) await createJob(this.$store, this.editedJob)
+      else await updateJob(this.$store, this.editedJob)
       this.closeDialog()
     }
     finally {

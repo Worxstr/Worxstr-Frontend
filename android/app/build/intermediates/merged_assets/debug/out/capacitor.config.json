@@ -5,17 +5,13 @@
 	"bundledWebRuntime": false,
 	"plugins": {
 		"SplashScreen": {
-			"launchShowDuration": 0
+			"launchAutoHide": false,
+			"androidScaleType": "CENTER_INSIDE",
+			"backgroundColor": "#e7edf7"
 		}
 	},
 	"cordova": {},
 	"server": {
-		"hostname": "worxstr.com",
-<<<<<<< HEAD
-		"url": "http://192.168.86.249:8080",
-=======
-		"url": "http://192.168.86.27:8080",
->>>>>>> 14d5c6383ab89bfd8dd29bcd5476248942dc6a68
-		"cleartext": true
+		"hostname": "worxstr.com"
 	}
 }

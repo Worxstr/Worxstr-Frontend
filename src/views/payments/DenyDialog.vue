@@ -28,31 +28,31 @@ v-dialog(
       v-btn(text, color="red", @click="denyPayments" :loading='loading') Deny
 </template>
 
-<script>
-export default {
-  name: "denyDialog",
-  props: {
-    opened: Boolean,
-    timecardIds: Array,
-  },
-  computed: {
-    timecards() {
-      return this.$store.getters.timecardsByIds(this.timecardIds)
-    },
-  },
-  data: () => ({
-    loading: false,
-  }),
-  methods: {
-    closeDialog() {
-      this.$emit("update:opened", false);
-    },
-    async denyPayments() {
-      this.loading = true
-      await this.$store.dispatch('denyPayments', this.timecardIds)
-      this.loading = false
-      this.closeDialog()
-    }
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import { denyPayments } from '@/services/payments'
+
+@Component
+export default class DenyDialog extends Vue {
+
+  @Prop({ default: false }) opened!: boolean
+  @Prop({ default: [] }) timecardIds!: Array<number>
+  
+  get timecards() {
+    return this.$store.getters.timecardsByIds(this.timecardIds)
   }
-};
+
+  loading = false
+  
+  closeDialog() {
+    this.$emit("update:opened", false);
+  }
+
+  async denyPayments() {
+    this.loading = true
+    await denyPayments(this.$store, this.timecardIds)
+    this.loading = false
+    this.closeDialog()
+  }
+}
 </script>

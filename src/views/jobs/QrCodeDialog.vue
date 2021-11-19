@@ -7,7 +7,7 @@ v-dialog(
   v-toolbar.flex-grow-0(flat)
     v-toolbar-title.text-h6 Clock-in code
     v-spacer
-    v-btn(icon color='primary' @click='print()')
+    v-btn(v-if='showPrint' icon color='primary' @click='print()')
       v-icon mdi-printer
     v-btn(
       icon
@@ -31,6 +31,7 @@ v-dialog(
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import VueQrcode from '@chenfengyuan/vue-qrcode'
+import { Capacitor } from '@capacitor/core'
 
 @Component({
   components: {
@@ -45,6 +46,10 @@ export default class QrCodeDialog extends Vue {
 
   closeDialog() {
     this.$emit('update:opened', false)
+  }
+
+  get showPrint() {
+    return !Capacitor.isNativePlatform()
   }
 
   print() {

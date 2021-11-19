@@ -34,6 +34,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
             )
               | {{ transfer.status | capitalize }}
 
+          //- TODO: This looks like shit
           span.mt-1
             | {{ transferFundsAdded(transfer) ? 'From' : 'To' }}&nbsp;
             span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'business'")
@@ -75,8 +76,9 @@ div(v-if="loadingTransfers && !(transfers.length)")
 </template>
 
 <script lang="ts">
-import { Transfer } from '@/definitions/Payments'
+import { Transfer } from '@/types/Payments'
 import { Component, Vue } from 'vue-property-decorator'
+import { loadTransfers } from '@/services/payments'
 
 @Component
 export default class TransferHistory extends Vue {
@@ -104,9 +106,13 @@ export default class TransferHistory extends Vue {
     }
   }
 
+  get me() {
+    return this.$store.getters.me
+  }
+
   transferFundsAdded(transfer: Transfer): boolean {
     return transfer._links.destination.href ===
-      this.$store.state.authenticatedUser.dwolla_customer_url
+      this.me.dwolla_customer_url
   }
 
   get transfers() {
@@ -118,7 +124,7 @@ export default class TransferHistory extends Vue {
     if (this.pageOffset == 0) this.loadingTransfers = true
     else this.loadingMore = true
 
-    const data = await this.$store.dispatch('loadTransfers', {
+    const data = await loadTransfers(this.$store, {
       offset: this.pageOffset,
     })
 

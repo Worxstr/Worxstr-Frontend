@@ -193,8 +193,8 @@ v-dialog(
 /* eslint-disable @typescript-eslint/camelcase */
 import dayjs from 'dayjs'
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { User } from '@/definitions/User'
-import { Shift } from '@/definitions/Job'
+import { User } from '@/types/Users'
+import { createShift } from '@/services/jobs'
 
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
@@ -349,10 +349,11 @@ export default class CreateShiftDialog extends Vue {
 
     // TODO: Validate shifts so that end time is after start time
     try {
-      await this.$store.dispatch('createShift', {
+      await createShift(
+        this.$store,
         shift,
-        jobId: this.$route.params.jobId,
-      })
+        parseInt(this.$route.params.jobId),
+      )
       this.closeDialog()
     } finally {
       this.loading = false

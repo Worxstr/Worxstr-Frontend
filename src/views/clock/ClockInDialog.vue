@@ -1,4 +1,4 @@
-<template lang="pug">
+`<template lang="pug">
 v-dialog(
   id='clock-in-dialog'
   v-model='dialogOpened'
@@ -56,6 +56,7 @@ v-dialog(
           v-model='code'
           dense
           outlined
+          maxlength='6'
           :rules='codeRules'
         )
 
@@ -71,7 +72,10 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { Capacitor } from '@capacitor/core'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
+import * as geolocation from '@/services/geolocation'
 
+import * as clock from '@/services/clock'
+import { showToast } from '@/services/app'
 /*
   We are using two difference QR code scanner libraries here.
   vue-qrcode-reader only works on web, and @capacitor-community/barcode-scanner
@@ -97,7 +101,7 @@ export default class ClockInDialog extends Vue {
 
   codeRules = [
     (code: string) => !!code || 'Please enter your clock-in code',
-    (code: string) => code.length === 6 && code.match(/^-?\d+$/) || 'Please enter a valid clock-in code',
+    (code: string) => ((code.length === 6 || code.length === 5) && code.match(/^-?\d+$/)) || 'Please enter a valid clock-in code',
   ]
 
   @Prop({ default: false }) readonly opened!: boolean
@@ -114,7 +118,7 @@ export default class ClockInDialog extends Vue {
     // TODO: Handle incorrect code
     try {
       this.loading = true
-      await this.$store.dispatch('clockIn', code)
+      await clock.clockIn(this.$store, code, this.$store.getters.nextShift?.id)
       this.closeDialog()
     }
     finally {
@@ -126,23 +130,7 @@ export default class ClockInDialog extends Vue {
   async onOpened(opened: boolean) {
     if (opened) {
       (this.$refs.form as HTMLFormElement)?.reset()
-      // this.initLocation()
       this.initQr()
-    }
-  }
-
-  async initLocation() {
-    this.allowedLocation = await this.$store.dispatch(
-      'locationPermissionGranted'
-    )
-
-    if (this.allowedLocation) {
-      const location = await this.$store.dispatch('getUserLocation')
-      this.$store.dispatch('showSnackbar', {
-        text: `${location.lat} ${location.lng}`,
-      })
-      this.closeDialog()
-      // TODO: Fire clock in request with user location
     }
   }
 
@@ -183,16 +171,15 @@ export default class ClockInDialog extends Vue {
           break
       }
       this.cameraFailed = true
-      console.log(error)
-      this.$store.dispatch('showSnackbar', { text: errorMessage })
+      showToast(this.$store, { text: errorMessage })
     } finally {
       this.cameraLoading = false
     }
   }
 
   async getUserLocation() {
-    const location = await this.$store.dispatch('getUserLocation')
-    this.$store.dispatch('showSnackbar', {
+    const location = await geolocation.get(this.$store)
+    showToast(this.$store, {
       text: `${location.lat} ${location.lng}`,
     })
     this.closeDialog()
@@ -211,6 +198,7 @@ export default class ClockInDialog extends Vue {
   }
 
   async nativeCameraPermissionGranted() {
+    if (!Capacitor.isNativePlatform()) return false
     const status = await BarcodeScanner.checkPermission({ force: true })
     return !!status.granted
   }
@@ -220,7 +208,7 @@ export default class ClockInDialog extends Vue {
 
       const nativeCameraPermissionGranted = await this.nativeCameraPermissionGranted()
       if (!nativeCameraPermissionGranted) {
-        this.$store.dispatch('showSnackbar', {
+        showToast(this.$store, {
           text: 'Camera permission is not granted'
         })
         return
@@ -241,7 +229,8 @@ export default class ClockInDialog extends Vue {
   }
 
   stopScan() {
-    BarcodeScanner.stopScan()
+    if (Capacitor.isNativePlatform())
+      BarcodeScanner.stopScan()
     this.toggleWebview(true)
   }
 

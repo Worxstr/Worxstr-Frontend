@@ -19,6 +19,13 @@ html {
 }
 a {
   text-decoration: none;
+  
+  &.alt-style {
+    color: unset !important;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 .v-btn__content, .v-tabs * {
   text-transform: none !important;
@@ -84,6 +91,10 @@ $black: #000;
 	div, p, span, h1, h2, h3, h4, h5, h6 {
   	color: white !important;
 	}
+}
+.gradient-text {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .soft-shadow {

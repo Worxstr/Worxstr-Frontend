@@ -2,16 +2,24 @@
 div
   v-container.sign-in.fill-height.d-flex.flex-column.justify-center.align-center.arrow-container
     v-card.soft-shadow(width="500")
-      v-form(@submit.prevent="signIn", v-model="isValid")
+      v-form(@submit.prevent="signIn()", v-model="isValid")
         v-card-title.text-h5 Sign in
         v-card-text.pb-0
+          v-alert(
+            v-if='usingSandbox'
+            border='left'
+            color='primary'
+            dense
+            text
+            type='info'
+          ) You are signing in to the sandbox environment
           v-text-field(
             autofocus
             label='Email'
-            type='emali'
+            type='email'
             required
             v-model='form.email'
-            :rules='emailRules'
+            :rules='rules.email'
             outlined
             dense
           )
@@ -19,11 +27,11 @@ div
             label='Password'
             :type="showPassword ? 'text' : 'password'"
             v-model='form.password'
-            :rules='passwordRules'
+            :rules='rules.password'
+            hide-details
             required
             outlined
             dense
-            :hide-details='biometricsAvailable'
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append='showPassword = !showPassword'
           )
@@ -31,6 +39,11 @@ div
             v-if='biometricsAvailable'
             v-model='form.useBiometrics'
             label='Use biometrics for future sign-ins'
+          )
+          v-checkbox(
+            v-else
+            v-model='form.rememberMe'
+            label='Remember me'
           )
 
         v-card-actions
@@ -48,8 +61,11 @@ div
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { AvailableResult, Credentials, NativeBiometric } from 'capacitor-native-biometric'
-import { emailRules, passwordRules } from '@/plugins/inputValidation'
+import { emailRules, passwordRules } from '@/util/inputValidation'
 import Arrows from '@/components/Arrows.vue'
+import { signIn } from '@/services/auth'
+import { showToast } from '@/services/app'
+import { Capacitor } from '@capacitor/core'
 
 @Component({
   metaInfo: {
@@ -64,34 +80,45 @@ export default class SignIn extends Vue {
     email: '',
     password: '',
     useBiometrics: false,
+    rememberMe: false,
   }
   showPassword = false
   isValid = false
   loading = false
   biometricsAvailable = false
-  emailRules = emailRules
-  passwordRules = passwordRules
+  rules = {
+    email: emailRules,
+    password: passwordRules,
+  }
 
-  mounted() {
+  async mounted() {
     if (this.$route.params.email) {
       this.form.email = this.$route.params.email
     }
-    this.loadCredentialsFromBiometrics()
+    if (await this.checkBiometricsAvailable())
+      this.loadCredentialsFromBiometrics()
   }
 
-  async signIn(email?: string, password?: string) {
+  get usingSandbox() {
+    return this.form.email.includes('+test')
+  }
+
+  async signIn(email?: string, password?: string, rememberMe?: boolean) {
     this.loading = true
     try {
-      const data = await this.$store.dispatch('signIn', (email && password) ? {
-        email,
-        password,
-      } : this.form)
+      if (!email) email = this.form.email
+      if (!password) password = this.form.password
+      if (rememberMe === undefined) rememberMe = this.form.rememberMe
+
+      console.log(email, password, rememberMe)
+
+      const data = await signIn(this.$store, email, password, rememberMe)
 
       // TODO: Find better way to determine login success
       if (data?.response?.user) {
-        const result: AvailableResult = await NativeBiometric.isAvailable()
+        const biometricsAvailable = await this.checkBiometricsAvailable()
 
-        if (result.isAvailable)
+        if (biometricsAvailable)
           this.saveCredentials(this.form.email, this.form.password)
       }
     } finally {
@@ -109,11 +136,17 @@ export default class SignIn extends Vue {
     }
   }
 
-  async loadCredentialsFromBiometrics() {
+  async checkBiometricsAvailable() {
+    if (!Capacitor.isNativePlatform()) return false
     const result: AvailableResult = await NativeBiometric.isAvailable()
-    this.biometricsAvailable = result.isAvailable
+    return this.biometricsAvailable = result.isAvailable
+  }
 
-    if (this.biometricsAvailable) {
+  async loadCredentialsFromBiometrics() {
+
+    const biometricsAvailable = await this.checkBiometricsAvailable()
+
+    if (biometricsAvailable) {
 
       // Get user's credentials
       const credentials: Credentials = await NativeBiometric.getCredentials({
@@ -129,10 +162,10 @@ export default class SignIn extends Vue {
         })
         
         // Authentication successful
-        this.signIn(credentials.username, credentials.password)
+        this.signIn(credentials.username, credentials.password, true)
       }
       catch (error) {
-        this.$store.dispatch('showSnackbar', {
+        showToast(this.$store, {
           text: "Couldn't sign in with biometrics."
         })
       }

@@ -31,6 +31,9 @@ v-container
       template(v-slot:item.roles="{ item }")
         roles(:roles='item.roles' small)
 
+      template(v-slot:item.dwolla_status="{ item }")
+        roles(:roles='item.roles' small)
+
       //- template(v-slot:item.phone="{ item }")
       //- 	v-icon(small class="mr-2" @click="editUser(item)") mdi-pencil
       //- 	v-icon(small @click="deleteItem(item)") mdi-delete
@@ -38,9 +41,10 @@ v-container
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { currentUserIs, User, UserRole } from '@/definitions/User'
+import { currentUserIs, User, UserRole } from '@/types/Users'
 import EditUserDialog from './EditUserDialog.vue'
 import Roles from '@/components/Roles.vue'
+import { loadWorkforce } from '@/services/users'
 
 @Component({
   metaInfo: {
@@ -81,7 +85,7 @@ export default class Users extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch('loadWorkforce')
+      await loadWorkforce(this.$store)
     } finally {
       this.loading = false
     }

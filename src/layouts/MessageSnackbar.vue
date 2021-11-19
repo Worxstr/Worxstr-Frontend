@@ -1,5 +1,4 @@
 <template lang="pug">
-  //- TODO: Update padding-bottom to be safeAreaBottom + headerHeight from App.vue
   v-snackbar(
     app
     bottom
@@ -27,7 +26,7 @@ export default class MessageSnackbar extends Vue {
   @Prop({ type: Number, default: 0 }) bottomOffset!: number
 
   get snackbar() {
-    return this.$store.state.snackbar
+    return this.$store.state.app.snackbar
   }
 }
 </script>

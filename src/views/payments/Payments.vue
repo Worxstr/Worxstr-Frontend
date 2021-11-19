@@ -11,6 +11,7 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
       @click='openAddFundsDialog'
+      :disabled='!iAmVerified'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-cash-plus
       span(v-if='!$vuetify.breakpoint.xs') Add funds to wallet
@@ -20,14 +21,13 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
       @click='openTransferToBankDialog'
-      :disabled='payments.balance.value == 0'
+      :disabled='!iAmVerified || payments.balance.value == 0'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
 
 
   v-container.d-flex.flex-column.justify-center
-  
     //- Balance display
     div(v-if="loadingBalance && !payments.balance.value")
       v-skeleton-loader.my-4(type="heading")
@@ -35,7 +35,6 @@ div
     .text-center.my-5(v-else)
       .text-h6 Available balance
       .text-h2 {{ payments.balance.value | currency }}
-
 
     timecards.mb-5(v-if='userIsManager')
 
@@ -49,7 +48,9 @@ import { Component, Vue } from 'vue-property-decorator'
 import Timecards from '@/components/Timecards.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
-import { currentUserIs, Managers } from '@/definitions/User'
+import { currentUserIs, Managers } from '@/types/Users'
+import { loadBalance } from '@/services/payments'
+import { showToast } from '@/services/app'
 
 @Component({
   metaInfo: {
@@ -69,14 +70,14 @@ export default class Payments extends Vue {
   async mounted() {
     this.loadingBalance = true
     try {
-      await this.$store.dispatch('loadBalance')
+      await loadBalance(this.$store)
     } finally {
       this.loadingBalance = false
     }
   }
 
-  get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+  get me() {
+    return this.$store.getters.me
   }
 
   get payments() {
@@ -87,9 +88,13 @@ export default class Payments extends Vue {
     return currentUserIs(...Managers)
   }
 
+  get iAmVerified() {
+    return this.$store.getters.iAmVerified
+  }
+
   userHasFundingSource() {
     if (this.$store.getters.fundingSources.length === 0) {
-      this.$store.dispatch('showSnackbar', {
+      showToast(this.$store, {
         text: "You haven't added any funding sources.",
         action: {
           text: 'Add funding source',

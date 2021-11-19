@@ -2,7 +2,7 @@
 v-dialog(
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  max-width="600",
   persistent
 )
   v-card.d-flex.flex-column
@@ -13,29 +13,35 @@ v-dialog(
       v-divider
           
       v-card-text
-        time-input(v-model="form.data.timeIn.time", label="Time in")
+        datetime-input(
+          outlined
+          v-model="form.data.timeIn.time"
+          label="Time in"
+        )
 
         .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
           v-row
             v-col
-              //- TODO: Use datetime-local instead
-              time-input(
-                required,
-                hide-details,
-                v-model="breakItem.start.time",
+              datetime-input(
+                outlined
+                required
+                hide-details
+                v-model="breakItem.start.time"
                 :label="`Break ${index + 1} start`"
               )
             v-col
-              time-input(
-                required,
-                hide-details,
-                v-model="breakItem.end.time",
+              datetime-input(
+                outlined
+                required
+                hide-details
+                v-model="breakItem.end.time"
                 :label="`Break ${index + 1} end`"
               )
 
-        time-input(
-          required,
-          v-model="form.data.timeOut.time",
+        datetime-input(
+          outlined
+          required
+          v-model="form.data.timeOut.time"
           label="Time out"
         )
 
@@ -52,99 +58,122 @@ v-dialog(
 </template>
 
 <script>
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import TimeInput from '@/components/inputs/TimeInput.vue'
+import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
+import * as payments from '@/services/payments'
+import { ClockAction } from '@/types/Clock'
+
+// TODO: Convert this file to typescript
+// TODO: Add chronology validation
 
 dayjs.extend(duration)
 
-export default {
-  components: { TimeInput },
-  name: 'approvals',
-  data: () => ({
-    loading: false,
-    form: {
-      isValid: false,
-      data: {
-        timeIn: null,
-        timeOut: null,
-        breaks: [],
-      },
+@Component({
+  components: { DatetimeInput },
+})
+export default class EditTimecardDialog extends Vue {
+  
+  loading = false
+  form = {
+    isValid: false,
+    data: {
+      timeIn: null,
+      timeOut: null,
+      breaks: [],
     },
-  }),
-  props: {
-    opened: Boolean,
-    timecardId: Object,
-  },
-  computed: {
-    timecard() {
-      return this.$store.getters.timecard(this.timecardId)
-    },
-  },
-  watch: {
-    timecardId: function() {
-      this.calculateFormValues()
-    },
-    opened(newVal) {
-      if (newVal == true) this.calculateFormValues()
-    },
-  },
-  methods: {
-    closeDialog() {
-      this.$emit('update:opened', false)
-    },
+  }
 
-    calculateFormValues() {
-      const events = this.timecard.time_clocks
+  @Prop({ default: false }) opened
+  @Prop({ type: Number }) timecardId
 
-      this.form.data.timeIn = Object.assign({}, events[0])
-      this.form.data.timeOut = Object.assign({}, events[events.length - 1])
+  get timecard() {
+    return this.$store.getters.timecard(this.timecardId)
+  }
 
-      const breakEvents = events.slice(1, events.length - 1),
-            breaks = []
+  @Watch('timecardId')
+  onTimecardIdChanged() {
+    this.calculateFormValues()
+  }
 
-      for (let i = 0; i < breakEvents.length; i += 2) {
-        breaks.push({
-          start: breakEvents[i],
-          end: breakEvents[i + 1],
-        })
-      }
-      this.form.data.breaks = breaks
-    },
+  @Watch('opened')
+  onOpened(opened) {
+    if (opened) this.calculateFormValues()
+  }
 
-    timeDiff(timeIn, timeOut) {
-      timeIn = dayjs(timeIn)
-      timeOut = dayjs(timeOut)
+  closeDialog() {
+    this.$emit('update:opened', false)
+  }
 
-      const duration = dayjs.duration(timeOut.diff(timeIn)),
-        hours = duration.format('H'),
-        minutes = duration.format('m')
-
-      return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${
-        minutes == 1 ? '' : 's'
-      }`
-    },
-    async updateTimecard() {
-      const newTimeclockEvents = []
-
-      newTimeclockEvents.push(this.form.data.timeIn)
-      this.form.data.breaks.forEach((breakItem) => {
-        newTimeclockEvents.push(breakItem.start)
-        newTimeclockEvents.push(breakItem.end)
+  calculateFormValues() {
+    const events = this.timecard.time_clocks
+      .sort((a, b) => {
+        return new Date(b.time).getTime() - new Date(a.time).getTime()
       })
-      newTimeclockEvents.push(this.form.data.timeOut)
 
-      this.loading = true
-      try {
-        await this.$store.dispatch('updateTimecard', {
-          timecardId: this.timecard.id,
-          events: newTimeclockEvents,
-        })
-        this.closeDialog()
-      } finally {
-        this.loading = false
-      }
-    },
-  },
+    this.form.data.timeIn = events.find(event => event.action === ClockAction.ClockIn)
+    this.form.data.timeOut = events.find(event => event.action === ClockAction.ClockOut)
+
+    const breakStarts = events.filter(event => event.action === ClockAction.StartBreak)
+    const breakEnds = events.filter(event => event.action === ClockAction.EndBreak)
+    /*
+      We will group the start and end breaks into pairs, eg:
+      breaks = [{
+        start: ClockEvent,
+        end: ClockEvent,
+      },
+      ...
+      ]
+    */
+   const breaks = []
+
+    if (breakStarts.length != breakEnds.length) return console.error('Malformed data.')
+
+    breakStarts.forEach((start, index) => {
+      breaks.push({
+        start,
+        end: breakEnds[index]
+      })
+    })
+    this.form.data.breaks = breaks
+  }
+
+  timeDiff(timeIn, timeOut) {
+    timeIn = dayjs(timeIn)
+    timeOut = dayjs(timeOut)
+
+    const duration = dayjs.duration(timeOut.diff(timeIn)),
+      hours = duration.format('H'),
+      minutes = duration.format('m')
+
+    return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${
+      minutes == 1 ? '' : 's'
+    }`
+  }
+
+  async updateTimecard() {
+    const newTimeclockEvents = []
+
+    newTimeclockEvents.push(this.form.data.timeIn)
+    this.form.data.breaks.forEach((breakItem) => {
+      newTimeclockEvents.push(breakItem.start)
+      newTimeclockEvents.push(breakItem.end)
+    })
+    newTimeclockEvents.push(this.form.data.timeOut)
+
+    this.loading = true
+
+    try {
+      await payments.updateTimecard(
+        this.$store,
+        this.timecard.id,
+        newTimeclockEvents,
+      )
+      this.closeDialog()
+    } finally {
+      this.loading = false
+    }
+  }
 }
 </script>

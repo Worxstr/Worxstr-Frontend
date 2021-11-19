@@ -1,7 +1,5 @@
 <template lang="pug">
 .messages.d-flex.flex-column(v-if="conversation")
-  
-  
   transition-group.message-container.px-4.pt-4.d-flex.flex-column.align-stretch(
     name="scroll-y-reverse-transition",
     tag="div"
@@ -11,15 +9,21 @@
     .message.d-flex.flex-column(
       v-for="(message, i) in conversation.messages"
       :key="message.id"
-      :class="message.sender_id == authenticatedUser.id ? 'right' : 'left'"
+      :class="sentByMe(message) ? 'right' : 'left'"
     )
-      p.px-4.py-2.mb-2.rounded-xl.grey(
-        :class="{ 'lighten-3': !$vuetify.theme.dark, 'darken-3': $vuetify.theme.dark }"
+      p.px-4.py-2.mb-1.rounded-xl(
+        :class="{\
+          'lighten-2': !$vuetify.theme.dark,\
+          'darken-2': $vuetify.theme.dark,\
+          'grey': !sentByMe(message),\
+          'primary white--text': sentByMe(message),\
+        }"
       ) 
         | {{ message.body }}
 
       p.text-caption.text--disabled(v-if='showInfo(i)')
-        span(v-if='message.sender_id != authenticatedUser.id') {{ participant(message.sender_id).first_name }} -&nbsp;
+        span(v-if='!sentByMe(message) && participant(message.sender_id)')
+          | {{ participant(message.sender_id).first_name }} -&nbsp;
         span(v-if='isToday(message.timestamp)') {{ message.timestamp | date('MMM D') }},&nbsp;
         span {{ message.timestamp | time }}
 
@@ -32,6 +36,7 @@
       hide-details
       rounded
       solo
+      dense
       placeholder="Type a message..."
     )
 
@@ -39,100 +44,92 @@
       v-icon mdi-send
 </template>
 
-<script>
+<script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import { mapState } from 'vuex'
+import { Component, Vue } from 'vue-property-decorator'
+import * as messages from '@/services/messages'
+import { Message } from '@/types/Messages'
+import { User } from '@/types/Users'
 
-export default {
-  name: 'Messages',
-  metaInfo() {
+@Component
+export default class Conversation extends Vue {
+  message = ''
+
+  metaInfo(): any {
     return {
       title: this.conversation
-        ? this.$options.filters.groupNameList(
+        ? this.$options.filters?.groupNameList(
             this.conversation,
-            this.authenticatedUser
+            this.me
           )
         : 'Conversation',
     }
-  },
-  mounted() {
+  }
+
+  async mounted() {
     // TODO: get the text input to focus
-    console.log(this.$refs.message) //.$el.focus();
+    // console.log(this.$refs.message) //.$el.focus();
+    await messages.loadConversation(this.$store, parseInt(this.$route.params.conversationId))
+  }
 
-    this.$store.dispatch('loadConversation', this.$route.params.conversationId)
-  },
-  watch: {
-    '$route.params.conversationId'() {
-      this.messages = []
-    },
-  },
-  data: () => ({
-    message: '',
-  }),
-  computed: {
-    ...mapState(['authenticatedUser']),
-    conversation() {
-      const conversation = this.$store.getters.conversation(
-        this.$route.params.conversationId
-      )
-      return conversation
-    },
-  },
-  methods: {
-    // Determine if the message info should be shown
-    showInfo(messageIndex) {
-      const current = this.conversation.messages[messageIndex]
-      const next = this.conversation.messages[messageIndex + 1]
+  get me() {
+    return this.$store.getters.me
+  }
 
-      if (next) {
-        // The messages were sent by different users
-        if (current.sender_id != next.sender_id) return true
+  get conversation() {
+    const conversation = this.$store.getters.conversation(
+      this.$route.params.conversationId
+    )
+    return conversation
+  }
 
-        // The messages were sent more than a minute apart
-        return (
-          new Date(next.timestamp).getTime() -
-            new Date(current.timestamp).getTime() >
-          60 * 1000
-        )
-      }
-      return true
-    },
-    // Check if the message was sent today
-    isToday(timestamp) {
-      const now = new Date()
-      const then = new Date(timestamp)
-      return !(
-        now.getUTCDay() == then.getUTCDay() &&
-        now.getUTCMonth() == then.getUTCMonth() &&
-        now.getUTCFullYear() == then.getUTCFullYear()
+  sentByMe(message: Message) {
+    return message.sender_id == this.me.id
+  }
+
+  // Determine if the message info should be shown
+  showInfo(messageIndex: number) {
+    const current = this.conversation.messages[messageIndex]
+    const next = this.conversation.messages[messageIndex + 1]
+
+    if (next) {
+      // The messages were sent by different users
+      if (current.sender_id != next.sender_id) return true
+
+      // The messages were sent more than a minute apart
+      return (
+        new Date(next.timestamp).getTime() -
+          new Date(current.timestamp).getTime() >
+        60 * 1000
       )
-    },
-    sendMessage() {
-      this.$socket.emit('test', { test: 1 })
-      this.$store.dispatch('sendMessage', {
-        message: {
-          body: this.message,
-        },
-        conversationId: this.$route.params.conversationId,
-      })
-      this.message = ''
-    },
-    participant(participantId) {
-      const participant = this.conversation.participants.find(
-        (p) => p.id == participantId
-      )
-      return participant
-    },
-  },
-  sockets: {
-    connect: function() {
-      console.log('Socket connected')
-    },
-    'message:create': function({ message, conversation_id }) {
-      if (conversation_id == this.$route.params.conversationId)
-        this.messages.unshift(message)
-    },
-  },
+    }
+    return true
+  }
+
+  // Check if the message was sent today
+  isToday(timestamp: string) {
+    const now = new Date()
+    const then = new Date(timestamp)
+    return !(
+      now.getUTCDay() == then.getUTCDay() &&
+      now.getUTCMonth() == then.getUTCMonth() &&
+      now.getUTCFullYear() == then.getUTCFullYear()
+    )
+  }
+
+  async sendMessage() {
+    this.$socket.client.emit('test', { test: 1 })
+    await messages.sendMessage(this.$store, { body: this.message }, parseInt(this.$route.params.conversationId))
+    this.message = ''
+  }
+
+  // TODO: Move the participants data into `users` state module
+  participant(participantId: number) {
+    const participant = this.conversation.participants.find(
+      (p: User) => p.id == participantId
+    )
+    return participant
+  }
 }
 </script>
 

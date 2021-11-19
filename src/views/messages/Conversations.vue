@@ -2,7 +2,7 @@
 
 v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line')
 
-.conversations(v-else)
+.conversations(v-else-if='conversations')
   v-list(color="transparent")
     div(
       v-for="(conversation, i) in conversations",
@@ -10,12 +10,12 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
     )
       v-list-item(
         two-line
-        link,
-        activeclass="primary--text",
+        link
+        active-class="primary--text"
         :to="{ name: 'conversation', params: { conversationId: conversation.id } }"
       )
         v-list-item-content
-          v-list-item-title {{ conversation | groupNameList(authenticatedUser) }}
+          v-list-item-title {{ conversation | groupNameList(me) }}
           v-list-item-subtitle(
             v-if='conversation.messages.length'
           ) {{ conversation.messages[conversation.messages.length - 1].body }}
@@ -29,13 +29,14 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
 
 <script>
 import { Component, Vue } from 'vue-property-decorator'
+import { loadConversations } from '@/services/messages'
 
 @Component()
 export default class Conversations extends Vue {
   loading = false
 
-  get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+  get me() {
+    return this.$store.getters.me
   }
 
   get conversations() {
@@ -45,7 +46,7 @@ export default class Conversations extends Vue {
   async mounted() {
     this.loading = true
     try {
-      await this.$store.dispatch("loadConversations")
+      await loadConversations(this.$store)
     }
     finally {
       this.loading = false

@@ -23,7 +23,8 @@ v-dialog(
 </template>
 
 <script lang="ts">
-import { FundingSource } from '@/definitions/Payments'
+import { FundingSource } from '@/types/Payments'
+import { removeFundingSource } from '@/services/payments'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
@@ -39,7 +40,7 @@ export default class RemoveFundingSourceDialog extends Vue {
 
   async removeFundingSource() {
     this.loading = true
-    await this.$store.dispatch('removeFundingSource', this.fundingSource._links.self.href)
+    await removeFundingSource(this.$store, this.fundingSource._links.self.href)
     this.loading = false
     this.closeDialog()
   }

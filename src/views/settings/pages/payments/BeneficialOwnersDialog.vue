@@ -13,13 +13,14 @@ v-dialog(
         v-icon mdi-close
 
     v-card-text
-      dwolla-beneficial-owners(:customerId='customerId(authenticatedUser.dwolla_customer_url)')
+      dwolla-beneficial-owners(:customerId='customerId(me.dwolla_customer_url)')
 
     v-spacer
     
 </template>
 
 <script lang="ts">
+import { dwollaCustomerIdFromUrl } from '@/util/dwolla'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
@@ -31,22 +32,12 @@ export default class BeneficialOwnersDialog extends Vue {
     this.$emit('update:opened', false)
   }
 
-  get authenticatedUser() {
-    return this.$store.state.authenticatedUser
+  get me() {
+    return this.$store.getters.me
   }
 
   customerId(customerUrl: string) {
-    return customerUrl
-      .replace('https://api-sandbox.dwolla.com/customers/', '')
-      .replace('https://api.dwolla.com/customers/', '')
+    return dwollaCustomerIdFromUrl(customerUrl)
   }
-
-  // async removeFundingSource() {
-  //   this.loading = true
-  //   await this.$store.dispatch('removeFundingSource', this.fundingSource._links.self.href)
-  //   this.loading = false
-  //   this.closeDialog()
-  // }
-
 }
 </script>

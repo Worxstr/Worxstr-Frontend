@@ -2,11 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { Route } from 'vue-router/types';
 import Meta from 'vue-meta'
-import store from '@/store'
 import { Capacitor } from '@capacitor/core'
 
-import * as MessagesTypes from '@/definitions/Messages'
-import { fullName, groupNameList } from '@/plugins/filters'
+import * as MessagesTypes from '@/types/Messages'
+import { fullName, groupNameList } from '@/util/filters'
+import usersStore from '@/store/users'
 
 import Home from '@/views/landing/Home.vue'
 import NativeHome from '@/views/landing/NativeHome.vue'
@@ -18,7 +18,7 @@ import SupportArticle from '@/views/support/SupportArticle.vue'
 import Privacy from '@/views/landing/Privacy.vue'
 import Terms from '@/views/landing/Terms.vue'
 import SignIn from '@/views/auth/SignIn.vue'
-import SignUp from '@/views/auth/SignUp.vue'
+import SignUp from '@/views/auth/sign-up/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
 import Clock from '@/views/clock/Clock.vue'
@@ -42,7 +42,7 @@ import NotFound from '@/views/errors/NotFound.vue'
 Vue.use(VueRouter)
 Vue.use(Meta)
 
-import { UserRole, Managers, defaultRoute, currentUserIs, isAuthenticated } from '@/definitions/User'
+import { UserRole, Managers, defaultRoute, currentUserIs, isAuthenticated } from '@/types/Users'
 
 const routes = [
   {
@@ -54,7 +54,7 @@ const routes = [
     },
     beforeEnter(to: Route, from: Route, next: Function) {
       if (Capacitor.isNativePlatform()) {
-        if (store.state.authenticatedUser)
+        if (usersStore.getters.me(usersStore.state))
           next({ name: defaultRoute() })
         else
           next({ name: 'nativeHome' })
@@ -149,6 +149,7 @@ const routes = [
   },
   {
     path: '/reset-password',
+    alias: '/auth/reset',
     name: 'resetPassword',
     component: ResetPassword,
     meta: {
@@ -242,7 +243,7 @@ const routes = [
       },
     }
   },
-  {
+{
     path: '/messages',
     name: 'messages',
     component: Messages,
@@ -258,9 +259,9 @@ const routes = [
         meta: {
           fullHeight: true,
           paramMap: {
-            conversationId: 'conversations',
+            conversationId: 'messages.conversations',
             propBuilder(conversation: MessagesTypes.Conversation) {
-              return groupNameList(conversation, store.state.authenticatedUser)
+              return groupNameList(conversation, usersStore.getters.me(usersStore.state))
             },
           },
         },
@@ -322,7 +323,7 @@ const routes = [
   },
   {
     path: '*',
-    name: 'Not found',
+    name: 'notFound',
     component: NotFound,
     meta: {
       fullHeight: true,

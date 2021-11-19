@@ -21,7 +21,7 @@
 				span(v-if='!$vuetify.breakpoint.xs') Edit
 
 			v-btn(
-				v-if='userIsOrgManager && user.id != authenticatedUser.id'
+				v-if='userIsOrgManager && user.id != me.id'
 				text
 				color='error'
 				@click='deleteUserDialog = true'
@@ -31,7 +31,7 @@
 				span(v-if='!$vuetify.breakpoint.xs') Delete
 
 		v-container.d-flex.flex-column.justify-center
-			.py-5
+			.py-5.px-4
 				h4.text-h4 {{ user | fullName }}
 				h6.text-h6
 					a(:href='`mailto:${user.email}`' target="_blank") {{ user.email }}
@@ -40,14 +40,23 @@
 
 				roles.mt-3(:roles='user.roles')
 
-			//- div(v-if='user.contractor_info')
-			//- 	p Makes {{ user.contractor_info.hourly_rate | currency }}/hour
-
 			v-list(color='transparent')
-				v-list-item(v-for='key in Object.keys(user).sort()')
+				v-list-item(v-if='user.manager_id')
 					v-list-item-content
-						v-list-item-title {{ key | snakeToSpace | capitalize }}
-						v-list-item-subtitle {{ user[key] }}
+						v-list-item-subtitle Manager
+						v-list-item-title {{ user.manager_id }}
+
+				v-list-item(v-if='user.manager_info')
+					v-list-item-content
+						v-list-item-subtitle Manager reference number
+						v-list-item-title {{ user.manager_info.reference_number }}
+					v-list-item-actions
+						clipboard-copy(:text='user.manager_info.reference_number')
+
+				v-list-item(v-if='user.contractor_info')
+					v-list-item-content
+						v-list-item-subtitle Hourly wage
+						v-list-item-title {{ user.contractor_info.hourly_rate | currency }} / hour
 
 </template>
 
@@ -56,13 +65,16 @@ import { Component, Vue } from 'vue-property-decorator'
 import EditUserDialog from './EditUserDialog.vue'
 import DeleteUserDialog from './DeleteUserDialog.vue'
 import Roles from '@/components/Roles.vue'
-import { Managers, userIs, currentUserIs, UserRole } from '@/definitions/User'
+import { Managers, userIs, currentUserIs, UserRole } from '@/types/Users'
+import { loadUser } from '@/services/users'
+import ClipboardCopy from '@/components/ClipboardCopy.vue'
 
 @Component({
   components: {
     EditUserDialog,
     DeleteUserDialog,
     Roles,
+		ClipboardCopy,
   },
 })
 export default class User extends Vue {
@@ -78,16 +90,16 @@ export default class User extends Vue {
   }
 
   async mounted() {
-    await this.$store.dispatch('loadUser', this.$route.params.userId)
-  }
+		await loadUser(this.$store, parseInt(this.$route.params.userId))
+	}
 
   get user() {
     return this.$store.getters.user(this.$route.params.userId)
   }
 
-	get authenticatedUser() {
-		return this.$store.state.authenticatedUser
-	}
+  get me() {
+    return this.$store.getters.me
+  }
 
   get userIsManager() {
     return userIs(this.user, ...Managers)

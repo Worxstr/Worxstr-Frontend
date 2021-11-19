@@ -15,7 +15,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
   //- Logo and collapse button
   v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
-    a(@click="mini = !mini", text)
+    a(@click="toggleMiniNav", text)
       v-avatar.mb-1(tile, :size="mini ? 40 : 130")
         img(
           :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
@@ -24,7 +24,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
     v-spacer
 
-    v-btn(icon, @click.stop="$vuetify.breakpoint.mdAndUp ? (mini = !mini) : (value = !value)")
+    v-btn(icon, @click.stop="$vuetify.breakpoint.mdAndUp ? toggleMiniNav() : (value = !value)")
       v-icon mdi-chevron-{{$vuetify.breakpoint.mdAndUp ? 'left' : 'down'}}
 
   v-divider
@@ -83,20 +83,29 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { User, Role, UserRole } from '@/definitions/User'
+import { User, Role, UserRole } from '@/types/Users'
+import { signOut } from '@/services/auth'
+import { miniNav } from '@/services/app'
 
 @Component
 export default class NavDrawer extends Vue {
 
-  mini = false
   @Prop({ default: false }) value!: boolean
 
   signOut(): void {
-    this.$store.dispatch("signOut");
+    signOut(this.$store)
   }
 
-  get authenticatedUser(): User {
-    return this.$store.state.authenticatedUser
+  get me(): User {
+    return this.$store.getters.me
+  }
+  
+  get mini() {
+    return this.$store.state.app.preferences.miniNav
+  }
+
+  toggleMiniNav() {
+    return miniNav.toggle(this.$store)
   }
 
   // TODO: Combine primary and secondary links
@@ -112,7 +121,7 @@ export default class NavDrawer extends Vue {
         const restrict = !!meta.restrict;
 
         const userHasRequiredRole = !!meta.restrict?.some((role: UserRole) =>
-          this.authenticatedUser?.roles?.map((r: Role) => r.id).includes(role)
+          this.me?.roles?.map((r: Role) => r.id).includes(role)
         );
 
         return (icon && !restrict) || (icon && userHasRequiredRole);

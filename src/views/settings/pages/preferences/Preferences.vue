@@ -11,11 +11,21 @@ v-list
         dense
         hide-details
       )
+    
+  v-list-item(two-line v-if='$vuetify.breakpoint.mdAndUp')
+    v-list-item-content
+      v-list-item-title Mini navigation
+    v-list-item-action
+      v-switch(
+        v-model='preferences.miniNav'
+        @change='updateMiniNav'
+      )
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { DarkPreference, getStoredPreference, setTheme } from '@/plugins/theme'
+import { darkMode, miniNav } from '@/services/app'
+import { DarkPreference } from '@/util/theme'
 
 @Component({
   metaInfo: {
@@ -24,8 +34,8 @@ import { DarkPreference, getStoredPreference, setTheme } from '@/plugins/theme'
 })
 export default class Preferences extends Vue {
 
-  preferences = {
-    darkMode: 'Default',
+  get preferences() {
+    return this.$store.state.app.preferences
   }
 
   darkPreferenceOptions = [
@@ -43,12 +53,12 @@ export default class Preferences extends Vue {
     },
   ]
 
-  mounted() {
-    this.preferences.darkMode = getStoredPreference()
+  updateDarkMode() {
+    darkMode.set(this.$store, this.preferences.darkMode as DarkPreference)
   }
 
-  updateDarkMode() {
-    setTheme(this.preferences.darkMode as DarkPreference)
+  updateMiniNav() {
+    miniNav.toggle(this.$store, this.preferences.miniNav)
   }
 }
 </script>

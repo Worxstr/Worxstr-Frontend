@@ -2,16 +2,17 @@
   GmapMap(
     :center="centerLocation",
     :zoom="zoomLevel",
-    :style='`height: ${height}`'
+    :style='`min-height: ${height}`'
+    :options='mapOptions'
   )
     GmapCircle(
-      v-if='userLocation'
+      v-if='userLocation && showUserLocation'
       :center='userLocation'
-      :radius='locationAccuracy'
+      :radius='userLocation.accuracy'
       :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
     )
     GmapMarker(
-      v-if='userLocation'
+      v-if='userLocation && showUserLocation'
       :position="userLocation"
       :icon="{ url: require('@/assets/icons/current-location-marker.svg')}"
     )
@@ -45,20 +46,14 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Geolocation } from '@capacitor/geolocation'
-import { Job } from '@/definitions/Job'
-
-type LatLng = {
-  lat: number;
-  lng: number;
-}
+import { Job } from '@/types/Jobs'
+import * as geolocation from '@/services/geolocation'
+import { light, dark } from '@/assets/mapStyles'
 
 @Component
 export default class JobsMap extends Vue {
-  userLocation: LatLng | null = null
   locationAccuracy: number | null = null
-
-  infoWindowPos: LatLng | null = null
+  infoWindowPos: geolocation.Position | null = null
   infoWinOpen = false
   currentMidx = null
   infoContent: Job | null = null
@@ -73,35 +68,13 @@ export default class JobsMap extends Vue {
   @Prop({ default: '40vh' }) height!: string
   @Prop({ default: false }) showUserLocation!: boolean
 
-  async mounted() {
-    this.getUserLocation()
+  get userLocation() {
+    return this.$store.state.users.userLocation
   }
 
-  async getUserLocation() {
-    if (!this.showUserLocation) return
-
-    // TODO: Keep track of user location in global app state
-
-    const { coords /* , timestamp */ } = await Geolocation.getCurrentPosition({
-      enableHighAccuracy: true,
-    })
-
-    // Watch position changes
-    /* Geolocation.watchPosition({
-      enableHighAccuracy: true,
-    }, ({coords}) => {
-      this.updatePosition(coords)
-    }) */
-
-    this.updatePosition(coords)
-  }
-
-  updatePosition(coords: any) {
-    console.log({ coords })
-    this.locationAccuracy = coords.accuracy
-    this.userLocation = {
-      lat: coords.latitude,
-      lng: coords.longitude,
+  get mapOptions() {
+    return {
+      styles: this.$vuetify.theme.dark ? dark : light
     }
   }
 
@@ -125,7 +98,7 @@ export default class JobsMap extends Vue {
         max = Math.max(max, this.distanceBetweenPoints(jobs[i], jobs[j]))
       }
 
-      if (this.userLocation) {
+      if (this.showUserLocation && this.userLocation) {
         // Compare each job to user location
         max = Math.max(
           max,
@@ -150,12 +123,12 @@ export default class JobsMap extends Vue {
   get centerLocation() {
     const sumLats =
       this.jobs.reduce((acc, job) => acc + job.latitude, 0) +
-      (this.userLocation?.lat || 0)
+      (this.showUserLocation && this.userLocation?.lat || 0)
     const sumLngs =
       this.jobs.reduce((acc, job) => acc + job.longitude, 0) +
-      (this.userLocation?.lng || 0)
-    const avgLats = sumLats / (this.jobs.length + (this.userLocation ? 1 : 0))
-    const avgLngs = sumLngs / (this.jobs.length + (this.userLocation ? 1 : 0))
+      (this.showUserLocation && this.userLocation?.lng || 0)
+    const avgLats = sumLats / (this.jobs.length + (this.showUserLocation && this.userLocation ? 1 : 0))
+    const avgLngs = sumLngs / (this.jobs.length + (this.showUserLocation && this.userLocation ? 1 : 0))
 
     return {
       lat: avgLats,

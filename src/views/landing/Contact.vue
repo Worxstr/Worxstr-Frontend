@@ -10,7 +10,7 @@ div
         v-for="(option, i) in helpOptions" :key="i"
         cols="12",
         :md="chosenOption == option.name ? 9 : 6",
-        v-if="(chosenOption == option.name || chosenOption == null) && !(option.name == 'sales' && $store.state.authenticatedUser)"
+        v-if="(chosenOption == option.name || chosenOption == null) && !(option.name == 'sales' && me)"
       )
         v-card.soft-shadow(outlined :class="chosenOption ? '' : 'hover-effect'")
           v-card-title.text-h5 {{ option.title }}
@@ -66,6 +66,10 @@ export default class Contact extends Vue {
     if (this.$route.params.option) {
       this.chosenOption = this.$route.params.option
     }
+  }
+
+  get me() {
+    return this.$store.getters.me
   }
 
   chosenOption: 'support' | 'sales' | string | null = null
