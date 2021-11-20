@@ -45,7 +45,7 @@
             p.mb-0.mr-2.font-weight-medium Get the app:
             v-btn(
               icon
-              href='https://testflight.apple.com/join/hvQXJsYe'
+              href='https://apps.apple.com/us/app/worxstr/id1571853545'
               target='_blank'
             )
               v-icon mdi-apple
@@ -65,14 +65,14 @@
 
   //- Feature carousel
   v-carousel(
-    v-model="carouselIndex",
-    cycle,
-    interval='8000',
-    height='700',
-    hide-delimiter-background,
-    show-arrows-on-hover,
-    delimiter-icon="mdi-circle-medium",
-    :dark="true",
+    v-model='carouselIndex'
+    cycle
+    interval='8000'
+    height='700'
+    hide-delimiter-background
+    show-arrows-on-hover
+    delimiter-icon='mdi-circle-medium'
+    :dark='true'
   )
     v-carousel-item(v-for='(feature, i) in carousel' :key='i')
       v-sheet(:dark='feature.dark', height='100%' :class='`gradient-${feature.gradient}`')
