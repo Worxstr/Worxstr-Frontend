@@ -15,7 +15,7 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
         :to="{ name: 'conversation', params: { conversationId: conversation.id } }"
       )
         v-list-item-content
-          v-list-item-title {{ conversation | groupNameList(authenticatedUser) }}
+          v-list-item-title {{ conversation | groupNameList(me) }}
           v-list-item-subtitle(
             v-if='conversation.messages.length'
           ) {{ conversation.messages[conversation.messages.length - 1].body }}
@@ -35,8 +35,8 @@ import { loadConversations } from '@/services/messages'
 export default class Conversations extends Vue {
   loading = false
 
-  get authenticatedUser() {
-    return this.$store.state.users.authenticatedUser
+  get me() {
+    return this.$store.getters.me
   }
 
   get conversations() {

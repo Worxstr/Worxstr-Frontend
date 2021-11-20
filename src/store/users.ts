@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { User } from '@/types/Users'
+import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
 import { Position } from '@/services/geolocation'
 
 export interface UsersState {
@@ -8,7 +8,7 @@ export interface UsersState {
     [key: number]: User;
   };
   
-  authenticatedUser: User | null;
+  me: number | null;
   userLocation: Position | null;
 
   workforce: number[];
@@ -20,7 +20,7 @@ export interface UsersState {
 export const initialState = (): UsersState => ({
   all: [],
   byId: {},
-  authenticatedUser: null,
+  me: null,
   userLocation: null,
   workforce: [],
   managers: {
@@ -29,23 +29,28 @@ export const initialState = (): UsersState => ({
   },
 })
 
+function addUser(state: UsersState, user: User) {
+  Vue.set(state.byId, user.id, {
+    ...state.byId[user.id],
+    ...user,
+  })
+  if (!state.all.includes(user.id)) state.all.push(user.id)
+}
+
 const mutations = {
   SET_AUTHENTICATED_USER(state: UsersState, user: User) {
-    state.authenticatedUser = user
-    localStorage.setItem('authenticatedUser', JSON.stringify(user))
+    addUser(state, user)
+    state.me = user.id
+    localStorage.setItem('me', JSON.stringify(user))
   },
 
   UNSET_AUTHENTICATED_USER(state: UsersState) {
-    state.authenticatedUser = null
-    localStorage.removeItem('authenticatedUser')
+    state.me = null
+    localStorage.removeItem('me')
   },
 
   ADD_USER(state: UsersState, user: User) {
-    Vue.set(state.byId, user.id, {
-      ...state.byId[user.id],
-      ...user,
-    })
-    if (!state.all.includes(user.id)) state.all.push(user.id)
+    addUser(state, user)
   },
 
   REMOVE_USER(state: UsersState, userId: number) {
@@ -77,8 +82,27 @@ const getters = {
     return state.byId[id]
   },
 
+  me: (state: UsersState) => {
+    if (!state.me) return null
+    return state.byId[state.me]
+  },
+
   workforce: (state: UsersState) => {
     return state.workforce.map((userId: number) => state.byId[userId])
+  },
+
+  // TODO: These two methods could go in types/Users.ts. Or maybe those functions should go here? Idk
+  // Check if a user has a verified status in dwolla
+  userIsVerified: (state: UsersState, getters: any) => (userId: number) => {
+    const user = getters.user(userId)
+    const field = userIs(user, UserRole.Contractor) ? 'contractor_info' : (userIs(user, ...Managers) ? 'organization_info' : null)
+    if (!field || !user) return true // Don't change the app behavior if not authed
+    return user[field]?.dwolla_customer_status === 'verified'
+  },
+
+  iAmVerified: (state: UsersState, getters: any) => {
+    if (!getters.me) return false
+    return getters.userIsVerified(getters.me.id)
   },
 }
 export default {

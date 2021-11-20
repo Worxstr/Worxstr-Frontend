@@ -11,6 +11,7 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
       @click='openAddFundsDialog'
+      :disabled='!iAmVerified'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-cash-plus
       span(v-if='!$vuetify.breakpoint.xs') Add funds to wallet
@@ -20,14 +21,13 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
       @click='openTransferToBankDialog'
-      :disabled='payments.balance.value == 0'
+      :disabled='!iAmVerified || payments.balance.value == 0'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
 
 
   v-container.d-flex.flex-column.justify-center
-  
     //- Balance display
     div(v-if="loadingBalance && !payments.balance.value")
       v-skeleton-loader.my-4(type="heading")
@@ -35,7 +35,6 @@ div
     .text-center.my-5(v-else)
       .text-h6 Available balance
       .text-h2 {{ payments.balance.value | currency }}
-
 
     timecards.mb-5(v-if='userIsManager')
 
@@ -77,8 +76,8 @@ export default class Payments extends Vue {
     }
   }
 
-  get authenticatedUser() {
-    return this.$store.state.users.authenticatedUser
+  get me() {
+    return this.$store.getters.me
   }
 
   get payments() {
@@ -87,6 +86,10 @@ export default class Payments extends Vue {
 
   get userIsManager() {
     return currentUserIs(...Managers)
+  }
+
+  get iAmVerified() {
+    return this.$store.getters.iAmVerified
   }
 
   userHasFundingSource() {

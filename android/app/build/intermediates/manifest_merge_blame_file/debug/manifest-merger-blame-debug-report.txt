@@ -1,7 +1,7 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.worxstr.worxstr"
-4    android:versionCode="9"
+4    android:versionCode="11"
 5    android:versionName="0.2.0" >
 6
 7    <uses-sdk
@@ -80,97 +80,98 @@
 44-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:9:9-54
 45        android:supportsRtl="true"
 45-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:10:9-35
-46        android:theme="@style/AppTheme" >
-46-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:11:9-40
-47        <activity
-47-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:13:9-26:20
-48            android:name="com.worxstr.app.MainActivity"
-48-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:15:13-56
-49            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
-49-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:14:13-129
-50            android:label="@string/title_activity_main"
-50-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:16:13-56
-51            android:launchMode="singleTask"
-51-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:18:13-44
-52            android:screenOrientation="userPortrait"
-52-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:19:13-53
-53            android:theme="@style/AppTheme.NoActionBarLaunch" >
-53-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:17:13-62
-54            <intent-filter>
-54-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:21:13-24:29
-55                <action android:name="android.intent.action.MAIN" />
-55-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:22:17-69
-55-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:22:25-66
-56
-57                <category android:name="android.intent.category.LAUNCHER" />
-57-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:23:17-77
-57-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:23:27-74
-58            </intent-filter>
-59        </activity>
-60
-61        <provider
-62            android:name="androidx.core.content.FileProvider"
-62-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:29:13-62
-63            android:authorities="com.worxstr.worxstr.fileprovider"
-63-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:30:13-64
-64            android:exported="false"
-64-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:31:13-37
-65            android:grantUriPermissions="true" >
-65-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:32:13-47
-66            <meta-data
-66-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:33:13-35:64
-67                android:name="android.support.FILE_PROVIDER_PATHS"
-67-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:34:17-67
-68                android:resource="@xml/file_paths" />
-68-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:35:17-51
-69        </provider>
-70
-71        <activity
-71-->[:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-13:59
-72            android:name="com.epicshaggy.biometric.AuthAcitivy"
-72-->[:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-64
-73            android:label="@string/title_activity_auth_acitivy"
-73-->[:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:12:13-64
-74            android:theme="@style/AppTheme.Transparent" />
-74-->[:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:13:13-56
-75        <activity
-75-->[androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:28:9-31:67
-76            android:name="androidx.biometric.DeviceCredentialHandlerActivity"
-76-->[androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:29:13-78
-77            android:exported="true"
-77-->[androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:30:13-36
-78            android:theme="@style/DeviceCredentialHandlerTheme" />
-78-->[androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:31:13-64
-79        <activity
-79-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:23:9-26:75
-80            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-80-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:24:13-79
-81            android:exported="false"
-81-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:25:13-37
-82            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-82-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:26:13-72
-83
-84        <meta-data
-84-->[com.google.android.gms:play-services-basement:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\8cef994e40aba8317bcfae94feb73e12\transformed\jetified-play-services-basement-17.3.0\AndroidManifest.xml:23:9-25:69
-85            android:name="com.google.android.gms.version"
-85-->[com.google.android.gms:play-services-basement:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\8cef994e40aba8317bcfae94feb73e12\transformed\jetified-play-services-basement-17.3.0\AndroidManifest.xml:24:13-58
-86            android:value="@integer/google_play_services_version" />
-86-->[com.google.android.gms:play-services-basement:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\8cef994e40aba8317bcfae94feb73e12\transformed\jetified-play-services-basement-17.3.0\AndroidManifest.xml:25:13-66
-87
-88        <activity
-88-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:47:9-53:63
-89            android:name="com.journeyapps.barcodescanner.CaptureActivity"
-89-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:48:13-74
-90            android:clearTaskOnLaunch="true"
-90-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:49:13-45
-91            android:screenOrientation="sensorLandscape"
-91-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:50:13-56
-92            android:stateNotNeeded="true"
-92-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:51:13-42
-93            android:theme="@style/zxing_CaptureTheme"
-93-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:52:13-54
-94            android:windowSoftInputMode="stateAlwaysHidden" />
-94-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:53:13-60
-95    </application>
-96
-97</manifest>
+46        android:testOnly="true"
+47        android:theme="@style/AppTheme" >
+47-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:11:9-40
+48        <activity
+48-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:13:9-26:20
+49            android:name="com.worxstr.app.MainActivity"
+49-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:15:13-56
+50            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
+50-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:14:13-129
+51            android:label="@string/title_activity_main"
+51-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:16:13-56
+52            android:launchMode="singleTask"
+52-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:18:13-44
+53            android:screenOrientation="userPortrait"
+53-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:19:13-53
+54            android:theme="@style/AppTheme.NoActionBarLaunch" >
+54-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:17:13-62
+55            <intent-filter>
+55-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:21:13-24:29
+56                <action android:name="android.intent.action.MAIN" />
+56-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:22:17-69
+56-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:22:25-66
+57
+58                <category android:name="android.intent.category.LAUNCHER" />
+58-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:23:17-77
+58-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:23:27-74
+59            </intent-filter>
+60        </activity>
+61
+62        <provider
+63            android:name="androidx.core.content.FileProvider"
+63-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:29:13-62
+64            android:authorities="com.worxstr.worxstr.fileprovider"
+64-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:30:13-64
+65            android:exported="false"
+65-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:31:13-37
+66            android:grantUriPermissions="true" >
+66-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:32:13-47
+67            <meta-data
+67-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:33:13-35:64
+68                android:name="android.support.FILE_PROVIDER_PATHS"
+68-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:34:17-67
+69                android:resource="@xml/file_paths" />
+69-->C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:35:17-51
+70        </provider>
+71
+72        <activity
+72-->[:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-13:59
+73            android:name="com.epicshaggy.biometric.AuthAcitivy"
+73-->[:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-64
+74            android:label="@string/title_activity_auth_acitivy"
+74-->[:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:12:13-64
+75            android:theme="@style/AppTheme.Transparent" />
+75-->[:capacitor-native-biometric] C:\Users\alexw\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:13:13-56
+76        <activity
+76-->[androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:28:9-31:67
+77            android:name="androidx.biometric.DeviceCredentialHandlerActivity"
+77-->[androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:29:13-78
+78            android:exported="true"
+78-->[androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:30:13-36
+79            android:theme="@style/DeviceCredentialHandlerTheme" />
+79-->[androidx.biometric:biometric:1.0.1] C:\Users\alexw\.gradle\caches\transforms-3\9df492b35c1c0e683d5b1db57a39c6d6\transformed\biometric-1.0.1\AndroidManifest.xml:31:13-64
+80        <activity
+80-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:23:9-26:75
+81            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+81-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:24:13-79
+82            android:exported="false"
+82-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:25:13-37
+83            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+83-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:26:13-72
+84
+85        <meta-data
+85-->[com.google.android.gms:play-services-basement:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\8cef994e40aba8317bcfae94feb73e12\transformed\jetified-play-services-basement-17.3.0\AndroidManifest.xml:23:9-25:69
+86            android:name="com.google.android.gms.version"
+86-->[com.google.android.gms:play-services-basement:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\8cef994e40aba8317bcfae94feb73e12\transformed\jetified-play-services-basement-17.3.0\AndroidManifest.xml:24:13-58
+87            android:value="@integer/google_play_services_version" />
+87-->[com.google.android.gms:play-services-basement:17.3.0] C:\Users\alexw\.gradle\caches\transforms-3\8cef994e40aba8317bcfae94feb73e12\transformed\jetified-play-services-basement-17.3.0\AndroidManifest.xml:25:13-66
+88
+89        <activity
+89-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:47:9-53:63
+90            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+90-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:48:13-74
+91            android:clearTaskOnLaunch="true"
+91-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:49:13-45
+92            android:screenOrientation="sensorLandscape"
+92-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:50:13-56
+93            android:stateNotNeeded="true"
+93-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:51:13-42
+94            android:theme="@style/zxing_CaptureTheme"
+94-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:52:13-54
+95            android:windowSoftInputMode="stateAlwaysHidden" />
+95-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\alexw\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:53:13-60
+96    </application>
+97
+98</manifest>

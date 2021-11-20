@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import { Route } from 'vue-router/types';
 import Meta from 'vue-meta'
 import { Capacitor } from '@capacitor/core'
+import { App, URLOpenListenerEvent } from '@capacitor/app'
+
 
 import * as MessagesTypes from '@/types/Messages'
 import { fullName, groupNameList } from '@/util/filters'
@@ -18,7 +20,7 @@ import SupportArticle from '@/views/support/SupportArticle.vue'
 import Privacy from '@/views/landing/Privacy.vue'
 import Terms from '@/views/landing/Terms.vue'
 import SignIn from '@/views/auth/SignIn.vue'
-import SignUp from '@/views/auth/SignUp.vue'
+import SignUp from '@/views/auth/sign-up/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
 import Clock from '@/views/clock/Clock.vue'
@@ -54,7 +56,7 @@ const routes = [
     },
     beforeEnter(to: Route, from: Route, next: Function) {
       if (Capacitor.isNativePlatform()) {
-        if (usersStore.state.authenticatedUser)
+        if (usersStore.getters.me(usersStore.state))
           next({ name: defaultRoute() })
         else
           next({ name: 'nativeHome' })
@@ -243,7 +245,7 @@ const routes = [
       },
     }
   },
-{
+  {
     path: '/messages',
     name: 'messages',
     component: Messages,
@@ -261,7 +263,7 @@ const routes = [
           paramMap: {
             conversationId: 'messages.conversations',
             propBuilder(conversation: MessagesTypes.Conversation) {
-              return groupNameList(conversation, usersStore.state.authenticatedUser)
+              return groupNameList(conversation, usersStore.getters.me(usersStore.state))
             },
           },
         },
@@ -355,6 +357,19 @@ router.beforeEach((to: any, _from: any, next: any) => {
     }
   }
   else next()
+})
+
+App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
+  // Example url: https://beerswift.app/tabs/tabs2
+  // slug = /tabs/tabs2
+  const slug = event.url.split('.app').pop()
+
+  // We only push to the route if there is a slug present
+  if (slug) {
+    router.push({
+      path: slug,
+    })
+  }
 })
 
 export default router

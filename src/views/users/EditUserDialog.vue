@@ -170,7 +170,11 @@ export default class EditUserDialog extends Vue {
   }
 
   mounted() {
-    this.editedUser.manager_id = this.$store.state.users.authenticatedUser?.id
+    this.editedUser.manager_id = this.me?.id
+  }
+
+  get me() {
+    return this.$store.getters.me
   }
 
   get managers() {

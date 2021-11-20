@@ -10,54 +10,46 @@ import { SplashScreen } from '@capacitor/splash-screen'
 import './styles/style.scss'
 import './util/filters'
 
-import VueMask  from 'v-mask'
+import VueMask from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
-import VueSocketIOExt from 'vue-socket.io-extended'
-import socket from '@/util/socket-io'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import VueGtag from 'vue-gtag'
 import { configureDwolla } from './util/dwolla'
 import { configureAxios } from './util/axios'
 import { initDarkMode } from './util/theme'
-import { getAuthenticatedUser } from '@/services/users'
+import { getMe } from '@/services/users'
 import { sandboxMode } from '@/services/app'
 import { shouldUseSandbox } from './services/auth'
 
 // TODO: Move this to environment variable
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
-Vue.use(VueMask)
-Vue.use(PortalVue)
-Vue.use(VueChatScroll)
+function configurePlugins() {
+  Vue.use(VueMask)
+  Vue.use(PortalVue)
+  Vue.use(VueChatScroll)
 
-Vue.use(VueGoogleMaps, {
-  load: {
-    key: GOOGLE_MAPS_API_KEY,
-    libraries: 'places',
-  },
-})
-Vue.use(VuetifyGoogleAutocomplete, {
-  apiKey: GOOGLE_MAPS_API_KEY,
-  vueGoogleMapsCompatibility: true,
-})
+  Vue.use(VueGoogleMaps, {
+    load: {
+      key: GOOGLE_MAPS_API_KEY,
+      libraries: 'places',
+    },
+  })
+  Vue.use(VuetifyGoogleAutocomplete, {
+    apiKey: GOOGLE_MAPS_API_KEY,
+    vueGoogleMapsCompatibility: true,
+  })
 
-Vue.use(VueSocketIOExt, socket, {
-  store,
-  actionPrefix: '',
-  mutationPrefix: '',
-})
-
-Vue.use(VueGtag, {
-  config: { id: process.env.VUE_APP_GTAG_API },
-})
-
-Vue.config.productionTip = false
+  Vue.use(VueGtag, {
+    config: { id: process.env.VUE_APP_GTAG_API },
+  })
+}
 
 async function getUserData() {
   // Get local user data
-  const storedUser = localStorage.getItem('authenticatedUser')
+  const storedUser = localStorage.getItem('me')
   if (storedUser) {
     const user = JSON.parse(storedUser)
     sandboxMode.toggle(store, shouldUseSandbox(user.email))
@@ -69,7 +61,7 @@ async function getUserData() {
 
   try {
     // Load new user data
-    await getAuthenticatedUser(store)
+    await getMe(store)
   }
   catch (e) {
     // console.error(e)
@@ -83,6 +75,9 @@ function configureBackButtonPress() {
 }
 
 async function init() {
+  Vue.config.productionTip = false
+
+  configurePlugins()
   await configureAxios(store)
   await getUserData()
 
@@ -92,6 +87,7 @@ async function init() {
     vuetify,
     render: (h) => h(App),
   }).$mount('#app')
+
 
   initDarkMode()
   await SplashScreen.hide()

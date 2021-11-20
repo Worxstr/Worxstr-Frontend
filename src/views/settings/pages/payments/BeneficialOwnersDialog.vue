@@ -13,7 +13,7 @@ v-dialog(
         v-icon mdi-close
 
     v-card-text
-      dwolla-beneficial-owners(:customerId='customerId(authenticatedUser.dwolla_customer_url)')
+      dwolla-beneficial-owners(:customerId='customerId(me.dwolla_customer_url)')
 
     v-spacer
     
@@ -32,8 +32,8 @@ export default class BeneficialOwnersDialog extends Vue {
     this.$emit('update:opened', false)
   }
 
-  get authenticatedUser() {
-    return this.$store.state.users.authenticatedUser
+  get me() {
+    return this.$store.getters.me
   }
 
   customerId(customerUrl: string) {

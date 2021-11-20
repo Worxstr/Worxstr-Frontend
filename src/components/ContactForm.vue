@@ -17,8 +17,8 @@ v-form.flex-grow-1.d-flex.flex-column(
   )
 
   .d-flex.flex-column.flex-md-row
-    v-text-field.mr-2(
-      v-if="!$store.state.users.authenticatedUser"
+    v-text-field.mr-4(
+      v-if="!me"
       v-model="form.contact_name",
       label="Your name",
       required,
@@ -29,7 +29,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
     v-text-field(
-      :class="{'.ml-2': $store.state.users.authenticatedUser}"
+      :class="{'.ml-2': me}"
       v-if="type == 'sales'"
       v-model="form.contact_title",
       label="Job title",
@@ -39,7 +39,7 @@ v-form.flex-grow-1.d-flex.flex-column(
       :filled="filled"
     )
 
-  .d-flex(v-if='!$store.state.users.authenticatedUser')
+  .d-flex(v-if='!me')
     phone-input(
       v-if="usePhone",
       v-model="form.phone",
@@ -175,6 +175,14 @@ export default class ContactForm extends Vue {
         ...this.dataSupplement
       }
     }
+    
+    if (this.$route.params.description) {
+      this.form.description = this.$route.params.description
+    }
+  }
+
+  get me() {
+    return this.$store.getters.me
   }
 
   async submitForm() {

@@ -18,3 +18,12 @@ export async function updateMyOrganization({ commit }: any, newData: any) {
   })
   commit('ADD_ORGANIZATION', data)
 }
+
+export async function retryDwollaBusinessVerification({ commit }: any, newData: any) {
+  const { data } = await api({
+    method: 'PUT',
+    url: '/organizations/retry',
+    data: newData,
+  })
+  commit('ADD_USER', data)
+}

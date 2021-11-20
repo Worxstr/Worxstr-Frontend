@@ -8,9 +8,12 @@
       v-row.jumbo.d-flex.align-center
         v-col.flex-grow-1
           .my-8
-            h3.text-h3.text-md-h2.font-weight-black.mb-2 The adaptive solution to contract labor management
+            h3.text-h3.text-md-h2.font-weight-black.mb-2
+              | The&nbsp;
+              span.gradient-text(:class="$vuetify.theme.dark ? 'gradient-secondary' : 'gradient-tertiary'") adaptive
+              | &nbsp;solution to contract labor management
 
-          div(v-if='authenticatedUser')
+          div(v-if='me')
             v-btn.mr-3.black--text(
               elevation='0'
               color='accent'
@@ -42,7 +45,7 @@
             p.mb-0.mr-2.font-weight-medium Get the app:
             v-btn(
               icon
-              href='https://testflight.apple.com/join/hvQXJsYe'
+              href='https://apps.apple.com/us/app/worxstr/id1571853545'
               target='_blank'
             )
               v-icon mdi-apple
@@ -62,14 +65,14 @@
 
   //- Feature carousel
   v-carousel(
-    v-model="carouselIndex",
-    cycle,
-    interval='8000',
-    height='700',
-    hide-delimiter-background,
-    show-arrows-on-hover,
-    delimiter-icon="mdi-circle-medium",
-    :dark="true",
+    v-model='carouselIndex'
+    cycle
+    interval='8000'
+    height='700'
+    hide-delimiter-background
+    show-arrows-on-hover
+    delimiter-icon='mdi-circle-medium'
+    :dark='true'
   )
     v-carousel-item(v-for='(feature, i) in carousel' :key='i')
       v-sheet(:dark='feature.dark', height='100%' :class='`gradient-${feature.gradient}`')
@@ -102,32 +105,35 @@
         v-col(cols="12", md="6")
           p.text-h6.mb-4.pl-2 My company has:
           v-text-field.pb-4(
-            v-model.number="calculator.managers",
-            suffix="managers",
-            outlined,
-            color="accent",
-            hide-details,
-            type="number",
+            v-model.number="calculator.managers"
+            suffix="managers"
+            outlined
+            color="accent"
+            hide-details
+            type="number"
+            pattern="\d*"
             min="1"
             filled
           )
           v-text-field.pb-4(
-            v-model.number="calculator.contracts",
-            suffix="contracts / year",
-            outlined,
-            color="accent",
-            hide-details,
-            type="number",
+            v-model.number="calculator.contracts"
+            suffix="contracts / year"
+            outlined
+            color="accent"
+            hide-details
+            type="number"
+            pattern="\d*"
             min="1"
             filled
           )
           v-text-field.pb-4(
-            v-model.number="calculator.contractors",
-            suffix="contractors",
-            outlined,
-            color="accent",
-            hide-details,
-            type="number",
+            v-model.number="calculator.contractors"
+            suffix="contractors"
+            outlined
+            color="accent"
+            hide-details
+            type="number"
+            pattern="\d*"
             min="1"
             filled
           )
@@ -245,9 +251,9 @@ export default class Home extends Vue {
       },
     },
   ]
-  
-  get authenticatedUser() {
-    return this.$store.state.users.authenticatedUser
+
+  get me() {
+    return this.$store.getters.me
   }
 
   get savingsEstimate() {
@@ -256,7 +262,7 @@ export default class Home extends Vue {
   }
   
   get defaultRoute() {
-    return defaultRoute(this.authenticatedUser)
+    return defaultRoute(this.me)
   }
 
   @Watch('savingsEstimate')

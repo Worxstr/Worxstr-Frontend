@@ -50,6 +50,7 @@
                 dark
                 style='transition: background-color 0.3s'
                 :loading='togglingClock'
+                :disabled='!iAmVerified'
               )
                 | Clock {{ clocked ? "out" : "in" }}
 
@@ -63,6 +64,7 @@
                 dark
                 style='transition: background-color 0.3s'
                 :loading='togglingBreak'
+                :disabled='!iAmVerified'
               )
                 | {{ onBreak ? "End" : "Start" }} break
 
@@ -169,6 +171,10 @@ export default class Clock extends Vue {
       (event: ClockEvent) => event.action == ClockAction.StartBreak || event.action == ClockAction.EndBreak
     )
     return lastBreakEvent ? lastBreakEvent.action == ClockAction.StartBreak : null
+  }
+
+  get iAmVerified() {
+    return this.$store.getters.iAmVerified
   }
 
   async clockOut() {

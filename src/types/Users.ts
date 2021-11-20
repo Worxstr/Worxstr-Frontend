@@ -7,9 +7,17 @@ export type User = {
 	email: string;
 	roles: Role[];
 	contractor_info?: {
+		dwolla_customer_url: string;
+		dwolla_customer_status: string;
+		[key: string]: any;
+	};
+	organization_info?: {
+		dwolla_customer_url: string;
+		dwolla_customer_status: string;
 		[key: string]: any;
 	};
 	manager_info?: {
+		reference_number: string;
 		[key: string]: any;
 	};
 	[key: string]: any;
@@ -42,7 +50,7 @@ export const Managers = [
 ]
 
 export function isAuthenticated() {
-	return !!usersStore.state.authenticatedUser
+	return !!usersStore.getters.me(usersStore.state)
 }
 
 // Take a list of roles as parameters
@@ -53,12 +61,13 @@ export function userIs(user: User, ...roles: UserRole[]): boolean {
 }
 
 export function currentUserIs(...roles: UserRole[]): boolean {
-	if (!usersStore.state.authenticatedUser) return false
-	return userIs(usersStore.state.authenticatedUser, ...roles)
+	const me = usersStore.getters.me(usersStore.state)
+	if (!me) return false
+	return userIs(me, ...roles)
 }
 
 export function defaultRoute() {
-	const user = usersStore.state.authenticatedUser
+	const user = usersStore.getters.me(usersStore.state)
 	if (!user || !user.roles) return 'schedule'
 
 	switch (user?.roles[0]?.id) {

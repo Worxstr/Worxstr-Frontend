@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
 import router from '@/router'
-import { getAuthenticatedUser } from './users'
+import { getMe } from './users'
 import { sandboxMode, showToast } from '@/services/app'
 import { defaultRoute } from '@/types/Users'
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
-import socket from '@/util/socket-io'
+import usersStore from '@/store/users'
+import { socket } from '@/util/socket-io'
 
 export function shouldUseSandbox(email: string) {
-  return email.includes('+test')
+  return email?.includes('+test')
 }
 
 export async function getAuthToken() {
@@ -37,7 +38,7 @@ export async function unsetAuthToken() {
   return await SecureStoragePlugin.remove({ key: 'authToken' })
 }
 
-export async function signIn({ commit }: any, email: string, password: string) {
+export async function signIn({ commit }: any, email: string, password: string, rememberMe = false) {
   sandboxMode.toggle({ commit }, shouldUseSandbox(email))
 
   // try {
@@ -50,7 +51,7 @@ export async function signIn({ commit }: any, email: string, password: string) {
       data: {
         email,
         password,
-        remember_me: true,
+        remember_me: rememberMe,
       },
     })
     const authToken = data?.response?.user?.authentication_token
@@ -64,7 +65,7 @@ export async function signIn({ commit }: any, email: string, password: string) {
     //   value: authToken
     // })
 
-    await getAuthenticatedUser({ commit })
+    await getMe({ commit })
     router.push({ name: defaultRoute() })
     return data
   // } catch (err) {
@@ -84,36 +85,14 @@ export async function signIn({ commit }: any, email: string, password: string) {
   dwollaCustomerUrl: Customer url returned after Dwolla account registration
   dwollaAuthToken: Auth token used for Dwolla account registration
 */
-export async function signUp(
-  { commit }: any,
-  {
-    email,
-    accountType,
-    customer_url,
-    password,
-    manager_reference,
-  }: {
-    email: string;
-    accountType: 'contractor' | 'org';
-    customer_url: string;
-    password: string;
-    manager_reference: string;
-  }
-) {
-  sandboxMode.toggle({ commit }, shouldUseSandbox(email))
+export async function signUp({ commit }: any, form: any) {
+  sandboxMode.toggle({ commit }, shouldUseSandbox(form.email))
 
   try {
     const { data } = await api({
       method: 'POST',
-      url: `/auth/sign-up/${accountType}`,
-      // headers: {
-      //   'Authorization': `Bearer ${dwollaAuthToken}`
-      // },
-      data: {
-        customer_url,
-        password,
-        manager_reference,
-      },
+      url: `/auth/sign-up/${form.accountType}`,
+      data: form,
     })
     router.push({ name: 'home' })
     showToast(
@@ -128,20 +107,24 @@ export async function signUp(
   }
 }
 
+export async function clearUserData({ commit }: any) {
+  commit('UNSET_AUTHENTICATED_USER')
+  commit('RESET_STATE')
+  unsetAuthToken()
+  socket.emit('sign-out')
+}
+
 export async function signOut({ state, commit }: any) {
   sandboxMode.toggle(
     { commit },
-    shouldUseSandbox(state.users.authenticatedUser.email)
+    shouldUseSandbox(usersStore.getters.me(usersStore.state)?.email as string)
   )
 
   await api({
     method: 'POST',
     url: `/auth/logout`,
   })
-  commit('UNSET_AUTHENTICATED_USER')
-  commit('RESET_STATE')
-  unsetAuthToken()
-  socket.emit('sign-out')
+  clearUserData({ commit })
   router.push({ name: 'home' })
 }
 
@@ -174,7 +157,7 @@ export async function resetPassword(
     },
   })
   if (response.status === 200) {
-    await getAuthenticatedUser(context)
+    await getMe(context)
     router.push({
       name: defaultRoute(),
     })
@@ -217,7 +200,7 @@ export async function updatePassword(
 ) {
   sandboxMode.toggle(
     { commit },
-    shouldUseSandbox(state.users.authenticatedUser.email)
+    shouldUseSandbox(state.getters.me(usersStore.state).email)
   )
 
   const { data } = await api({

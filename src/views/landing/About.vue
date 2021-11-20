@@ -3,7 +3,7 @@
 
   //- What is Worxstr?
   v-sheet
-    v-container.d-flex.flex-column.justify-center.align-center.pa-16
+    .pa-8.pa-md-16.d-flex.flex-column.justify-center.align-center
       h3.text-h3.font-weight-black.mb-15 What is Worxstr?
 
       p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
@@ -11,7 +11,7 @@
 
 
   //- Our mission/vision
-  v-container.justify-center.align-center.pa-16.gradient-primary.text-center(fluid)
+  .pa-8.pa-md-16.justify-center.align-center.gradient-primary.text-center(fluid)
     v-row
       v-col(cols="12", md="6")
         v-icon.white--text.text-h2.mb-6 mdi-rocket-launch
@@ -25,7 +25,7 @@
 
   //- Team
   v-sheet
-    v-container.d-flex.flex-column.justify-center.align-stretch.px-16.py-16.text-center(fluid style='position: relative; z-index: 1')
+    .pa-8.pa-md-16.d-flex.flex-column.justify-center.align-stretch.text-center(fluid style='position: relative; z-index: 1')
       h3.text-h3.font-weight-black.mb-10 Our team
 
       v-row

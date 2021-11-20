@@ -5,6 +5,14 @@ node_modules
 !src/types.d.ts
 dist/
 
+# Yarn workspaces
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 # local env 
 .vscode

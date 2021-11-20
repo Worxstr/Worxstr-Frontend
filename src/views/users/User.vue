@@ -21,7 +21,7 @@
 				span(v-if='!$vuetify.breakpoint.xs') Edit
 
 			v-btn(
-				v-if='userIsOrgManager && user.id != authenticatedUser.id'
+				v-if='userIsOrgManager && user.id != me.id'
 				text
 				color='error'
 				@click='deleteUserDialog = true'
@@ -51,17 +51,7 @@
 						v-list-item-subtitle Manager reference number
 						v-list-item-title {{ user.manager_info.reference_number }}
 					v-list-item-actions
-						v-tooltip(bottom)
-							span Copy to clipboard
-							template(v-slot:activator='{ on, attrs }')
-								v-btn(
-									icon
-									color='primary'
-									v-bind='attrs'
-									v-on='on'
-									@click='copyText(user.manager_info.reference_number)'
-								)
-									v-icon mdi-content-copy
+						clipboard-copy(:text='user.manager_info.reference_number')
 
 				v-list-item(v-if='user.contractor_info')
 					v-list-item-content
@@ -77,14 +67,14 @@ import DeleteUserDialog from './DeleteUserDialog.vue'
 import Roles from '@/components/Roles.vue'
 import { Managers, userIs, currentUserIs, UserRole } from '@/types/Users'
 import { loadUser } from '@/services/users'
-import { Clipboard } from '@capacitor/clipboard'
-import { showToast } from '@/services/app'
+import ClipboardCopy from '@/components/ClipboardCopy.vue'
 
 @Component({
   components: {
     EditUserDialog,
     DeleteUserDialog,
     Roles,
+		ClipboardCopy,
   },
 })
 export default class User extends Vue {
@@ -107,9 +97,9 @@ export default class User extends Vue {
     return this.$store.getters.user(this.$route.params.userId)
   }
 
-	get authenticatedUser() {
-		return this.$store.state.users.authenticatedUser
-	}
+  get me() {
+    return this.$store.getters.me
+  }
 
   get userIsManager() {
     return userIs(this.user, ...Managers)
@@ -118,22 +108,5 @@ export default class User extends Vue {
 	get userIsOrgManager() {
 		return currentUserIs(UserRole.OrganizationManager)
 	}
-
-	// TODO: Move this to util, it is duplicated in other files
-  async copyText(text: string) {
-    try {
-      await Clipboard.write({
-        string: text
-      })
-      showToast(this.$store, {
-        text: "Copied."
-      })
-    }
-    catch (e) {
-      showToast(this.$store, {
-        text: "Couldn't copy to clipboard."
-      })
-    }
-  }
 }
 </script>
