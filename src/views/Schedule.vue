@@ -35,15 +35,20 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
         )
 
     v-calendar(
-      ref="calendar"
-      v-model="value"
-      :type="type"
-      :events="calendarEvents"
-      event-overlap-mode="stack"
-      :event-overlap-threshold="30"
-      :event-color="getEventColor"
-      @change="getEvents"
-      @click:event="showEvent"
+      ref='calendar'
+      v-model='value'
+      :type='type'
+      :events='calendarEvents'
+      event-overlap-mode='stack'
+      :event-overlap-threshold='30'
+      :event-color='getEventColor'
+      @change='getEvents'
+      @click:event='showEvent'
+      @mousedown:event='startDrag'
+      @mousedown:time='startTime'
+      @mousemove:time='mouseMove'
+      @mouseup:time='endDrag'
+      @mouseleave.native='cancelDrag'
     )
     v-menu(
       v-model='selectedOpen'
@@ -64,7 +69,7 @@ import JobPreview from '@/components/JobPreview.vue'
 
 @Component({
   components: {
-    JobPreview,
+    JobPreview
   },
   metaInfo: {
     title: 'Schedule'
@@ -75,12 +80,21 @@ export default class Schedule extends Vue {
   type = 'month'
   types = ['month', 'week', 'day', '4day']
   value = ''
+
   selectedEvent = {}
   selectedElement = null
   selectedOpen = false
 
+  pseudoEvents: any = []
+  dragTime: any = null
+  dragEvent: any = null
+  dragStart: any = null
+  createEvent: any = null
+  createStart: any = null
+  extendOriginal: any = null
+
   get calendarEvents() {
-    return this.$store.getters.calendarEvents
+    return [...this.pseudoEvents, ...this.$store.getters.calendarEvents]
   }
 
   async getEvents({ start, end }: any) {
@@ -125,8 +139,118 @@ export default class Schedule extends Vue {
       }
 
       nativeEvent.stopPropagation()
-
     }
+  }
+
+  startDrag({ event, timed }: any) {
+    console.log('start drag')
+    if (event && timed) {
+      this.dragEvent = event
+      this.dragTime = null
+      this.extendOriginal = null
+    }
+  }
+
+  startTime(tms: any) {
+    const mouse = this.toTime(tms)
+
+    if (this.dragEvent && this.dragTime === null) {
+      const start = this.dragEvent.start
+
+      this.dragTime = mouse - start
+    } else {
+      this.createStart = this.roundTime(mouse)
+      this.createEvent = {
+        name: `Event #${this.pseudoEvents.length}`,
+        color: 'blue',
+        start: this.createStart,
+        end: this.createStart,
+        timed: true
+      }
+
+      this.pseudoEvents.push(this.createEvent)
+    }
+  }
+
+  extendBottom(event: any) {
+    this.createEvent = event
+    this.createStart = event.start
+    this.extendOriginal = event.end
+  }
+
+  mouseMove(tms: any) {
+    const mouse = this.toTime(tms)
+
+    if (this.dragEvent && this.dragTime !== null) {
+      const start = this.dragEvent.start
+      const end = this.dragEvent.end
+      const duration = end - start
+      const newStartTime = mouse - this.dragTime
+      const newStart = this.roundTime(newStartTime)
+      const newEnd = newStart + duration
+
+      this.dragEvent.start = newStart
+      this.dragEvent.end = newEnd
+    } else if (this.createEvent && this.createStart !== null) {
+      const mouseRounded = this.roundTime(mouse, false)
+      const min = Math.min(mouseRounded, this.createStart)
+      const max = Math.max(mouseRounded, this.createStart)
+
+      this.createEvent.start = min
+      this.createEvent.end = max
+    }
+  }
+
+  endDrag() {
+    this.dragTime = null
+    this.dragEvent = null
+    this.createEvent = null
+    this.createStart = null
+    this.extendOriginal = null
+  }
+
+  cancelDrag() {
+    if (this.createEvent) {
+      if (this.extendOriginal) {
+        this.createEvent.end = this.extendOriginal
+      } else {
+        const i = this.pseudoEvents.indexOf(this.createEvent)
+        if (i !== -1) {
+          this.pseudoEvents.splice(i, 1)
+        }
+      }
+    }
+
+    this.createEvent = null
+    this.createStart = null
+    this.dragTime = null
+    this.dragEvent = null
+  }
+
+  roundTime(time: any, down = true) {
+    const roundTo = 15 // minutes
+    const roundDownTime = roundTo * 60 * 1000
+
+    return down
+      ? time - (time % roundDownTime)
+      : time + (roundDownTime - (time % roundDownTime))
+  }
+  toTime(tms: any) {
+    return new Date(
+      tms.year,
+      tms.month - 1,
+      tms.day,
+      tms.hour,
+      tms.minute
+    ).getTime()
+  }
+
+  rnd(a: any, b: any) {
+    return Math.floor((b - a + 1) * Math.random()) + a
+  }
+
+  rndElement(arr: any) {
+    return arr[this.rnd(0, arr.length - 1)]
   }
 }
 </script>
