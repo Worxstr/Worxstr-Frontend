@@ -1,16 +1,6 @@
 /* eslint-disable no-undef */
 /// <reference types="cypress" />
 
-// Welcome to Cypress!
-//
-// This spec file contains a variety of sample tests
-// for a todo list app that are designed to demonstrate
-// the power of writing tests in Cypress.
-//
-// To learn more about how Cypress works and
-// what makes it such an awesome testing tool,
-// please read our getting started guide:
-// https://on.cypress.io/introduction-to-cypress
 import { job } from '../../fixtures/jobs'
 
 describe('jobs', () => {
@@ -24,53 +14,57 @@ describe('jobs', () => {
     cy.logout()
   })
   
-  // before(() => {
-  //   cy.login()
-  //   cy.visit('localhost:8080/jobs')
-  // })
-
-  // after(() => {
-  //   cy.logout()
-  // })
-
-  it('should create job', () => {
-    cy.get('header').contains('Add job').click()
-
-    cy.textField('Job name', job.name)
-    cy.textField('Address', job.address)
-
-    // Wait for google maps autocomplete options
-    cy.wait(1000)
-    cy.contains('Address').parent().type('{downarrow}{enter}')
-
-    // cy.contains('Organizational manager').parent().type('{downarrow}{enter}')
-    cy.selectField('Organizational manager', 0)
-    cy.selectField('Contractor manager', 0)
-
-    cy.textField('Name', job.consultantName)
-    cy.textField('Phone number', job.consultantPhone)
-    cy.textField('Email', job.consultantEmail)
-
-    cy.button('Create')
-
+  it('should create and display jobs', () => {
+    // Create
+    cy.createJob(job)
     cy.get('main').should('contain', job.name)
-  })
 
-  it('should edit job', () => {
-    cy.listMenuButton(job.name, 'Edit')
-    cy.textField('Job name', ' (edited)')
-    cy.button('Save')
+    // Read
+    cy.visit('localhost:8080/jobs')
+    cy.get('main').should('contain', job.name)
 
+    // Update
+    cy.editJob(job)
     cy.get('main').should('contain', `${job.name} (edited)`)
-  })
 
-  it('should close job', () => {
-    cy.listMenuButton(job.name, 'Close')
-    cy.button('Yes, close')
+    // Delete
+    cy.closeJob(job)
     cy.get('main').should('not.contain', `${job.name} (edited)`)
   })
 
+  it('should assign shifts', () => {
+    // Create
+    // cy.createJob(job)
+    cy.get('main').should('contain', job.name)
+
+    // Open job
+    cy.contains(job.name).click()
+
+    // Assign shift
+    cy.assignShift()
+
+
+  })
+
 })
+
+// describe('job', () => {
+
+//   before(() => {
+//     cy.login()
+//     cy.visit('localhost:8080/jobs')
+//   })
+
+//   after(() => {
+//     cy.logout()
+//   }
+
+//   it('should assign shift', () => {
+//     cy.createJob(job)
+//     cy.click
+//   })
+
+// })
 
 // describe('auth', () => {
 

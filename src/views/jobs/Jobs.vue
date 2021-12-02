@@ -9,6 +9,7 @@ div
       :icon='$vuetify.breakpoint.xs'
       @click="openCreateJobDialog",
       v-if="userIsOrgManager"
+      data-cy='add-job-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
       span(v-if='!$vuetify.breakpoint.xs') Add job
