@@ -93,7 +93,7 @@ describe('payments', () => {
     cy.transferFunds(100)
   })
 
-  it('should transfer funds to bank', {
+  it.only('should transfer funds to bank', {
     defaultCommandTimeout: 20000
   }, () => {
     cy.wait(3000) // Wait for funding sources to load
