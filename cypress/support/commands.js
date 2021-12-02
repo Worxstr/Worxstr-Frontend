@@ -97,8 +97,21 @@ Cypress.Commands.add('closeJob', (job) => {
   cy.button('close-job-button', true)
 })
 
-Cypress.Commands.add('assignShift', () => {
-  cy.button('Assign shift')
-  cy.wait(2000)
-  cy.contains('Contractors').parent().click().type('{downarrow}{downarrow}{enter}{escape}')
+Cypress.Commands.add('assignShift', (shiftLocation) => {
+  cy.button('assign-shift-button')
+  cy.wait(3000)
+  cy.selectField('shift-contractors', 0, true)
+  cy.textField('shift-site-location-0', shiftLocation, true)
+  cy.button('create-shift-button', true)
+})
+
+Cypress.Commands.add('editShift', () => {
+  cy.button('edit-shift-button')
+  cy.textField('shift-site-location', ' (edited)', true)
+  cy.button('save-shift-button', true)
+})
+
+Cypress.Commands.add('deleteShift', () => {
+  cy.button('delete-shift-button')
+  cy.button('confirm-delete-shift-button', true)
 })

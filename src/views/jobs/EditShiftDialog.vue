@@ -43,6 +43,7 @@ v-dialog(
           outlined,
           dense,
           required
+          data-cy="shift-site-location"
         )
             
         v-divider
@@ -68,7 +69,7 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="green", @click="updateShift", :disabled="!isValid") Save
+        v-btn(text, color="green", @click="updateShift", :disabled="!isValid" data-cy="save-shift-button") Save
 </template>
 
 <script lang="ts">

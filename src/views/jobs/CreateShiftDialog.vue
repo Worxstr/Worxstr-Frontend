@@ -34,6 +34,7 @@ v-dialog(
           dense
           required
           label='Contractors'
+          data-cy='shift-contractors'
         )
           template(v-slot:item='{ active, item, attrs, on }')
             v-list-item(v-on='on' v-bind='attrs' #default='{ active }')
@@ -74,6 +75,7 @@ v-dialog(
               outlined,
               dense,
               required
+              :data-cy="`shift-site-location-${index}`"
             )
 
         v-divider
@@ -185,8 +187,14 @@ v-dialog(
 
       v-card-actions
         v-spacer
-        v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="green", @click="updateShift", :disabled="!isValid") Create
+        v-btn(text @click="closeDialog") Cancel
+        v-btn(
+          text
+          color="green"
+          @click="updateShift"
+          :disabled="!isValid"
+          data-cy="create-shift-button"
+        ) Create
 </template>
 
 <script lang="ts">

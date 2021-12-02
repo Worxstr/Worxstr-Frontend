@@ -33,17 +33,25 @@ describe('jobs', () => {
   })
 
   it('should assign shifts', () => {
-    // Create
-    // cy.createJob(job)
+    cy.createJob(job)
     cy.get('main').should('contain', job.name)
 
     // Open job
     cy.contains(job.name).click()
 
     // Assign shift
-    cy.assignShift()
+    const shiftLocation = 'Cypress site location'
+    cy.assignShift(shiftLocation)
 
+    // Edit shift
+    cy.contains(shiftLocation).click()
+    cy.editShift()
 
+    // Delete shift
+    cy.deleteShift()
+
+    cy.visit('localhost:8080/jobs')
+    cy.closeJob(job)
   })
 
 })

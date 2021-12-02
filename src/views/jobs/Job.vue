@@ -132,7 +132,7 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text color='primary' @click="createShiftDialog = true")
+      v-btn(text color='primary' @click="createShiftDialog = true" data-cy="assign-shift-button")
         v-icon(left) mdi-clipboard-plus-outline
         span Assign shift
 
@@ -175,8 +175,17 @@ div(v-else)
 
           v-card-actions
             v-spacer
-            v-btn(text, @click="openEditShiftDialog(shift)") Edit
-            v-btn(text, color="error", @click="openDeleteShiftDialog(shift)") Delete
+            v-btn(
+              text
+              @click="openEditShiftDialog(shift)"
+              data-cy="edit-shift-button"
+            ) Edit
+            v-btn(
+              text
+              color="error"
+              @click="openDeleteShiftDialog(shift)"
+              data-cy="delete-shift-button"
+            ) Delete
 </template>
 
 <script lang="ts">
