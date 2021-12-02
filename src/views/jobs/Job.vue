@@ -40,6 +40,7 @@ div(v-else)
         :icon='$vuetify.breakpoint.xs'
         color='primary'
         @click="editJobDialog = true"
+        data-cy='edit-job-button'
       )
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
         span(v-if='!$vuetify.breakpoint.xs') Edit
@@ -50,6 +51,7 @@ div(v-else)
         :icon='$vuetify.breakpoint.xs'
         color="error"
         @click="closeJobDialog = true"
+        data-cy='close-job-button'
       ) 
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
         span(v-if='!$vuetify.breakpoint.xs') Close

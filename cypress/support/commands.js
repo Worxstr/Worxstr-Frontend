@@ -66,8 +66,6 @@ Cypress.Commands.add('listMenuButton', (listItemText, buttonText) => {
 
 
 Cypress.Commands.add('createJob', (job) => {
-  cy.button('add-job-button')
-
   cy.textField('job-name', job.name, true)
   cy.textField('job-address', job.address, true)
 
@@ -87,14 +85,12 @@ Cypress.Commands.add('createJob', (job) => {
 })
 
 Cypress.Commands.add('editJob', (job) => {
-  cy.listMenuButton(job.name, 'Edit')
   cy.textField('job-name', ' (edited)', true)
   cy.button('save-job-button', true)
 })
 
 Cypress.Commands.add('closeJob', (job) => {
-  cy.listMenuButton(job.name, 'Close')
-  cy.button('close-job-button', true)
+  cy.button('confirm-close-job-button', true)
 })
 
 Cypress.Commands.add('assignShift', (shiftLocation) => {

@@ -14,8 +14,9 @@ describe('jobs', () => {
     cy.logout()
   })
   
-  it('should create and display jobs', () => {
+  it('should display and modify jobs', () => {
     // Create
+    cy.button('add-job-button')
     cy.createJob(job)
     cy.get('main').should('contain', job.name)
 
@@ -24,15 +25,18 @@ describe('jobs', () => {
     cy.get('main').should('contain', job.name)
 
     // Update
+    cy.listMenuButton(job.name, 'Edit')
     cy.editJob(job)
     cy.get('main').should('contain', `${job.name} (edited)`)
 
     // Delete
+    cy.listMenuButton(job.name, 'Close')
     cy.closeJob(job)
     cy.get('main').should('not.contain', `${job.name} (edited)`)
   })
 
-  it('should assign shifts', () => {
+  it.only('should perform job operations', () => {
+    cy.button('add-job-button')
     cy.createJob(job)
     cy.get('main').should('contain', job.name)
 
@@ -43,6 +47,7 @@ describe('jobs', () => {
     const shiftLocation = 'Cypress site location'
     cy.assignShift(shiftLocation)
 
+
     // Edit shift
     cy.contains(shiftLocation).click()
     cy.editShift()
@@ -50,7 +55,12 @@ describe('jobs', () => {
     // Delete shift
     cy.deleteShift()
 
-    cy.visit('localhost:8080/jobs')
+    // Edit job
+    cy.button('edit-job-button')
+    cy.editJob(job)
+
+    // Close job
+    cy.button('close-job-button')
     cy.closeJob(job)
   })
 

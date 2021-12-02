@@ -16,7 +16,7 @@ v-dialog(
       v-btn(text @click="closeDialog") Cancel
       v-btn(
         text
-        color="red"
+        color="error"
         @click="deleteShift"
         data-cy="confirm-delete-shift-button"
       ) Yes, Delete
