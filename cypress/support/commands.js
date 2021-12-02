@@ -36,15 +36,25 @@ Cypress.Commands.add('logout', () => {
     localStorage.removeItem('token')
   })
 })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+
+// Commands for user inputs
+Cypress.Commands.add('textField', (placeholderText, input) => {
+  cy.contains(placeholderText).parent().type(input)
+})
+
+Cypress.Commands.add('selectField', (placeholderText, index) => {
+  const arrowPresses = Array(index + 1).fill('{downarrow}')
+  const keySequence = `${arrowPresses.join()}{enter}`
+  cy.contains(placeholderText).parent().type(keySequence)
+})
+
+Cypress.Commands.add('button', (buttonText) => {
+  // Old selector: .v-dialog--active button
+  cy.get('button').contains(buttonText).click()
+})
+
+Cypress.Commands.add('listMenuButton', (listItemText, buttonText) => {
+  cy.get('main').contains(listItemText).parent().parent().find('.v-list-item__action button').click({force: true})
+  cy.get('.v-menu__content').contains(buttonText).click()
+})

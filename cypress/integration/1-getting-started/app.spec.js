@@ -16,54 +16,57 @@ import { job } from '../../fixtures/jobs'
 describe('jobs', () => {
 
   beforeEach(() => {
-    cy.login('admin')
+    cy.login()
+    cy.visit('localhost:8080/jobs')
   })
 
   afterEach(() => {
     cy.logout()
   })
   
-  before(() => {
-    cy.login()
-    cy.visit('localhost:8080/jobs')
-    cy.logout()
-  })
+  // before(() => {
+  //   cy.login()
+  //   cy.visit('localhost:8080/jobs')
+  // })
+
+  // after(() => {
+  //   cy.logout()
+  // })
 
   it('should create job', () => {
     cy.get('header').contains('Add job').click()
 
-    cy.contains('Job name').parent().type(job.name)
-    cy.contains('Address').parent().type(job.address)
+    cy.textField('Job name', job.name)
+    cy.textField('Address', job.address)
+
     // Wait for google maps autocomplete options
     cy.wait(1000)
     cy.contains('Address').parent().type('{downarrow}{enter}')
 
-    cy.contains('Organizational manager').parent().type('{downarrow}{enter}')
-    cy.contains('Contractor manager').parent().type('{downarrow}{enter}')
+    // cy.contains('Organizational manager').parent().type('{downarrow}{enter}')
+    cy.selectField('Organizational manager', 0)
+    cy.selectField('Contractor manager', 0)
 
-    cy.contains('Name').parent().type(job.consultantName)
-    cy.contains('Phone number').parent().type(job.consultantPhone)
-    cy.contains('Email').parent().type(job.consultantEmail)
+    cy.textField('Name', job.consultantName)
+    cy.textField('Phone number', job.consultantPhone)
+    cy.textField('Email', job.consultantEmail)
 
-    cy.get('.v-dialog--active button').contains('Create').click()
+    cy.button('Create')
+
     cy.get('main').should('contain', job.name)
   })
 
   it('should edit job', () => {
-    cy.get('main').contains(job.name).parent().parent().find('.v-list-item__action button').click()
-    cy.get('.v-menu__content').contains('Edit').click()
-    cy.get('.v-dialog--active').should('be.visible')
-    cy.get('.v-dialog--active').contains('Job name').parent().type(' (edited)')
-    cy.get('.v-dialog--active button').contains('Save').click()
+    cy.listMenuButton(job.name, 'Edit')
+    cy.textField('Job name', ' (edited)')
+    cy.button('Save')
 
     cy.get('main').should('contain', `${job.name} (edited)`)
   })
 
   it('should close job', () => {
-    cy.get('main').contains(job.name).parent().parent().find('.v-list-item__action button').click({force: true})
-    cy.get('.v-menu__content').contains('Close').click({force: true})
-    cy.get('.v-dialog--active button').contains('Yes, close').click()
-
+    cy.listMenuButton(job.name, 'Close')
+    cy.button('Yes, close')
     cy.get('main').should('not.contain', `${job.name} (edited)`)
   })
 
