@@ -11,15 +11,16 @@
 //
 //
 
-import { manager } from "../fixtures/auth"
+import * as users from "../fixtures/auth"
 
 // -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
+Cypress.Commands.add('login', (userRole) => {
+  console.log(users, userRole)
   cy.request({
     method: 'POST',
     url: 'http://localhost:5000/auth/login',
     body: {
-      ...manager
+      ...users[userRole],
     },
   }).then((response) => {
     cy.request('GET', 'http://localhost:5000/users/me').then((response) => {
@@ -46,9 +47,9 @@ Cypress.Commands.add('textField', (name, input, insideDialog = false) => {
   cy.get(`[data-cy=${name}]`).type(input)
 })
 
-Cypress.Commands.add('selectField', (name, index, insideDialog = false) => {
+Cypress.Commands.add('selectField', (name, index, multiple = false, insideDialog = false) => {
   const arrowPresses = Array(index + 1).fill('{downarrow}')
-  const keySequence = `${arrowPresses.join()}{enter}`
+  const keySequence = ` ${arrowPresses.join()}{enter}`
   
   cy.get(`[data-cy=${name}]`).parent().type(keySequence)
 })
@@ -64,6 +65,7 @@ Cypress.Commands.add('listMenuButton', (listItemText, buttonText) => {
 })
 
 
+// Commands for job functions
 
 Cypress.Commands.add('createJob', (job) => {
   cy.textField('job-name', job.name, true)
@@ -74,8 +76,8 @@ Cypress.Commands.add('createJob', (job) => {
   cy.contains('Address').parent().type('{downarrow}{enter}')
 
   // cy.contains('Organizational manager').parent().type('{downarrow}{enter}')
-  cy.selectField('job-org-manager', 0, true)
-  cy.selectField('job-contractor-manager', 0, true)
+  cy.selectField('job-org-manager', 0, false, true)
+  cy.selectField('job-contractor-manager', 0, false, true)
 
   cy.textField('job-consultant-name', job.consultantName, true)
   cy.textField('job-consultant-phone', job.consultantPhone, true)
@@ -96,7 +98,7 @@ Cypress.Commands.add('closeJob', (job) => {
 Cypress.Commands.add('assignShift', (shiftLocation) => {
   cy.button('assign-shift-button')
   cy.wait(3000)
-  cy.selectField('shift-contractors', 0, true)
+  cy.selectField('shift-contractors', 0, true, true)
   cy.textField('shift-site-location-0', shiftLocation, true)
   cy.button('create-shift-button', true)
 })
@@ -104,10 +106,20 @@ Cypress.Commands.add('assignShift', (shiftLocation) => {
 Cypress.Commands.add('editShift', () => {
   cy.button('edit-shift-button')
   cy.textField('shift-site-location', ' (edited)', true)
+  // TODO: Change start and end dates
   cy.button('save-shift-button', true)
 })
 
 Cypress.Commands.add('deleteShift', () => {
   cy.button('delete-shift-button')
   cy.button('confirm-delete-shift-button', true)
+})
+
+
+// Commands for payments functions
+
+Cypress.Commands.add('transferFunds', (amount) => {
+  const backspaces = Array(20).fill('{backspace}{del}').join('')
+  cy.textField('transfer-amount', `${backspaces}${amount.toString()}`, true)
+  cy.button('transfer-submit-button', true)
 })

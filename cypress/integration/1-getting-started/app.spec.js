@@ -6,7 +6,7 @@ import { job } from '../../fixtures/jobs'
 describe('jobs', () => {
 
   beforeEach(() => {
-    cy.login()
+    cy.login('manager')
     cy.visit('localhost:8080/jobs')
   })
 
@@ -35,7 +35,8 @@ describe('jobs', () => {
     cy.get('main').should('not.contain', `${job.name} (edited)`)
   })
 
-  it.only('should perform job operations', () => {
+  it('should perform job operations', () => {
+
     cy.button('add-job-button')
     cy.createJob(job)
     cy.get('main').should('contain', job.name)
@@ -47,42 +48,61 @@ describe('jobs', () => {
     const shiftLocation = 'Cypress site location'
     cy.assignShift(shiftLocation)
 
+    // TODO: Check shift is displayed on page
 
     // Edit shift
     cy.contains(shiftLocation).click()
     cy.editShift()
 
+    // TODO: Check shift was updated
+
     // Delete shift
     cy.deleteShift()
+
+    // TODO: Check shift was deleted
 
     // Edit job
     cy.button('edit-job-button')
     cy.editJob(job)
 
+    // TODO: Check job was updated
+
     // Close job
     cy.button('close-job-button')
     cy.closeJob(job)
+
+    // TODO: Check page was redirected to jobs page
   })
 
 })
 
-// describe('job', () => {
+describe('payments', () => {
+  
+  beforeEach(() => {
+    cy.login('manager')
+    cy.visit('localhost:8080/payments')
+  })
 
-//   before(() => {
-//     cy.login()
-//     cy.visit('localhost:8080/jobs')
-//   })
+  afterEach(() => {
+    cy.logout()
+  })
 
-//   after(() => {
-//     cy.logout()
-//   }
+  it('should add funds', () => {
+    cy.wait(3000) // Wait for funding sources to load
+    cy.button('add-funds-button')
+    cy.transferFunds(100)
+  })
 
-//   it('should assign shift', () => {
-//     cy.createJob(job)
-//     cy.click
-//   })
-
-// })
+  it('should transfer funds to bank', {
+    defaultCommandTimeout: 20000
+  }, () => {
+    cy.wait(3000) // Wait for funding sources to load
+    cy.button('transfer-to-bank-button')
+    cy.transferFunds(1)
+    cy.get('body').should('contain', 'Hang tight')
+  })
+  
+})
 
 // describe('auth', () => {
 
