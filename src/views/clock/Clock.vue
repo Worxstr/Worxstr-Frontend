@@ -51,6 +51,7 @@
                 style='transition: background-color 0.3s'
                 :loading='togglingClock'
                 :disabled='!iAmVerified'
+                :data-cy="clocked ? 'clock-out-button' : 'clock-in-button'"
               )
                 | Clock {{ clocked ? "out" : "in" }}
 
@@ -65,6 +66,7 @@
                 style='transition: background-color 0.3s'
                 :loading='togglingBreak'
                 :disabled='!iAmVerified'
+                :data-cy="onBreak ? 'end-break-button' : 'start-break-button'"
               )
                 | {{ onBreak ? "End" : "Start" }} break
 

@@ -113,7 +113,7 @@ div(v-else)
           .flex-grow-1.d-flex.flex-row.align-center
             .d-flex.flex-column
               p.text-subtitle-2.mb-1 Clock-in code
-              p {{ job.consultant_code }}
+              p(data-cy='clock-in-code') {{ job.consultant_code }}
             .mb-3.ml-3
               v-tooltip(bottom)
                 span View QR code

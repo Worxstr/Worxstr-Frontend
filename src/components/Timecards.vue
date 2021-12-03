@@ -43,6 +43,7 @@
           @click="openPaymentDialog()"
           :disabled='!hasSufficientBalance()'
           :icon='$vuetify.breakpoint.xs'
+          data-cy='complete-all-timecards-button'
         )
           v-icon(:left='!$vuetify.breakpoint.xs') mdi-check-all
           span(v-if='!$vuetify.breakpoint.xs') Complete&nbsp;
@@ -53,6 +54,7 @@
           color="error",
           @click="openDenyDialog()"
           :icon='$vuetify.breakpoint.xs'
+          data-cy='deny-all-timecards-button'
         )
           v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
           span(v-if='!$vuetify.breakpoint.xs') Deny&nbsp;
@@ -62,6 +64,7 @@
         v-expansion-panel(
           v-for="(timecard, i) in timecards",
           :key="timecard.id"
+          data-cy='timecard'
         )
           v-expansion-panel-header.py-3
             v-checkbox.mt-0.mb-1.mr-3(
@@ -108,16 +111,26 @@
 
             v-card-actions
               v-spacer
-              v-btn(text, @click="openEditTimecardDialog(timecard.id)") Edit
+              v-btn(
+                text
+                @click="openEditTimecardDialog(timecard.id)"
+                data-cy='edit-timecard-button'
+              ) Edit
               v-btn(
                 text,
                 color="green",
                 @click="openPaymentDialog(timecard.id)"
                 :disabled='!hasSufficientBalance(timecard.id)'
+                data-cy='complete-timecard-button'
               )
                 v-icon(left) mdi-check
                 span Complete
-              v-btn(text, color="red", @click="openDenyDialog(timecard.id)")
+              v-btn(
+                text
+                color="red"
+                @click="openDenyDialog(timecard.id)"
+                data-cy='deny-timecard-button'
+              )
                 v-icon(left) mdi-close
                 span Deny
 

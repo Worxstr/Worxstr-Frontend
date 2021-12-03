@@ -56,7 +56,7 @@ Cypress.Commands.add('selectField', (name, index, multiple = false, insideDialog
 
 Cypress.Commands.add('button', (name, insideDialog = false) => {
   // Old selector: .v-dialog--active button
-  getContainer(insideDialog).get(`[data-cy=${name}]`).click()
+  return getContainer(insideDialog).get(`[data-cy=${name}]`)
 })
 
 Cypress.Commands.add('listMenuButton', (listItemText, buttonText) => {
@@ -83,36 +83,36 @@ Cypress.Commands.add('createJob', (job) => {
   cy.textField('job-consultant-phone', job.consultantPhone, true)
   cy.textField('job-consultant-email', job.consultantEmail, true)
 
-  cy.button('save-job-button', true)
+  cy.button('save-job-button', true).click()
 })
 
 Cypress.Commands.add('editJob', (job) => {
   cy.textField('job-name', ' (edited)', true)
-  cy.button('save-job-button', true)
+  cy.button('save-job-button', true).click()
 })
 
 Cypress.Commands.add('closeJob', (job) => {
-  cy.button('confirm-close-job-button', true)
+  cy.button('confirm-close-job-button', true).click()
 })
 
 Cypress.Commands.add('assignShift', (shiftLocation) => {
-  cy.button('assign-shift-button')
+  cy.button('assign-shift-button').click()
   cy.wait(3000)
   cy.selectField('shift-contractors', 0, true, true)
   cy.textField('shift-site-location-0', shiftLocation, true)
-  cy.button('create-shift-button', true)
+  cy.button('create-shift-button', true).click()
 })
 
 Cypress.Commands.add('editShift', () => {
-  cy.button('edit-shift-button')
+  cy.button('edit-shift-button').click()
   cy.textField('shift-site-location', ' (edited)', true)
   // TODO: Change start and end dates
-  cy.button('save-shift-button', true)
+  cy.button('save-shift-button', true).click()
 })
 
 Cypress.Commands.add('deleteShift', () => {
-  cy.button('delete-shift-button')
-  cy.button('confirm-delete-shift-button', true)
+  cy.button('delete-shift-button').click()
+  cy.button('confirm-delete-shift-button', true).click()
 })
 
 
@@ -121,5 +121,5 @@ Cypress.Commands.add('deleteShift', () => {
 Cypress.Commands.add('transferFunds', (amount) => {
   const backspaces = Array(20).fill('{backspace}{del}').join('')
   cy.textField('transfer-amount', `${backspaces}${amount.toString()}`, true)
-  cy.button('transfer-submit-button', true)
+  cy.button('transfer-submit-button', true).click()
 })

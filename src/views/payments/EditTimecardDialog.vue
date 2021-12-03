@@ -17,6 +17,7 @@ v-dialog(
           outlined
           v-model="form.data.timeIn.time"
           label="Time in"
+          data-cy='timecard-time-in'
         )
 
         .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
@@ -28,6 +29,7 @@ v-dialog(
                 hide-details
                 v-model="breakItem.start.time"
                 :label="`Break ${index + 1} start`"
+                :data-cy="`timecard-break-${index + 1}-start`"
               )
             v-col
               datetime-input(
@@ -36,6 +38,7 @@ v-dialog(
                 hide-details
                 v-model="breakItem.end.time"
                 :label="`Break ${index + 1} end`"
+                :data-cy="`timecard-break-${index + 1}-end`"
               )
 
         datetime-input(
@@ -43,14 +46,20 @@ v-dialog(
           required
           v-model="form.data.timeOut.time"
           label="Time out"
+          data-cy='timecard-time-out'
         )
 
       v-spacer
       
       v-card-actions
         v-spacer
-        v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="primary", @click="updateTimecard") Save
+        v-btn(text @click="closeDialog") Cancel
+        v-btn(
+          text
+          color="primary"
+          @click="updateTimecard"
+          data-cy='save-timecard-button'
+        ) Save
 
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")
