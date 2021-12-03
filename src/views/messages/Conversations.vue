@@ -2,8 +2,23 @@
 
 v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line')
 
-.conversations(v-else-if='conversations')
-  v-list(color="transparent")
+
+
+.conversations.d-flex.justify-center(v-else-if='conversations' style='height: 100%')
+  
+  .d-flex.flex-column.justify-center(v-if='!conversations.length')
+    v-icon.text-h2.ma-5 mdi-forum
+    p.text-center.text-body-1 No messages yet
+    v-btn(
+      outlined
+      color='primary'
+      class='ma-2 white--text'
+      @click="$emit('newConversation')"
+    )
+      v-icon(left) mdi-plus
+      | Start new conversation
+
+  v-list.flex-grow-1(color="transparent")
     div(
       v-for="(conversation, i) in conversations",
       :key="conversation.id",
