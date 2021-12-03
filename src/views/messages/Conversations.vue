@@ -4,9 +4,10 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
 
 
 
-.conversations.d-flex.justify-center(v-else-if='conversations' style='height: 100%')
+.conversations.d-flex.flex-column(v-else-if='conversations' style='height: 100%')
   
-  .d-flex.flex-column.justify-center(v-if='!conversations.length')
+  // TODO: Make empty state UI into component
+  .align-self-center.d-flex.flex-column.justify-center(v-if='!conversations.length' style='height: 100%')
     v-icon.text-h2.ma-5 mdi-forum
     p.text-center.text-body-1 No messages yet
     v-btn(
@@ -18,7 +19,7 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
       v-icon(left) mdi-plus
       | Start new conversation
 
-  v-list.flex-grow-1(color="transparent")
+  v-list.flex-grow-1(v-else color="transparent")
     div(
       v-for="(conversation, i) in conversations",
       :key="conversation.id",
