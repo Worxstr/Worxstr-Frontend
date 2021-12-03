@@ -37,12 +37,12 @@ div
     .mt-12
       h4.text-h4.font-weight-black.mb-3 Need help deciding?
       p
-        | Are you a contractor? Click
-        router-link(:to="{ name: 'signUp' }") &nbsp;here&nbsp;
-        | to create your account.
+        | Are you a contractor?
+        router-link(:to="{ name: 'signUp' }") &nbsp;Create your account
+        | .
         br
-        | Or, contact us
-        router-link(:to="{ name: 'contact' }") &nbsp;here&nbsp;
+        | Or,
+        router-link(:to="{ name: 'contact' }") &nbsp;contact us&nbsp;
         | for support.
       
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0' v-if='$vuetify.breakpoint.smAndUp')
