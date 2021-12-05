@@ -6,6 +6,24 @@ on:
       - dev
       - main
       - cypress
+env:
+  DWOLLA_APP_KEY: ${{ secrets.DWOLLA_SANDBOX_KEY }}
+  DWOLLA_APP_SECRET: ${{ secrets.DWOLLA_SANDBOX_SECRET }}
+  DWOLLA_HOST: "sandbox"
+  FLASK_APP: application.py
+  MAIL_SERVER: smtp.googlemail.com
+  MAIL_PORT: 587
+  MAIL_USE_TLS: 1
+  MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+  MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+  SQLALCHEMY_DATABASE_URL: ${{ secrets.SQLALCHEMY_DATABASE_URL }}
+  BASE_URL: "localhost:5000"
+  FRONT_URL: "http://localhost:8080"
+  CLICKUP_KEY: ${{ secrets.CLICKUP_KEY }}
+  PLAID_HOST: "https://sandbox.plaid.com"
+  PLAID_SECRET: ${{ secrets.PLAID_SECRET }}
+  PLAID_CLIENT_ID: ${{ secrets.PLAID_CLIENT_ID }}
+  
 
 jobs:
   install:
