@@ -1,6 +1,10 @@
 name: Cypress Tests with installation job
 
-on: [push]
+on:
+  push:
+    branches:
+      - dev
+      - main
 
 jobs:
   install:
@@ -23,8 +27,42 @@ jobs:
           # Disable running of tests within install job
           runTests: false
           build: yarn build
+  backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE
+      - uses: actions/checkout@v2
+        with:
+          name: Worxstr/Worxstr-Backend
+          ref: refs/heads/release
+
+      # Set up Python 3.7 environment
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.7"
+
+      - name: Get pip cache dir
+        id: pip-cache
+        run: |
+          echo "::set-output name=dir::$(pip cache dir)"
+      
+      - name: Cache pip
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
   cypress-run:
-    needs: install
+    needs: [install, backend]
     runs-on: ubuntu-latest
     container: cypress/browsers:node12.18.3-chrome87-ff82
     steps:
