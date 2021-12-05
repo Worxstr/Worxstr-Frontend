@@ -2,7 +2,40 @@
 /// <reference types="cypress" />
 
 import { job } from '../../fixtures/jobs'
+import { manager, contractor } from '../../fixtures/auth'
 import dayjs from 'dayjs'
+
+describe('auth', () => {
+
+  before(() => {
+    cy.visit('localhost:8080')
+  })
+
+  it('will load', () => {
+    cy.get('main').contains('The adaptive solution').should('be.visible')
+  })
+
+  it('should sign in', () => {
+    cy.get('main').contains('Sign in').click()
+
+    const { email, password } = manager
+
+    cy.get('input[type=email]')
+      .type(email)
+      .should('have.value', email)
+      
+    cy.get('input[type=password]')
+    .type(password)
+    .should('have.value', password)
+
+    cy.get('main').contains('button', 'Sign in').click()
+  })
+
+  it('should sign out', () => {
+    cy.contains('Sign out').click()
+  })
+
+})
 
 describe('jobs', () => {
 
@@ -104,7 +137,7 @@ describe('payments', () => {
   })
 })
 
-describe.only('payments', {
+describe('payments', {
   defaultCommandTimeout: 20000
 }, () => {
 
@@ -232,36 +265,3 @@ describe.only('payments', {
 
   })
 })
-
-// describe('auth', () => {
-
-//   before(() => {
-//     cy.visit('localhost:8080')
-//   })
-
-//   it('will load', () => {
-//     cy.get('main').contains('The adaptive solution').should('be.visible')
-//   })
-
-//   it('should sign in', () => {
-//     cy.get('main').contains('Sign in').click()
-
-//     const email = 'alex+test1@worxstr.com'
-//     const password = 'password'
-
-//     cy.get('input[type=email]')
-//       .type(email)
-//       .should('have.value', email)
-      
-//     cy.get('input[type=password]')
-//     .type(password)
-//     .should('have.value', password)
-
-//     cy.get('main').contains('button', 'Sign in').click()
-//   })
-
-//   it('should sign out', () => {
-//     cy.contains('Sign out').click()
-//   })
-
-// })
