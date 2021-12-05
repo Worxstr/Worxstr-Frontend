@@ -35,8 +35,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v2
         with:
-          name: Worxstr/Worxstr-Backend
-          ref: refs/heads/release
+          repository: Worxstr/Worxstr-Backend
 
       # Set up Python 3.7 environment
       - name: Set up Python 3.7
