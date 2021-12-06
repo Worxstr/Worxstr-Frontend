@@ -18,7 +18,7 @@ export function shouldUseSandbox(email: string) {
 // namely in the native mobile app and in our testing environment
 function shouldUseLocalstorageAuth() {
   return Capacitor.isNativePlatform() ||
-         process.env.USE_LOCALSTORAGE_AUTH === 'true'
+         process.env.VUE_APP_USE_LOCALSTORAGE_AUTH === 'true'
 }
 
 export async function getAuthToken() {

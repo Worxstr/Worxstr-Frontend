@@ -7,7 +7,7 @@ on:
       - main
       - cypress
 env:
-  USE_LOCALSTORAGE_AUTH: true
+  VUE_APP_USE_LOCALSTORAGE_AUTH: true
 
 jobs:
   install:
