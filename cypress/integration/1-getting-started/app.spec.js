@@ -129,9 +129,8 @@ describe('payments', () => {
   })
 
   it('should transfer funds to bank', {
-    defaultCommandTimeout: 20000
+    defaultCommandTimeout: 30000
   }, () => {
-    cy.wait(10000) // Wait for funding sources to load
     cy.button('transfer-to-bank-button').click()
     cy.transferFunds(1)
     cy.get('body').should('contain', 'Hang tight')
@@ -139,7 +138,7 @@ describe('payments', () => {
 })
 
 describe('payments', {
-  defaultCommandTimeout: 20000
+  defaultCommandTimeout: 30000
 }, () => {
 
   it('should clock in and out', () => {
