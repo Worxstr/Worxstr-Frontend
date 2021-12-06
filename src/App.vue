@@ -25,8 +25,6 @@ v-app
             span.flex-grow-1 You have not completed your identity verification.
             v-btn(text :to="{name: 'settings/payments', params: { verifyIdentity: 'true' }}") Verify
       
-      pre VUE_APP_TEST_MODE: {{env}}
-
       //- Offline state alert
       transition(
         appear
