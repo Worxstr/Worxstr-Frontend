@@ -12,18 +12,19 @@
 //
 
 import * as users from "../fixtures/auth"
+const serverUrl = 'https://dev.worxstr.com'
 
 // -- This is a parent command --
 Cypress.Commands.add('login', (userRole) => {
   console.log(users, userRole)
   cy.request({
     method: 'POST',
-    url: 'http://localhost:5000/auth/login',
+    url: `${serverUrl}/auth/login`,
     body: {
       ...users[userRole],
     },
   }).then((response) => {
-    cy.request('GET', 'http://localhost:5000/users/me').then((response) => {
+    cy.request('GET', `${serverUrl}/users/me`).then((response) => {
       localStorage.setItem('token', JSON.stringify(response.body.authenticated_user))
     })
   })
@@ -32,7 +33,7 @@ Cypress.Commands.add('login', (userRole) => {
 Cypress.Commands.add('logout', () => {
   cy.request({
     method: 'POST',
-    url: 'http://localhost:5000/auth/logout',
+    url: `${serverUrl}/auth/logout`,
   }).then(() => {
     localStorage.removeItem('token')
   })
