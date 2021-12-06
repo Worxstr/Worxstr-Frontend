@@ -7,7 +7,7 @@ on:
       - main
       - cypress
 env:
-  NODE_ENV: test
+  USE_LOCALSTORAGE_AUTH: true
 
 jobs:
   install:
@@ -29,7 +29,7 @@ jobs:
         with:
           # Disable running of tests within install job
           runTests: false
-          build: yarn build
+          build: yarn install
   
   cypress-run:
     needs: install

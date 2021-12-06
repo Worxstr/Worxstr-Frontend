@@ -13,8 +13,16 @@ export function shouldUseSandbox(email: string) {
   return email?.includes('+test')
 }
 
+// Determine if we should use local storage API for authentication
+// This can be used as a fallback for when cookies can't be used,
+// namely in the native mobile app and in our testing environment
+function shouldUseLocalstorageAuth() {
+  return Capacitor.isNativePlatform() ||
+         process.env.USE_LOCALSTORAGE_AUTH === 'true'
+}
+
 export async function getAuthToken() {
-  if (!Capacitor.isNativePlatform()) return
+  if (!shouldUseLocalstorageAuth()) return
   try {
     return (await SecureStoragePlugin.get({ key: 'authToken' })).value
   } catch (error) {
@@ -23,7 +31,7 @@ export async function getAuthToken() {
 }
 
 export async function setAuthToken(authToken: string) {
-  if (!Capacitor.isNativePlatform()) return
+  if (!shouldUseLocalstorageAuth()) return
   api.defaults.headers.common['Authentication-Token'] = authToken
 
   await SecureStoragePlugin.set({
@@ -33,7 +41,7 @@ export async function setAuthToken(authToken: string) {
 }
 
 export async function unsetAuthToken() {
-  if (!Capacitor.isNativePlatform()) return
+  if (!shouldUseLocalstorageAuth()) return
   api.defaults.headers.common['Authentication-Token'] = null
   return await SecureStoragePlugin.remove({ key: 'authToken' })
 }
