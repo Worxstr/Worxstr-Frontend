@@ -4,11 +4,12 @@
 import { job } from '../../fixtures/jobs'
 import { manager, contractor } from '../../fixtures/auth'
 import dayjs from 'dayjs'
+import { localUrl } from '../../fixtures/app'
 
 describe('auth', () => {
 
   before(() => {
-    cy.visit('localhost:8080')
+    cy.visit(`${localUrl}`)
   })
 
   it('will load', () => {
@@ -41,7 +42,7 @@ describe('jobs', () => {
 
   beforeEach(() => {
     cy.login('manager')
-    cy.visit('localhost:8080/jobs')
+    cy.visit(`${localUrl}/jobs`)
   })
 
   afterEach(() => {
@@ -55,7 +56,7 @@ describe('jobs', () => {
     cy.get('main').should('contain', job.name)
 
     // Read
-    cy.visit('localhost:8080/jobs')
+    cy.visit(`${localUrl}/jobs`)
     cy.get('main').should('contain', job.name)
 
     // Update
@@ -114,7 +115,7 @@ describe('payments', () => {
   
   beforeEach(() => {
     cy.login('manager')
-    cy.visit('localhost:8080/payments')
+    cy.visit(`${localUrl}/payments`)
   })
 
   afterEach(() => {
@@ -146,7 +147,7 @@ describe('payments', {
     /* Assign a shift to contractor */
 
     cy.login('manager')
-    cy.visit('localhost:8080/clock')
+    cy.visit(`${localUrl}/clock`)
     
     cy.button('add-job-button').click()
     cy.createJob(job)
@@ -167,7 +168,7 @@ describe('payments', {
 
       cy.login('contractor')
 
-      cy.visit('localhost:8080/clock')
+      cy.visit(`${localUrl}/clock`)
       cy.get('main').should('contain', 'Clock in')
       
       // Generate 4 timecards
@@ -203,7 +204,7 @@ describe('payments', {
       /* Pay contractor for timecard */
 
       cy.login('manager')
-      cy.visit('localhost:8080/payments')
+      cy.visit(`${localUrl}/payments`)
 
       // TODO: Transfer enough funds for payments
       // TODO: This is hard because the payments must be processed through dwolla externally
@@ -239,7 +240,7 @@ describe('payments', {
         /* Transfer new funds */
 
         cy.login('contractor')
-        cy.visit('localhost:8080/payments')
+        cy.visit(`${localUrl}/payments`)
 
         cy.wait(10000) // Wait for funding sources to load
         cy.button('transfer-to-bank-button').click()
@@ -251,7 +252,7 @@ describe('payments', {
         /* Delete shift and close job */
     
         cy.login('manager')
-        cy.visit('localhost:8080/jobs')
+        cy.visit(`${localUrl}/jobs`)
         
         cy.contains(job.name).click()
         cy.wait(3000)

@@ -12,20 +12,28 @@
 //
 
 import * as users from "../fixtures/auth"
-const serverUrl = 'https://dev.worxstr.com'
+import { localUrl, serverUrl } from '../fixtures/app'
 
 // -- This is a parent command --
 Cypress.Commands.add('login', (userRole) => {
-  console.log(users, userRole)
+  
+  // TODO: Cypress is clearing the localStorage in the middle of the tests.
   cy.request({
     method: 'POST',
     url: `${serverUrl}/auth/login`,
+    qs: {
+      include_auth_token: true,
+    },
     body: {
       ...users[userRole],
     },
   }).then((response) => {
+    console.log(response)
+    const token = response.body.response.user.authentication_token
+    localStorage.setItem('cap_sec_authToken', btoa(token))
+
     cy.request('GET', `${serverUrl}/users/me`).then((response) => {
-      localStorage.setItem('token', JSON.stringify(response.body.authenticated_user))
+      localStorage.setItem('me', JSON.stringify(response.body.authenticated_user))
     })
   })
 })
@@ -35,7 +43,8 @@ Cypress.Commands.add('logout', () => {
     method: 'POST',
     url: `${serverUrl}/auth/logout`,
   }).then(() => {
-    localStorage.removeItem('token')
+    localStorage.removeItem('me')
+    localStorage.removeItem('cap_sec_authToken')
   })
 })
 

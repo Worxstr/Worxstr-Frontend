@@ -25,6 +25,8 @@ v-app
             span.flex-grow-1 You have not completed your identity verification.
             v-btn(text :to="{name: 'settings/payments', params: { verifyIdentity: 'true' }}") Verify
       
+      pre VUE_APP_TEST_MODE: {{env}}
+
       //- Offline state alert
       transition(
         appear
@@ -106,6 +108,10 @@ export default class App extends Vue {
     Network.addListener('networkStatusChange', status => {
       this.offline = !status.connected
     })
+  }
+
+  get env() {
+    return process.env.VUE_APP_TEST_MODE
   }
 
   get me(): User {

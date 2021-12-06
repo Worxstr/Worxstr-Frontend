@@ -8,7 +8,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "deploy": "aws s3 sync ./dist s3://worxstr-secure-app-client",
-    "e2e": "cypress open"
+    "e2e": "cypress open",
+    "e2e:headless": "npx cypress run --record --key 3c840ce5-d413-43f7-b199-cabeca580a05"
   },
   "dependencies": {
     "@capacitor-community/barcode-scanner": "^2.0.1",
