@@ -28,7 +28,7 @@ export const baseUrl = {
   set(sandbox = false) {
     const oldBaseUrl = this.get()
     const webProdUrl = sandbox ? sandboxUrl : productionUrl
-    const baseUrl = process.env.NODE_ENV === 'production' ? webProdUrl : localUrl
+    const baseUrl = (process.env.NODE_ENV === 'production' || process.env.VUE_APP_TEST_MODE === 'true') ? webProdUrl : localUrl
 
     api.defaults.baseURL = baseUrl
     if (baseUrl != oldBaseUrl) environment.emit('baseUrlChanged', baseUrl)

@@ -63,7 +63,7 @@ jobs:
           # group: 'UI - Chrome'
           # spec: cypress/tests/ui/*
         env:
-          VUE_APP_USE_LOCALSTORAGE_AUTH: true
+          VUE_APP_TEST_MODE: true
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
