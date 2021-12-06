@@ -26,9 +26,10 @@ const localUrl = process.env.VUE_APP_API_BASE_URL || window.location.origin.repl
 
 export const baseUrl = {
   set(sandbox = false) {
+    const runningCypressTest = process.env.VUE_APP_TEST_MODE === 'true'
     const oldBaseUrl = this.get()
-    const webProdUrl = sandbox ? sandboxUrl : productionUrl
-    const baseUrl = (process.env.NODE_ENV === 'production' || process.env.VUE_APP_TEST_MODE === 'true') ? webProdUrl : localUrl
+    const webProdUrl = (sandbox || runningCypressTest) ? sandboxUrl : productionUrl
+    const baseUrl = (process.env.NODE_ENV === 'production' || runningCypressTest) ? webProdUrl : localUrl
 
     api.defaults.baseURL = baseUrl
     if (baseUrl != oldBaseUrl) environment.emit('baseUrlChanged', baseUrl)
