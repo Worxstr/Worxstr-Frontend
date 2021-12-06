@@ -8,29 +8,29 @@ on:
       - cypress
 
 jobs:
-  install:
-    runs-on: ubuntu-latest
-    container: cypress/browsers:node12.18.3-chrome87-ff82
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  # install:
+  #   runs-on: ubuntu-latest
+  #   container: cypress/browsers:node12.18.3-chrome87-ff82
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - name: Cypress install
-        uses: cypress-io/github-action@v2
-        with:
-          # Disable running of tests within install job
-          runTests: false
-          build: yarn install
+  #     - name: Cypress install
+  #       uses: cypress-io/github-action@v2
+  #       with:
+  #         # Disable running of tests within install job
+  #         runTests: false
+  #         build: yarn install
 
-      - name: Save build folder
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          if-no-files-found: error
-          path: dist
+  #     - name: Save dist folder
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: dist
+  #         if-no-files-found: error
+  #         path: dist
   
   run:
-    needs: install
+    # needs: install
     runs-on: ubuntu-latest
     container: cypress/browsers:node12.18.3-chrome87-ff82
     # strategy:
@@ -42,20 +42,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Download the build folders
-        uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
+      # - name: Download the build folders
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: dist
+      #     path: dist
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
           # we have already installed all dependencies above
-          install: false
+          # install: false
+          install-command: yarn install
           start: yarn serve
           wait-on: 'http://localhost:8080'
-          wait-on-timeout: 500
+          wait-on-timeout: 600
           browser: chrome
           # record: true
           # parallel: true
