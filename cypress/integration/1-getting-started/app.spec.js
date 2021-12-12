@@ -261,8 +261,6 @@ describe('clock', {
         cy.closeJob(job)
       })
     })
-
-
   })
 })
 

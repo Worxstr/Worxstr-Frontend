@@ -6,6 +6,6 @@ export const manager = {
 
 export const contractor = {
   // email: 'cypress+testcontractor@worxstr.com',
-  email: 'alex+test1@worxstr.com',
+  email: 'alex+testcontractor@worxstr.com',
   password: 'password',
 }

@@ -65,7 +65,6 @@ Cypress.Commands.add('selectField', (name, index, multiple = false, insideDialog
 })
 
 Cypress.Commands.add('button', (name, insideDialog = false) => {
-  // Old selector: .v-dialog--active button
   return getContainer(insideDialog).get(`[data-cy=${name}]`)
 })
 
