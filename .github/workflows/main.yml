@@ -53,8 +53,8 @@ jobs:
         with:
           # we have already installed all dependencies above
           # install: false
-          install-command: yarn install
-          start: yarn serve
+          install-command: yarn --silent install
+          start: yarn --silent serve
           wait-on: 'http://localhost:8080'
           wait-on-timeout: 600
           browser: chrome
