@@ -30,11 +30,24 @@ v-dialog(
       v-card-text
 
         .d-flex.flex-column
-          //- v-btn(text @click='getUserLocation' x-large)
+          //- v-btn.mb-2(
+          //-   @click='getUserLocation'
+          //-   text
+          //-   color='primary'
+          //-   outlined
+          //-   x-large
+          //- )
           //-   v-icon(left) mdi-map-marker-radius
           //-   span Use my location
 
-          v-btn(text @click='startScan' x-large v-if='!allowedLocation && !webQrEnabled && !cameraFailed')
+          v-btn(
+            v-if='!allowedLocation && !webQrEnabled && !cameraFailed'
+            @click='startScan'
+            text
+            color='primary'
+            outlined
+            x-large
+          )
             v-icon(left) mdi-qrcode
             span Scan clock-in code
 

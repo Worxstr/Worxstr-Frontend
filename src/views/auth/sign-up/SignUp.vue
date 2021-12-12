@@ -25,9 +25,9 @@ div
 
             v-window-item(:value='1' :style='$vuetify.breakpoint.xs && `min-height: calc(80vh - 70px)`')
               p(v-if="accountType == 'org'")
-                | Are you a contractor? Click
-                a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
-                | to create your account.
+                | Are you a contractor?
+                a(@click="accountType = 'contractor'") &nbsp;Create your account here
+                | .
 
                 
               v-alert(
