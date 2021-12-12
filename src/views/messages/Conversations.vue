@@ -19,7 +19,7 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
       v-icon(left) mdi-plus
       | Start new conversation
 
-  v-list.flex-grow-1(v-else color="transparent")
+  v-list.flex-grow-1(v-else color="transparent" style='overflow-y: scroll')
     div(
       v-for="(conversation, i) in conversations",
       :key="conversation.id",
@@ -29,6 +29,7 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
         link
         active-class="primary--text"
         :to="{ name: 'conversation', params: { conversationId: conversation.id } }"
+        data-cy='conversation'
       )
         v-list-item-content
           v-list-item-title {{ conversation | groupNameList(me) }}

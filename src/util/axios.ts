@@ -115,21 +115,21 @@ export async function configureAxios(store: any) {
       return response
     },
     (error: any) => {
-      // // if (error.config.hideErrorMessage) return
+      // if (error.config.hideErrorMessage) return
 
-      // // TODO: this is stupid, don't keep this. use custom api config
-      // // We are ignoring an error message if we are trying to access /users/me without being logged in.
-      // // This request is made on app load.
-      // if (error.request.responseURL.includes('/users/me')) return
+      // TODO: this is stupid, don't keep this. use custom api config
+      // We are ignoring an error message if we are trying to access /users/me without being logged in.
+      // This request is made on app load.
+      if (error.request.responseURL.includes('/users/me')) return
 
-      // checkLoggedIn(error)
-      // const message = getErrorMessage(error)
-      // const action = getAction(error)
+      checkLoggedIn(error)
+      const message = getErrorMessage(error)
+      const action = getAction(error)
 
-      // showToast(store, {
-      //   text: message,
-      //   action,
-      // })
+      showToast(store, {
+        text: message,
+        action,
+      })
       console.log('asdflkjasdflkjasdflkj')
       console.log(error)
 

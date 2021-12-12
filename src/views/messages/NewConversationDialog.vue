@@ -29,14 +29,21 @@ v-dialog(
           :rules="[(v) => v.length != 0]",
           :item-text="(u) => `${u.first_name} ${u.last_name}`",
           :item-value="(u) => u.id"
+          data-cy='users-select'
         )
 
       v-spacer
 
       v-card-actions
         v-spacer
-        v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="primary", @click="createConversation" :disabled="!isValid") Create conversation
+        v-btn(text @click="closeDialog") Cancel
+        v-btn(
+          text
+          color="primary"
+          @click="createConversation"
+          :disabled="!isValid"
+          data-cy='create-conversation-button'
+        ) Create conversation
         
       v-fade-transition
         v-overlay(v-if="loading", absolute, opacity=".2")
@@ -44,54 +51,55 @@ v-dialog(
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import * as messages from '@/services/messages'
-import { User } from '@/types/Users'
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
+import * as messages from "@/services/messages";
+import { User } from "@/types/Users";
 
 @Component
 export default class NewConversationDialog extends Vue {
+  isValid = false;
+  loading = false;
+  selectedUsers = [];
 
-  isValid = false
-  loading = false
-  selectedUsers = []
-  
-  @Prop({ default: false }) opened!: boolean
+  @Prop({ default: false }) opened!: boolean;
 
-  @Watch('opened')
+  @Watch("opened")
   onOpened(opened: boolean) {
-    if (opened) (this.$refs.form as HTMLFormElement).reset()
+    if (opened) (this.$refs.form as HTMLFormElement).reset();
   }
 
   async mounted() {
-    await messages.loadContacts(this.$store)
+    await messages.loadContacts(this.$store);
   }
 
   get contacts() {
-    return this.$store.state.messages.contacts
-      .filter((user: User) => {
-        return user.id !== this.me?.id
-      })
+    return this.$store.state.messages.contacts.filter((user: User) => {
+      return user.id !== this.me?.id;
+    });
   }
 
   get me() {
-    return this.$store.getters.me
+    return this.$store.getters.me;
   }
 
   closeDialog() {
-    this.$emit('update:opened', false)
+    this.$emit("update:opened", false);
   }
-  
+
   async createConversation() {
-    this.loading = true
+    this.loading = true;
     try {
-      const conversation = await messages.createConversation(this.$store, this.selectedUsers)
+      const conversation = await messages.createConversation(
+        this.$store,
+        this.selectedUsers
+      );
       this.$router.push({
-        name: 'conversation',
+        name: "conversation",
         params: { conversationId: conversation.id },
-      })
-      this.closeDialog()
+      });
+      this.closeDialog();
     } finally {
-      this.loading = false
+      this.loading = false;
     }
   }
 }

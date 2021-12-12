@@ -58,8 +58,8 @@ Cypress.Commands.add('textField', (name, input, insideDialog = false) => {
 })
 
 Cypress.Commands.add('selectField', (name, index, multiple = false, insideDialog = false) => {
-  const arrowPresses = Array(index + 1).fill('{downarrow}')
-  const keySequence = ` ${arrowPresses.join()}{enter}`
+  const arrowPresses = Array(index + (multiple ? 2 : 1)).fill('{downarrow}')
+  const keySequence = ` ${arrowPresses.join('')}{enter}`
   
   cy.get(`[data-cy=${name}]`).parent().type(keySequence)
 })

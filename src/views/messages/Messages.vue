@@ -13,6 +13,7 @@ div.pa-2
           @click="newConversationDialog = true"
           v-bind="attrs"
           v-on="on"
+          data-cy='new-conversation-button'
         )
           v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
           span(v-if='$vuetify.breakpoint.smAndUp') New
