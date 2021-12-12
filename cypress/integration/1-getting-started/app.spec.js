@@ -249,14 +249,14 @@ describe('clock', {
         cy.logout()
     
         /* Delete shift and close job */
-    
         cy.login('manager')
         cy.visit(`${localUrl}/jobs`)
         
         cy.contains(job.name).click()
-        cy.wait(3000)
-        cy.contains(shiftLocation).click()
-        cy.deleteShift()
+        // TODO: Shift can't be deleted right now if it is active
+        // cy.wait(3000)
+        // cy.contains(shiftLocation).click()
+        // cy.deleteShift()
         cy.button('close-job-button').click()
         cy.closeJob(job)
       })
