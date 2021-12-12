@@ -173,6 +173,7 @@ describe('clock', {
       // Generate 4 timecards
       for (let i = 0; i < 4; i++) {
         // Clock in
+        cy.wait(1000)
         cy.button('clock-in-button').click()
         cy.textField('clock-in-code', clockInCode, true)
         cy.button('submit-clock-in-code-button', true).click()
@@ -183,19 +184,20 @@ describe('clock', {
 
         if (i === 0) {
           // Start break
+          cy.wait(1000)
           cy.button('start-break-button').click()
           cy.get('main').should('contain', 'End break')
 
           // End break
+          cy.wait(1000)
           cy.button('end-break-button').click()
           cy.get('main').should('contain', `Clock out`)
         }
           
         // Clock out
+        cy.wait(1000)
         cy.button('clock-out-button').click()
         cy.get('main').should('contain', 'Clock in')
-
-        cy.wait(1000)
       }
 
       cy.logout()
