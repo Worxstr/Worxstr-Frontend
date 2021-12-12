@@ -266,28 +266,28 @@ describe('clock', {
   })
 })
 
-describe('messages', () => {
-  beforeEach(() => {
-    cy.login('manager')
-    cy.visit(`${localUrl}/messages`)
-  })
+// describe('messages', () => {
+//   beforeEach(() => {
+//     cy.login('manager')
+//     cy.visit(`${localUrl}/messages`)
+//   })
 
-  afterEach(() => {
-    cy.logout()
-  })
+//   afterEach(() => {
+//     cy.logout()
+//   })
 
-  it('should send messages', () => {
-    // Create a conversation
-    cy.button('new-conversation-button').click()
-    cy.wait(1500)
-    cy.selectField('users-select', 0, true, true)
+//   it('should send messages', () => {
+//     // Create a conversation
+//     cy.button('new-conversation-button').click()
+//     cy.wait(1500)
+//     cy.selectField('users-select', 0, true, true)
 
-    const rand = Math.floor(Math.random() * 1000).toString()
-    const input = `Hello world ${rand}`
+//     const rand = Math.floor(Math.random() * 1000).toString()
+//     const input = `Hello world ${rand}`
 
-    cy.get('[data-cy=conversation]').first().click()
-    cy.textField('message-input', `${input}{enter}`)
+//     cy.get('[data-cy=conversation]').first().click()
+//     cy.textField('message-input', `${input}{enter}`)
 
-    cy.get('main').should('contain', input)
-  })
-})
+//     cy.get('main').should('contain', input)
+//   })
+// })
