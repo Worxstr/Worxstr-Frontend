@@ -125,7 +125,7 @@ describe('payments', () => {
   it('should add funds', () => {
     cy.wait(10000) // Wait for funding sources to load
     cy.button('add-funds-button').click()
-    cy.transferFunds(100)
+    cy.transferFunds(5000)
   })
 
   it('should transfer funds to bank', {
