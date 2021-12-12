@@ -13,11 +13,16 @@ v-dialog(
     
     v-card-actions
       v-spacer
-      v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="red", @click="deleteShift") Yes, Delete
+      v-btn(text @click="closeDialog") Cancel
+      v-btn(
+        text
+        color="error"
+        @click="deleteShift"
+        data-cy="confirm-delete-shift-button"
+      ) Yes, Delete
       
     v-fade-transition
-      v-overlay(v-if="loading", absolute, opacity=".2")
+      v-overlay(v-if="loading" absolute opacity=".2")
         v-progress-circular(indeterminate)
 
 </template>

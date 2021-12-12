@@ -40,6 +40,7 @@ div(v-else)
         :icon='$vuetify.breakpoint.xs'
         color='primary'
         @click="editJobDialog = true"
+        data-cy='edit-job-button'
       )
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
         span(v-if='!$vuetify.breakpoint.xs') Edit
@@ -50,6 +51,7 @@ div(v-else)
         :icon='$vuetify.breakpoint.xs'
         color="error"
         @click="closeJobDialog = true"
+        data-cy='close-job-button'
       ) 
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
         span(v-if='!$vuetify.breakpoint.xs') Close
@@ -111,7 +113,7 @@ div(v-else)
           .flex-grow-1.d-flex.flex-row.align-center
             .d-flex.flex-column
               p.text-subtitle-2.mb-1 Clock-in code
-              p {{ job.consultant_code }}
+              p(data-cy='clock-in-code') {{ job.consultant_code }}
             .mb-3.ml-3
               v-tooltip(bottom)
                 span View QR code
@@ -132,7 +134,7 @@ div(v-else)
     v-toolbar(flat, color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text color='primary' @click="createShiftDialog = true")
+      v-btn(text color='primary' @click="createShiftDialog = true" data-cy="assign-shift-button")
         v-icon(left) mdi-clipboard-plus-outline
         span Assign shift
 
@@ -175,8 +177,17 @@ div(v-else)
 
           v-card-actions
             v-spacer
-            v-btn(text, @click="openEditShiftDialog(shift)") Edit
-            v-btn(text, color="error", @click="openDeleteShiftDialog(shift)") Delete
+            v-btn(
+              text
+              @click="openEditShiftDialog(shift)"
+              data-cy="edit-shift-button"
+            ) Edit
+            v-btn(
+              text
+              color="error"
+              @click="openDeleteShiftDialog(shift)"
+              data-cy="delete-shift-button"
+            ) Delete
 </template>
 
 <script lang="ts">

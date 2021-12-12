@@ -3,11 +3,13 @@
   "version": "0.2.1",
   "private": true,
   "scripts": {
+    "start": "node ./bin/www",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "deploy": "aws s3 sync ./dist s3://worxstr-secure-app-client",
-    "e2e": "cypress open"
+    "e2e": "cypress open",
+    "e2e:headless": "npx cypress run --record --key 3c840ce5-d413-43f7-b199-cabeca580a05"
   },
   "dependencies": {
     "@capacitor-community/barcode-scanner": "^2.0.1",
@@ -69,7 +71,7 @@
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-typescript": "^5.0.2",
-    "cypress": "^8.6.0",
+    "cypress": "^9.1.1",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "node-sass": "^5.0.0",
@@ -77,6 +79,7 @@
     "pug-plain-loader": "^1.1.0",
     "sass": "^1.26.5",
     "sass-loader": "^10.1.1",
+    "serve": "^13.0.2",
     "typescript": "~3.9.3",
     "vue-cli-plugin-vuetify": "~2.0.8",
     "vue-template-compiler": "^2.6.11",

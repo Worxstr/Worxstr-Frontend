@@ -29,6 +29,7 @@ v-dialog(
           outlined
           required
           :headerFont='true'
+          data-cy='transfer-amount'
         )
 
         v-select(
@@ -41,6 +42,7 @@ v-dialog(
           :items='fundingSources'
           item-text='name'
           item-value='_links.self.href'
+          data-cy='transfer-location'
         )
 
       v-spacer
@@ -48,7 +50,13 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="primary", :disabled="!isValid", type="submit") Transfer
+        v-btn(
+          text
+          color="primary"
+          :disabled="!isValid"
+          type="submit"
+          data-cy='transfer-submit-button'
+        ) Transfer
 </template>
 
 <script lang="ts">

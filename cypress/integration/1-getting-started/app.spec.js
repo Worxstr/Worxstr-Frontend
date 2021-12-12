@@ -1,21 +1,15 @@
 /* eslint-disable no-undef */
 /// <reference types="cypress" />
 
-// Welcome to Cypress!
-//
-// This spec file contains a variety of sample tests
-// for a todo list app that are designed to demonstrate
-// the power of writing tests in Cypress.
-//
-// To learn more about how Cypress works and
-// what makes it such an awesome testing tool,
-// please read our getting started guide:
-// https://on.cypress.io/introduction-to-cypress
+import { job } from '../../fixtures/jobs'
+import { manager, contractor } from '../../fixtures/auth'
+import dayjs from 'dayjs'
+import { localUrl } from '../../fixtures/app'
 
-describe('App', () => {
+describe('auth', () => {
 
   before(() => {
-    cy.visit('localhost:8080')
+    cy.visit(`${localUrl}`)
   })
 
   it('will load', () => {
@@ -25,8 +19,7 @@ describe('App', () => {
   it('should sign in', () => {
     cy.get('main').contains('Sign in').click()
 
-    const email = 'alex+test1@worxstr.com'
-    const password = 'password'
+    const { email, password } = manager
 
     cy.get('input[type=email]')
       .type(email)
@@ -45,134 +38,256 @@ describe('App', () => {
 
 })
 
-/* describe('example to-do app', () => {
+describe('jobs', () => {
+
   beforeEach(() => {
-    // Cypress starts out with a blank slate for each test
-    // so we must tell it to visit our website with the `cy.visit()` command.
-    // Since we want to visit the same URL at the start of all our tests,
-    // we include it in our beforeEach function so that it runs before each test
-    cy.visit('https://example.cypress.io/todo')
+    cy.login('manager')
+    cy.visit(`${localUrl}/jobs`)
   })
 
-  it('displays two todo items by default', () => {
-    // We use the `cy.get()` command to get all elements that match the selector.
-    // Then, we use `should` to assert that there are two matched items,
-    // which are the two default items.
-    cy.get('.todo-list li').should('have.length', 2)
+  afterEach(() => {
+    cy.logout()
+  })
+  
+  it('should display and modify jobs', () => {
+    // Create
+    cy.button('add-job-button').click()
+    cy.createJob(job)
+    cy.get('main').should('contain', job.name)
 
-    // We can go even further and check that the default todos each contain
-    // the correct text. We use the `first` and `last` functions
-    // to get just the first and last matched elements individually,
-    // and then perform an assertion with `should`.
-    cy.get('.todo-list li').first().should('have.text', 'Pay electric bill')
-    cy.get('.todo-list li').last().should('have.text', 'Walk the dog')
+    // Read
+    cy.visit(`${localUrl}/jobs`)
+    cy.get('main').should('contain', job.name)
+
+    // Update
+    cy.listMenuButton(job.name, 'Edit')
+    cy.editJob(job)
+    cy.get('main').should('contain', `${job.name} (edited)`)
+
+    // Delete
+    cy.listMenuButton(job.name, 'Close')
+    cy.closeJob(job)
+    cy.get('main').should('not.contain', `${job.name} (edited)`)
   })
 
-  it('can add new todo items', () => {
-    // We'll store our item text in a variable so we can reuse it
-    const newItem = 'Feed the cat'
+  it('should perform job operations', () => {
 
-    // Let's get the input element and use the `type` command to
-    // input our new list item. After typing the content of our item,
-    // we need to type the enter key as well in order to submit the input.
-    // This input has a data-test attribute so we'll use that to select the
-    // element in accordance with best practices:
-    // https://on.cypress.io/selecting-elements
-    cy.get('[data-test=new-todo]').type(`${newItem}{enter}`)
+    cy.button('add-job-button').click()
+    cy.createJob(job)
+    cy.get('main').should('contain', job.name)
 
-    // Now that we've typed our new item, let's check that it actually was added to the list.
-    // Since it's the newest item, it should exist as the last element in the list.
-    // In addition, with the two default items, we should have a total of 3 elements in the list.
-    // Since assertions yield the element that was asserted on,
-    // we can chain both of these assertions together into a single statement.
-    cy.get('.todo-list li')
-      .should('have.length', 3)
-      .last()
-      .should('have.text', newItem)
+    // Open job
+    cy.contains(job.name).click()
+
+    // Assign shift
+    const shiftLocation = 'Cypress site location'
+    cy.assignShift(shiftLocation)
+
+    // TODO: Check shift is displayed on page
+
+    // Edit shift
+    cy.contains(shiftLocation).click()
+    cy.editShift()
+
+    // TODO: Check shift was updated
+
+    // Delete shift
+    cy.deleteShift()
+
+    // TODO: Check shift was deleted
+
+    // Edit job
+    cy.button('edit-job-button').click()
+    cy.editJob(job)
+
+    // TODO: Check job was updated
+
+    // Close job
+    cy.button('close-job-button').click()
+    cy.closeJob(job)
+
+    // TODO: Check page was redirected to jobs page
   })
 
-  it('can check off an item as completed', () => {
-    // In addition to using the `get` command to get an element by selector,
-    // we can also use the `contains` command to get an element by its contents.
-    // However, this will yield the <label>, which is lowest-level element that contains the text.
-    // In order to check the item, we'll find the <input> element for this <label>
-    // by traversing up the dom to the parent element. From there, we can `find`
-    // the child checkbox <input> element and use the `check` command to check it.
-    cy.contains('Pay electric bill')
-      .parent()
-      .find('input[type=checkbox]')
-      .check()
+})
 
-    // Now that we've checked the button, we can go ahead and make sure
-    // that the list element is now marked as completed.
-    // Again we'll use `contains` to find the <label> element and then use the `parents` command
-    // to traverse multiple levels up the dom until we find the corresponding <li> element.
-    // Once we get that element, we can assert that it has the completed class.
-    cy.contains('Pay electric bill')
-      .parents('li')
-      .should('have.class', 'completed')
+describe('payments', () => {
+  
+  beforeEach(() => {
+    cy.login('manager')
+    cy.visit(`${localUrl}/payments`)
   })
 
-  context('with a checked task', () => {
-    beforeEach(() => {
-      // We'll take the command we used above to check off an element
-      // Since we want to perform multiple tests that start with checking
-      // one element, we put it in the beforeEach hook
-      // so that it runs at the start of every test.
-      cy.contains('Pay electric bill')
-        .parent()
-        .find('input[type=checkbox]')
-        .check()
-    })
+  afterEach(() => {
+    cy.logout()
+  })
 
-    it('can filter for uncompleted tasks', () => {
-      // We'll click on the "active" button in order to
-      // display only incomplete items
-      cy.contains('Active').click()
+  it('should add funds', () => {
+    cy.wait(10000) // Wait for funding sources to load
+    cy.button('add-funds-button').click()
+    cy.transferFunds(5000)
+  })
 
-      // After filtering, we can assert that there is only the one
-      // incomplete item in the list.
-      cy.get('.todo-list li')
-        .should('have.length', 1)
-        .first()
-        .should('have.text', 'Walk the dog')
+  it('should transfer funds to bank', {
+    defaultCommandTimeout: 30000
+  }, () => {
+    cy.button('transfer-to-bank-button').click()
+    cy.transferFunds(1)
+    cy.get('body').should('contain', 'Hang tight')
+  })
+})
 
-      // For good measure, let's also assert that the task we checked off
-      // does not exist on the page.
-      cy.contains('Pay electric bill').should('not.exist')
-    })
+describe('clock', {
+  defaultCommandTimeout: 30000
+}, () => {
 
-    it('can filter for completed tasks', () => {
-      // We can perform similar steps as the test above to ensure
-      // that only completed tasks are shown
-      cy.contains('Completed').click()
+  it('should clock in and out', () => {
 
-      cy.get('.todo-list li')
-        .should('have.length', 1)
-        .first()
-        .should('have.text', 'Pay electric bill')
+    /* Assign a shift to contractor */
 
-      cy.contains('Walk the dog').should('not.exist')
-    })
+    cy.login('manager')
+    cy.visit(`${localUrl}/clock`)
+    
+    cy.button('add-job-button').click()
+    cy.createJob(job)
 
-    it('can delete all completed tasks', () => {
-      // First, let's click the "Clear completed" button
-      // `contains` is actually serving two purposes here.
-      // First, it's ensuring that the button exists within the dom.
-      // This button only appears when at least one task is checked
-      // so this command is implicitly verifying that it does exist.
-      // Second, it selects the button so we can click it.
-      cy.contains('Clear completed').click()
+    // Open job
+    cy.get('main').contains(job.name).click()
 
-      // Then we can make sure that there is only one element
-      // in the list and our element does not exist
-      cy.get('.todo-list li')
-        .should('have.length', 1)
-        .should('not.have.text', 'Pay electric bill')
+    cy.get('[data-cy=clock-in-code]').invoke('text').then(clockInCode => {
+      
+      // Assign shift
+      const shiftLocation = 'Cypress site location'
+      cy.assignShift(shiftLocation)
 
-      // Finally, make sure that the clear button no longer exists.
-      cy.contains('Clear completed').should('not.exist')
+      cy.logout()
+
+
+      /* Switch to contractor and clock in and out */
+
+      cy.login('contractor')
+
+      cy.visit(`${localUrl}/clock`)
+      cy.get('main').should('contain', 'Clock in')
+      
+      // Generate 4 timecards
+      for (let i = 0; i < 4; i++) {
+        // Clock in
+        cy.wait(1000)
+        cy.button('clock-in-button').click()
+        cy.textField('clock-in-code', clockInCode, true)
+        cy.button('submit-clock-in-code-button', true).click()
+
+        cy.get('main').should('contain', 'Clock out')
+        cy.get('main').should('contain', 'Start break')
+        cy.get('main').should('contain', `Your shift at ${shiftLocation} `)
+
+        if (i === 0) {
+          // Start break
+          cy.wait(1000)
+          cy.button('start-break-button').click()
+          cy.get('main').should('contain', 'End break')
+
+          // End break
+          cy.wait(1000)
+          cy.button('end-break-button').click()
+          cy.get('main').should('contain', `Clock out`)
+        }
+          
+        // Clock out
+        cy.wait(1000)
+        cy.button('clock-out-button').click()
+        cy.get('main').should('contain', 'Clock in')
+      }
+
+      cy.logout()
+
+      /* Pay contractor for timecard */
+
+      cy.login('manager')
+      cy.visit(`${localUrl}/payments`)
+
+      // TODO: Transfer enough funds for payments
+      // TODO: This is hard because the payments must be processed through dwolla externally
+
+      // Edit a timecard
+      cy.get('[data-cy=timecard]').first().click()
+      cy.button('edit-timecard-button').last().click()
+      
+      // Get date 5 minutes before shift
+      cy.get('[data-cy=timecard-time-in]').find('input').invoke('val').then(text => {
+
+        const formatted = dayjs(text).subtract(5, 'minute').format('YYYY-MM-DDThh:mm')
+        
+        cy.textField('timecard-time-in', formatted, true)
+        cy.button('save-timecard-button', true).click()
+        
+        // Approve edited timecard
+        cy.get('[data-cy=timecard]').first().click()
+        cy.button('complete-timecard-button').last().click()
+        cy.button('confirm-complete-payment-button', true).click()
+
+        // Deny a timecard
+        cy.get('[data-cy=timecard]').last().click()
+        cy.button('deny-timecard-button').last().click()
+        cy.button('confirm-deny-payment-button', true).click()
+
+        // Deny remaining timecards
+        cy.button('deny-all-timecards-button').click()
+        cy.button('confirm-deny-payment-button', true).click()
+
+        cy.logout()
+    
+        /* Transfer new funds */
+
+        cy.login('contractor')
+        cy.visit(`${localUrl}/payments`)
+
+        cy.wait(10000) // Wait for funding sources to load
+        cy.button('transfer-to-bank-button').click()
+        cy.button('transfer-submit-button', true).click()
+        cy.get('body').should('contain', 'Hang tight')
+
+        cy.logout()
+    
+        /* Delete shift and close job */
+        cy.login('manager')
+        cy.visit(`${localUrl}/jobs`)
+        
+        cy.contains(job.name).click()
+        // TODO: Shift can't be deleted right now if it is active
+        // cy.wait(3000)
+        // cy.contains(shiftLocation).click()
+        // cy.deleteShift()
+        cy.button('close-job-button').click()
+        cy.closeJob(job)
+      })
     })
   })
 })
- */
+
+// describe('messages', () => {
+//   beforeEach(() => {
+//     cy.login('manager')
+//     cy.visit(`${localUrl}/messages`)
+//   })
+
+//   afterEach(() => {
+//     cy.logout()
+//   })
+
+//   it('should send messages', () => {
+//     // Create a conversation
+//     cy.button('new-conversation-button').click()
+//     cy.wait(1500)
+//     cy.selectField('users-select', 0, true, true)
+
+//     const rand = Math.floor(Math.random() * 1000).toString()
+//     const input = `Hello world ${rand}`
+
+//     cy.get('[data-cy=conversation]').first().click()
+//     cy.textField('message-input', `${input}{enter}`)
+
+//     cy.get('main').should('contain', input)
+//   })
+// })

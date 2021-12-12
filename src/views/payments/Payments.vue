@@ -12,6 +12,7 @@ div
       :icon='$vuetify.breakpoint.xs'
       @click='openAddFundsDialog'
       :disabled='!iAmVerified'
+      data-cy='add-funds-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-cash-plus
       span(v-if='!$vuetify.breakpoint.xs') Add funds to wallet
@@ -22,6 +23,7 @@ div
       :icon='$vuetify.breakpoint.xs'
       @click='openTransferToBankDialog'
       :disabled='!iAmVerified || payments.balance.value == 0'
+      data-cy='transfer-to-bank-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank

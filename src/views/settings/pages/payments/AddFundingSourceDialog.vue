@@ -70,7 +70,9 @@ export default {
     async openPlaidAuth() {
       this.loading = true
       try {
-        await openPlaidLink(this.accountName)
+        await openPlaidLink(this.accountName, (loading) => {
+          this.$emit('updateFundingSourceLoader', loading)
+        })
         this.closeDialog()
       }
       finally {

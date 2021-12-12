@@ -10,43 +10,38 @@ declare global {
   }
 }
 
-function onSuccess(name: string) {
-  return async function(public_token: string, metadata: any) {
+function onSuccess(name: string, callback: (loading: boolean) => void) {
+  return async function (public_token: string, metadata: any) {
     const accountId = metadata.accounts[0].id
-  
+
     const accessToken = await addPlaidFundingSource(store, {
       name,
       publicToken: public_token,
       accountId
     })
 
+    callback(false)
     return accessToken
   }
 }
 
-async function onLoad() {
-  console.log('loaded')
+function onEvent(callback: (loading: boolean) => void) {
+  return async function (eventName: string, metadata: any) {
+    switch (eventName) {
+      case 'HANDOFF':
+        callback(true)
+        break
+    }
+  }
 }
 
-async function onExit(err: any, metadata: any) {
-  console.log('exited', err, metadata)
-}
-
-async function onEvent(eventName: string, metadata: any) {
-  console.log('event', eventName, metadata)
-}
-
-
-export async function openPlaidLink(name: string) {
+export async function openPlaidLink(name: string, callback: (loading: boolean) => void) {
   const linkToken = await getPlaidLinkToken(store)
-  console.log(linkToken)
 
   const handler = window.Plaid.create({
     token: linkToken,
-    onSuccess: onSuccess(name),
-    onLoad,
-    onEvent,
-    onExit,
+    onSuccess: onSuccess(name, callback),
+    onEvent: onEvent(callback),
     receivedRedirectUri: null,
   })
 

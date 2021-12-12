@@ -1,1 +1,6 @@
-{}
+{
+  "projectId": "esvase",
+  "env": {
+    "VUE_APP_TEST_MODE": "true"
+  }
+}

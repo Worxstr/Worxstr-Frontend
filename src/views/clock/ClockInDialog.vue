@@ -30,11 +30,24 @@ v-dialog(
       v-card-text
 
         .d-flex.flex-column
-          //- v-btn(text @click='getUserLocation' x-large)
+          //- v-btn.mb-2(
+          //-   @click='getUserLocation'
+          //-   text
+          //-   color='primary'
+          //-   outlined
+          //-   x-large
+          //- )
           //-   v-icon(left) mdi-map-marker-radius
           //-   span Use my location
 
-          v-btn(text @click='startScan' x-large v-if='!allowedLocation && !webQrEnabled && !cameraFailed')
+          v-btn(
+            v-if='!allowedLocation && !webQrEnabled && !cameraFailed'
+            @click='startScan'
+            text
+            color='primary'
+            outlined
+            x-large
+          )
             v-icon(left) mdi-qrcode
             span Scan clock-in code
 
@@ -58,12 +71,20 @@ v-dialog(
           outlined
           maxlength='6'
           :rules='codeRules'
+          data-cy='clock-in-code'
         )
 
       v-card-actions
         v-spacer
         v-btn(text @click='closeDialog') Cancel
-        v-btn(text color='primary' type='submit' :loading='loading' :disabled='!isValid') Submit
+        v-btn(
+          text
+          color='primary'
+          type='submit'
+          :loading='loading'
+          :disabled='!isValid'
+          data-cy='submit-clock-in-code-button'
+        ) Submit
 
 </template>
 
@@ -101,7 +122,7 @@ export default class ClockInDialog extends Vue {
 
   codeRules = [
     (code: string) => !!code || 'Please enter your clock-in code',
-    (code: string) => ((code.length === 6 || code.length === 5) && code.match(/^-?\d+$/)) || 'Please enter a valid clock-in code',
+    (code: string) => (code && (code.length === 6 || code.length === 5) && code.match(/^-?\d+$/)) || 'Please enter a valid clock-in code',
   ]
 
   @Prop({ default: false }) readonly opened!: boolean

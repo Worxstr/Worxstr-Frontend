@@ -13,8 +13,16 @@ export function shouldUseSandbox(email: string) {
   return email?.includes('+test')
 }
 
+// Determine if we should use local storage API for authentication
+// This can be used as a fallback for when cookies can't be used,
+// namely in the native mobile app and in our testing environment
+function shouldUseLocalstorageAuth() {
+  return Capacitor.isNativePlatform() ||
+         process.env.VUE_APP_TEST_MODE === 'true'
+}
+
 export async function getAuthToken() {
-  if (!Capacitor.isNativePlatform()) return
+  if (!shouldUseLocalstorageAuth()) return
   try {
     return (await SecureStoragePlugin.get({ key: 'authToken' })).value
   } catch (error) {
@@ -23,7 +31,7 @@ export async function getAuthToken() {
 }
 
 export async function setAuthToken(authToken: string) {
-  if (!Capacitor.isNativePlatform()) return
+  if (!shouldUseLocalstorageAuth()) return
   api.defaults.headers.common['Authentication-Token'] = authToken
 
   await SecureStoragePlugin.set({
@@ -33,7 +41,7 @@ export async function setAuthToken(authToken: string) {
 }
 
 export async function unsetAuthToken() {
-  if (!Capacitor.isNativePlatform()) return
+  if (!shouldUseLocalstorageAuth()) return
   api.defaults.headers.common['Authentication-Token'] = null
   return await SecureStoragePlugin.remove({ key: 'authToken' })
 }
@@ -41,7 +49,7 @@ export async function unsetAuthToken() {
 export async function signIn({ commit }: any, email: string, password: string, rememberMe = false) {
   sandboxMode.toggle({ commit }, shouldUseSandbox(email))
 
-  try {
+  // try {
     const { data } = await api({
       method: 'POST',
       url: '/auth/login',
@@ -68,18 +76,17 @@ export async function signIn({ commit }: any, email: string, password: string, r
     await getMe({ commit })
     router.push({ name: defaultRoute() })
     return data
-  } catch (err) {
-    if ((err as any).response?.status === 400) {
-      // Maybe already signed in
-      const me = await getMe({ commit })
-      if (me && me.id) {
-        router.push({ name: defaultRoute() })
-      }
-    } else {
-      commit('UNSET_AUTHENTICATED_USER')
-      return err
-    }
-  }}
+  // } catch (err) {
+  //   if ((err as any).response.status === 400) {
+  //     // Already signed in
+  //     await getAuthenticatedUser({ commit })
+  //     router.push({ name: defaultRoute() })
+  //   } else {
+  //     commit('UNSET_AUTHENTICATED_USER')
+  //     return err
+  //   }
+  // }
+}
 
 /*
   accountType: 'contractor' | 'org'

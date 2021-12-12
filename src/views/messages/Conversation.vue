@@ -38,6 +38,7 @@
       solo
       dense
       placeholder="Type a message..."
+      data-cy='message-input'
     )
 
     v-btn.ml-3(color="primary", icon, type="submit")

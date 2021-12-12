@@ -108,6 +108,10 @@ export default class App extends Vue {
     })
   }
 
+  get env() {
+    return process.env.VUE_APP_TEST_MODE
+  }
+
   get me(): User {
     return this.$store.getters.me
   }

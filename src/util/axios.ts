@@ -96,12 +96,12 @@ export async function configureAxios(store: any) {
   baseUrl.set()
 
   api.interceptors.request.use(
-    async (config: any) => {
-      if (!checkOnline(config)) {
-        showToast(store, { text: 'You are offline.' })
-        return false
-      }
-      sendGtagEvent(config)
+    (config: any) => {
+      // if (!checkOnline(config)) {
+      //   showToast(store, { text: 'You are offline.' })
+      //   return false
+      // }
+      // sendGtagEvent(config)
       return config
     },
     (error: any) => {
@@ -111,10 +111,10 @@ export async function configureAxios(store: any) {
 
   api.interceptors.response.use(
     (response: any) => {
+      console.log('oiqwerqoweiruqw')
       return response
     },
     (error: any) => {
-      console.log('network error', error)
       // if (error.config.hideErrorMessage) return
 
       // TODO: this is stupid, don't keep this. use custom api config
@@ -130,6 +130,8 @@ export async function configureAxios(store: any) {
         text: message,
         action,
       })
+      console.log('asdflkjasdflkjasdflkj')
+      console.log(error)
 
       return Promise.reject(error)
     }

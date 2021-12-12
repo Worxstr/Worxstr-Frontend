@@ -31,6 +31,7 @@ v-dialog(
           v-model="editedJob.name",
           :rules="rules.name",
           required
+          data-cy='job-name'
         )
 
         vuetify-google-autocomplete#map(
@@ -40,6 +41,7 @@ v-dialog(
           v-on:placechanged="setPlace",
           :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''",
           :rules="rules.address"
+          data-cy='job-address'
         )
 
         div(v-if='showMap')
@@ -84,6 +86,7 @@ v-dialog(
           dense,
           required,
           label="Organizational manager"
+          data-cy='job-org-manager'
         )
         v-select(
           v-if="managers.contractor && managers.contractor.length",
@@ -95,6 +98,7 @@ v-dialog(
           dense,
           required,
           label="Contractor manager"
+          data-cy='job-contractor-manager'
         )
         v-subheader Consultant info
         v-text-field(
@@ -103,10 +107,12 @@ v-dialog(
           label="Name",
           v-model="editedJob.consultant_name",
           :rules="rules.consultantName",
+          data-cy='job-consultant-name'
           required
         )
         phone-input(
           v-model='editedJob.consultant_phone'
+          data-cy='job-consultant-phone'
           outlined
           :required='true'
         )
@@ -117,6 +123,7 @@ v-dialog(
           type="email",
           v-model="editedJob.consultant_email",
           :rules="rules.consultantEmail",
+          data-cy='job-consultant-email'
           required
         )
 
@@ -125,7 +132,13 @@ v-dialog(
       v-card-actions
         v-spacer
         v-btn(text, @click="closeDialog") Cancel
-        v-btn(text, color="green", :disabled="!isValid", type="submit")
+        v-btn(
+          text
+          color="green"
+          :disabled="!isValid"
+          type="submit"
+          data-cy='save-job-button'
+        )
           | {{ create ? 'Create' : 'Save' }}
 </template>
 
