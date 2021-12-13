@@ -67,26 +67,50 @@ div(v-else)
       )
 
       div
-        //- Address
         v-card-text.d-flex
-          .mt-1.mr-1
-            v-tooltip(bottom)
-              span Navigate to job
-              template(v-slot:activator='{ on, attrs }')
-                v-btn(
-                  icon
-                  color='primary'
-                  v-bind='attrs'
-                  v-on='on'
-                  @click='openNavigation'
-                )
-                  v-icon mdi-map-search
+          //- Address
+          .d-flex
+            .mt-1.mr-1
+              v-tooltip(bottom)
+                span Navigate to job
+                template(v-slot:activator='{ on, attrs }')
+                  v-btn(
+                    icon
+                    color='primary'
+                    v-bind='attrs'
+                    v-on='on'
+                    @click='openNavigation'
+                  )
+                    v-icon mdi-map-search
 
-          p {{ job.address }}
-            br
-            | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
+            p {{ job.address }}
+              br
+              | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
 
-        .px-5.mb-5
+          v-spacer
+
+          //- Clock in code
+          .d-flex.flex-row.align-center
+            .d-flex.flex-column
+              p.text-subtitle-2.mb-1 Clock-in code
+              p(data-cy='clock-in-code') {{ job.consultant_code }}
+            .mb-3.ml-3
+              v-tooltip(bottom)
+                span View QR code
+                template(v-slot:activator='{ on, attrs }')
+                  v-btn(
+                    icon
+                    color='primary'
+                    v-bind='attrs'
+                    v-on='on'
+                    @click='openQrCodeDialog'
+                  )
+                    v-icon mdi-qrcode
+
+              clipboard-copy(:text='job.consultant_code')
+
+        //- Job notes
+        v-card-text
           p.text-subtitle-2.mb-1 Job notes
           div(v-html='job.notes')
 
@@ -114,25 +138,6 @@ div(v-else)
           .flex-grow-1
             p.text-subtitle-2.mb-1 Consultant
             p {{ job.consultant_name }}
-
-          .flex-grow-1.d-flex.flex-row.align-center
-            .d-flex.flex-column
-              p.text-subtitle-2.mb-1 Clock-in code
-              p(data-cy='clock-in-code') {{ job.consultant_code }}
-            .mb-3.ml-3
-              v-tooltip(bottom)
-                span View QR code
-                template(v-slot:activator='{ on, attrs }')
-                  v-btn(
-                    icon
-                    color='primary'
-                    v-bind='attrs'
-                    v-on='on'
-                    @click='openQrCodeDialog'
-                  )
-                    v-icon mdi-qrcode
-
-              clipboard-copy(:text='job.consultant_code')
 
         v-skeleton-loader(type='list-item-two-line' v-else)
 
