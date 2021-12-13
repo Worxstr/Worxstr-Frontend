@@ -157,7 +157,7 @@ export default {
       {
         name: 'Austin Cockerham',
         title: "Director of Sales / Southeast",
-        photo: 'andrew.jpg',
+        photo: 'austin.jpg',
         socials: [
           {
             link: 'mailto:austin@worxstr.com',
@@ -204,25 +204,25 @@ export default {
       //     },
       //   ]
       // },
-      // {
-      //   name: 'Victoria DiMarco',
-      //   title: "Lead UI/UX Designer",
-      //   photo: 'victoria.jpg',
-      //   socials: [
-      //     {
-      //       link: 'mailto:victoriadimarco99@gmail.com',
-            // icon: 'mdi-email-outline',
-      //     },
-      //     {
-      //       link: 'https://www.linkedin.com/in/victoriadimarco',
-      //       icon: 'mdi-linkedin'
-      //     },
-      //     {
-      //       link: 'https://www.instagram.com/designdimarco',
-      //       icon: 'mdi-instagram'
-      //     },
-      //   ]
-      // },
+      {
+        name: 'Victoria DiMarco',
+        title: "Marketing Designer",
+        photo: 'victoria.jpg',
+        socials: [
+          {
+            link: 'mailto:victoriadimarco99@gmail.com',
+            icon: 'mdi-email-outline',
+          },
+          {
+            link: 'https://www.linkedin.com/in/victoriadimarco',
+            icon: 'mdi-linkedin'
+          },
+          {
+            link: 'https://www.instagram.com/designdimarco',
+            icon: 'mdi-instagram'
+          },
+        ]
+      },
     ],
   }),
 };

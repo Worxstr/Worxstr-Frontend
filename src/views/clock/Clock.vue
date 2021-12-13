@@ -77,17 +77,18 @@
         div
           h4.text-subtitle-1 Your tasks
           .mb-4
-            v-checkbox(
+            v-checkbox.mt-1(
               v-for='task in nextShift.tasks'
               :key='task.id'
               hide-details
-              v-model='nextShift.task'
+              v-model='task.completed'
             )
               template(v-slot:label)
                 v-sheet(v-if='task.description' outlined rounded style='width: 100%')
                   v-card-text.px-4.py-2
                     h5.text-subtitle-1 {{ task.title }}
-                    div(v-html='task.description')
+                    v-expand-transition
+                      div(v-show='!task.completed' v-html='task.description')
 
       div(v-else-if='!loadingNextShift')
         h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
