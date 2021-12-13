@@ -66,8 +66,8 @@ div(v-else)
         :style='$vuetify.breakpoint.lgAndUp && `width: 50%`'
       )
 
-      div
-        v-card-text.d-flex.pb-0
+      .flex-grow-1
+        v-card-text.d-flex.pb-0.flex-column.flex-sm-row
           //- Address
           .d-flex
             .mt-1.mr-1
@@ -94,6 +94,7 @@ div(v-else)
             .d-flex.flex-column
               p.text-subtitle-2.mb-1 Clock-in code
               p(data-cy='clock-in-code') {{ job.consultant_code }}
+
             .mb-3.ml-3
               v-tooltip(bottom)
                 span View QR code
