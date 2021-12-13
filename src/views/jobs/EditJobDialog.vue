@@ -23,26 +23,28 @@ v-dialog(
 
       v-card-text.py-0
         v-subheader Job details
-        v-text-field(
-          autofocus
-          outlined,
-          dense,
-          label="Job name",
-          v-model="editedJob.name",
-          :rules="rules.name",
-          required
-          data-cy='job-name'
-        )
+        .d-flex.flex-column.flex-sm-row
+          v-text-field.mr-sm-4(
+            autofocus
+            outlined
+            dense
+            label="Job name",
+            v-model="editedJob.name"
+            :rules="rules.name"
+            required
+            data-cy='job-name'
+          )
 
-        vuetify-google-autocomplete#map(
-          outlined,
-          dense,
-          label="Address",
-          v-on:placechanged="setPlace",
-          :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''",
-          :rules="rules.address"
-          data-cy='job-address'
-        )
+          vuetify-google-autocomplete#map(
+            outlined,
+            dense,
+            label="Address",
+            v-on:placechanged="setPlace",
+            :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''",
+            :rules="rules.address"
+            data-cy='job-address'
+          )
+        richtext-field(placeholder='Job notes' v-model='editedJob.notes')
 
         div(v-if='showMap')
           .d-flex.align-center
@@ -76,46 +78,48 @@ v-dialog(
             jobs-map(:jobs='[editedJob]')
 
         v-subheader Managers
-        v-select(
-          v-if="managers.organization && managers.organization.length",
-          v-model="editedJob.organization_manager_id",
-          :items="managers.organization",
-          :item-text="(m) => `${m.first_name} ${m.last_name}`",
-          :item-value="'id'",
-          outlined,
-          dense,
-          required,
-          label="Organizational manager"
-          data-cy='job-org-manager'
-        )
-        v-select(
-          v-if="managers.contractor && managers.contractor.length",
-          v-model="editedJob.contractor_manager_id",
-          :items="managers.contractor",
-          :item-text="(m) => `${m.first_name} ${m.last_name}`",
-          :item-value="'id'",
-          outlined,
-          dense,
-          required,
-          label="Contractor manager"
-          data-cy='job-contractor-manager'
-        )
+        .d-flex.flex-column.flex-sm-row
+          v-select.mr-sm-4(
+            v-if="managers.organization && managers.organization.length",
+            v-model="editedJob.organization_manager_id",
+            :items="managers.organization",
+            :item-text="(m) => `${m.first_name} ${m.last_name}`",
+            :item-value="'id'",
+            outlined,
+            dense,
+            required,
+            label="Organizational manager"
+            data-cy='job-org-manager'
+          )
+          v-select(
+            v-if="managers.contractor && managers.contractor.length",
+            v-model="editedJob.contractor_manager_id",
+            :items="managers.contractor",
+            :item-text="(m) => `${m.first_name} ${m.last_name}`",
+            :item-value="'id'",
+            outlined,
+            dense,
+            required,
+            label="Contractor manager"
+            data-cy='job-contractor-manager'
+          )
         v-subheader Consultant info
-        v-text-field(
-          outlined,
-          dense,
-          label="Name",
-          v-model="editedJob.consultant_name",
-          :rules="rules.consultantName",
-          data-cy='job-consultant-name'
-          required
-        )
-        phone-input(
-          v-model='editedJob.consultant_phone'
-          data-cy='job-consultant-phone'
-          outlined
-          :required='true'
-        )
+        .d-flex.flex-column.flex-sm-row
+          v-text-field.mr-sm-4(
+            outlined,
+            dense,
+            label="Name",
+            v-model="editedJob.consultant_name",
+            :rules="rules.consultantName",
+            data-cy='job-consultant-name'
+            required
+          )
+          phone-input(
+            v-model='editedJob.consultant_phone'
+            data-cy='job-consultant-phone'
+            outlined
+            :required='true'
+          )
         v-text-field(
           outlined,
           dense,
@@ -149,6 +153,7 @@ import colors from 'vuetify/lib/util/colors'
 import { User } from '@/types/Users'
 import { Job } from '@/types/Jobs';
 import { exists, phoneRules, emailRules } from '@/util/inputValidation'
+import RichtextField from '@/components/inputs/RichtextField.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import JobsMap from '@/components/JobsMap.vue'
 import { loadManagers } from '@/services/users'
@@ -156,6 +161,7 @@ import { createJob, updateJob } from '@/services/jobs'
 
 @Component({
   components: {
+    RichtextField,
     PhoneInput,
     JobsMap,
   }

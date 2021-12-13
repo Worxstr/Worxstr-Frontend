@@ -86,10 +86,15 @@ div(v-else)
             br
             | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
 
+        .px-5.mb-5
+          p.text-subtitle-2.mb-1 Job notes
+          div(v-html='job.notes')
+
         //- Job info fields
         v-layout.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between(
           v-if='job.organization_manager && job.contractor_manager && job.consultant_name && job.consultant_code'
         )
+        
           .flex-grow-1
             p.text-subtitle-2.mb-1 Organization manager
             p
