@@ -38,17 +38,7 @@
             template(v-slot:finish)
               span That's right now!
 
-        v-sheet.mb-2(v-if='nextShift.notes' outlined rounded)
-          v-card-text
-            div(v-html='nextShift.notes')
-        
-        div
-          h4.text-subtitle-1 Your tasks
-          .mb-4
-            v-checkbox(hide-details v-model='nextShift.task' label='Task 1')
-            v-checkbox(hide-details v-model='nextShift.task2' label='Task 2')
-
-        .d-flex.flex-row.justify-center.justify-md-start
+        .mb-4.d-flex.flex-row.justify-center.justify-md-start
 
           v-expand-x-transition
             .py-2(v-if='!onBreak')
@@ -79,6 +69,25 @@
                 :data-cy="onBreak ? 'end-break-button' : 'start-break-button'"
               )
                 | {{ onBreak ? "End" : "Start" }} break
+
+        v-sheet.mb-5(v-if='nextShift.notes' outlined rounded)
+          v-card-text
+            div(v-html='nextShift.notes')
+        
+        div
+          h4.text-subtitle-1 Your tasks
+          .mb-4
+            v-checkbox(
+              v-for='task in nextShift.tasks'
+              :key='task.id'
+              hide-details
+              v-model='nextShift.task'
+            )
+              template(v-slot:label)
+                v-sheet(v-if='task.description' outlined rounded style='width: 100%')
+                  v-card-text.px-4.py-2
+                    h5.text-subtitle-1 {{ task.title }}
+                    div(v-html='task.description')
 
       div(v-else-if='!loadingNextShift')
         h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
