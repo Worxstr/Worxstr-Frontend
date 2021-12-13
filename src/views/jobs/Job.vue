@@ -67,7 +67,7 @@ div(v-else)
       )
 
       div
-        v-card-text.d-flex
+        v-card-text.d-flex.pb-0
           //- Address
           .d-flex
             .mt-1.mr-1
@@ -110,9 +110,11 @@ div(v-else)
               clipboard-copy(:text='job.consultant_code')
 
         //- Job notes
-        v-card-text
-          p.text-subtitle-2.mb-1 Job notes
-          div(v-html='job.notes')
+        v-card-text(v-if='job.notes')
+          p.text-subtitle-2 Job notes
+          v-sheet(outlined rounded)
+            v-card-text
+              div(v-html='job.notes')
 
         //- Job info fields
         v-layout.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between(
@@ -179,6 +181,11 @@ div(v-else)
             span.my-1 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
         v-expansion-panel-content
+          p.text-subtitle-2 Shift notes
+          v-sheet(outlined rounded v-if='shift.notes')
+            v-card-text
+              div(v-html='shift.notes')
+
           div(v-if="shift.active")
             clock-events(
               v-if="shift.timeclock_actions && shift.timeclock_actions.length",
@@ -192,6 +199,7 @@ div(v-else)
               @click="openEditShiftDialog(shift)"
               data-cy="edit-shift-button"
             ) Edit
+
             v-btn(
               text
               color="error"

@@ -22,6 +22,12 @@ v-dialog(
       v-divider
 
       v-card-text
+      
+        richtext-field.mb-6(
+          autofocus
+          placeholder='Shift notes'
+          v-model='editedShift.notes'
+        )
 
         //- Contractor selector
         v-select(
@@ -82,6 +88,7 @@ import { updateShift } from '@/services/jobs'
 
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
+import RichtextField from '@/components/inputs/RichtextField.vue'
 
 type ShiftForm = {
   id: number | null;
@@ -95,6 +102,7 @@ type ShiftForm = {
   components: {
     DatetimeInput,
     WeekdaySelector,
+    RichtextField,
   },
 })
 export default class EditShiftDialog extends Vue {

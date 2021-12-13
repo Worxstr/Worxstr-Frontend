@@ -22,6 +22,8 @@ v-dialog(
 
       v-card-text
 
+        richtext-field.mb-6(placeholder='Shift notes' v-model='shift.notes')
+
         //- Contractor selector
         v-select(
           autofocus
@@ -206,6 +208,7 @@ import { createShift } from '@/services/jobs'
 
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
+import RichtextField from '@/components/inputs/RichtextField.vue'
 
 // TODO: Move these to reusable import
 const exists = (errorMessage: string) => (value: any) => !!value || errorMessage
@@ -251,6 +254,7 @@ function initialState() {
   components: {
     DatetimeInput,
     WeekdaySelector,
+    RichtextField,
   },
 })
 export default class CreateShiftDialog extends Vue {

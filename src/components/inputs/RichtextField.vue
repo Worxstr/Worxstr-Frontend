@@ -1,8 +1,8 @@
 <template lang="pug">
 tiptap-vuetify(
+  v-bind='$attrs'
   :value='value'
   @input="input"
-  placeholder='Job notes'
   :extensions='tiptapExtensions'
   :toolbar-attributes="{ color: $vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-4' }"
   :card-props="{ flat: true, outlined: true}"
