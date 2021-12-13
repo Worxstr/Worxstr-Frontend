@@ -38,6 +38,10 @@
             template(v-slot:finish)
               span That's right now!
 
+        v-sheet.mb-2(v-if='nextShift.notes' outlined rounded)
+          v-card-text
+            div(v-html='nextShift.notes')
+
         .d-flex.flex-row.justify-center.justify-md-start
 
           v-expand-x-transition
