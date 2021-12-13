@@ -41,6 +41,12 @@
         v-sheet.mb-2(v-if='nextShift.notes' outlined rounded)
           v-card-text
             div(v-html='nextShift.notes')
+        
+        div
+          h4.text-subtitle-1 Your tasks
+          .mb-4
+            v-checkbox(hide-details v-model='nextShift.task' label='Task 1')
+            v-checkbox(hide-details v-model='nextShift.task2' label='Task 2')
 
         .d-flex.flex-row.justify-center.justify-md-start
 
@@ -83,7 +89,7 @@
       )
         v-skeleton-loader(type='sentences')
 
-    v-card.clock-history.soft-shadow.align-self-center(width='100%' max-width='500px' rounded='lg')
+    v-card.clock-history.soft-shadow.align-self-center(outlined width='100%' max-width='500px' rounded='lg')
 
       v-card-title.text-h5.ma-1 Your history
 

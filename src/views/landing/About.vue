@@ -155,24 +155,39 @@ export default {
         ]
       },
       {
-        name: 'Andrew Thorp',
-        title: "Lead Backend Developer / DevOps engineer",
+        name: 'Austin Cockerham',
+        title: "Director of Sales / Southeast",
         photo: 'andrew.jpg',
         socials: [
           {
-            link: 'https://thorp.dev/',
-            icon: 'mdi-web'
+            link: 'mailto:austin@worxstr.com',
+            icon: 'mdi-email-outline',
           },
           {
-            link: 'https://github.com/aThorp96',
-            icon: 'mdi-github',
-          },
-          {
-            link: 'https://www.linkedin.com/in/aThorp96',
+            link: 'https://www.linkedin.com/in/austin-cockerham-5b3025206/',
             icon: 'mdi-linkedin'
           },
         ]
       },
+      // {
+      //   name: 'Andrew Thorp',
+      //   title: "Lead Backend Developer / DevOps engineer",
+      //   photo: 'andrew.jpg',
+      //   socials: [
+      //     {
+      //       link: 'https://thorp.dev/',
+      //       icon: 'mdi-web'
+      //     },
+      //     {
+      //       link: 'https://github.com/aThorp96',
+      //       icon: 'mdi-github',
+      //     },
+      //     {
+      //       link: 'https://www.linkedin.com/in/aThorp96',
+      //       icon: 'mdi-linkedin'
+      //     },
+      //   ]
+      // },
       // {
       //   name: 'Coley Lippard',
       //   title: "Creative Marketing Director",

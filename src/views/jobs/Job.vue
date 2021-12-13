@@ -79,21 +79,22 @@ div(v-else)
                     color='primary'
                     v-bind='attrs'
                     v-on='on'
-                    @click='openNavigation'
+                    :href='navigationUrl' target='_blank'
                   )
                     v-icon mdi-map-search
 
-            p {{ job.address }}
+            a(:href='navigationUrl' target='_blank') {{ job.address }}
               br
               | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
 
           v-spacer
 
-          //- Clock in code
+          //- Clock-in code
           .d-flex.flex-row.align-center
+              
             .d-flex.flex-column
-              p.text-subtitle-2.mb-1 Clock-in code
-              p(data-cy='clock-in-code') {{ job.consultant_code }}
+              p.text-sm-right.text-subtitle-2.mb-1 Clock-in code
+              p.text-sm-right(data-cy='clock-in-code') {{ job.consultant_code }}
 
             .mb-3.ml-3
               v-tooltip(bottom)
@@ -112,7 +113,6 @@ div(v-else)
 
         //- Job notes
         v-card-text(v-if='job.notes')
-          p.text-subtitle-2 Job notes
           v-sheet(outlined rounded)
             v-card-text
               div(v-html='job.notes')
@@ -182,7 +182,6 @@ div(v-else)
             span.my-1 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
         v-expansion-panel-content
-          p.text-subtitle-2 Shift notes
           v-sheet(outlined rounded v-if='shift.notes')
             v-card-text
               div(v-html='shift.notes')
@@ -299,10 +298,10 @@ export default class JobView extends Vue {
     return this.$store.state.users.userLocation
   }
 
-  openNavigation() {
+  get navigationUrl() {
     const position = this.userLocation && `${this.userLocation.lat},${this.userLocation.lng}`
     const address = `${this.job.address}, ${this.job.city}, ${this.job.state} ${this.job.zip_code}`
-    window.open(`https://www.google.com/maps/dir/?api=1${position ? `&origin=${position}` : ''}&destination=${address}`)
+    return `https://www.google.com/maps/dir/?api=1${position ? `&origin=${position}` : ''}&destination=${address}`
   }
 
   contractorName(contractorId: number) {
