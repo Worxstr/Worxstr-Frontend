@@ -1,11 +1,11 @@
 <template lang="pug">
-  v-container.clock.d-flex.flex-column.flex-md-row-reverse.justify-md-center.align-md-start
+  v-container.clock.d-flex.flex-column.flex-md-row-reverse
 
     clock-in-dialog(:opened.sync='clockInDialog')
 
-    .clock-display.mx-15.d-flex.align-center.align-md-start.flex-column.justify-center
+    .mx-15.d-flex.align-center.align-md-start.flex-column.justify-center(style='flex:1')
 
-      div(v-if='nextShift && nextShift.time_begin && nextShift.time_end')
+      .clock-display(v-if='nextShift && nextShift.time_begin && nextShift.time_end' style='width: 100%')
         h6.text-h6.text-center.text-md-left
           | Your shift at
           | {{ nextShift.site_location }}
@@ -70,6 +70,7 @@
               )
                 | {{ onBreak ? "End" : "Start" }} break
 
+
         v-sheet.mb-5(v-if='nextShift.notes' outlined rounded)
           v-card-text
             div(v-html='nextShift.notes')
@@ -99,7 +100,12 @@
       )
         v-skeleton-loader(type='sentences')
 
-    v-card.clock-history.soft-shadow.align-self-center(outlined width='100%' max-width='500px' rounded='lg')
+    v-card.clock-history.soft-shadow.align-self-center.d-flex.flex-column(
+      outlined
+      style='flex:1'
+      max-width='500px'
+      rounded='lg'
+    )
 
       v-card-title.text-h5.ma-1 Your history
 
@@ -241,8 +247,7 @@ export default class Clock extends Vue {
 <style lang="scss">
 .clock-display {
   margin-top: 20vh;
-  margin-bottom: 15vh;
-  top: 120px;
+  top: 100px;
   position: sticky;
   z-index: 1;
 }
