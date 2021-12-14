@@ -57,6 +57,15 @@ export async function closeJob({ commit }: any, jobId: number) {
   commit('REMOVE_JOB', jobId)
 }
 
+export async function getShift({ commit }: any, shiftId: number) {
+  const { data } = await api({
+    method: 'GET',
+    url: `shifts/${shiftId}`,
+  })
+  commit('ADD_SHIFT', data)
+  return data
+}
+
 export async function createShift({ commit }: any, shift: Shift, jobId: number) {
   const { data } = await api({
     method: 'POST',

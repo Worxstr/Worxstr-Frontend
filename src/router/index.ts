@@ -28,6 +28,7 @@ import Payments from '@/views/payments/Payments.vue'
 // import Availability from '@/views/Availability.vue'
 import Jobs from '@/views/jobs/Jobs.vue'
 import Job from '@/views/jobs/Job.vue'
+import Shift from '@/views/shifts/Shift.vue'
 import Users from '@/views/users/Users.vue'
 import User from '@/views/users/User.vue'
 import Schedule from '@/views/Schedule.vue'
@@ -204,6 +205,18 @@ const routes = [
       paramMap: {
         jobId: 'jobs',
         prop: 'name'
+      }
+    }
+  },
+  {
+    path: '/shifts/:shiftId',
+    name: 'shift',
+    component: Shift,
+    meta: {
+      paramMap: {
+        // TODO: Need to use a getter for this. Come back to it
+        // shiftId: 'shifts',
+        // prop: ''
       }
     }
   },

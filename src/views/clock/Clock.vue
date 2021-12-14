@@ -9,12 +9,11 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch.gap-medium
 
       //- Shift name
       h6.text-h6.text-center
-        | Your shift at
-        | {{ nextShift.site_location }}
-        | {{ nextShift.shiftActive ? "ends" : "begins" }}
-        //- router-link(:to="{ name: 'job', params: { jobId: nextShift.job_id }}")
-          | &nbsp;{{ nextShift.site_location }}&nbsp;
-        | at
+        | Your shift at&nbsp;
+        span.font-weight-bold {{ nextShift.site_location }}
+        | &nbsp;for&nbsp;
+        span.font-weight-bold {Job name}
+        | &nbsp;{{ nextShift.shiftActive ? "ends" : "begins" }} at
 
       //- Shift time
       h3.text-h3.py-2.font-weight-bold.text-center
@@ -90,23 +89,27 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch.gap-medium
   .d-flex.flex-column.flex-md-row.gap-medium
 
     //- Shift notes
-    div(style='flex: 1' v-if='nextShift.notes')
-      h5.text-h5.mb-4 Shift notes
+    .flex-1.d-flex.flex-column.gap-small(v-if='nextShift.notes')
+      h5.text-h5 Notes
       v-sheet(outlined rounded)
+        v-card-text
+          div(v-html='`{Job notes}`')
+        v-divider
         v-card-text
           div(v-html='nextShift.notes')
           
     //- Task list
-    div(style='flex: 1' v-if='totalTasks > 0')
-      h5.text-h5 Your tasks
-      p.text-caption(:class="{'success--text font-weight-bold': tasksComplete == totalTasks}")
-        | {{tasksComplete}}/{{totalTasks}} completed
+    .flex-1.d-flex.flex-column.gap-small(v-if='totalTasks > 0')
+      div
+        h5.text-h5 Your tasks
+        h6.text-caption(:class="{'success--text font-weight-bold': allTasksComplete}")
+          | {{tasksComplete}}/{{totalTasks}} completed
 
       task-list(:tasks='tasks')
 
-  //- Clock history
+  //- Activity timeline
   div
-    h5.text-h5 Your history
+    h5.text-h5 Your activity
 
     v-card.clock-history.soft-shadow.mt-4.align-self-center.d-flex.flex-column(
       outlined
@@ -225,6 +228,10 @@ export default class Clock extends Vue {
 
   get tasksComplete() {
     return this.nextShift.tasks.filter((task: Task) => task.complete).length
+  }
+
+  get allTasksComplete() {
+    return this.tasksComplete == this.totalTasks
   }
 
   async clockOut() {

@@ -120,6 +120,14 @@ $black: #000;
   gap: 60px;
 }
 
+$flex: (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+@each $i in $flex {
+  .flex-#{$i} {
+    flex: #{$i};
+  }
+}
+
+
 .v-select.fit {
   width: min-content;
 }

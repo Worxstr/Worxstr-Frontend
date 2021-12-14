@@ -113,6 +113,7 @@ div(v-else)
 
         //- Job notes
         v-card-text(v-if='job.notes')
+          p.text-subtitle-2.mb-2 Notes
           v-sheet(outlined rounded)
             v-card-text
               div(v-html='job.notes')
@@ -182,15 +183,23 @@ div(v-else)
             span.my-1 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
         v-expansion-panel-content
-          v-sheet(outlined rounded v-if='shift.notes')
-            v-card-text
-              div(v-html='shift.notes')
+          .d-flex.flex-column.gap-small
+            div(v-if='shift.notes')
+              p.text-subtitle-1.mb-2 Notes
+              v-sheet(outlined rounded)
+                v-card-text
+                  div(v-html='shift.notes')
 
-          div(v-if="shift.active")
-            clock-events(
-              v-if="shift.timeclock_actions && shift.timeclock_actions.length",
-              :events="shift.timeclock_actions"
-            )
+            div(v-if='shift.tasks')
+              p.text-subtitle-1.mb-2 Tasks
+              task-list(:tasks='shift.tasks')
+
+            div(v-if="shift.active")
+              p.text-subtitle-1.mb-2 Activity
+              clock-events(
+                v-if="shift.timeclock_actions && shift.timeclock_actions.length",
+                :events="shift.timeclock_actions"
+              )
 
           v-card-actions
             v-spacer
@@ -222,6 +231,7 @@ import QrCodeDialog from './QrCodeDialog.vue'
 import JobsMap from '@/components/JobsMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
 import ClipboardCopy from '@/components/ClipboardCopy.vue'
+import TaskList from '@/components/TaskList.vue'
 
 import { currentUserIs, UserRole } from '@/types/Users'
 import { Job, Shift } from '@/types/Jobs'
@@ -239,6 +249,7 @@ import * as geolocation from '@/services/geolocation'
     JobsMap,
     ClockEvents,
     ClipboardCopy,
+    TaskList,
   },
 })
 export default class JobView extends Vue {
