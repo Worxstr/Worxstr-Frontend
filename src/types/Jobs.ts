@@ -43,4 +43,14 @@ export type Shift = {
 	time_end: string;
 	timecard_id: number;
 	timeclock_actions: ClockEvent[];
+	tasks: Task[];
+}
+
+export type Task = {
+	id: number;
+	shift_id: number;
+	title: string;
+	description: string;
+	complete: boolean;
+	time_complete: string;
 }

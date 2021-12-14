@@ -83,7 +83,7 @@ div(v-else)
                   )
                     v-icon mdi-map-search
 
-            a(:href='navigationUrl' target='_blank') {{ job.address }}
+            a.alt-style(:href='navigationUrl' target='_blank') {{ job.address }}
               br
               | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
 

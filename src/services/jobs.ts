@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
-import { Job, Shift } from '@/types/Jobs'
+import { Job, Shift, Task } from '@/types/Jobs'
 import { User } from '@/types/Users'
 
 export async function loadJobs({ commit }: any) {
@@ -92,4 +92,25 @@ export async function deleteShift({ commit }: any, shiftId: number) {
     url: `shifts/${shiftId}`,
   })
   commit('REMOVE_SHIFT', shiftId)
+}
+
+export async function createTask({ commit }: any, shiftId: number, task: Task) {
+  // TODO
+}
+
+export async function updateTask({ commit }: any, task: Task) {
+  // TODO
+}
+
+
+export async function completeTask({ commit }: any, taskId: number) {
+  const { data } = await api({
+    method: 'PUT',
+    url: `tasks/${taskId}/complete`,
+  })
+  commit('ADD_TASK', data)
+}
+
+export async function deleteTask({ commit }: any, taskId: number) {
+  // TODO
 }
