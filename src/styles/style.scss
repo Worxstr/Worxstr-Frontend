@@ -110,6 +110,15 @@ $black: #000;
 .shift-down {
   padding-top: 178px !important;
 }
+.gap-small {
+  gap: 15px;
+}
+.gap-medium {
+  gap: 30px;
+}
+.gap-large {
+  gap: 60px;
+}
 
 .v-select.fit {
   width: min-content;

@@ -1,101 +1,103 @@
 <template lang="pug">
-v-container.clock.pa-6.d-flex.flex-column.align-stretch
-  .d-flex.flex-column.flex-md-row.align-stretch.align-md-center
+v-container.clock.pa-6.d-flex.flex-column.align-stretch.gap-medium
 
-    clock-in-dialog(:opened.sync='clockInDialog')
+  clock-in-dialog(:opened.sync='clockInDialog')
 
-    .mr-md-15.mt-15.mt-md-0.d-flex.flex-column(style='flex:1')
+  .mt-8.d-flex.flex-column
 
-      .clock-display(v-if='nextShift && nextShift.time_begin && nextShift.time_end' style='width: 100%')
+    .clock-display(v-if='nextShift && nextShift.time_begin && nextShift.time_end' style='width: 100%')
 
-        //- Shift name
-        h6.text-h6.text-center.text-md-left
-          | Your shift at
-          | {{ nextShift.site_location }}
-          | {{ nextShift.shiftActive ? "ends" : "begins" }}
-          //- router-link(:to="{ name: 'job', params: { jobId: nextShift.job_id }}")
-            | &nbsp;{{ nextShift.site_location }}&nbsp;
-          | at
+      //- Shift name
+      h6.text-h6.text-center
+        | Your shift at
+        | {{ nextShift.site_location }}
+        | {{ nextShift.shiftActive ? "ends" : "begins" }}
+        //- router-link(:to="{ name: 'job', params: { jobId: nextShift.job_id }}")
+          | &nbsp;{{ nextShift.site_location }}&nbsp;
+        | at
 
-        //- Shift time
-        h3.text-h3.py-2.font-weight-bold.text-center.text-md-left
-          | {{
-          | (nextShift.shiftActive ? (new Date(nextShift.time_end)) : (new Date(nextShift.time_begin)))
-          | .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-          | .replace(/^0(?:0:0?)?/, "")
-          | }}
+      //- Shift time
+      h3.text-h3.py-2.font-weight-bold.text-center
+        | {{
+        | (nextShift.shiftActive ? (new Date(nextShift.time_end)) : (new Date(nextShift.time_begin)))
+        | .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        | .replace(/^0(?:0:0?)?/, "")
+        | }}
 
 
-        //- Countdown clock
-        p.text-subtitle-2.text-center.text-md-left
+      //- Countdown clock
+      p.text-subtitle-2.text-center
 
-          countdown(:end-time='\
-          nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin\
-          ')
-            template(v-slot:process='props')
-              span
-                | That's in &nbsp;
-                span(v-if='props.timeObj.d != 0')
-                  | {{ props.timeObj.d }} days,&nbsp;
-                span(v-if='props.timeObj.h != 0')
-                  | {{ props.timeObj.h }} hours,&nbsp;
-                span(v-if='props.timeObj.m != 0')
-                  | {{ props.timeObj.m }} minutes, {{ props.timeObj.s }} seconds.
-            template(v-slot:finish)
-              span That's right now!
+        countdown(:end-time='\
+        nextShift.shiftActive ? nextShift.time_end : nextShift.time_begin\
+        ')
+          template(v-slot:process='props')
+            span
+              | That's in &nbsp;
+              span(v-if='props.timeObj.d != 0')
+                | {{ props.timeObj.d }} days,&nbsp;
+              span(v-if='props.timeObj.h != 0')
+                | {{ props.timeObj.h }} hours,&nbsp;
+              span(v-if='props.timeObj.m != 0')
+                | {{ props.timeObj.m }} minutes, {{ props.timeObj.s }} seconds.
+          template(v-slot:finish)
+            span That's right now!
 
-        //- Clock buttons
-        .mb-4.d-flex.flex-row.justify-center.justify-md-start
+      //- Clock buttons
+      .mb-4.d-flex.flex-row.justify-center
 
-          v-expand-x-transition
-            .py-2(v-if='!onBreak')
-              v-btn.pa-6.mr-2(
-                raised
-                :color="clocked ? 'pink' : 'green'"
-                @click='clocked ? clockOut() : openVerifyDialog()'
-                width='130px'
-                dark
-                style='transition: background-color 0.3s'
-                :loading='togglingClock'
-                :disabled='!iAmVerified'
-                :data-cy="clocked ? 'clock-out-button' : 'clock-in-button'"
-              )
-                | Clock {{ clocked ? "out" : "in" }}
+        v-expand-x-transition
+          .py-2(v-if='!onBreak')
+            v-btn.pa-6.mr-2(
+              raised
+              :color="clocked ? 'pink' : 'green'"
+              @click='clocked ? clockOut() : openVerifyDialog()'
+              width='130px'
+              dark
+              style='transition: background-color 0.3s'
+              :loading='togglingClock'
+              :disabled='!iAmVerified'
+              :data-cy="clocked ? 'clock-out-button' : 'clock-in-button'"
+            )
+              | Clock {{ clocked ? "out" : "in" }}
 
-          v-expand-x-transition
-            .py-2(v-if='clocked')
-              v-btn.pa-6(
-                raised
-                :color="onBreak ? 'green' : 'amber'"
-                @click='toggleBreak(!!onBreak)'
-                width='130px'
-                dark
-                style='transition: background-color 0.3s'
-                :loading='togglingBreak'
-                :disabled='!iAmVerified'
-                :data-cy="onBreak ? 'end-break-button' : 'start-break-button'"
-              )
-                | {{ onBreak ? "End" : "Start" }} break
-
-        //- Shift notes
-        div(v-if='nextShift.notes')
-          h5.text-h5.mb-2 Shift notes
-          v-sheet.mb-5(outlined rounded)
-            v-card-text
-              div(v-html='nextShift.notes')
-        
-      div(v-else-if='!loadingNextShift')
-        h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
+        v-expand-x-transition
+          .py-2(v-if='clocked')
+            v-btn.pa-6(
+              raised
+              :color="onBreak ? 'green' : 'amber'"
+              @click='toggleBreak(!!onBreak)'
+              width='130px'
+              dark
+              style='transition: background-color 0.3s'
+              :loading='togglingBreak'
+              :disabled='!iAmVerified'
+              :data-cy="onBreak ? 'end-break-button' : 'start-break-button'"
+            )
+              | {{ onBreak ? "End" : "Start" }} break
       
-      //- Loader
-      div(
-        v-else
-        style='width: 300px'
-      )
-        v-skeleton-loader(type='sentences')
+    div(v-else-if='!loadingNextShift')
+      h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
+    
+    //- Loader
+    div(
+      v-else
+      style='width: 300px'
+    )
+      v-skeleton-loader(type='sentences')
 
+
+  .d-flex.flex-column.flex-md-row.gap-medium
+
+    //- Shift notes
+    div(style='flex: 1' v-if='nextShift.notes')
+      h5.text-h5.mb-4 Shift notes
+      v-sheet(outlined rounded)
+        v-card-text
+          div(v-html='nextShift.notes')
+          
     //- Task list
-    div(style='flex:1' v-if='totalTasks > 0')
+    div(style='flex: 1' v-if='totalTasks > 0')
       h5.text-h5 Your tasks
       p.text-caption(:class="{'success--text font-weight-bold': tasksComplete == totalTasks}")
         | {{tasksComplete}}/{{totalTasks}} completed
@@ -122,7 +124,7 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch
 
   //- Clock history
   div
-    v-card-title.text-h5 Your history
+    h5.text-h5 Your history
 
     v-card.clock-history.soft-shadow.mt-4.align-self-center.d-flex.flex-column(
       outlined
@@ -232,7 +234,7 @@ export default class Clock extends Vue {
   }
 
   get tasks() {
-    return this.nextShift.tasks.sort((a, b) => a.id - b.id)
+    return this.nextShift.tasks.sort((a: Task, b: Task) => a.id - b.id)
   }
 
   get totalTasks() {
