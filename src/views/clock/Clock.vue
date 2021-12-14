@@ -78,9 +78,11 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch
                 | {{ onBreak ? "End" : "Start" }} break
 
         //- Shift notes
-        v-sheet.mb-5(v-if='nextShift.notes' outlined rounded)
-          v-card-text
-            div(v-html='nextShift.notes')
+        div(v-if='nextShift.notes')
+          h5.text-h5.mb-2 Shift notes
+          v-sheet.mb-5(outlined rounded)
+            v-card-text
+              div(v-html='nextShift.notes')
         
       div(v-else-if='!loadingNextShift')
         h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
@@ -93,7 +95,7 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch
         v-skeleton-loader(type='sentences')
 
     //- Task list
-    div(style='flex:1')
+    div(style='flex:1' v-if='totalTasks > 0')
       h5.text-h5 Your tasks
       p.text-caption(:class="{'success--text font-weight-bold': tasksComplete == totalTasks}")
         | {{tasksComplete}}/{{totalTasks}} completed
@@ -104,8 +106,8 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch
           :key='task.id'
           hide-details
           v-model='task.complete'
-          loading
           @change='completeTask(task.id)'
+          :disabled='loadingTask == task.id'
         )
           template(v-slot:label)
             v-sheet(v-if='task.description' outlined rounded style='width: 100%')
@@ -118,28 +120,28 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch
                 v-progress-circular(indeterminate size='30')
 
   //- Clock history
-  v-card.clock-history.soft-shadow.mt-4.align-self-center.d-flex.flex-column(
-    outlined
-    rounded='lg'
-    width='100%'
-    max-width='500px'
-  )
+  div
+    v-card-title.text-h5 Your history
 
-    v-card-title.text-h5.ma-1 Your history
+    v-card.clock-history.soft-shadow.mt-4.align-self-center.d-flex.flex-column(
+      outlined
+      rounded='lg'
+      width='100%'
+    )
 
-    div(v-if='clockHistory.length')
-      clock-events(:events='clockHistory')
+      div(v-if='clockHistory.length')
+        clock-events(:events='clockHistory')
 
-      v-card-actions.d-flex.justify-center
-        v-btn(text color='primary' @click='loadClockHistory' :loading='loadingHistory')
-          v-icon(left dark)  mdi-arrow-down 
-          span View {{ clockHistoryCurrentWeek }}
+        v-card-actions.d-flex.justify-center
+          v-btn(text color='primary' @click='loadClockHistory' :loading='loadingHistory')
+            v-icon(left dark)  mdi-arrow-down 
+            span View {{ clockHistoryCurrentWeek }}
 
-    .px-4(v-else-if='loadingHistory')
-      v-skeleton-loader.py-2(v-for='i in 10' key='item' type="sentences")
+      .px-4(v-else-if='loadingHistory')
+        v-skeleton-loader.py-2(v-for='i in 10' key='item' type="sentences")
 
-    v-card-text(v-else)
-      | No history yet
+      v-card-text(v-else)
+        | No history yet
 
     
 </template>
@@ -284,18 +286,3 @@ export default class Clock extends Vue {
 
 }
 </script>
-
-<style lang="scss">
-// .clock-display {
-//   margin-top: 20vh;
-//   top: 100px;
-//   position: sticky;
-//   z-index: 1;
-// }
-
-// .clock-history {
-//   position: relative !important;
-//   z-index: 3;
-//   transform: translate3d(0,0,0)
-// }
-</style>
