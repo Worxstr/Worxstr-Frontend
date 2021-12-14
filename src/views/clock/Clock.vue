@@ -102,7 +102,7 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch
 
       .mb-4
         v-checkbox.mt-1(
-          v-for='task in nextShift.tasks'
+          v-for='task in tasks'
           :key='task.id'
           hide-details
           v-model='task.complete'
@@ -116,8 +116,9 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch
                 v-expand-transition
                   div(v-show='!task.complete' v-html='task.description')
 
-              v-overlay(absolute v-if='loadingTask == task.id')
-                v-progress-circular(indeterminate size='30')
+              v-fade-transition
+                v-overlay(absolute opacity='.2' v-if='loadingTask == task.id')
+                  v-progress-circular(indeterminate size='30')
 
   //- Clock history
   div
@@ -177,7 +178,7 @@ export default class Clock extends Vue {
   togglingBreak = false
   loadingHistory = false
   loadingNextShift = false
-  loadingTask = null
+  loadingTask: number | null = null
 
   mounted() {
     this.loadClockHistory()
@@ -228,6 +229,10 @@ export default class Clock extends Vue {
 
   get iAmVerified() {
     return this.$store.getters.iAmVerified
+  }
+
+  get tasks() {
+    return this.nextShift.tasks.sort((a, b) => a.id - b.id)
   }
 
   get totalTasks() {
