@@ -102,25 +102,7 @@ v-container.clock.pa-6.d-flex.flex-column.align-stretch.gap-medium
       p.text-caption(:class="{'success--text font-weight-bold': tasksComplete == totalTasks}")
         | {{tasksComplete}}/{{totalTasks}} completed
 
-      .mb-4
-        v-checkbox.mt-1(
-          v-for='task in tasks'
-          :key='task.id'
-          hide-details
-          v-model='task.complete'
-          @change='completeTask(task.id)'
-          :disabled='loadingTask == task.id'
-        )
-          template(v-slot:label)
-            v-sheet(v-if='task.description' outlined rounded style='width: 100%')
-              v-card-text.px-4.py-2
-                h5.text-subtitle-1 {{ task.title }}
-                v-expand-transition
-                  div(v-show='!task.complete' v-html='task.description')
-
-              v-fade-transition
-                v-overlay(absolute opacity='.2' v-if='loadingTask == task.id')
-                  v-progress-circular(indeterminate size='30')
+      task-list(:tasks='tasks')
 
   //- Clock history
   div
@@ -154,10 +136,10 @@ import { Vue, Component } from 'vue-property-decorator'
 import vueAwesomeCountdown from "vue-awesome-countdown"
 
 import * as clock from '@/services/clock'
-import { completeTask } from '@/services/jobs'
 import { ClockAction, ClockEvent } from '@/types/Clock'
 import { Task } from '@/types/Jobs'
 import ClockEvents from '@/components/ClockEvents.vue'
+import TaskList from '@/components/TaskList.vue'
 import ClockInDialog from './ClockInDialog.vue'
 import dayjs from 'dayjs'
 import { Socket } from 'vue-socket.io-extended'
@@ -171,6 +153,7 @@ Vue.use(vueAwesomeCountdown, "vac");
   components: {
     ClockEvents,
     ClockInDialog,
+    TaskList,
   },
 })
 export default class Clock extends Vue {
@@ -180,7 +163,6 @@ export default class Clock extends Vue {
   togglingBreak = false
   loadingHistory = false
   loadingNextShift = false
-  loadingTask: number | null = null
 
   mounted() {
     this.loadClockHistory()
@@ -278,16 +260,6 @@ export default class Clock extends Vue {
     }
     finally {
       this.loadingNextShift = false
-    }
-  }
-
-  async completeTask(taskId: number) {
-    this.loadingTask = taskId
-    try {
-      await completeTask(this.$store, taskId)
-    }
-    finally {
-      this.loadingTask = null
     }
   }
 
