@@ -119,7 +119,7 @@ div(v-else)
               div(v-html='job.notes')
 
         //- Job info fields
-        v-layout.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between(
+        v-card-text.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between(
           v-if='job.organization_manager && job.contractor_manager && job.consultant_name && job.consultant_code'
         )
         
@@ -141,7 +141,10 @@ div(v-else)
 
           .flex-grow-1
             p.text-subtitle-2.mb-1 Consultant
-            p {{ job.consultant_name }}
+            .d-flex.flex-column.gap
+              span.mb-0 {{ job.consultant_name }}
+              a.mb-0(target='_blank' :href='`mailto:${job.consultant_email}`') {{ job.consultant_email }}
+              a(target='_blank' :href='`tel:${job.consultant_phone}`')    {{ job.consultant_phone | phone }}
 
         v-skeleton-loader(type='list-item-two-line' v-else)
 

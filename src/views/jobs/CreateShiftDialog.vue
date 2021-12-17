@@ -2,7 +2,7 @@
 v-dialog(
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  max-width="700",
   persistent
 )
   v-card.d-flex.flex-column
@@ -21,8 +21,6 @@ v-dialog(
       v-divider
 
       v-card-text
-
-        richtext-field.mb-6(placeholder='Shift notes' v-model='shift.notes')
 
         //- Contractor selector
         v-select(
@@ -62,8 +60,6 @@ v-dialog(
 
         //- Location fields
         div(v-if="shift.contractor_ids && shift.contractor_ids.length")
-          v-divider
-          v-subheader Site locations
 
           v-expand-transition(
             appear,
@@ -73,6 +69,7 @@ v-dialog(
             v-text-field(
               v-model="shift.site_locations[index]",
               :label="`Site location for ${contractorName(contractorId)}`",
+              :placeholder='randomSiteLocation()'
               :rules="rules.location",
               outlined,
               dense,
@@ -82,20 +79,27 @@ v-dialog(
 
         v-divider
 
+        richtext-field.my-6(placeholder='Shift notes' v-model='shift.notes')
+
+        task-list-input(v-model='shift.tasks' editable orderable)
+
+        v-divider
+
         v-subheader Date and time
 
-        //- Start date
-        datetime-input(
-          v-model='shift.time_begin'
-          outlined
-          label='Start'
-        )
-        //- End date
-        datetime-input(
-          v-model="shift.time_end"
-          outlined
-          label='End'
-        )
+        .d-flex.flex-column.flex-md-row.gap-small
+          //- Start date
+          datetime-input(
+            v-model='shift.time_begin'
+            outlined
+            label='Start'
+          )
+          //- End date
+          datetime-input(
+            v-model="shift.time_end"
+            outlined
+            label='End'
+          )
 
         //- v-divider
 
@@ -209,6 +213,7 @@ import { createShift } from '@/services/jobs'
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import WeekdaySelector from '@/components/inputs/WeekdaySelector.vue'
 import RichtextField from '@/components/inputs/RichtextField.vue'
+import TaskListInput from '@/components/inputs/TaskListInput.vue'
 
 // TODO: Move these to reusable import
 const exists = (errorMessage: string) => (value: any) => !!value || errorMessage
@@ -235,6 +240,8 @@ function initialState() {
     site_locations: [],
     time_begin: nowLocal,
     time_end: hourFromNowLocal,
+    notes: '',
+    tasks: [],
     repeat: {
       repeatEvery: {
         value: 1,
@@ -255,6 +262,7 @@ function initialState() {
     DatetimeInput,
     WeekdaySelector,
     RichtextField,
+    TaskListInput,
   },
 })
 export default class CreateShiftDialog extends Vue {
@@ -316,6 +324,11 @@ export default class CreateShiftDialog extends Vue {
     return (
       prefixes[Math.ceil(date.getDate() / 7 - 1)] + ' ' + days[date.getDay()]
     )
+  }
+
+  randomSiteLocation() {
+    const examples = ['Front of store', 'Back of store', 'Outside', 'Front desk', 'Kitchen', 'Main site', 'West wing', 'East wing']
+    return 'Ex. ' +  examples[Math.floor(Math.random() * examples.length)]
   }
 
   /*

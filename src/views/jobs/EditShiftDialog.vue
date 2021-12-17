@@ -2,7 +2,7 @@
 v-dialog(
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  max-width="700",
   persistent
 )
   v-card.d-flex.flex-column
@@ -12,7 +12,7 @@ v-dialog(
 
     v-form.flex-grow-1.d-flex.flex-column(
       v-if="editedShift",
-      @submit.prevent="createShift",
+      @submit.prevent="updateShift",
       ref="form",
       v-model="isValid"
     )

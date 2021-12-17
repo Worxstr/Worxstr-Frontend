@@ -19,6 +19,7 @@ import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import { TiptapVuetifyPlugin } from 'tiptap-vuetify'
 import VueSanitize from 'vue-sanitize'
 import VueGtag from 'vue-gtag'
+
 import { configureDwolla } from './util/dwolla'
 import { configureAxios } from './util/axios'
 import { initDarkMode } from './util/theme'
@@ -33,6 +34,7 @@ function configurePlugins() {
   Vue.use(VueMask)
   Vue.use(PortalVue)
   Vue.use(VueChatScroll)
+  Vue.use(VueSanitize)
 
   Vue.use(VueGtag, {
     config: { id: process.env.VUE_APP_GTAG_API },
@@ -53,8 +55,6 @@ function configurePlugins() {
     vuetify,
     iconsGroup: 'mdi'
   })
-
-  Vue.use(VueSanitize)
 }
 
 async function getUserData() {

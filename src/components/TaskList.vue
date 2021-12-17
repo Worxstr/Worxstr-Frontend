@@ -18,6 +18,7 @@
         v-fade-transition
           v-overlay(absolute opacity='.2' v-if='loadingTask == task.id')
             v-progress-circular(indeterminate size='30')
+  
 </template>
 
 <script lang="ts">
