@@ -22,6 +22,26 @@ v-dialog(
 
       v-card-text
 
+        v-subheader Date and time
+
+        .d-flex.flex-column.flex-md-row.gap-small
+          //- Start date
+          datetime-input(
+            v-model='shift.time_begin'
+            outlined
+            label='Start'
+          )
+          //- End date
+          datetime-input(
+            v-model="shift.time_end"
+            outlined
+            label='End'
+          )
+
+        v-divider.mb-4
+
+        v-subheader Contractors and locations
+
         //- Contractor selector
         v-select(
           autofocus
@@ -77,32 +97,14 @@ v-dialog(
               :data-cy="`shift-site-location-${index}`"
             )
 
-        v-divider
+
+        v-subheader Shift notes
 
         richtext-field.my-6(placeholder='Shift notes' v-model='shift.notes')
 
         //- pre {{shift.tasks}}
         v-subheader Tasks
         task-list-input.mb-4(v-model='shift.tasks' editable orderable)
-
-        v-divider
-
-        v-subheader Date and time
-
-        .d-flex.flex-column.flex-md-row.gap-small
-          //- Start date
-          datetime-input(
-            v-model='shift.time_begin'
-            outlined
-            label='Start'
-          )
-          //- End date
-          datetime-input(
-            v-model="shift.time_end"
-            outlined
-            label='End'
-          )
-
         //- v-divider
 
         //- Recurrence section

@@ -44,9 +44,10 @@
             text
             color='primary'
             @click='addTask'
+            :disabled='!taskValid'
           )
             v-icon(left) mdi-plus
-            | Add task
+            | Add another task
 
           v-btn(
             v-if='editingTask'
@@ -117,6 +118,7 @@ export default class TaskListInput extends Vue {
   }
 
   addTask() {
+    this.localTasks = this.localTasks.filter((task: Task) => !!task.title)
     this.localTasks.push({
       title: '',
       description: ''
