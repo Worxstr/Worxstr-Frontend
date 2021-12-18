@@ -68,11 +68,11 @@ v-dialog(
           )
             v-text-field(
               v-model="shift.site_locations[index]",
-              :label="`Site location for ${contractorName(contractorId)}`",
+              :label="`Site location for ${contractorName(contractorId)}`"
               :placeholder='randomSiteLocation()'
-              :rules="rules.location",
-              outlined,
-              dense,
+              :rules="rules.location"
+              outlined
+              dense
               required
               :data-cy="`shift-site-location-${index}`"
             )
@@ -81,7 +81,9 @@ v-dialog(
 
         richtext-field.my-6(placeholder='Shift notes' v-model='shift.notes')
 
-        task-list-input(v-model='shift.tasks' editable orderable)
+        //- pre {{shift.tasks}}
+        v-subheader Tasks
+        task-list-input.mb-4(v-model='shift.tasks' editable orderable)
 
         v-divider
 

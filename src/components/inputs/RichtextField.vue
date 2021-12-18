@@ -10,7 +10,7 @@ tiptap-vuetify(
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
 
 @Component({
@@ -21,6 +21,11 @@ import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragrap
 export default class RichtextField extends Vue {
 
   @Prop({ type: String, required: true }) readonly value?: string
+
+  @Watch('placeholder')
+  onPlaceholderChanged(newValue: string) {
+    console.log(newValue)
+  }
 
   input(value: string) {
     this.$emit('input', value)
