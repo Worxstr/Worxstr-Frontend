@@ -13,14 +13,15 @@ div(v-else)
   v-container.approvals.mb-16(v-if="job")
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
-    create-shift-dialog(
+    edit-shift-dialog(
       :opened.sync='createShiftDialog',
       :contractors='job.contractors'
     )
     edit-shift-dialog(
-      :opened.sync="editShiftDialog",
-      :shift.sync="selectedShift",
-      :contractors="job.contractors"
+      :editing='true'
+      :shift.sync='selectedShift'
+      :opened.sync='editShiftDialog',
+      :contractors='job.contractors'
     )
     delete-shift-dialog(
       v-if="selectedShift",
@@ -226,7 +227,6 @@ import { Vue, Component } from 'vue-property-decorator'
 
 import EditJobDialog from './EditJobDialog.vue'
 import CloseJobDialog from './CloseJobDialog.vue'
-import CreateShiftDialog from './CreateShiftDialog.vue'
 import EditShiftDialog from './EditShiftDialog.vue'
 import DeleteShiftDialog from './DeleteShiftDialog.vue'
 import QrCodeDialog from './QrCodeDialog.vue'
@@ -245,7 +245,6 @@ import * as geolocation from '@/services/geolocation'
   components: {
     EditJobDialog,
     CloseJobDialog,
-    CreateShiftDialog,
     EditShiftDialog,
     DeleteShiftDialog,
     QrCodeDialog,

@@ -50,7 +50,7 @@
             | Add another task
 
           v-btn(
-            v-if='editingTask'
+            v-if='editingTask !== null'
             text
             color='primary'
             @click='exitEditMode'
@@ -93,6 +93,7 @@ import RichtextField from '@/components/inputs/RichtextField.vue'
 import draggable from 'vuedraggable'
 
 type Task = {
+  id?: number;
   title: string;
   description: string;
 }
