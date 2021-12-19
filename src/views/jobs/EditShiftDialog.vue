@@ -43,6 +43,8 @@ v-dialog(
         v-subheader Contractors and locations
 
         //- Contractor selector
+
+        //- Single selection for editing
         v-select(
           v-if='editing'
           v-model='editedShift.contractor_id'
@@ -55,6 +57,7 @@ v-dialog(
           label='Contractor'
           data-cy='shift-contractor'
         )
+        //- Multi selection for creating
         v-select(
           v-else
           autofocus
@@ -93,6 +96,7 @@ v-dialog(
 
         //- Location fields
 
+        //- Single field for editing
         v-text-field(
           v-if='editing'
           v-model='editedShift.site_location'
@@ -105,6 +109,7 @@ v-dialog(
           data-cy='shift-site-location'
         )
 
+        //- Multiple fields for creating
         div(v-else-if="editedShift.contractor_ids && editedShift.contractor_ids.length")
 
           v-expand-transition(

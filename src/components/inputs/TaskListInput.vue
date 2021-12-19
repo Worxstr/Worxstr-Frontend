@@ -118,6 +118,10 @@ export default class TaskListInput extends Vue {
     title: [exists('Task title required')],
   }
 
+  mounted() {
+    this.localTasks = this.value
+  }
+
   addTask() {
     this.localTasks = this.localTasks.filter((task: Task) => !!task.title)
     this.localTasks.push({
