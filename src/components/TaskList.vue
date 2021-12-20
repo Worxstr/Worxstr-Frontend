@@ -9,11 +9,20 @@
     :disabled='loadingTask == task.id'
   )
     template(v-slot:label)
-      v-sheet(v-if='task.description' outlined rounded style='width: 100%')
+      v-sheet.d-flex.align-center(
+        v-if='task.description'
+        outlined
+        rounded
+        style='width: 100%'
+      )
         v-card-text.px-4.py-2
           h5.text-subtitle-1 {{ task.title }}
           v-expand-transition
             div(v-show='!task.complete' v-html='task.description')
+          
+        v-spacer
+
+        span.mr-4.text-caption.no-wrap(v-if='task.complete') {{ task.last_updated | timeAgo }}
 
         v-fade-transition
           v-overlay(absolute opacity='.2' v-if='loadingTask == task.id')
