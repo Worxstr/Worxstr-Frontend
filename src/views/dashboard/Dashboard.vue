@@ -34,7 +34,7 @@ v-container.dashboard.d-flex.flex-column
                 v-icon(left) mdi-chevron-right
 
       .my-4.d-flex.justify-center
-        v-btn(text outlined color='primary') View more
+        v-btn(text outlined color='primary' to='payments') View more
 
   //- Activity timeline
   div

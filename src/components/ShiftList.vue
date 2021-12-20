@@ -31,7 +31,7 @@ div
               :to="{name: 'user', params: {userId: shift.contractor_id}}"
             ) {{ getContractor(shift.contractor_id) | fullName }}
           
-            span(v-if='!userIsManager') {Job name} &bull; {n} tasks
+            //- span(v-if='!userIsManager') {Job name} &bull; {n} tasks
 
         v-chip.mx-4.px-2.flex-grow-0(
           v-if="shift.active",

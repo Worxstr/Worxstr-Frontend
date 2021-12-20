@@ -12,67 +12,70 @@ div(v-if="loadingTransfers && !(transfers.length)")
     v-toolbar-title.px-4.text-h6
       span Transfer history
 
-  v-expansion-panels.mb-6.soft-shadow(accordion flat)
-    v-expansion-panel(
-      v-for="(transfer, i) in transfers",
-      :key="transfer.id"
-    )
-      v-expansion-panel-header
-        
-        .flex-grow-0.font-weight-medium
-          v-badge.mr-5(
-            v-if='$vuetify.breakpoint.smAndDown'
-            dot
-            left
-            style='margin-bottom: 3px'
-            :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
+  v-card.soft-shadow(outlined rounded)
+    v-expansion-panels.mb-6(accordion flat)
+      v-expansion-panel(
+        v-for="(transfer, i) in transfers",
+        :key="transfer.id"
+      )
+        v-expansion-panel-header
+          
+          .flex-grow-0.font-weight-medium
+            v-badge.mr-5(
+              v-if='$vuetify.breakpoint.smAndDown'
+              dot
+              left
+              style='margin-bottom: 3px'
+              :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`')
 
-          v-chip.mr-3(
-            v-else
-            small
-            :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`'
-            )
-              | {{ transfer.status | capitalize }}
+            v-chip.mr-3(
+              v-else
+              small
+              :color='`${statusColor(transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`'
+              )
+                | {{ transfer.status | capitalize }}
 
-          //- TODO: This looks like shit
-          span.mt-1
-            | {{ transferFundsAdded(transfer) ? 'From' : 'To' }}&nbsp;
-            span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'business'")
-              | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].businessName }}
+            //- TODO: This looks like shit
+            span.mt-1
+              | {{ transferFundsAdded(transfer) ? 'From' : 'To' }}&nbsp;
+              span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'business'")
+                | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].businessName }}
 
-            span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'bank'")
-              | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].bankName }}
+              span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'bank'")
+                | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].bankName }}
 
-            span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'Commercial'")
-              | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].name }}
-              
-            span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'personal'")
-              | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].firstName }}
-              | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].lastName }}
-        
-        v-spacer
+              span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'Commercial'")
+                | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].name }}
+                
+              span(v-if="transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].type == 'personal'")
+                | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].firstName }}
+                | {{ transfer._links[transferFundsAdded(transfer) ? 'source' : 'destination']['additional-information'].lastName }}
+          
+          v-spacer
 
-        span.flex-grow-0.px-2.font-weight-bold(
-          :class="transferFundsAdded(transfer) ? 'green--text' : 'red--text'"
-        ) {{ transferFundsAdded(transfer) ? '+' : '-' }}{{ transfer.amount.value | currency }}
-        
-        span.flex-grow-0.px-2(v-if='$vuetify.breakpoint.smAndUp') {{ transfer.created | date }}
+          span.flex-grow-0.px-2.font-weight-bold(
+            :class="transferFundsAdded(transfer) ? 'green--text' : 'red--text'"
+          ) {{ transferFundsAdded(transfer) ? '+' : '-' }}{{ transfer.amount.value | currency }}
+          
+          span.flex-grow-0.px-2(v-if='$vuetify.breakpoint.smAndUp') {{ transfer.created | date }}
 
-      v-expansion-panel-content
-        v-card-text.text-body-1
-          p(v-if='$vuetify.breakpoint.xs') {{ transfer.created | date }}
-          p Transfer ID: {{ transfer.id }}
-          p {{ transfer._links.destination['additional-information'].type == 'Commercial' ? 'Fee' : ''}}
+        v-expansion-panel-content
+          v-card-text.text-body-1
+            p(v-if='$vuetify.breakpoint.xs') {{ transfer.created | date }}
+            p Transfer ID: {{ transfer.id }}
+            p {{ transfer._links.destination['additional-information'].type == 'Commercial' ? 'Fee' : ''}}
 
-      v-divider(v-if='i != transfers.length - 1')
+        v-divider(v-if='i != transfers.length - 1')
 
-  v-btn(
-    v-if='!noMore'
-    text
-    color='primary'
-    @click='loadPage'
-    :loading='loadingMore'
-  ) Load more
+  .mt-4.d-flex.justify-center
+    v-btn(
+      v-if='!noMore'
+      text
+      outlined
+      color='primary'
+      @click='loadPage'
+      :loading='loadingMore'
+    ) Load more
 </template>
 
 <script lang="ts">
