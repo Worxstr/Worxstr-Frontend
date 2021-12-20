@@ -11,7 +11,7 @@ v-container.dashboard.d-flex.flex-column
       v-card.mb-2(flat style='background: rgba(255, 255, 255,.1)')
         v-list-item.px-5.py-2(
           two-line
-          :to="{ name: 'shift', params: { id: upcomingShifts[0].id } }"
+          :to="{ name: 'shift', params: { shiftId: upcomingShifts[0].id } }"
           exact
         )
           v-list-item-content
@@ -24,7 +24,7 @@ v-container.dashboard.d-flex.flex-column
         v-for='shift in upcomingShifts.slice(1)'
         :key='shift.id'
         two-line
-        :to="{ name: 'shift', params: { id: shift.id } }"
+        :to="{ name: 'shift', params: { shiftId: shift.id } }"
         exact
       )
         v-list-item-content
@@ -68,23 +68,83 @@ v-container.dashboard.d-flex.flex-column
       .my-4.d-flex.justify-center
         v-btn(text outlined color='primary') View more
 
+  //- Activity timeline
+  div
+    v-toolbar.pa-0.flex-grow-0(flat color='transparent')
+      v-toolbar-title
+        h6.text-h6 Your activity
+
+    v-card.clock-history.soft-shadow.mt-4.align-self-center.d-flex.flex-column(
+      outlined
+      rounded='lg'
+      width='100%'
+    )
+      div(v-if='clockHistory.length')
+        clock-events(:events='clockHistory')
+
+        v-card-actions.d-flex.justify-center
+          v-btn(text color='primary' @click='loadClockHistory' :loading='loadingHistory')
+            v-icon(left dark)  mdi-arrow-down 
+            span View {{ clockHistoryCurrentWeek }}
+
+      .px-4(v-else-if='loadingHistory')
+        v-skeleton-loader.py-2(v-for='i in 10' :key='i' type="sentences")
+
+      v-card-text(v-else)
+        | No history yet
+
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-
 import { Vue, Component } from 'vue-property-decorator'
+import * as clock from '@/services/clock'
+import ClockEvents from '@/components/ClockEvents.vue'
+import dayjs from 'dayjs'
 
 @Component({
   metaInfo: {
     title: 'Dashboard',
   },
+  components: {
+    ClockEvents,
+  },
 })
 export default class Dashboard extends Vue {
+
+  
+  loadingHistory = false
+
+  mounted() {
+    this.loadClockHistory()
+  }
 
   clockIn() {
     // TODO
     console.log('clocked in')
+  }
+
+  get clockHistory() {
+    return this.$store.getters.clockHistory
+  }
+
+  get clockHistoryCurrentWeek() {
+    const nextOffset = this.$store.state.clock.events.historyPaginationOffset + 1
+    const start = new Date()
+    const end = new Date()
+    start.setDate(start.getDate() - nextOffset * 7)
+    end.setDate(end.getDate() - (nextOffset * 7) + 7)
+    return `${dayjs(start).format('MMM DD')} - ${dayjs(end).format('MMM DD')}`
+  }
+
+  async loadClockHistory() {
+    this.loadingHistory = true
+    try {
+      await clock.loadClockHistory(this.$store)
+    }
+    finally {
+      this.loadingHistory = false
+    }
   }
 
   upcomingShifts = [
@@ -138,7 +198,7 @@ export default class Dashboard extends Vue {
       timecard_id: 334,
     },
     {
-      id: 1239841,
+      id: 114,
       job: {
         title: "Alex's test job",
       },
@@ -148,7 +208,7 @@ export default class Dashboard extends Vue {
       time_end: "2022-12-03T22:00:00Z",
     },
     {
-      id: 12532841,
+      id: 114,
       job: {
         title: "Alex's test job",
       },

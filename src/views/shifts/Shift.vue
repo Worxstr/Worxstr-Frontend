@@ -1,7 +1,6 @@
 <template lang="pug">
 v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium
 
-  clock-in-dialog(:opened.sync='clockInDialog')
 
   .mt-8.d-flex.flex-column
 
@@ -41,39 +40,8 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium
                 | {{ props.timeObj.m }} minutes, {{ props.timeObj.s }} seconds.
           template(v-slot:finish)
             span That's right now!
-
-      //- Clock buttons
-      .mb-4.d-flex.flex-row.justify-center
-
-        v-expand-x-transition
-          .py-2(v-if='!onBreak')
-            v-btn.pa-6.mr-2(
-              raised
-              :color="clocked ? 'pink' : 'green'"
-              @click='clocked ? clockOut() : openVerifyDialog()'
-              width='130px'
-              dark
-              style='transition: background-color 0.3s'
-              :loading='togglingClock'
-              :disabled='!iAmVerified'
-              :data-cy="clocked ? 'clock-out-button' : 'clock-in-button'"
-            )
-              | Clock {{ clocked ? "out" : "in" }}
-
-        v-expand-x-transition
-          .py-2(v-if='clocked')
-            v-btn.pa-6(
-              raised
-              :color="onBreak ? 'green' : 'amber'"
-              @click='toggleBreak(!!onBreak)'
-              width='130px'
-              dark
-              style='transition: background-color 0.3s'
-              :loading='togglingBreak'
-              :disabled='!iAmVerified'
-              :data-cy="onBreak ? 'end-break-button' : 'start-break-button'"
-            )
-              | {{ onBreak ? "End" : "Start" }} break
+    
+      clock-buttons
       
     div(v-else-if='!loadingNextShift')
       h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
@@ -106,30 +74,6 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium
           | {{tasksComplete}}/{{totalTasks}} completed
 
       task-list(:tasks='tasks')
-
-  //- Activity timeline
-  div
-    h5.text-h5 Your activity
-
-    v-card.clock-history.soft-shadow.mt-4.align-self-center.d-flex.flex-column(
-      outlined
-      rounded='lg'
-      width='100%'
-    )
-
-      div(v-if='clockHistory.length')
-        clock-events(:events='clockHistory')
-
-        v-card-actions.d-flex.justify-center
-          v-btn(text color='primary' @click='loadClockHistory' :loading='loadingHistory')
-            v-icon(left dark)  mdi-arrow-down 
-            span View {{ clockHistoryCurrentWeek }}
-
-      .px-4(v-else-if='loadingHistory')
-        v-skeleton-loader.py-2(v-for='i in 10' :key='i' type="sentences")
-
-      v-card-text(v-else)
-        | No history yet
 </template>
 
 <script lang="ts">
@@ -139,13 +83,11 @@ import vueAwesomeCountdown from "vue-awesome-countdown"
 import * as clock from '@/services/clock'
 import * as jobs from '@/services/jobs'
 import { getShift } from '@/services/jobs'
-import { ClockAction, ClockEvent } from '@/types/Clock'
 import { Task } from '@/types/Jobs'
-import ClockEvents from '@/components/ClockEvents.vue'
-import TaskList from '@/components/TaskList.vue'
-import ClockInDialog from '@/views/clock/ClockInDialog.vue'
-import dayjs from 'dayjs'
 import { Socket } from 'vue-socket.io-extended'
+
+import TaskList from '@/components/TaskList.vue'
+import ClockButtons from '@/components/ClockButtons.vue'
 
 Vue.use(vueAwesomeCountdown, "vac");
 
@@ -154,23 +96,19 @@ Vue.use(vueAwesomeCountdown, "vac");
     title: 'Clock'
   },
   components: {
-    ClockEvents,
-    ClockInDialog,
     TaskList,
+    ClockButtons,
   },
 })
 export default class Shift extends Vue {
   
-  clockInDialog = false
   togglingClock = false
   togglingBreak = false
-  loadingHistory = false
   loadingNextShift = false
   loadingJob = false
 
   async mounted() {
     console.log('mounted')
-    this.loadClockHistory()
     await this.loadShift()
     if (this.shift?.job_id) {
       console.log('loading job' + this.shift.job_id)
@@ -193,19 +131,6 @@ export default class Shift extends Vue {
     return this.$store.state.clock
   }
 
-  get clockHistory() {
-    return this.$store.getters.clockHistory
-  }
-
-  get clockHistoryCurrentWeek() {
-    const nextOffset = this.$store.state.clock.events.historyPaginationOffset + 1
-    const start = new Date()
-    const end = new Date()
-    start.setDate(start.getDate() - nextOffset * 7)
-    end.setDate(end.getDate() - (nextOffset * 7) + 7)
-    return `${dayjs(start).format('MMM DD')} - ${dayjs(end).format('MMM DD')}`
-  }
-
   get nextShift() {
     return this.$store.getters.nextShift
   }
@@ -215,19 +140,7 @@ export default class Shift extends Vue {
     return this.$store.getters.job(this.shift.job_id)
   }
 
-  get clocked() {
-    const lastClockEvent = this.clockHistory.find(
-      (event: ClockEvent) => event.action == ClockAction.ClockIn || event.action == ClockAction.ClockOut
-    )
-    return lastClockEvent ? lastClockEvent.action == ClockAction.ClockIn : null
-  }
 
-  get onBreak() {
-    const lastBreakEvent = this.clockHistory.find(
-      (event: ClockEvent) => event.action == ClockAction.StartBreak || event.action == ClockAction.EndBreak
-    )
-    return lastBreakEvent ? lastBreakEvent.action == ClockAction.StartBreak : null
-  }
 
   get iAmVerified() {
     return this.$store.getters.iAmVerified
@@ -249,21 +162,6 @@ export default class Shift extends Vue {
     return this.tasksComplete == this.totalTasks
   }
 
-  async clockOut() {
-    this.togglingClock = true
-    await clock.clockOut(this.$store, this.$store.getters.nextShift?.id)
-    this.togglingClock = false
-  }
-
-  async toggleBreak(breakState: boolean) {
-    this.togglingBreak = true
-    await clock.toggleBreak(this.$store, breakState)
-    this.togglingBreak = false
-  }
-
-  openVerifyDialog() {
-    this.clockInDialog = true
-  }
 
   async loadShift() {
     this.loadingShift = true
@@ -272,16 +170,6 @@ export default class Shift extends Vue {
     }
     finally {
       this.loadingShift = false
-    }
-  }
-
-  async loadClockHistory() {
-    this.loadingHistory = true
-    try {
-      await clock.loadClockHistory(this.$store)
-    }
-    finally {
-      this.loadingHistory = false
     }
   }
 
