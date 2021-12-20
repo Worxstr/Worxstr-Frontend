@@ -1,6 +1,41 @@
 <template lang="pug">
 v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
 
+  edit-shift-dialog(
+    :editing='true'
+    :shift.sync='shift'
+    :opened.sync='editShiftDialog'
+    :contractors='[]'
+  )
+  delete-shift-dialog(
+    :opened.sync='deleteShiftDialog'
+    :shift.sync='shift'
+    :contractorName='"Contractor name"'
+  )
+  
+  portal(to='toolbarActions')
+    v-btn(
+      v-if='userIsManager'
+      text
+      :icon='$vuetify.breakpoint.xs'
+      color='primary'
+      @click='editShiftDialog = true'
+      data-cy='edit-job-button'
+    )
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
+      span(v-if='!$vuetify.breakpoint.xs') Edit
+
+    v-btn(
+      v-if='userIsManager'
+      text
+      :icon='$vuetify.breakpoint.xs'
+      color='error'
+      @click='deleteShiftDialog = true'
+      data-cy='edit-job-button'
+    )
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
+      span(v-if='!$vuetify.breakpoint.xs') Delete
+
   .mt-8.d-flex.flex-column
 
     .clock-display(v-if='nextShift && shift.time_begin && shift.time_end' style='width: 100%')
@@ -81,10 +116,13 @@ import vueAwesomeCountdown from "vue-awesome-countdown"
 
 import * as clock from '@/services/clock'
 import * as jobs from '@/services/jobs'
+import { Managers, currentUserIs } from '@/types/Users'
 import { getShift } from '@/services/jobs'
 import { Task } from '@/types/Jobs'
 import { Socket } from 'vue-socket.io-extended'
 
+import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
+import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
 import TaskList from '@/components/TaskList.vue'
 import ClockButtons from '@/components/ClockButtons.vue'
 
@@ -95,6 +133,8 @@ Vue.use(vueAwesomeCountdown, "vac");
     title: 'Clock'
   },
   components: {
+    EditShiftDialog,
+    DeleteShiftDialog,
     TaskList,
     ClockButtons,
   },
@@ -103,6 +143,9 @@ export default class Shift extends Vue {
   
   loadingNextShift = false
   loadingJob = false
+
+  editShiftDialog = false
+  deleteShiftDialog = false
 
   async mounted() {
     console.log('mounted')
@@ -117,6 +160,9 @@ export default class Shift extends Vue {
     return this.$store.getters.shift(parseInt(this.$route.params.shiftId))
   }
 
+  get userIsManager() {
+    return currentUserIs(...Managers)
+  }
   // For some fucking reason the view won't rerender when we delete a shift and socket.io pushes the new next shift.
   // This forces the view to rerender when that mutation occurs.
   @Socket('SET_NEXT_SHIFT')
