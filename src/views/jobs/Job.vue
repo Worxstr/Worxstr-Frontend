@@ -165,11 +165,18 @@ div(v-else)
         v-list-item(
           v-for='shift in job.shifts'
           :key='shift.id'
-          :to="{name: 'shift', params: {shiftId: shift.id}}"
         )
           v-list-item-content
-            v-list-item-title {{ shift.site_location }}
-            v-list-item-subtitle {{ getContractor(shift.contractor_id) | fullName }}
+            v-list-item-title
+              router-link.alt-style.my-1.font-weight-medium(
+                :to="{name: 'shift', params: {shiftId: shift.id}}"
+              ) {{ shift.site_location }}
+
+            v-list-item-subtitle
+              router-link.alt-style.my-1.font-weight-medium(
+                v-if="shift.contractor_id"
+                :to="{name: 'user', params: {userId: shift.contractor_id}}"
+              ) {{ getContractor(shift.contractor_id) | fullName }}
 
           v-chip.mx-4.px-2.flex-grow-0(
             v-if="shift.active",
@@ -184,68 +191,31 @@ div(v-else)
               .text-body-2.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
               .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
+          v-list-item-action.ml-3
+            v-btn(
+              icon
+              color='primary'
+              @click.stop='openEditShiftDialog(shift)'
+              data-cy='edit-shift-button'
+            )
+              v-icon mdi-pencil
+              
+          v-list-item-action
+            v-btn(
+              icon
+              color='error'
+              @click.stop='openDeleteShiftDialog(shift)'
+              data-cy='delete-shift-button'
+            )
+              v-icon mdi-delete
 
+          v-list-item-action.ml-0
+            v-btn(
+              icon
+              :to="{name: 'shift', params: {shiftId: shift.id}}"
+            )
+              v-icon mdi-chevron-right
 
-    //- v-expansion-panels.soft-shadow(tile flat)
-    //-   v-expansion-panel(v-for="shift in job.shifts", :key="shift.id")
-    //-     v-expansion-panel-header.d-flex
-    //-       //- span.text-subtitle-1.flex-grow-0
-    //-       p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-    //-         router-link.alt-style.my-1.font-weight-medium(
-    //-           v-if="shift.contractor_id"
-    //-           :to="{name: 'user', params: {userId: shift.contractor_id}}"
-    //-         )
-    //-           | {{ getContractor(shift.contractor_id) | fullName }}
-    //-         span.my-1.font-weight-medium(v-else) Unassigned
-    //-         span.my-1 {{ shift.site_location }}
-
-    //-       v-chip.mx-4.px-2.flex-grow-0(
-    //-         v-if="shift.active",
-    //-         label,
-    //-         outlined,
-    //-         small,
-    //-         color="green"
-    //-       ) Active
-
-    //-       v-spacer
-
-    //-       p.d-flex.flex-column.mb-0.flex-grow-0.px-2
-    //-         span.my-1.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
-    //-         span.my-1 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
-
-    //-     v-expansion-panel-content
-    //-       .d-flex.flex-column.gap-small
-    //-         div(v-if='shift.notes')
-    //-           p.text-subtitle-1.mb-2 Notes
-    //-           v-sheet(outlined rounded)
-    //-             v-card-text
-    //-               div(v-html='shift.notes')
-
-    //-         div(v-if='shift.tasks')
-    //-           p.text-subtitle-1.mb-2 Tasks
-    //-           task-list(:tasks='shift.tasks')
-
-    //-         div(v-if="shift.active")
-    //-           p.text-subtitle-1.mb-2 Activity
-    //-           clock-events(
-    //-             v-if="shift.timeclock_actions && shift.timeclock_actions.length",
-    //-             :events="shift.timeclock_actions"
-    //-           )
-
-    //-       v-card-actions
-    //-         v-spacer
-    //-         v-btn(
-    //-           text
-    //-           @click="openEditShiftDialog(shift)"
-    //-           data-cy="edit-shift-button"
-    //-         ) Edit
-
-    //-         v-btn(
-    //-           text
-    //-           color="error"
-    //-           @click="openDeleteShiftDialog(shift)"
-    //-           data-cy="delete-shift-button"
-    //-         ) Delete
 </template>
 
 <script lang="ts">
