@@ -34,7 +34,7 @@ v-container.dashboard.d-flex.flex-column
         v-list-item-action
           v-list-item-action-text {{ shift.time_begin | time }}
   
-  .mt-4.mb-8.d-flex.justify-center
+  .my-4.d-flex.justify-center
     v-btn(text outlined color='primary') View more
   
   .d-flex.gap-small
@@ -61,6 +61,12 @@ v-container.dashboard.d-flex.flex-column
             v-list-item-content
               v-list-item-title $256.32
               v-list-item-subtitle 2021-12-19
+            v-list-item-action
+              v-btn(text color='primary' icon)
+                v-icon(left) mdi-chevron-right
+
+      .my-4.d-flex.justify-center
+        v-btn(text outlined color='primary') View more
 
 </template>
 
