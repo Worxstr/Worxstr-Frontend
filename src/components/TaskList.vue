@@ -10,7 +10,6 @@
   )
     template(v-slot:label)
       v-sheet.d-flex.align-center(
-        v-if='task.description'
         outlined
         rounded
         style='width: 100%'

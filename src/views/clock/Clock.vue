@@ -139,6 +139,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import vueAwesomeCountdown from "vue-awesome-countdown"
 
 import * as clock from '@/services/clock'
+import * as jobs from '@/services/jobs'
 import { ClockAction, ClockEvent } from '@/types/Clock'
 import { Task } from '@/types/Jobs'
 import ClockEvents from '@/components/ClockEvents.vue'
@@ -166,10 +167,14 @@ export default class Clock extends Vue {
   togglingBreak = false
   loadingHistory = false
   loadingNextShift = false
+  loadingJob = false
 
-  mounted() {
+  async mounted() {
     this.loadClockHistory()
-    this.loadNextShift()
+    await this.loadNextShift()
+    if (this.nextShift?.job_id) {
+      this.loadJob()
+    }
   }
 
   // For some fucking reason the view won't rerender when we delete a shift and socket.io pushes the new next shift.
@@ -198,6 +203,11 @@ export default class Clock extends Vue {
 
   get nextShift() {
     return this.$store.getters.nextShift
+  }
+
+  get job() {
+    if (!this.nextShift) return null
+    return this.$store.getters.job(this.$store, this.nextShift.job_id)
   }
 
   get clocked() {
@@ -267,6 +277,17 @@ export default class Clock extends Vue {
     }
     finally {
       this.loadingNextShift = false
+    }
+  }
+
+  async loadJob() {
+    this.loadingJob = true
+    if (!this.nextShift || !this.nextShift.job_id) return
+    try {
+      await jobs.loadJob(this.$store, this.nextShift.job_id)
+    }
+    finally {
+      this.loadingJob = false
     }
   }
 
