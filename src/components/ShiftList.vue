@@ -16,7 +16,7 @@ div
   v-card.soft-shadow(outlined rounded)
     v-list
       v-list-item(
-        v-for='shift in shifts'
+        v-for='(shift, i) in shifts'
         :key='shift.id'
       )
         v-list-item-content
@@ -27,9 +27,11 @@ div
 
           v-list-item-subtitle
             router-link.alt-style.my-1.font-weight-medium(
-              v-if="shift.contractor_id"
+              v-if='shift.contractor_id && userIsManager'
               :to="{name: 'user', params: {userId: shift.contractor_id}}"
             ) {{ getContractor(shift.contractor_id) | fullName }}
+          
+            span(v-if='!userIsManager') {Job name} &bull; {n} tasks
 
         v-chip.mx-4.px-2.flex-grow-0(
           v-if="shift.active",
@@ -39,12 +41,15 @@ div
           color="green"
         ) Active
                   
-        v-list-item-action
+        v-list-item-action(v-if='i != 0')
           .d-flex.flex-column.align-end
             .text-body-2.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
             .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
-        v-list-item-action.ml-3
+        v-list-item-action(v-if='!userIsManager && i == 0')
+          clock-buttons
+
+        v-list-item-action.ml-3(v-if='userIsManager')
           v-btn(
             icon
             color='primary'
@@ -53,7 +58,7 @@ div
           )
             v-icon mdi-pencil
             
-        v-list-item-action
+        v-list-item-action(v-if='userIsManager')
           v-btn(
             icon
             color='error'
@@ -62,7 +67,7 @@ div
           )
             v-icon mdi-delete
 
-        v-list-item-action.ml-0
+        v-list-item-action(:class="{'ml-0': userIsManager}")
           v-btn(
             icon
             :to="{name: 'shift', params: {shiftId: shift.id}}"
@@ -73,12 +78,15 @@ div
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Shift } from '@/types/Jobs'
+import { Managers, currentUserIs } from '@/types/Users'
 
+import ClockButtons from '@/components/ClockButtons.vue'
 import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
 
 @Component({
   components: {
+    ClockButtons,
     EditShiftDialog,
     DeleteShiftDialog,
   },
@@ -90,6 +98,10 @@ export default class ShiftList extends Vue {
   selectedShift: Shift | {} = {}
   editShiftDialog = false
   deleteShiftDialog = false
+
+  get userIsManager() {
+    return currentUserIs(...Managers)
+  }
 
   getContractor(contractorId: number) {
     return this.$store.getters.user(contractorId)

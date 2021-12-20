@@ -1,14 +1,13 @@
 <template lang="pug">
-v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium
-
+v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
 
   .mt-8.d-flex.flex-column
 
-    .clock-display(v-if='job && nextShift && shift.time_begin && shift.time_end' style='width: 100%')
+    .clock-display(v-if='nextShift && shift.time_begin && shift.time_end' style='width: 100%')
 
       //- Shift name
       h6.text-h6.text-center
-        | Your shift at&nbsp;
+        | {{ isMyShift ? 'Your' : '{Contractor name}\'s' }} shift at&nbsp;
         span.font-weight-bold {{ shift.site_location }}
         | &nbsp;for&nbsp;
         span.font-weight-bold {{ job.name }}
@@ -41,7 +40,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium
           template(v-slot:finish)
             span That's right now!
     
-      clock-buttons
+      clock-buttons(v-if='isMyShift')
       
     div(v-else-if='!loadingNextShift')
       h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
@@ -69,7 +68,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium
     //- Task list
     .flex-1.d-flex.flex-column.gap-small(v-if='totalTasks > 0')
       div
-        h5.text-h5 Your tasks
+        h5.text-h5 {{ isMyShift ? 'Your' : 'Shift' }} tasks
         h6.text-caption(:class="{'success--text font-weight-bold': allTasksComplete}")
           | {{tasksComplete}}/{{totalTasks}} completed
 
@@ -102,8 +101,6 @@ Vue.use(vueAwesomeCountdown, "vac");
 })
 export default class Shift extends Vue {
   
-  togglingClock = false
-  togglingBreak = false
   loadingNextShift = false
   loadingJob = false
 
@@ -140,10 +137,16 @@ export default class Shift extends Vue {
     return this.$store.getters.job(this.shift.job_id)
   }
 
-
-
   get iAmVerified() {
     return this.$store.getters.iAmVerified
+  }
+
+  get me() {
+    return this.$store.getters.me
+  }
+
+  get isMyShift() {
+    return this.me.id === this.shift.contractor_id
   }
 
   get tasks() {
@@ -161,7 +164,6 @@ export default class Shift extends Vue {
   get allTasksComplete() {
     return this.tasksComplete == this.totalTasks
   }
-
 
   async loadShift() {
     this.loadingShift = true

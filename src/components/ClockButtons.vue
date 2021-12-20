@@ -5,38 +5,40 @@
   .mb-4.d-flex.flex-row.justify-center
 
     v-expand-x-transition
-      .py-2(v-if='!onBreak')
-        v-btn.pa-6.mr-2(
-          raised
-          :color="clocked ? 'pink' : 'green'"
+      div(v-if='!onBreak')
+        v-btn.mr-2(
           @click='clocked ? clockOut() : openVerifyDialog()'
-          width='130px'
-          dark
-          style='transition: background-color 0.3s'
           :loading='togglingClock'
           :disabled='!iAmVerified'
+          width='130px'
+          raised
+          dark
+          style='transition: background-color 0.3s'
+          :color="clocked ? 'pink' : 'green'"
+          :large='large'
           :data-cy="clocked ? 'clock-out-button' : 'clock-in-button'"
         )
           | Clock {{ clocked ? "out" : "in" }}
 
     v-expand-x-transition
-      .py-2(v-if='clocked')
-        v-btn.pa-6(
-          raised
-          :color="onBreak ? 'green' : 'amber'"
+      div(v-if='clocked')
+        v-btn(
           @click='toggleBreak(!!onBreak)'
-          width='130px'
-          dark
-          style='transition: background-color 0.3s'
           :loading='togglingBreak'
           :disabled='!iAmVerified'
+          width='130px'
+          raised
+          dark
+          style='transition: background-color 0.3s'
+          :color="onBreak ? 'green' : 'amber'"
+          :large='large'
           :data-cy="onBreak ? 'end-break-button' : 'start-break-button'"
         )
           | {{ onBreak ? "End" : "Start" }} break
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import * as clock from '@/services/clock'
 import { ClockAction, ClockEvent } from '@/types/Clock'
 
@@ -49,6 +51,8 @@ import ClockInDialog from '@/views/clock/ClockInDialog.vue'
 })
 export default class ClockButtons extends Vue {
   
+  @Prop({ default: false }) readonly large!: boolean
+
   clockInDialog = false
   togglingClock = false
   togglingBreak = false
@@ -83,6 +87,10 @@ export default class ClockButtons extends Vue {
     //   (event: ClockEvent) => event.action == ClockAction.StartBreak || event.action == ClockAction.EndBreak
     // )
     // return lastBreakEvent ? lastBreakEvent.action == ClockAction.StartBreak : null
+  }
+
+  get iAmVerified() {
+    return this.$store.getters.iAmVerified
   }
 
 }
