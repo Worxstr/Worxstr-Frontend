@@ -5,14 +5,14 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium
 
   .mt-8.d-flex.flex-column
 
-    .clock-display(v-if='nextShift && shift.time_begin && shift.time_end' style='width: 100%')
+    .clock-display(v-if='job && nextShift && shift.time_begin && shift.time_end' style='width: 100%')
 
       //- Shift name
       h6.text-h6.text-center
         | Your shift at&nbsp;
         span.font-weight-bold {{ shift.site_location }}
         | &nbsp;for&nbsp;
-        span.font-weight-bold {Job name}
+        span.font-weight-bold {{ job.name }}
         | &nbsp;{{ shift.shiftActive ? "ends" : "begins" }} at
 
       //- Shift time
@@ -93,7 +93,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium
       h5.text-h5 Notes
       v-sheet(outlined rounded)
         v-card-text
-          div(v-html='`{Job notes}`')
+          div(v-html='job.notes')
         v-divider
         v-card-text
           div(v-html='shift.notes')
@@ -126,7 +126,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium
             span View {{ clockHistoryCurrentWeek }}
 
       .px-4(v-else-if='loadingHistory')
-        v-skeleton-loader.py-2(v-for='i in 10' key='item' type="sentences")
+        v-skeleton-loader.py-2(v-for='i in 10' :key='i' type="sentences")
 
       v-card-text(v-else)
         | No history yet
@@ -137,6 +137,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import vueAwesomeCountdown from "vue-awesome-countdown"
 
 import * as clock from '@/services/clock'
+import * as jobs from '@/services/jobs'
 import { getShift } from '@/services/jobs'
 import { ClockAction, ClockEvent } from '@/types/Clock'
 import { Task } from '@/types/Jobs'
@@ -158,18 +159,23 @@ Vue.use(vueAwesomeCountdown, "vac");
     TaskList,
   },
 })
-export default class Clock extends Vue {
+export default class Shift extends Vue {
   
   clockInDialog = false
   togglingClock = false
   togglingBreak = false
   loadingHistory = false
   loadingNextShift = false
+  loadingJob = false
 
-  mounted() {
-    getShift(this.$store, parseInt(this.$route.params.shiftId))
+  async mounted() {
+    console.log('mounted')
     this.loadClockHistory()
-    this.loadNextShift()
+    await this.loadShift()
+    if (this.shift?.job_id) {
+      console.log('loading job' + this.shift.job_id)
+      this.loadJob()
+    }
   }
 
   get shift() {
@@ -202,6 +208,11 @@ export default class Clock extends Vue {
 
   get nextShift() {
     return this.$store.getters.nextShift
+  }
+
+  get job() {
+    if (!this.shift) return null
+    return this.$store.getters.job(this.shift.job_id)
   }
 
   get clocked() {
@@ -254,6 +265,16 @@ export default class Clock extends Vue {
     this.clockInDialog = true
   }
 
+  async loadShift() {
+    this.loadingShift = true
+    try {
+      getShift(this.$store, parseInt(this.$route.params.shiftId))
+    }
+    finally {
+      this.loadingShift = false
+    }
+  }
+
   async loadClockHistory() {
     this.loadingHistory = true
     try {
@@ -274,5 +295,15 @@ export default class Clock extends Vue {
     }
   }
 
+  async loadJob() {
+    this.loadingJob = true
+    if (!this.shift || !this.shift.job_id) return
+    try {
+      await jobs.loadJob(this.$store, this.shift.job_id)
+    }
+    finally {
+      this.loadingJob = false
+    }
+  }
 }
 </script>

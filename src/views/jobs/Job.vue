@@ -17,18 +17,6 @@ div(v-else)
       :opened.sync='createShiftDialog',
       :contractors='job.contractors'
     )
-    edit-shift-dialog(
-      :editing='true'
-      :shift.sync='selectedShift'
-      :opened.sync='editShiftDialog',
-      :contractors='job.contractors'
-    )
-    delete-shift-dialog(
-      v-if="selectedShift",
-      :opened.sync="deleteShiftDialog",
-      :shift.sync="selectedShift",
-      :contractorName="contractorName(selectedShift.contractor_id)"
-    )
     qr-code-dialog(
       :opened.sync='qrCodeDialog'
       :code='job.consultant_code'
@@ -160,61 +148,7 @@ div(v-else)
     p.text-body-2.text-center.mt-3(v-if="!job.shifts || !job.shifts.length")
       | There aren't any shifts for this job.
     
-    v-card.soft-shadow(v-else outlined rounded)
-      v-list
-        v-list-item(
-          v-for='shift in job.shifts'
-          :key='shift.id'
-        )
-          v-list-item-content
-            v-list-item-title
-              router-link.alt-style.my-1.font-weight-medium(
-                :to="{name: 'shift', params: {shiftId: shift.id}}"
-              ) {{ shift.site_location }}
-
-            v-list-item-subtitle
-              router-link.alt-style.my-1.font-weight-medium(
-                v-if="shift.contractor_id"
-                :to="{name: 'user', params: {userId: shift.contractor_id}}"
-              ) {{ getContractor(shift.contractor_id) | fullName }}
-
-          v-chip.mx-4.px-2.flex-grow-0(
-            v-if="shift.active",
-            label,
-            outlined,
-            small,
-            color="green"
-          ) Active
-                    
-          v-list-item-action
-            .d-flex.flex-column.align-end
-              .text-body-2.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
-              .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
-
-          v-list-item-action.ml-3
-            v-btn(
-              icon
-              color='primary'
-              @click.stop='openEditShiftDialog(shift)'
-              data-cy='edit-shift-button'
-            )
-              v-icon mdi-pencil
-              
-          v-list-item-action
-            v-btn(
-              icon
-              color='error'
-              @click.stop='openDeleteShiftDialog(shift)'
-              data-cy='delete-shift-button'
-            )
-              v-icon mdi-delete
-
-          v-list-item-action.ml-0
-            v-btn(
-              icon
-              :to="{name: 'shift', params: {shiftId: shift.id}}"
-            )
-              v-icon mdi-chevron-right
+    shift-list(v-else :shifts='job.shifts')
 
 </template>
 
@@ -225,16 +159,16 @@ import { Vue, Component } from 'vue-property-decorator'
 import EditJobDialog from './EditJobDialog.vue'
 import CloseJobDialog from './CloseJobDialog.vue'
 import EditShiftDialog from './EditShiftDialog.vue'
-import DeleteShiftDialog from './DeleteShiftDialog.vue'
 import QrCodeDialog from './QrCodeDialog.vue'
 
 import JobsMap from '@/components/JobsMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
 import ClipboardCopy from '@/components/ClipboardCopy.vue'
 import TaskList from '@/components/TaskList.vue'
+import ShiftList from '@/components/ShiftList.vue'
 
 import { currentUserIs, UserRole } from '@/types/Users'
-import { Job, Shift } from '@/types/Jobs'
+import { Job } from '@/types/Jobs'
 import { loadJob } from '@/services/jobs'
 import * as geolocation from '@/services/geolocation'
 
@@ -243,12 +177,12 @@ import * as geolocation from '@/services/geolocation'
     EditJobDialog,
     CloseJobDialog,
     EditShiftDialog,
-    DeleteShiftDialog,
     QrCodeDialog,
     JobsMap,
     ClockEvents,
     ClipboardCopy,
     TaskList,
+    ShiftList,
   },
 })
 export default class JobView extends Vue {
@@ -256,10 +190,7 @@ export default class JobView extends Vue {
   editJobDialog = false
   closeJobDialog = false
   createShiftDialog = false
-  editShiftDialog = false
-  deleteShiftDialog = false
   qrCodeDialog = false
-  selectedShift: Shift | {} = {}
   shifts = []
 
   metaInfo() {
@@ -286,20 +217,6 @@ export default class JobView extends Vue {
     return currentUserIs(UserRole.OrganizationManager)
   }
 
-  getContractor(contractorId: number) {
-    return this.$store.getters.user(contractorId)
-  }
-
-  openEditShiftDialog(shift: Shift) {
-    this.selectedShift = shift
-    this.editShiftDialog = true
-  }
-
-  openDeleteShiftDialog(shift: Shift) {
-    this.selectedShift = shift
-    this.deleteShiftDialog = true
-  }
-
   openQrCodeDialog() {
     this.qrCodeDialog = true
   }
@@ -312,13 +229,6 @@ export default class JobView extends Vue {
     const position = this.userLocation && `${this.userLocation.lat},${this.userLocation.lng}`
     const address = `${this.job.address}, ${this.job.city}, ${this.job.state} ${this.job.zip_code}`
     return `https://www.google.com/maps/dir/?api=1${position ? `&origin=${position}` : ''}&destination=${address}`
-  }
-
-  contractorName(contractorId: number) {
-    if (!this.job.contractors) return ''
-    const contractor = this.job.contractors.find((e) => e.id == contractorId)
-    if (!contractor) return 'Unknown contractor'
-    return `${contractor.first_name} ${contractor.last_name}`
   }
 }
 </script>
