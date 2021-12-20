@@ -5,7 +5,7 @@
     :key='task.id'
     hide-details
     v-model='task.complete'
-    @change='completeTask(task.id)'
+    @change='completeTask($event, task.id)'
     :disabled='loadingTask == task.id'
   )
     template(v-slot:label)
@@ -33,10 +33,10 @@ export default class TaskList extends Vue {
 
   loadingTask: number | null = null
 
-  async completeTask(taskId: number) {
+  async completeTask(completed: boolean, taskId: number) {
     this.loadingTask = taskId
     try {
-      await completeTask(this.$store, taskId)
+      await completeTask(this.$store, taskId, completed)
     }
     finally {
       this.loadingTask = null

@@ -112,10 +112,13 @@ export async function updateTask({ commit }: any, task: Task) {
 }
 
 
-export async function completeTask({ commit }: any, taskId: number) {
+export async function completeTask({ commit }: any, taskId: number, completed = false) {
   const { data } = await api({
     method: 'PUT',
     url: `tasks/${taskId}/complete`,
+    data: {
+      completed,
+    }
   })
   commit('ADD_TASK', data)
 }
