@@ -38,7 +38,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
 
   .mt-8.d-flex.flex-column
 
-    .clock-display(v-if='nextShift && shift.time_begin && shift.time_end' style='width: 100%')
+    .clock-display(v-if='shift && shift.time_begin && shift.time_end' style='width: 100%')
 
       //- Shift name
       h6.text-h6.text-center
@@ -77,9 +77,6 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
     
       clock-buttons(v-if='isMyShift')
       
-    div(v-else-if='!loadingNextShift')
-      h6.text-h6.text-center.text-sm-left You have no upcoming shifts. Go have fun! 🎉
-    
     //- Loader
     div(
       v-else
@@ -114,7 +111,6 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
 import { Vue, Component } from 'vue-property-decorator'
 import vueAwesomeCountdown from "vue-awesome-countdown"
 
-import * as clock from '@/services/clock'
 import * as jobs from '@/services/jobs'
 import { Managers, currentUserIs } from '@/types/Users'
 import { getShift } from '@/services/jobs'
@@ -141,18 +137,17 @@ Vue.use(vueAwesomeCountdown, "vac");
 })
 export default class Shift extends Vue {
   
-  loadingNextShift = false
+  loadingShift = false
   loadingJob = false
 
   editShiftDialog = false
   deleteShiftDialog = false
 
   async mounted() {
-    console.log('mounted')
-    await this.loadShift()
-    if (this.shift?.job_id) {
-      console.log('loading job' + this.shift.job_id)
-      this.loadJob()
+    const shift = await this.loadShift()
+
+    if (shift?.job_id) {
+      this.loadJob(shift.job_id)
     }
   }
 
@@ -172,10 +167,6 @@ export default class Shift extends Vue {
 
   get clock() {
     return this.$store.state.clock
-  }
-
-  get nextShift() {
-    return this.$store.getters.nextShift
   }
 
   get job() {
@@ -214,28 +205,18 @@ export default class Shift extends Vue {
   async loadShift() {
     this.loadingShift = true
     try {
-      getShift(this.$store, parseInt(this.$route.params.shiftId))
+      return getShift(this.$store, parseInt(this.$route.params.shiftId))
     }
     finally {
       this.loadingShift = false
     }
   }
 
-  async loadNextShift() {
-    this.loadingNextShift = true
-    try {
-      await clock.loadNextShift(this.$store)
-    }
-    finally {
-      this.loadingNextShift = false
-    }
-  }
-
-  async loadJob() {
+  async loadJob(jobId: number) {
     this.loadingJob = true
     if (!this.shift || !this.shift.job_id) return
     try {
-      await jobs.loadJob(this.$store, this.shift.job_id)
+      await jobs.loadJob(this.$store, jobId)
     }
     finally {
       this.loadingJob = false

@@ -211,7 +211,6 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      restrict: Managers,
       paramMap: {
         jobId: 'jobs',
         prop: 'name'
