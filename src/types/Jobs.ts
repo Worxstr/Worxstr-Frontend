@@ -1,3 +1,4 @@
+import { ClockState } from '@/store/clock'
 import { ClockEvent } from './Clock'
 import { User } from './Users'
 
@@ -36,6 +37,7 @@ export type Shift = {
 	id: number;
 	active: boolean;
 	job_id: number;
+	clock_state: ClockEvent;
 	contractor: User;
 	contractor_id: number;
 	site_location: string;

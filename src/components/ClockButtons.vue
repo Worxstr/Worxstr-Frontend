@@ -1,6 +1,6 @@
 <template lang="pug">
 .clock-buttons
-  clock-in-dialog(:opened.sync='clockInDialog')
+  clock-in-dialog(:opened.sync='clockInDialog' :shift='shift')
 
   .mb-4.d-flex.flex-row.justify-center
 
@@ -40,6 +40,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import * as clock from '@/services/clock'
+import { Shift } from '@/types/Jobs'
 import { ClockAction, ClockEvent } from '@/types/Clock'
 
 import ClockInDialog from '@/views/clock/ClockInDialog.vue'
@@ -51,6 +52,7 @@ import ClockInDialog from '@/views/clock/ClockInDialog.vue'
 })
 export default class ClockButtons extends Vue {
   
+  @Prop({ type: Object }) readonly shift!: Shift
   @Prop({ default: false }) readonly large!: boolean
 
   clockInDialog = false
@@ -63,7 +65,7 @@ export default class ClockButtons extends Vue {
 
   async clockOut() {
     this.togglingClock = true
-    await clock.clockOut(this.$store, this.$store.getters.nextShift?.id)
+    await clock.clockOut(this.$store, this.shift.id)
     this.togglingClock = false
   }
 
@@ -74,19 +76,11 @@ export default class ClockButtons extends Vue {
   }
 
   get clocked() {
-    return true
-    // const lastClockEvent = this.clockHistory.find(
-    //   (event: ClockEvent) => event.action == ClockAction.ClockIn || event.action == ClockAction.ClockOut
-    // )
-    // return lastClockEvent ? lastClockEvent.action == ClockAction.ClockIn : null
+    return this.shift.clock_state != ClockAction.ClockOut
   }
 
   get onBreak() {
-    return false
-    // const lastBreakEvent = this.clockHistory.find(
-    //   (event: ClockEvent) => event.action == ClockAction.StartBreak || event.action == ClockAction.EndBreak
-    // )
-    // return lastBreakEvent ? lastBreakEvent.action == ClockAction.StartBreak : null
+    return this.shift.clock_state == ClockAction.StartBreak
   }
 
   get iAmVerified() {

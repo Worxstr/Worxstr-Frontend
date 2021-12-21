@@ -97,6 +97,8 @@ import * as geolocation from '@/services/geolocation'
 
 import * as clock from '@/services/clock'
 import { showToast } from '@/services/app'
+import { Shift } from '@/types/Jobs'
+
 /*
   We are using two difference QR code scanner libraries here.
   vue-qrcode-reader only works on web, and @capacitor-community/barcode-scanner
@@ -126,6 +128,7 @@ export default class ClockInDialog extends Vue {
   ]
 
   @Prop({ default: false }) readonly opened!: boolean
+  @Prop({ type: Object }) readonly shift!: Shift
 
   get dialogOpened() {
     return this.opened && !this.hideDialogForQr
@@ -139,7 +142,7 @@ export default class ClockInDialog extends Vue {
     // TODO: Handle incorrect code
     try {
       this.loading = true
-      await clock.clockIn(this.$store, code, this.$store.getters.nextShift?.id)
+      await clock.clockIn(this.$store, code, this.shift.id)
       this.closeDialog()
     }
     finally {

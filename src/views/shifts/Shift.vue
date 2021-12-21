@@ -75,7 +75,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
           template(v-slot:finish)
             span That's right now!
     
-      clock-buttons(v-if='isMyShift')
+      clock-buttons(v-if='isMyShift' :shift='shift' large)
       
     //- Loader
     div(
