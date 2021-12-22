@@ -82,7 +82,7 @@ div(v-else)
           v-spacer
 
           //- Clock-in code
-          .d-flex.flex-row.align-center
+          .d-flex.flex-row.align-center(v-if='userIsManager')
               
             .d-flex.flex-column
               p.text-sm-right.text-subtitle-2.mb-1 Clock-in code
@@ -169,7 +169,7 @@ import ClipboardCopy from '@/components/ClipboardCopy.vue'
 import TaskList from '@/components/TaskList.vue'
 import ShiftList from '@/components/ShiftList.vue'
 
-import { currentUserIs, UserRole } from '@/types/Users'
+import { currentUserIs, UserRole, Managers } from '@/types/Users'
 import { Job } from '@/types/Jobs'
 import { loadJob } from '@/services/jobs'
 import * as geolocation from '@/services/geolocation'
@@ -213,6 +213,10 @@ export default class JobView extends Vue {
 
   get job(): Job {
     return this.$store.getters.job(parseInt(this.$route.params.jobId))
+  }
+
+  get userIsManager() {
+    return currentUserIs(...Managers)
   }
 
   get userIsOrgManager() {

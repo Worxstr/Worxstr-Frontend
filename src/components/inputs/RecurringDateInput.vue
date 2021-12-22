@@ -24,7 +24,7 @@
     )
 
   //- Week option
-  div(v-if="isWeekly")
+  div(v-if="showWeekdays")
     p.text-no-wrap.mb-0 Repeat on
     .d-flex.align-center.pt-1
       v-checkbox.mt-0(
@@ -146,7 +146,7 @@ export default class RecurringDateInput extends Vue {
     { value: RRule.SA, initial: 's' },
   ]
 
-  get isWeekly() {
+  get showWeekdays() {
     return this.recurData.freq == RRule.WEEKLY
   }
 
