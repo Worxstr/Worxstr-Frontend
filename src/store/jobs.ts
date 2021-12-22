@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import Vue from "vue"
-import { Job, Shift } from "@/types/Jobs"
-import { addContractor } from "@/services/users"
-import usersStore from "@/store/users"
-import clockStore from "@/store/clock"
-import { User } from "@/types/Users"
-import { ClockAction, ClockEvent } from "@/types/Clock"
+import Vue from 'vue'
+import { Job } from '@/types/Jobs'
 
 export interface JobsState {
   all: number[];

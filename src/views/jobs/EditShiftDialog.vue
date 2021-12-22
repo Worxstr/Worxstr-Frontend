@@ -256,7 +256,7 @@ export default class EditShiftDialog extends Vue {
   }
 
   contractorName(contractorId: number) {
-    const e: any = this.contractors.find((e) => e.id == contractorId)
+    const e: any = this.contractors.find((e: User) => e.id == contractorId)
     if (contractorId > 0) return `${e.first_name} ${e.last_name}`
     return `Unassigned ${-contractorId}`
   }
