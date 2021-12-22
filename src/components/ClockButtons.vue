@@ -2,11 +2,11 @@
 .clock-buttons
   clock-in-dialog(:opened.sync='clockInDialog' :shift='shift')
 
-  .mb-4.d-flex.flex-row.justify-center
+  .d-flex.flex-row.justify-center.gap-small
 
     v-expand-x-transition
       div(v-if='!onBreak')
-        v-btn.mr-2(
+        v-btn(
           @click='clocked ? clockOut() : openVerifyDialog()'
           :loading='togglingClock'
           :disabled='!iAmVerified'
@@ -77,10 +77,12 @@ export default class ClockButtons extends Vue {
   }
 
   get clocked() {
+    if (this.shift.clock_state === null) return false
     return this.shift.clock_state != ClockAction.ClockOut
   }
 
   get onBreak() {
+    if (this.shift.clock_state === null) return false
     return this.shift.clock_state == ClockAction.StartBreak
   }
 
