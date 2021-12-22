@@ -184,16 +184,16 @@ if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
 now.setSeconds(0, 0)
 now.setMinutes(0)
 const hourFromNow = new Date(now.getTime() + 60 * 60 * 1000)
-const nowLocal = dayjs(now).format('YYYY-MM-DDTHH:mm:ss')
-const hourFromNowLocal = dayjs(hourFromNow).format('YYYY-MM-DDTHH:mm:ss')
+const nowFormatted = dayjs(now).utc().format('YYYY-MM-DDTHH:mm:ssZ')
+const hourFromNowFormatted = dayjs(hourFromNow).utc().format('YYYY-MM-DDTHH:mm:ssZ')
 
 function initialState() {
   return {
     contractor_ids: [],
     site_locations: [],
     site_location: '',
-    time_begin: nowLocal,
-    time_end: hourFromNowLocal,
+    time_begin: nowFormatted,
+    time_end: hourFromNowFormatted,
     notes: '',
     tasks: [],
   }

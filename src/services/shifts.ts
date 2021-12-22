@@ -15,8 +15,8 @@ export async function clockIn({ commit }: any, code: string, shiftId: number) {
       code,
     },
   })
-  commit('ADD_CLOCK_EVENT', data)
-  commit('CLOCK_IN')
+  // commit('ADD_CLOCK_EVENT', data)
+  commit('CLOCK_IN', shiftId)
   return data
 }
 
@@ -28,19 +28,21 @@ export async function clockOut({ commit }: any, shiftId: number) {
       shift_id: shiftId,
     },
   })
-  commit('ADD_CLOCK_EVENT', data)
-  commit('CLOCK_OUT')
+  // commit('ADD_CLOCK_EVENT', data)
+  commit('CLOCK_OUT', shiftId)
+  return data
 }
 
-export async function toggleBreak({ commit }: any, breakState: boolean) {
-  const action = breakState ? 'end' : 'start'
+export async function toggleBreak({ commit }: any, shiftId: number, breakState: boolean) {
+  const action = breakState ? 'start' : 'end'
 
   const { data } = await api({
     method: 'POST',
     url: `clock/${action}-break`,
   })
-  commit('ADD_CLOCK_EVENT', data)
-  commit(`${action.toUpperCase()}_BREAK`)
+  // commit('ADD_CLOCK_EVENT', data)
+  commit(`${action.toUpperCase()}_BREAK`, shiftId)
+  return data
 }
 
 export async function getShift({ commit }: any, shiftId: number) {

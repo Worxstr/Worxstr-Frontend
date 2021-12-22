@@ -23,7 +23,7 @@
     v-expand-x-transition
       div(v-if='clocked')
         v-btn(
-          @click='toggleBreak(!!onBreak)'
+          @click='toggleBreak'
           :loading='togglingBreak'
           :disabled='!iAmVerified'
           width='130px'
@@ -39,9 +39,9 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import * as clock from '@/services/shifts'
+import * as shifts from '@/services/shifts'
 import { Shift } from '@/types/Jobs'
-import { ClockAction, ClockEvent } from '@/types/Clock'
+import { ClockAction } from '@/types/Clock'
 
 import ClockInDialog from '@/views/clock/ClockInDialog.vue'
 
@@ -65,13 +65,14 @@ export default class ClockButtons extends Vue {
 
   async clockOut() {
     this.togglingClock = true
-    await clock.clockOut(this.$store, this.shift.id)
+    await shifts.clockOut(this.$store, this.shift.id)
     this.togglingClock = false
   }
 
-  async toggleBreak(breakState: boolean) {
+  async toggleBreak() {
+    console.log(this.shift.id)
     this.togglingBreak = true
-    await clock.toggleBreak(this.$store, breakState)
+    await shifts.toggleBreak(this.$store, this.shift.id, !this.onBreak)
     this.togglingBreak = false
   }
 

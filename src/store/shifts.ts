@@ -72,6 +72,7 @@ const mutations = {
   },
 
   CLOCK_IN(state: ShiftsState, shiftId: number) {
+    console.log(shiftId)
     state.byId[shiftId].clock_state = ClockAction.ClockIn
   },
 
