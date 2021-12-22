@@ -4,7 +4,7 @@ div
     :editing='true'
     :shift.sync='selectedShift'
     :opened.sync='editShiftDialog'
-    :contractors='[]'
+    :job-id='selectedShift.job_id'
   )
   delete-shift-dialog(
     v-if="selectedShift",
@@ -41,13 +41,13 @@ div
           color="green"
         ) Active
                   
-        v-list-item-action(v-if='i != 0')
+        v-list-item-action(v-if='userIsManager || i != 0')
           .d-flex.flex-column.align-end
             .text-body-2.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
             .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
         v-list-item-action(v-if='!userIsManager && i == 0')
-          clock-buttons
+          clock-buttons(:shift='shift')
 
         v-list-item-action.ml-3(v-if='userIsManager')
           v-btn(

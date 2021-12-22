@@ -111,7 +111,6 @@ export async function configureAxios(store: any) {
 
   api.interceptors.response.use(
     (response: any) => {
-      console.log('oiqwerqoweiruqw')
       return response
     },
     (error: any) => {
@@ -130,8 +129,6 @@ export async function configureAxios(store: any) {
         text: message,
         action,
       })
-      console.log('asdflkjasdflkjasdflkj')
-      console.log(error)
 
       return Promise.reject(error)
     }

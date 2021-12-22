@@ -32,7 +32,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Task } from '@/types/Jobs'
-import { completeTask } from '@/services/jobs'
+import { completeTask } from '@/services/shifts'
 
 @Component
 export default class TaskList extends Vue {

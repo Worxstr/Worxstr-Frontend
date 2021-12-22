@@ -24,7 +24,6 @@ import SignUp from '@/views/auth/sign-up/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
 import Dashboard from '@/views/dashboard/Dashboard.vue'
-import Clock from '@/views/clock/Clock.vue'
 import Payments from '@/views/payments/Payments.vue'
 // import Availability from '@/views/Availability.vue'
 import Jobs from '@/views/jobs/Jobs.vue'
@@ -178,15 +177,6 @@ const routes = [
       icon: 'mdi-view-dashboard',
       restrict: [UserRole.Contractor],
     },
-  },
-  {
-    path: '/clock',
-    name: 'clock',
-    component: Clock,
-    meta: {
-      icon: 'mdi-clock-outline',
-      restrict: [UserRole.Contractor]
-    }
   },
   // {
   //   path: '/availability',

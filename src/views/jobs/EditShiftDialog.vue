@@ -164,7 +164,7 @@ import dayjs from 'dayjs'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { User } from '@/types/Users'
 import { Shift } from '@/types/Jobs'
-import { createShift, updateShift } from '@/services/jobs'
+import { createShift, updateShift } from '@/services/shifts'
 import { exists } from '@/util/inputValidation'
 
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
@@ -223,8 +223,9 @@ export default class EditShiftDialog extends Vue {
 
   @Prop({ type: Object   }) readonly shift?: Shift
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ default: []    }) readonly contractors!: (User | UnassignedContractor)[]
   @Prop({ default: false }) readonly editing!: boolean
+  // @Prop({ default: []    }) readonly contractors!: (User | UnassignedContractor)[]
+  @Prop({ type: Number    }) readonly jobId!: number
 
   @Watch('opened')
   onOpened() {
@@ -245,10 +246,13 @@ export default class EditShiftDialog extends Vue {
     this.$emit('update:opened', false)
   }
 
-  get contractorsSorted() {
-    return this.contractors.sort((a: any, b: any) => {
-      return (a.direct === b.direct) ? 0 : (a.direct ? -1 : 1)
-    })
+  get contractors() {
+    // TODO: Sort
+    return this.$store.getters.job(this.jobId)?.contractors ?? []
+
+    // return this.contractors.sort((a: any, b: any) => {
+    //   return (a.direct === b.direct) ? 0 : (a.direct ? -1 : 1)
+    // })
   }
 
   contractorName(contractorId: number) {

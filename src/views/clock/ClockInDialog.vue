@@ -95,7 +95,7 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 import * as geolocation from '@/services/geolocation'
 
-import * as clock from '@/services/clock'
+import * as clock from '@/services/shifts'
 import { showToast } from '@/services/app'
 import { Shift } from '@/types/Jobs'
 

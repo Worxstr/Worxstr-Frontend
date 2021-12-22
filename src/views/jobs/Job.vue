@@ -10,12 +10,14 @@ v-container(v-if="loading && !job")
   )
 
 div(v-else)
+
   v-container.approvals.mb-16(v-if="job")
     edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
     edit-shift-dialog(
       :opened.sync='createShiftDialog',
       :contractors='job.contractors'
+      :job-id='job.id'
     )
     qr-code-dialog(
       :opened.sync='qrCodeDialog'

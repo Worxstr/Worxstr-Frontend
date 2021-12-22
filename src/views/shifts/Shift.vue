@@ -5,7 +5,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
     :editing='true'
     :shift.sync='shift'
     :opened.sync='editShiftDialog'
-    :contractors='[]'
+    :job-id='shift.job_id'
   )
   delete-shift-dialog(
     :opened.sync='deleteShiftDialog'
@@ -112,8 +112,8 @@ import { Vue, Component } from 'vue-property-decorator'
 import vueAwesomeCountdown from "vue-awesome-countdown"
 
 import * as jobs from '@/services/jobs'
+import * as shifts from '@/services/shifts'
 import { Managers, currentUserIs } from '@/types/Users'
-import { getShift } from '@/services/jobs'
 import { Task } from '@/types/Jobs'
 import { Socket } from 'vue-socket.io-extended'
 
@@ -191,6 +191,7 @@ export default class Shift extends Vue {
   }
 
   get totalTasks() {
+    if (!this.shift?.tasks?.length) return 0
     return this.shift.tasks.length
   }
 
@@ -205,7 +206,7 @@ export default class Shift extends Vue {
   async loadShift() {
     this.loadingShift = true
     try {
-      return getShift(this.$store, parseInt(this.$route.params.shiftId))
+      return shifts.getShift(this.$store, parseInt(this.$route.params.shiftId))
     }
     finally {
       this.loadingShift = false

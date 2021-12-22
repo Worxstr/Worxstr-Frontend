@@ -1,5 +1,4 @@
-import { ClockState } from '@/store/clock'
-import { ClockEvent } from './Clock'
+import { ClockAction, ClockEvent } from './Clock'
 import { User } from './Users'
 
 export type Job = {
@@ -23,8 +22,8 @@ export type Job = {
 	organization_id: number;
 	organization_manager_id: number;
 	contractor_manager_id: number;
-	contractor_manager?: User;
-	organization_manager?: User;
+	contractor_manager: User;
+	organization_manager: User;
 	shifts?: Shift[];
 	contractors: User[];
 	managers: {
@@ -37,7 +36,7 @@ export type Shift = {
 	id: number;
 	active: boolean;
 	job_id: number;
-	clock_state: ClockEvent;
+	clock_state: ClockAction;
 	contractor: User;
 	contractor_id: number;
 	site_location: string;

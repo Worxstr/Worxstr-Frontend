@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import * as clock from '@/services/clock'
+import * as clock from '@/services/shifts'
 import { Shift } from '@/types/Jobs'
 import { ClockAction, ClockEvent } from '@/types/Clock'
 

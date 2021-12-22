@@ -42,18 +42,18 @@ v-container.dashboard.d-flex.flex-column
       v-toolbar-title
         h6.text-h6 Your activity
 
-    v-card.clock-history.soft-shadow.mt-4.align-self-center.d-flex.flex-column(
-      outlined
-      rounded='lg'
-      width='100%'
-    )
-      div(v-if='clockHistory.length')
-        clock-events(:events='clockHistory')
+    //- v-card.clock-history.soft-shadow.mt-4.align-self-center.d-flex.flex-column(
+    //-   outlined
+    //-   rounded='lg'
+    //-   width='100%'
+    //- )
+    //-   div(v-if='clockHistory.length')
+    //-     clock-events(:events='clockHistory')
 
-        v-card-actions.d-flex.justify-center
-          v-btn(text color='primary' @click='loadClockHistory' :loading='loadingHistory')
-            v-icon(left dark)  mdi-arrow-down 
-            span View {{ clockHistoryCurrentWeek }}
+    //-     v-card-actions.d-flex.justify-center
+    //-       v-btn(text color='primary' @click='loadClockHistory' :loading='loadingHistory')
+    //-         v-icon(left dark)  mdi-arrow-down 
+    //-         span View {{ clockHistoryCurrentWeek }}
 
       .px-4(v-else-if='loadingHistory')
         v-skeleton-loader.py-2(v-for='i in 10' :key='i' type="sentences")
@@ -65,10 +65,8 @@ v-container.dashboard.d-flex.flex-column
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import * as clock from '@/services/clock'
 import ClockEvents from '@/components/ClockEvents.vue'
 import UpcomingShiftList from '@/components/UpcomingShiftList.vue'
-import dayjs from 'dayjs'
 
 @Component({
   metaInfo: {
@@ -82,39 +80,35 @@ import dayjs from 'dayjs'
 export default class Dashboard extends Vue {
 
   
-  loadingHistory = false
+  // loadingHistory = false
 
-  mounted() {
-    this.loadClockHistory()
+  async mounted() {
+    // this.loadClockHistory()
   }
 
-  clockIn() {
-    // TODO
-    console.log('clocked in')
-  }
 
-  get clockHistory() {
-    return this.$store.getters.clockHistory
-  }
+  // get clockHistory() {
+  //   return this.$store.getters.clockHistory
+  // }
 
-  get clockHistoryCurrentWeek() {
-    const nextOffset = this.$store.state.clock.events.historyPaginationOffset + 1
-    const start = new Date()
-    const end = new Date()
-    start.setDate(start.getDate() - nextOffset * 7)
-    end.setDate(end.getDate() - (nextOffset * 7) + 7)
-    return `${dayjs(start).format('MMM DD')} - ${dayjs(end).format('MMM DD')}`
-  }
+  // get clockHistoryCurrentWeek() {
+  //   const nextOffset = this.$store.state.clock.events.historyPaginationOffset + 1
+  //   const start = new Date()
+  //   const end = new Date()
+  //   start.setDate(start.getDate() - nextOffset * 7)
+  //   end.setDate(end.getDate() - (nextOffset * 7) + 7)
+  //   return `${dayjs(start).format('MMM DD')} - ${dayjs(end).format('MMM DD')}`
+  // }
 
-  async loadClockHistory() {
-    this.loadingHistory = true
-    try {
-      await clock.loadClockHistory(this.$store)
-    }
-    finally {
-      this.loadingHistory = false
-    }
-  }
+  // async loadClockHistory() {
+  //   this.loadingHistory = true
+  //   try {
+  //     await clock.loadClockHistory(this.$store)
+  //   }
+  //   finally {
+  //     this.loadingHistory = false
+  //   }
+  // }
 
 }
 </script>
