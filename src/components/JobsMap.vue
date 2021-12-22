@@ -141,6 +141,7 @@ export default class JobsMap extends Vue {
   }
 
   darkenColor(color: string, amount: number) {
+    if (!color) return color
     const c = /^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/.exec(color)!
     return `#${c[1] +
       (~~Math.min(Math.max(parseInt(c[2], 16) + amount, 0), 255)).toString(

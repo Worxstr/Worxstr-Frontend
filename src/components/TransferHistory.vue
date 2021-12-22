@@ -75,7 +75,7 @@ div(v-if="loadingTransfers && !(transfers.length)")
       color='primary'
       @click='loadPage'
       :loading='loadingMore'
-    ) Load more
+    ) View more
 </template>
 
 <script lang="ts">

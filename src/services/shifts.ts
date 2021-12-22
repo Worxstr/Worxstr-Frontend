@@ -101,12 +101,15 @@ export async function updateShift({ commit }: any, shift: {
   return data
 }
 
-export async function deleteShift({ commit }: any, shiftId: number) {
+export async function deleteShift({ commit }: any, shiftId: number, jobId: number) {
   await api({
     method: 'DELETE',
     url: `shifts/${shiftId}`,
   })
-  commit('REMOVE_SHIFT', shiftId)
+  commit('REMOVE_SHIFT', {
+    shiftId,
+    jobId,
+  })
 }
 
 export async function createTask({ commit }: any, shiftId: number, task: Task) {

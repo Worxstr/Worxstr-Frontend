@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import { Shift, Task } from '@/types/Jobs'
 import { ClockAction } from '@/types/Clock'
+import jobsStore from '@/store/jobs'
 
 export interface ShiftsState {
   upcoming: number[] | null;
@@ -45,9 +46,8 @@ const mutations = {
 
     if (!state.all.includes(shift.id))
       state.all.push(shift.id)
-
-    // TODO
-    // Normalize clock events
+    
+    // TODO: Normalize clock events
     // if (shift.timeclock_actions) {
     //   shift.timeclock_actions.forEach((event: ClockEvent) => {
     //     Vue.set(clockStore.state.events.byId, event.id, event)
@@ -57,7 +57,11 @@ const mutations = {
     // }
   },
 
-  REMOVE_SHIFT(state: ShiftsState, shiftId: number) {
+  REMOVE_SHIFT(state: ShiftsState, {jobId, shiftId}: {jobId: number; shiftId: number}) {
+
+    // Remove shift id from the job
+    jobsStore.state.byId[jobId].shifts = jobsStore.state.byId[jobId].shifts?.filter((id: number) => id !== shiftId)
+
     Vue.delete(state.byId, shiftId)
     Vue.delete(
       state.all,

@@ -16,7 +16,7 @@ v-dialog(
       v-model='isValid'
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ editing ? 'Editing shift' : 'Assigning new shift' }}
+        v-toolbar-title.text-h6 {{ editing ? 'Editing shift' : (`Assigning new shift${recurring || editedShift.contractor_ids.length>1 ? 's' : ''}`) }}
 
       v-divider
 
@@ -30,13 +30,21 @@ v-dialog(
             v-model='editedShift.time_begin'
             outlined
             label='Start'
+            hide-details
           )
           //- End date
           datetime-input(
             v-model='editedShift.time_end'
             outlined
             label='End'
+            hide-details
           )
+
+        //- Recurrence section
+        v-checkbox(label='Recurring' v-model='recurring' :hide-details='recurring')
+
+        v-expand-transition
+          recurring-date-input.mt-4(v-show='recurring')
 
         v-divider.mb-4
 
@@ -128,6 +136,7 @@ v-dialog(
               :data-cy="`shift-site-location-${index}`"
             )
 
+        v-divider.mb-4
 
         v-subheader Shift notes
 
@@ -136,13 +145,6 @@ v-dialog(
         //- pre {{editedShift.tasks}}
         v-subheader Tasks
         task-list-input.mb-4(v-model='editedShift.tasks' editable orderable)
-        //- v-divider
-
-        //- Recurrence section
-        //- v-checkbox(label='Recurring' v-model='recurring' hide-details)
-
-        //- v-expand-transition
-        //-   recurring-date-input.mt-4(v-show='recurring')
 
       v-spacer
 

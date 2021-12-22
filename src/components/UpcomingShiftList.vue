@@ -6,8 +6,9 @@
 
   shift-list(:shifts='upcomingShifts')
 
-  .my-4.d-flex.justify-center
-    v-btn(text outlined color='primary') View more
+  //-// TODO: Pagination
+  //- .my-4.d-flex.justify-center
+  //-   v-btn(text outlined color='primary') View more
 
 </template>
 
