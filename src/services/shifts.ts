@@ -52,12 +52,13 @@ export async function getShift({ commit }: any, shiftId: number) {
   return data
 }
 
-export async function getUpcomingShifts({ commit }: any, weekOffset = 0) {
+export async function getUpcomingShifts({ commit }: any, offset = 0, limit = 10) {
   const { data } = await api({
     method: 'GET',
     url: 'shifts',
     params: {
-      week_offset: weekOffset,
+      offset,
+      limit,
     },
   })
   data.shifts.forEach((shift: Shift) => {

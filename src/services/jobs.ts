@@ -20,10 +20,12 @@ export async function loadJobs({ commit }: any) {
 function normalizeJob(commit: any, job: any) {
 
   // Normalize shifts
-  job.shifts = job.shifts.map((shift: any) => {
-    commit('ADD_SHIFT', shift)
-    return shift.id
-  })
+  if (job.shifts) {
+    job.shifts = job.shifts.map((shift: any) => {
+      commit('ADD_SHIFT', shift)
+      return shift.id
+    })
+  }
 
   // Normalize contractors
   if (job.contractors) {
