@@ -1,5 +1,5 @@
 <template lang="pug">
-.recurring
+.recurring-date-input
 
   .d-flex.flex-column.flex-md-row.gap-small
     //- Start date
@@ -18,28 +18,30 @@
     )
 
   //- Recurrence section
-  v-checkbox(label='Recurring' v-model='recurring' :hide-details='recurring')
+  v-checkbox(label='Recurring' v-model='recurring')
 
   v-expand-transition
-    div(v-show='recurring')
+    .d-flex.flex-column.gap-medium(v-if='recurring')
 
       //- Repeat every {num} {day,week,month,year}
       .d-flex.align-center
-        p.text-no-wrap.mb-6.mr-1 Repeat every
+        span.text-no-wrap.mr-1 Repeat every
         v-text-field.px-2(
-          outlined,
-          dense,
-          v-model.number="recurData.interval",
-          type="number",
-          increment="1",
-          min="1",
+          outlined
+          dense
+          v-model.number="recurData.interval"
+          type="number"
+          increment="1"
+          min="1"
           :rules="rules.interval"
+          hide-details
         )
         v-select(
           outlined
           dense
           v-model="recurData.freq"
           :items="freqOptions"
+          hide-details
         )
 
       //- Week option
@@ -56,15 +58,12 @@
           )
 
       //- Days to repeat option
-      .d-flex.align-center(
-        v-if="showDayRepeatOption"
-      )
-        v-radio-group(v-model="dayRepeatOption")
-          .d-flex.mb-2
-            v-radio.mr-4.mr-sm-0(
-              value="on-day"
-              label="On day"
-              :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
+      div(v-if='showDayRepeatOption')
+        v-radio-group(v-model='dayRepeatOption' hide-details)
+          .d-flex.gap-small.mb-4
+            v-radio.mr-4.mb-0(
+              value='on-day'
+              label='On day'
             )
             v-select(
               v-if='selectedYearlyRepeat'
@@ -73,6 +72,7 @@
               v-model='recurData.bymonth'
               :items='months'
               :disabled="dayRepeatOption != 'on-day'"
+              hide-details
             )
             v-select(
               outlined
@@ -80,75 +80,79 @@
               v-model="recurData.bymonthday"
               :items="dates"
               :disabled="dayRepeatOption != 'on-day'"
+              hide-details
             )
-          .d-flex
-            v-radio.mr-4.mr-sm-0(
-              value="on-the"
-              label="On the"
-              :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
-            )
-            v-select(
-              outlined
-              dense
-              v-model="recurData.bysetpos"
-              :items="ordinals"
-              :disabled="dayRepeatOption != 'on-the'"
-            )
-            v-select(
-              outlined
-              dense
-              v-model="recurData.byweekday"
-              :items="weekdayOptions"
-              item-text='text'
-              :disabled="dayRepeatOption != 'on-the'"
-            )
-            .d-flex(v-if='selectedYearlyRepeat')
-              p of
+          .d-flex.flex-column.flex-sm-row.gap-small
+            .d-flex.gap-small
+              v-radio.mr-4.mb-0(
+                value="on-the"
+                label="On the"
+              )
+              v-select(
+                outlined
+                dense
+                v-model="recurData.bysetpos"
+                :items="ordinals"
+                :disabled="dayRepeatOption != 'on-the'"
+                hide-details
+              )
+              v-select(
+                outlined
+                dense
+                v-model="recurData.byweekday"
+                :items="weekdayOptions"
+                item-text='text'
+                :disabled="dayRepeatOption != 'on-the'"
+                hide-details
+              )
+            .d-flex.align-center.gap-small(v-if='selectedYearlyRepeat')
+              span of
               v-select(
                 outlined
                 dense
                 v-model='recurData.bymonth'
                 :items='months'
                 :disabled="dayRepeatOption != 'on-the'"
+                hide-details
               )
 
-
       //- End on selector
-      p.text-no-wrap.mb-0 Ends
-      v-radio-group(v-model="endsOption")
-        .d-flex.mb-2
-          v-radio.mr-4.mr-sm-0(
-            value="on"
-            label="On"
-            :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
-          )
-          v-text-field(
-            v-model="recurData.until"
-            outlined
-            dense
-            hide-details
-            type="date"
-            :disabled="endsOption == 'after'"
-            :rules="rules.endsOn"
-          )
-        .d-flex
-          v-radio.mr-4.mr-sm-0(
-            value="after"
-            label="After"
-            :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
-          )
-          v-text-field(
-            v-model.number="recurData.count"
-            outlined
-            dense
-            hide-details
-            type="number"
-            increment="1"
-            min="1"
-            suffix="occurences"
-            value="1"
-            :disabled="endsOption == 'on'"
-          )
+      div
+        span.text-no-wrap.mb-0 Ends
+        v-radio-group(v-model="endsOption")
+          .d-flex.mb-2
+            v-radio.mr-4.mb-0(
+              value="on"
+              label="On"
+              style='width: 70px'
+            )
+            v-text-field(
+              v-model="recurData.until"
+              outlined
+              dense
+              hide-details
+              type="date"
+              :disabled="endsOption == 'after'"
+              :rules="rules.endsOn"
+            )
+          .d-flex
+            v-radio.mr-4.mb-0(
+              value="after"
+              label="After"
+              style='width: 70px'
+            )
+            v-text-field(
+              v-model.number="recurData.count"
+              outlined
+              dense
+              hide-details
+              type="number"
+              increment="1"
+              min="1"
+              suffix="occurences"
+              value="1"
+              :disabled="endsOption == 'on'"
+            )
 
 </template>
 
@@ -349,3 +353,11 @@ export default class RecurringDateInput extends Vue {
 
 }
 </script>
+
+<style lang="scss">
+.recurring-date-input {
+  .v-radio label {
+    white-space: nowrap;
+  }
+}
+</style>
