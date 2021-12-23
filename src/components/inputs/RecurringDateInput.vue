@@ -150,14 +150,10 @@
             :disabled="endsOption == 'on'"
           )
 
-      pre duration: {{duration}}
-      pre {{rrule.toString()}}
-      pre {{rrule.toText()}}
-      pre {{recurDataSanitized}}
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import { RRule } from 'rrule'
 
@@ -182,7 +178,27 @@ export default class RecurringDateInput extends Vue {
   
   @Prop({ type: Object }) readonly value: any
 
-  
+  @Watch('rrule')
+  onrruleChanged() {
+    this.updateValue()
+  }
+
+  @Watch('end')
+  endDateChanged() {
+    this.updateValue()
+  }
+
+  mounted() {
+    this.updateValue()
+  }
+
+  updateValue() {
+    this.$emit('input', {
+      rrule: this.rrule.toString(),
+      duration: this.duration,
+    })
+  }
+
   rules = {
     repeatEvery: [exists('Repeat required')],
     endsOn: [exists('End date required')],
@@ -193,14 +209,12 @@ export default class RecurringDateInput extends Vue {
   dayRepeatOption = 'on-day'
   endsOption = 'after'
 
-
   freqOptions = [
     { value: RRule.YEARLY, text: 'years' },
     { value: RRule.MONTHLY, text: 'months' },
     { value: RRule.WEEKLY, text: 'weeks' },
     { value: RRule.DAILY, text: 'days' },
   ]
-
   months = [
     { value: 1, text: 'January' },
     { value: 2, text: 'February' },
@@ -243,7 +257,6 @@ export default class RecurringDateInput extends Vue {
         text: day.text,
     })),
   ]
-
   dates = Array.from({ length: 31 }, (v, i) => i + 1)
   ordinals = [
     { value: 1, text: 'first' },
@@ -254,6 +267,7 @@ export default class RecurringDateInput extends Vue {
     { value: -1, text: 'last' },
   ]
 
+  // Default form data
   recurData: any = {
     dtstart: now,
     freq: RRule.DAILY,
@@ -262,11 +276,11 @@ export default class RecurringDateInput extends Vue {
     bymonthday: now.getDate(),
     bysetpos: 1,
     byweekday: [RRule.MO, RRule.FR],
-    // dtstart: new Date(Date.UTC(2012, 1, 1, 10, 30)),
-    // until: new Date(Date.UTC(2012, 12, 31))
+    until: now,
   }
   end = hourFromNowFormatted
 
+  // Process form data and output clean object
   get recurDataSanitized() {
     const recurData = {...this.recurData}
 
@@ -311,6 +325,7 @@ export default class RecurringDateInput extends Vue {
     return recurData
   }
 
+  // Compute rrule object
   get rrule() {
     return new RRule(this.recurDataSanitized)
   }
@@ -332,28 +347,5 @@ export default class RecurringDateInput extends Vue {
     return this.recurData.freq == RRule.YEARLY
   }
 
-  // // Build request object
-  // const shift = {
-  //   ...this.shift,
-  //   contractor_ids: this.shift.contractor_ids.map((id: number) => id < 0 ? null : id),
-  //   site_location: this.shift.site_locations[0],
-  // }
-  // // Correct date strings
-  // ;(shift.time_begin = new Date(shift.time_begin).toISOString()),
-  //   (shift.time_end = new Date(shift.time_end).toISOString()),
-  //   (shift.repeat.ends.date = new Date(shift.repeat.ends.date).toISOString())
-
-  // // Delete unwanted fields
-  // if (!this.recurring) delete shift.repeat
-  // else {
-  //   if (shift.repeat.repeatEvery.unit != 'week') delete shift.repeat.weekly
-  //   if (shift.repeat.repeatEvery.unit != 'month') delete shift.repeat.monthly
-
-  //   if (this.ends == 'on') delete shift.repeat.ends.occurences
-  //   else {
-  //     shift.repeat.ends.occurences = +shift.repeat.ends.occurences
-  //     delete shift.repeat.ends.date
-  //   }
-  // }
 }
 </script>

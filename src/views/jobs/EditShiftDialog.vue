@@ -24,7 +24,24 @@ v-dialog(
 
         v-subheader Date and time
 
-        recurring-date-input.mt-4
+        recurring-date-input.mt-4(v-if='!editing' v-model='recurData')
+
+        .d-flex.flex-column.flex-md-row.gap-small(v-else)
+          //- Start date
+          datetime-input(
+            v-model='editedShift.time_begin'
+            outlined
+            label='Start'
+            hide-details
+          )
+          //- End date
+          datetime-input(
+            v-model='editedShift.time_end'
+            outlined
+            label='End'
+            hide-details
+          )
+
 
         v-divider.mb-4
 
@@ -160,11 +177,21 @@ interface UnassignedContractor {
   id: number;
 }
 
+const now = new Date()
+if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
+now.setSeconds(0, 0)
+now.setMinutes(0)
+const hourFromNow = new Date(now.getTime() + 60 * 60 * 1000)
+const nowFormatted = dayjs(now).utc().format('YYYY-MM-DDTHH:mm:ssZ')
+const hourFromNowFormatted = dayjs(hourFromNow).utc().format('YYYY-MM-DDTHH:mm:ssZ')
+
 function initialState() {
   return {
     contractor_ids: [],
     site_locations: [],
     site_location: '',
+    time_begin: nowFormatted,
+    time_end: hourFromNowFormatted,
     notes: '',
     tasks: [],
   }
@@ -181,6 +208,7 @@ export default class EditShiftDialog extends Vue {
   ends = 'on'
 
   editedShift: any = initialState()
+  recurData: any = {}
   isValid = false
   loading = false
   rules = {
@@ -260,7 +288,10 @@ export default class EditShiftDialog extends Vue {
       else {
         await createShift(
           this.$store,
-          this.editedShift,
+          {
+            ...this.editedShift,
+            ...this.recurData,
+          },
           parseInt(this.$route.params.jobId),
         )
       }
