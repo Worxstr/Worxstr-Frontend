@@ -1,5 +1,7 @@
 declare module 'vue2-google-maps'
 declare module 'vuetify-google-autocomplete'
+declare module 'tiptap-vuetify'
+declare module 'vue-sanitize'
 declare module 'v-mask'
 declare module 'vue-markdown'
 declare module 'vue-chat-scroll'

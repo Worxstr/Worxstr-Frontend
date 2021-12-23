@@ -23,11 +23,12 @@ import SignIn from '@/views/auth/SignIn.vue'
 import SignUp from '@/views/auth/sign-up/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
-import Clock from '@/views/clock/Clock.vue'
+import Dashboard from '@/views/dashboard/Dashboard.vue'
 import Payments from '@/views/payments/Payments.vue'
 // import Availability from '@/views/Availability.vue'
 import Jobs from '@/views/jobs/Jobs.vue'
 import Job from '@/views/jobs/Job.vue'
+import Shift from '@/views/shifts/Shift.vue'
 import Users from '@/views/users/Users.vue'
 import User from '@/views/users/User.vue'
 import Schedule from '@/views/Schedule.vue'
@@ -169,13 +170,13 @@ const routes = [
     }
   },
   {
-    path: '/clock',
-    name: 'clock',
-    component: Clock,
+    path: '/dashboard',
+    name: 'dashboard',
+    component: Dashboard,
     meta: {
-      icon: 'mdi-clock-outline',
-      restrict: [UserRole.Contractor]
-    }
+      icon: 'mdi-view-dashboard',
+      restrict: [UserRole.Contractor],
+    },
   },
   // {
   //   path: '/availability',
@@ -200,10 +201,21 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      restrict: Managers,
       paramMap: {
         jobId: 'jobs',
         prop: 'name'
+      }
+    }
+  },
+  {
+    path: '/shifts/:shiftId',
+    name: 'shift',
+    component: Shift,
+    meta: {
+      paramMap: {
+        // TODO: Need to use a getter for this. Come back to it
+        // shiftId: 'shifts',
+        // prop: ''
       }
     }
   },

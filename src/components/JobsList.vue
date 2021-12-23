@@ -9,30 +9,39 @@
       v-for="(job, i) in jobs"
       :key="job.id"
     )
-      v-list-item(
-        @click="$router.push({ name: 'job', params: { jobId: job.id } })"
-      )
+      v-list-item
         v-list-item-avatar
           v-badge(:color='job.color' dot)
 
         v-list-item-content
-          v-list-item-title(v-text="job.name")
+          v-list-item-title
+            router-link.alt-style(:to="{name: 'job', params: {jobId: job.id}}") {{ job.name }}
           v-list-item-subtitle(v-text="job.address")
-        
+
         v-list-item-action
-          v-menu(bottom left)
-            template(v-slot:activator='{ on, attrs }')
-              v-btn(icon v-bind='attrs' v-on='on' @click.native.stop)
-                v-icon mdi-dots-vertical
-            v-list
-              v-list-item(@click='openEditJobDialog(job)')
-                v-list-item-icon.mr-3
-                  v-icon mdi-pencil
-                v-list-item-title Edit
-              v-list-item(@click='openCloseJobDialog(job)')
-                v-list-item-icon.mr-3
-                  v-icon(color='error') mdi-close
-                v-list-item-title Close
+          v-btn(
+            icon
+            color='primary'
+            @click.stop='openEditJobDialog(job)'
+            data-cy='edit-shift-button'
+          )
+            v-icon mdi-pencil
+            
+        v-list-item-action
+          v-btn(
+            icon
+            color='error'
+            @click.stop='openCloseJobDialog(job)'
+            data-cy='delete-shift-button'
+          )
+            v-icon mdi-delete
+
+        v-list-item-action.ml-0
+          v-btn(
+            icon
+            :to="{name: 'job', params: {jobId: job.id}}"
+          )
+            v-icon mdi-chevron-right
                 
       v-divider(v-if='i != jobs.length - 1')
 

@@ -1,8 +1,11 @@
 import Vue from 'vue'
 import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { User } from '@/types/Users'
 import { Conversation } from '@/types/Messages'
+
+dayjs.extend(relativeTime)
 
 Vue.filter('capitalize', (value: string) => {
 	if (!value) return ''
@@ -26,6 +29,11 @@ export const time = (value: (string|number|Date), format?: string) => {
 	return dayjs(value).format(format || 'h:mm a')
 }
 Vue.filter('time', time)
+
+export const timeAgo = (value: (string|number|Date)) => {
+	return dayjs(value).fromNow()
+}
+Vue.filter('timeAgo', timeAgo)
 
 Vue.filter('dateOrTime', (value: (string|number|Date)) => {
 	if (new Date(value).getTime() < Date.now() - (1000 * 60 * 60 * 24)) {

@@ -4,12 +4,7 @@
     @input='updateValue'
     dense
     :value='raw'
-    :label="label"
-    :required='required'
-    :color="color"
-    :filled="filled"
-    :outlined='outlined'
-    :hide-details='hideDetails'
+    v-bind='$attrs'
   )
 </template>
 
@@ -23,14 +18,7 @@ dayjs.extend(utc)
 @Component
 export default class DatetimeInput extends Vue {
 
-  @Prop({ type: String, required: true }) readonly value?: string
-  @Prop(String) readonly color: string | undefined
-  @Prop(String) readonly label: string | undefined
-  @Prop({ default: false }) readonly required!: boolean
-  @Prop({ default: false }) readonly filled!: boolean
-  @Prop({ default: false }) readonly outlined!: boolean
-  @Prop({ default: false }) readonly hideDetails!: boolean
-
+  @Prop({ type: [String, Date], required: true }) readonly value?: string | Date
 
   get raw() {
     return dayjs(this.value).format('YYYY-MM-DDTHH:mm')

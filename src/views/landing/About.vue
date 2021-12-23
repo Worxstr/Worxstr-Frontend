@@ -155,24 +155,39 @@ export default {
         ]
       },
       {
-        name: 'Andrew Thorp',
-        title: "Lead Backend Developer / DevOps engineer",
-        photo: 'andrew.jpg',
+        name: 'Austin Cockerham',
+        title: "Director of Sales / Southeast",
+        photo: 'austin.jpg',
         socials: [
           {
-            link: 'https://thorp.dev/',
-            icon: 'mdi-web'
+            link: 'mailto:austin@worxstr.com',
+            icon: 'mdi-email-outline',
           },
           {
-            link: 'https://github.com/aThorp96',
-            icon: 'mdi-github',
-          },
-          {
-            link: 'https://www.linkedin.com/in/aThorp96',
+            link: 'https://www.linkedin.com/in/austin-cockerham-5b3025206/',
             icon: 'mdi-linkedin'
           },
         ]
       },
+      // {
+      //   name: 'Andrew Thorp',
+      //   title: "Lead Backend Developer / DevOps engineer",
+      //   photo: 'andrew.jpg',
+      //   socials: [
+      //     {
+      //       link: 'https://thorp.dev/',
+      //       icon: 'mdi-web'
+      //     },
+      //     {
+      //       link: 'https://github.com/aThorp96',
+      //       icon: 'mdi-github',
+      //     },
+      //     {
+      //       link: 'https://www.linkedin.com/in/aThorp96',
+      //       icon: 'mdi-linkedin'
+      //     },
+      //   ]
+      // },
       // {
       //   name: 'Coley Lippard',
       //   title: "Creative Marketing Director",
@@ -189,25 +204,25 @@ export default {
       //     },
       //   ]
       // },
-      // {
-      //   name: 'Victoria DiMarco',
-      //   title: "Lead UI/UX Designer",
-      //   photo: 'victoria.jpg',
-      //   socials: [
-      //     {
-      //       link: 'mailto:victoriadimarco99@gmail.com',
-            // icon: 'mdi-email-outline',
-      //     },
-      //     {
-      //       link: 'https://www.linkedin.com/in/victoriadimarco',
-      //       icon: 'mdi-linkedin'
-      //     },
-      //     {
-      //       link: 'https://www.instagram.com/designdimarco',
-      //       icon: 'mdi-instagram'
-      //     },
-      //   ]
-      // },
+      {
+        name: 'Victoria DiMarco',
+        title: "Marketing Designer",
+        photo: 'victoria.jpg',
+        socials: [
+          {
+            link: 'mailto:victoriadimarco99@gmail.com',
+            icon: 'mdi-email-outline',
+          },
+          {
+            link: 'https://www.linkedin.com/in/victoriadimarco',
+            icon: 'mdi-linkedin'
+          },
+          {
+            link: 'https://www.instagram.com/designdimarco',
+            icon: 'mdi-instagram'
+          },
+        ]
+      },
     ],
   }),
 };
