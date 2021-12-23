@@ -45,7 +45,9 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
         | {{ isMyShift ? 'Your' : '{Contractor name}\'s' }} shift at&nbsp;
         span.font-weight-bold {{ shift.site_location }}
         | &nbsp;for&nbsp;
-        span.font-weight-bold {{ job.name }}
+        router-link.alt-style.font-weight-black(
+          :to="{name: 'job', params: { jobId: shift.job_id }}"
+        ) {{ job.name }}
         | &nbsp;{{ shift.shiftActive ? "ends" : "begins" }} at
 
       //- Shift time
