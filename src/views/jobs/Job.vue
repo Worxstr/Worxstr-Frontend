@@ -140,17 +140,23 @@ div(v-else)
 
         v-skeleton-loader(type='list-item-two-line' v-else)
 
-    v-toolbar(flat, color="transparent")
+    v-toolbar(flat color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
       v-spacer
-      v-btn(text color='primary' @click="createShiftDialog = true" data-cy="assign-shift-button")
+      v-btn(
+        v-if='userIsManager'
+        text
+        color='primary'
+        @click='createShiftDialog = true'
+        data-cy='assign-shift-button'
+      )
         v-icon(left) mdi-clipboard-plus-outline
         span Assign shift
 
-    p.text-body-2.text-center.mt-3(v-if="!job.shifts || !job.shifts.length")
+    p.text-body-2.text-center.mt-3(v-if="(!job.shifts || !job.shifts.length) && !loading")
       | There aren't any shifts for this job.
     
-    shift-list(v-else :shifts='job.shifts')
+    shift-list(v-else :shifts='job.shifts' :loading='loading')
 
 </template>
 

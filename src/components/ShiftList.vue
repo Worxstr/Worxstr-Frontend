@@ -15,6 +15,13 @@ div
 
   v-card.soft-shadow(outlined rounded)
     v-list
+      v-skeleton-loader(
+        v-if='loading'
+        v-for='(v, i) in [1,2,3,4,5,6]'
+        :key='i'
+        type="list-item-two-line"
+      )
+
       v-list-item(
         v-for='(shift, i) in sortedShifts'
         :key='shift.id'
@@ -94,6 +101,7 @@ import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
 export default class ShiftList extends Vue {
   
   @Prop({ default: [] }) shifts!: Shift[]
+  @Prop({ default: false }) loading!: boolean
 
   selectedShift: Shift | {} = {}
   editShiftDialog = false

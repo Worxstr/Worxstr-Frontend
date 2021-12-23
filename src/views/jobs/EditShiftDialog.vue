@@ -32,14 +32,12 @@ v-dialog(
             v-model='editedShift.time_begin'
             outlined
             label='Start'
-            hide-details
           )
           //- End date
           datetime-input(
             v-model='editedShift.time_end'
             outlined
             label='End'
-            hide-details
           )
 
 
@@ -169,6 +167,7 @@ import { exists } from '@/util/inputValidation'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import TaskListInput from '@/components/inputs/TaskListInput.vue'
 import RecurringDateInput from '@/components/inputs/RecurringDateInput.vue'
+import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 
 const timeValidate = (errorMessage: string) => (value: any) =>
   /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(value)
@@ -202,6 +201,7 @@ function initialState() {
     RichtextField,
     TaskListInput,
     RecurringDateInput,
+    DatetimeInput,
   },
 })
 export default class EditShiftDialog extends Vue {

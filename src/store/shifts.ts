@@ -47,8 +47,8 @@ const mutations = {
     if (!state.all.includes(shift.id))
       state.all.push(shift.id)
     
-    if (!jobsStore.state.byId[shift.job_id]?.shifts.includes(shift.id))
-      jobsStore.state.byId[shift.job_id]?.shifts.push(shift.id)
+    if (!jobsStore.state.byId[shift.job_id]?.shifts?.includes(shift.id))
+      jobsStore.state.byId[shift.job_id]?.shifts?.push(shift.id)
 
     
     // TODO: Normalize clock events
