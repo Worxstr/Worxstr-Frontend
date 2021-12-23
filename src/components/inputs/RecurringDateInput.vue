@@ -1,6 +1,6 @@
 <template lang="pug">
 .recurring-date-input
-
+  
   .d-flex.flex-column.flex-md-row.gap-small
     //- Start date
     datetime-input(
@@ -8,6 +8,7 @@
       outlined
       label='Start'
       hide-details
+      :rules='rules.start'
     )
     //- End date
     datetime-input(
@@ -15,6 +16,7 @@
       outlined
       label='End'
       hide-details
+      :rules='rules.end'
     )
 
   //- Recurrence section
@@ -137,7 +139,7 @@
               hide-details
               type="date"
               :disabled="endsOption == 'after'"
-              :rules="rules.endsOn"
+              :rules="rules.until"
             )
           .d-flex
             v-radio.mr-4.mb-0(
@@ -210,20 +212,34 @@ export default class RecurringDateInput extends Vue {
     })
   }
 
-  rules = {
-    // repeatEvery: [exists('Repeat required')],
-    interval: [exists('Interval required'), (v: number) => v > 0],
-    freq: [exists('Frequency required')],
-    bymonth: [exists('Month required')],
-    bymonthday: [exists('Day required')],
-    bysetpos: [exists('Ordinal required')],
-    byweekday: [exists('Day required')],
-    endsOn: [
-      exists('End date required'),
-      (v: string) => dayjs(v).isValid() || 'Invalid date',
-      (v: string) => dayjs(v).isAfter(dayjs(this.recurData.dtstart)) || 'End date must be after start date',
-    ],
-    count: [exists('Occurences required'), (v: number) => v > 0],
+  get rules() {
+    return {
+      interval: [exists('Interval required'), (v: number) => v > 0],
+      freq: [exists('Frequency required')],
+      bymonth: [exists('Month required')],
+      bymonthday: [exists('Day required')],
+      bysetpos: [exists('Ordinal required')],
+      byweekday: [exists('Day required')],
+      start: [
+        exists('Start date required'),
+        (v: string) => {
+          console.log(this.duration)
+          return this.duration > 0 || 'Start date must be before end date'
+        },
+      ],
+      end: [
+        exists('End date required'),
+        (v: string) => {
+          console.log(this.duration)
+          return this.duration > 0 || 'End date must be after start date'
+        },
+      ],
+      until: [
+        exists('End date required'),
+        (v: string) => dayjs(v).isAfter(dayjs(this.recurData.dtstart)) || 'End date must be after start date',
+      ],
+      count: [exists('Occurences required'), (v: number) => v > 0],
+    }
   }
 
   recurring = false
@@ -290,7 +306,7 @@ export default class RecurringDateInput extends Vue {
 
   // Default form data
   recurData: any = {
-    dtstart: now,
+    dtstart: nowFormatted,
     freq: RRule.DAILY,
     interval: 1,
     count: 10,
@@ -308,7 +324,7 @@ export default class RecurringDateInput extends Vue {
     const recurData = {...this.recurData}
 
     if (!this.recurring) return {
-      dtstart: recurData.dtstart,
+      dtstart: new Date(recurData.dtstart),
       freq: RRule.DAILY,
       count: 1,
     }
