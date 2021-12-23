@@ -16,7 +16,7 @@ div
   v-card.soft-shadow(outlined rounded)
     v-list
       v-list-item(
-        v-for='(shift, i) in shifts'
+        v-for='(shift, i) in sortedShifts'
         :key='shift.id'
       )
         v-list-item-content
@@ -101,6 +101,14 @@ export default class ShiftList extends Vue {
 
   get userIsManager() {
     return currentUserIs(...Managers)
+  }
+
+  get sortedShifts() {
+    return this.shifts.sort((a, b) => {
+      if (a.time_begin < b.time_begin) return -1
+      if (a.time_begin > b.time_begin) return 1
+      return 0
+    })
   }
 
   getContractor(contractorId: number) {

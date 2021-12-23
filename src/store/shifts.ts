@@ -47,6 +47,10 @@ const mutations = {
     if (!state.all.includes(shift.id))
       state.all.push(shift.id)
     
+    if (!jobsStore.state.byId[shift.job_id]?.shifts.includes(shift.id))
+      jobsStore.state.byId[shift.job_id]?.shifts.push(shift.id)
+
+    
     // TODO: Normalize clock events
     // if (shift.timeclock_actions) {
     //   shift.timeclock_actions.forEach((event: ClockEvent) => {
@@ -76,7 +80,6 @@ const mutations = {
   },
 
   CLOCK_IN(state: ShiftsState, shiftId: number) {
-    console.log(shiftId)
     state.byId[shiftId].clock_state = ClockAction.ClockIn
   },
 
