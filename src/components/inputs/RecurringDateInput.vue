@@ -43,6 +43,7 @@
           :items="freqOptions"
           :item-text="(e) => recurData.interval == 1 ? e.text : `${e.text}s`"
           hide-details
+          :rules='rules.freq'
         )
 
       //- Week option
@@ -74,6 +75,7 @@
               :items='months'
               :disabled="dayRepeatOption != 'on-day'"
               hide-details
+              :rules='bymonth'
             )
             v-select(
               outlined
@@ -82,6 +84,7 @@
               :items="dates"
               :disabled="dayRepeatOption != 'on-day'"
               hide-details
+              :rules='bymonthday'
             )
           .d-flex.flex-column.flex-sm-row.gap-small
             .d-flex.gap-small
@@ -121,7 +124,7 @@
       div
         span.text-no-wrap.mb-0 Ends
         v-radio-group(v-model="endsOption")
-          .d-flex.mb-2
+          .d-flex.mb-4
             v-radio.mr-4.mb-0(
               value="on"
               label="On"
@@ -153,6 +156,7 @@
               suffix="occurences"
               value="1"
               :disabled="endsOption == 'on'"
+              :rules='rules.count'
             )
 
 </template>
@@ -207,9 +211,19 @@ export default class RecurringDateInput extends Vue {
   }
 
   rules = {
-    repeatEvery: [exists('Repeat required')],
-    endsOn: [exists('End date required')],
-    endsAfter: [exists('Number of occurences required')],
+    // repeatEvery: [exists('Repeat required')],
+    interval: [exists('Interval required'), (v: number) => v > 0],
+    freq: [exists('Frequency required')],
+    bymonth: [exists('Month required')],
+    bymonthday: [exists('Day required')],
+    bysetpos: [exists('Ordinal required')],
+    byweekday: [exists('Day required')],
+    endsOn: [
+      exists('End date required'),
+      (v: string) => dayjs(v).isValid() || 'Invalid date',
+      (v: string) => dayjs(v).isAfter(dayjs(this.recurData.dtstart)) || 'End date must be after start date',
+    ],
+    count: [exists('Occurences required'), (v: number) => v > 0],
   }
 
   recurring = false
