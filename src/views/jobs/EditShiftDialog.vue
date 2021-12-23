@@ -16,7 +16,7 @@ v-dialog(
       v-model='isValid'
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ editing ? 'Editing shift' : (`Assigning new shift${recurring || editedShift.contractor_ids.length>1 ? 's' : ''}`) }}
+        v-toolbar-title.text-h6 {{ editing ? 'Editing shift' : (`Assigning new shift${editedShift.contractor_ids.length>1 ? 's' : ''}`) }}
 
       v-divider
 
@@ -24,27 +24,7 @@ v-dialog(
 
         v-subheader Date and time
 
-        .d-flex.flex-column.flex-md-row.gap-small
-          //- Start date
-          datetime-input(
-            v-model='editedShift.time_begin'
-            outlined
-            label='Start'
-            hide-details
-          )
-          //- End date
-          datetime-input(
-            v-model='editedShift.time_end'
-            outlined
-            label='End'
-            hide-details
-          )
-
-        //- Recurrence section
-        v-checkbox(label='Recurring' v-model='recurring' :hide-details='recurring')
-
-        v-expand-transition
-          recurring-date-input.mt-4(v-show='recurring')
+        recurring-date-input.mt-4
 
         v-divider.mb-4
 
@@ -169,7 +149,6 @@ import { Shift } from '@/types/Jobs'
 import { createShift, updateShift } from '@/services/shifts'
 import { exists } from '@/util/inputValidation'
 
-import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import TaskListInput from '@/components/inputs/TaskListInput.vue'
 import RecurringDateInput from '@/components/inputs/RecurringDateInput.vue'
@@ -181,21 +160,11 @@ interface UnassignedContractor {
   id: number;
 }
 
-const now = new Date()
-if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
-now.setSeconds(0, 0)
-now.setMinutes(0)
-const hourFromNow = new Date(now.getTime() + 60 * 60 * 1000)
-const nowFormatted = dayjs(now).utc().format('YYYY-MM-DDTHH:mm:ssZ')
-const hourFromNowFormatted = dayjs(hourFromNow).utc().format('YYYY-MM-DDTHH:mm:ssZ')
-
 function initialState() {
   return {
     contractor_ids: [],
     site_locations: [],
     site_location: '',
-    time_begin: nowFormatted,
-    time_end: hourFromNowFormatted,
     notes: '',
     tasks: [],
   }
@@ -203,14 +172,12 @@ function initialState() {
 
 @Component({
   components: {
-    DatetimeInput,
     RichtextField,
     TaskListInput,
     RecurringDateInput,
   },
 })
 export default class EditShiftDialog extends Vue {
-  recurring = false
   ends = 'on'
 
   editedShift: any = initialState()

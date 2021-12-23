@@ -1,156 +1,187 @@
 <template lang="pug">
 .recurring
 
-  //- Repeat every {num} {day,week,month,year}
-  .d-flex.align-center
-    p.text-no-wrap.mb-6.mr-1 Repeat every
-    v-text-field.px-2(
-      outlined,
-      dense,
-      v-model.number="recurData.interval",
-      type="number",
-      increment="1",
-      min="1",
-      :rules="rules.interval"
-    )
-    v-select(
+  .d-flex.flex-column.flex-md-row.gap-small
+    //- Start date
+    datetime-input(
+      v-model='recurData.dtstart'
       outlined
-      dense
-      v-model="recurData.freq"
-      :items="freqOptions"
+      label='Start'
+      hide-details
+    )
+    //- End date
+    datetime-input(
+      v-model='end'
+      outlined
+      label='End'
+      hide-details
     )
 
-  //- Week option
-  div(v-if="showWeekdays")
-    p.text-no-wrap.mb-0 Repeat on
-    .d-flex.align-center.pt-1
-      v-checkbox.mt-0(
-        v-for='(day, i) in weekdays'
-        :key='i'
-        v-model='recurData.byweekday'
-        :value='day.value'
-        :on-icon="`mdi-alpha-${day.text.charAt(0)}-circle`",
-        :off-icon="`mdi-alpha-${day.text.charAt(0)}-circle-outline`",
-      )
+  //- Recurrence section
+  v-checkbox(label='Recurring' v-model='recurring' :hide-details='recurring')
 
-  //- Days to repeat option
-  .d-flex.align-center(
-    v-if="showDayRepeatOption"
-  )
-    v-radio-group(v-model="dayRepeatOption")
-      .d-flex.mb-2
-        v-radio.mr-4.mr-sm-0(
-          value="on-day"
-          label="On day"
-          :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
-        )
-        v-select(
-          v-if='selectedYearlyRepeat'
-          outlined
-          dense
-          v-model='recurData.bymonth'
-          :items='months'
-          :disabled="dayRepeatOption != 'on-day'"
+  v-expand-transition
+    div(v-show='recurring')
+
+      //- Repeat every {num} {day,week,month,year}
+      .d-flex.align-center
+        p.text-no-wrap.mb-6.mr-1 Repeat every
+        v-text-field.px-2(
+          outlined,
+          dense,
+          v-model.number="recurData.interval",
+          type="number",
+          increment="1",
+          min="1",
+          :rules="rules.interval"
         )
         v-select(
           outlined
           dense
-          v-model="recurData.bymonthday"
-          :items="dates"
-          :disabled="dayRepeatOption != 'on-day'"
+          v-model="recurData.freq"
+          :items="freqOptions"
         )
-      .d-flex
-        v-radio.mr-4.mr-sm-0(
-          value="on-the"
-          label="On the"
-          :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
-        )
-        v-select(
-          outlined
-          dense
-          v-model="recurData.bysetpos"
-          :items="ordinals"
-          :disabled="dayRepeatOption != 'on-the'"
-        )
-        v-select(
-          outlined
-          dense
-          v-model="recurData.byweekday"
-          :items="weekdayOptions"
-          item-text='text'
-          :disabled="dayRepeatOption != 'on-the'"
-        )
-        .d-flex(v-if='selectedYearlyRepeat')
-          p of
-          v-select(
-            outlined
-            dense
-            v-model='recurData.bymonth'
-            :items='months'
-            :disabled="dayRepeatOption != 'on-the'"
+
+      //- Week option
+      div(v-if="showWeekdays")
+        p.text-no-wrap.mb-0 Repeat on
+        .d-flex.align-center.pt-1
+          v-checkbox.mt-0(
+            v-for='(day, i) in weekdays'
+            :key='i'
+            v-model='recurData.byweekday'
+            :value='day.value'
+            :on-icon="`mdi-alpha-${day.text.charAt(0)}-circle`",
+            :off-icon="`mdi-alpha-${day.text.charAt(0)}-circle-outline`",
           )
 
+      //- Days to repeat option
+      .d-flex.align-center(
+        v-if="showDayRepeatOption"
+      )
+        v-radio-group(v-model="dayRepeatOption")
+          .d-flex.mb-2
+            v-radio.mr-4.mr-sm-0(
+              value="on-day"
+              label="On day"
+              :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
+            )
+            v-select(
+              v-if='selectedYearlyRepeat'
+              outlined
+              dense
+              v-model='recurData.bymonth'
+              :items='months'
+              :disabled="dayRepeatOption != 'on-day'"
+            )
+            v-select(
+              outlined
+              dense
+              v-model="recurData.bymonthday"
+              :items="dates"
+              :disabled="dayRepeatOption != 'on-day'"
+            )
+          .d-flex
+            v-radio.mr-4.mr-sm-0(
+              value="on-the"
+              label="On the"
+              :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
+            )
+            v-select(
+              outlined
+              dense
+              v-model="recurData.bysetpos"
+              :items="ordinals"
+              :disabled="dayRepeatOption != 'on-the'"
+            )
+            v-select(
+              outlined
+              dense
+              v-model="recurData.byweekday"
+              :items="weekdayOptions"
+              item-text='text'
+              :disabled="dayRepeatOption != 'on-the'"
+            )
+            .d-flex(v-if='selectedYearlyRepeat')
+              p of
+              v-select(
+                outlined
+                dense
+                v-model='recurData.bymonth'
+                :items='months'
+                :disabled="dayRepeatOption != 'on-the'"
+              )
 
-  //- End on selector
-  p.text-no-wrap.mb-0 Ends
-  v-radio-group(v-model="endsOption")
-    .d-flex.mb-2
-      v-radio.mr-4.mr-sm-0(
-        value="on"
-        label="On"
-        :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
-      )
-      v-text-field(
-        v-model="recurData.until"
-        outlined
-        dense
-        hide-details
-        type="date"
-        :disabled="endsOption == 'after'"
-        :rules="rules.endsOn"
-      )
-    .d-flex
-      v-radio.mr-4.mr-sm-0(
-        value="after"
-        label="After"
-        :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
-      )
-      v-text-field(
-        v-model.number="recurData.count"
-        outlined
-        dense
-        hide-details
-        type="number"
-        increment="1"
-        min="1"
-        suffix="occurences"
-        value="1"
-        :disabled="endsOption == 'on'"
-      )
 
-  pre {{rrule.toString()}}
-  pre {{rrule.toText()}}
-  pre {{recurDataSanitized}}
+      //- End on selector
+      p.text-no-wrap.mb-0 Ends
+      v-radio-group(v-model="endsOption")
+        .d-flex.mb-2
+          v-radio.mr-4.mr-sm-0(
+            value="on"
+            label="On"
+            :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
+          )
+          v-text-field(
+            v-model="recurData.until"
+            outlined
+            dense
+            hide-details
+            type="date"
+            :disabled="endsOption == 'after'"
+            :rules="rules.endsOn"
+          )
+        .d-flex
+          v-radio.mr-4.mr-sm-0(
+            value="after"
+            label="After"
+            :style="`width: ${$vuetify.breakpoint.smAndUp ? '100px' : 'auto'}`"
+          )
+          v-text-field(
+            v-model.number="recurData.count"
+            outlined
+            dense
+            hide-details
+            type="number"
+            increment="1"
+            min="1"
+            suffix="occurences"
+            value="1"
+            :disabled="endsOption == 'on'"
+          )
+
+      pre duration: {{duration}}
+      pre {{rrule.toString()}}
+      pre {{rrule.toText()}}
+      pre {{recurDataSanitized}}
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import dayjs from 'dayjs'
-import { RRule, RRuleSet, rrulestr } from 'rrule'
+import { RRule } from 'rrule'
 
 import { exists } from '@/util/inputValidation'
+
+import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 
 const now = new Date()
 if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
 now.setSeconds(0, 0)
 now.setMinutes(0)
-const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
-const weekFromNowLocal = dayjs(weekFromNow).format('YYYY-MM-DDTHH:mm:ss')
+const hourFromNow = new Date(now.getTime() + 60 * 60 * 1000)
+const nowFormatted = dayjs(now).utc().format('YYYY-MM-DDTHH:mm:ssZ')
+const hourFromNowFormatted = dayjs(hourFromNow).utc().format('YYYY-MM-DDTHH:mm:ssZ')
 
-@Component
+@Component({
+  components: {
+    DatetimeInput,
+  },
+})
 export default class RecurringDateInput extends Vue {
   
   @Prop({ type: Object }) readonly value: any
+
   
   rules = {
     repeatEvery: [exists('Repeat required')],
@@ -158,8 +189,10 @@ export default class RecurringDateInput extends Vue {
     endsAfter: [exists('Number of occurences required')],
   }
 
+  recurring = false
   dayRepeatOption = 'on-day'
   endsOption = 'after'
+
 
   freqOptions = [
     { value: RRule.YEARLY, text: 'years' },
@@ -222,6 +255,7 @@ export default class RecurringDateInput extends Vue {
   ]
 
   recurData: any = {
+    dtstart: now,
     freq: RRule.DAILY,
     interval: 1,
     count: 1,
@@ -231,11 +265,15 @@ export default class RecurringDateInput extends Vue {
     // dtstart: new Date(Date.UTC(2012, 1, 1, 10, 30)),
     // until: new Date(Date.UTC(2012, 12, 31))
   }
+  end = hourFromNowFormatted
 
   get recurDataSanitized() {
     const recurData = {...this.recurData}
 
-    // Convert until date string into date object
+    // Convert date strings into date objects
+    if (recurData.dtstart) {
+      recurData.dtstart = new Date(recurData.dtstart)
+    }
     if (recurData.until) {
       recurData.until = new Date(recurData.until)
     }
@@ -276,7 +314,11 @@ export default class RecurringDateInput extends Vue {
   get rrule() {
     return new RRule(this.recurDataSanitized)
   }
-  
+
+  // Compute duration of event in seconds
+  get duration() {
+    return ((new Date(this.end)).getTime() - (new Date(this.recurData.dtstart)).getTime()) / 1000
+  }
 
   get showWeekdays() {
     return this.recurData.freq == RRule.WEEKLY
