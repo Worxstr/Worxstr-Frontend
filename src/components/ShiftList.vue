@@ -16,7 +16,7 @@ div
   v-card.soft-shadow(outlined rounded)
     v-list
       v-skeleton-loader(
-        v-if='loading'
+        v-if='loading && (!shifts.length)'
         v-for='(v, i) in [1,2,3,4,5,6]'
         :key='i'
         type="list-item-two-line"
