@@ -23,7 +23,7 @@ dayjs.extend(utc)
 @Component
 export default class DatetimeInput extends Vue {
 
-  @Prop({ type: String, required: true }) readonly value?: string
+  @Prop({ type: [String, Date], required: true }) readonly value?: string | Date
   @Prop(String) readonly color: string | undefined
   @Prop(String) readonly label: string | undefined
   @Prop({ default: false }) readonly required!: boolean

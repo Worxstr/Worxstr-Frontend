@@ -41,6 +41,7 @@
           dense
           v-model="recurData.freq"
           :items="freqOptions"
+          :item-text="(e) => recurData.interval == 1 ? e.text : `${e.text}s`"
           hide-details
         )
 
@@ -53,8 +54,8 @@
             :key='i'
             v-model='recurData.byweekday'
             :value='day.value'
-            :on-icon="`mdi-alpha-${day.text.charAt(0)}-circle`",
-            :off-icon="`mdi-alpha-${day.text.charAt(0)}-circle-outline`",
+            :on-icon="`mdi-alpha-${day.text.charAt(0).toLowerCase()}-circle`",
+            :off-icon="`mdi-alpha-${day.text.charAt(0).toLowerCase()}-circle-outline`",
           )
 
       //- Days to repeat option
@@ -170,8 +171,10 @@ if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
 now.setSeconds(0, 0)
 now.setMinutes(0)
 const hourFromNow = new Date(now.getTime() + 60 * 60 * 1000)
-const nowFormatted = dayjs(now).utc().format('YYYY-MM-DDTHH:mm:ssZ')
+const monthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+const nowFormatted = dayjs(now).format('YYYY-MM-DDTHH:mm:ssZ')
 const hourFromNowFormatted = dayjs(hourFromNow).utc().format('YYYY-MM-DDTHH:mm:ssZ')
+const monthFromNowFormatted = dayjs(monthFromNow).utc().format('YYYY-MM-DD')
 
 @Component({
   components: {
@@ -211,13 +214,13 @@ export default class RecurringDateInput extends Vue {
 
   recurring = false
   dayRepeatOption = 'on-day'
-  endsOption = 'after'
+  endsOption = 'on'
 
   freqOptions = [
-    { value: RRule.YEARLY, text: 'years' },
-    { value: RRule.MONTHLY, text: 'months' },
-    { value: RRule.WEEKLY, text: 'weeks' },
-    { value: RRule.DAILY, text: 'days' },
+    { value: RRule.YEARLY, text: 'year' },
+    { value: RRule.MONTHLY, text: 'month' },
+    { value: RRule.WEEKLY, text: 'week' },
+    { value: RRule.DAILY, text: 'day' },
   ]
   months = [
     { value: 1, text: 'January' },
@@ -234,13 +237,13 @@ export default class RecurringDateInput extends Vue {
     { value: 12, text: 'December' },
   ]
   weekdays = [
-    { value: RRule.SU, text: 'sunday', weekday: false },
-    { value: RRule.MO, text: 'monday', weekday: true },
-    { value: RRule.TU, text: 'tuesday', weekday: true },
-    { value: RRule.WE, text: 'wednesday', weekday: true },
-    { value: RRule.TH, text: 'thursday', weekday: true },
-    { value: RRule.FR, text: 'friday', weekday: true },
-    { value: RRule.SA, text: 'saturday', weekday: false },
+    { value: RRule.SU, text: 'Sunday', weekday: false },
+    { value: RRule.MO, text: 'Monday', weekday: true },
+    { value: RRule.TU, text: 'Tuesday', weekday: true },
+    { value: RRule.WE, text: 'Wednesday', weekday: true },
+    { value: RRule.TH, text: 'Thursday', weekday: true },
+    { value: RRule.FR, text: 'Friday', weekday: true },
+    { value: RRule.SA, text: 'Saturday', weekday: false },
   ]
   weekdayOptions = [
     { // Every day
@@ -276,17 +279,25 @@ export default class RecurringDateInput extends Vue {
     dtstart: now,
     freq: RRule.DAILY,
     interval: 1,
-    count: 1,
+    count: 10,
     bymonthday: now.getDate(),
     bysetpos: 1,
-    byweekday: [RRule.MO, RRule.FR],
-    until: now,
+    bymonth: 1,
+    byweekday: this.weekdayOptions[1].value,
+    until: monthFromNowFormatted,
   }
   end = hourFromNowFormatted
 
   // Process form data and output clean object
   get recurDataSanitized() {
+    
     const recurData = {...this.recurData}
+
+    if (!this.recurring) return {
+      dtstart: recurData.dtstart,
+      freq: RRule.DAILY,
+      count: 1,
+    }
 
     // Convert date strings into date objects
     if (recurData.dtstart) {
