@@ -41,14 +41,16 @@ const getters = {
     if (!job) return undefined
 
     if (job.shifts) {
-      job.shifts = job.shifts.map((shiftId: number) => {
+      // TODO: REMOVE ANY TYPES
+      job.shifts = job.shifts.map((shiftId: number | any) => {
         const shift = {...getters.shift(shiftId)}
         return shift
       })
     }
 
     if (job.contractors) {
-      job.contractors = job.contractors.map((contractorId: number) => {
+      // TODO: REMOVE ANY TYPES
+      job.contractors = job.contractors.map((contractorId: number | any) => {
         const contractor = {...getters.user(contractorId)}
         return contractor
       })

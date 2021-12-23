@@ -4,6 +4,10 @@ import { Shift, Task } from '@/types/Jobs'
 import { ClockAction } from '@/types/Clock'
 import jobsStore from '@/store/jobs'
 
+// TODO ---------------------
+// TODO: REMOVE ANY TYPES
+// TODO ---------------------
+
 export interface ShiftsState {
   upcoming: number[] | null;
   all: number[];
@@ -34,7 +38,8 @@ const mutations = {
     state.upcoming = shiftIds
   },
 
-  ADD_SHIFT(state: ShiftsState, shift: Shift) {
+  // TODO: REMOVE ANY TYPES
+  ADD_SHIFT(state: ShiftsState, shift: Shift | any) {
     Vue.set(state.byId, shift.id, shift)
 
     shift.tasks = shift.tasks.map((task: Task) => {
@@ -64,7 +69,8 @@ const mutations = {
   REMOVE_SHIFT(state: ShiftsState, {jobId, shiftId}: {jobId: number; shiftId: number}) {
 
     // Remove shift id from the job
-    jobsStore.state.byId[jobId].shifts = jobsStore.state.byId[jobId].shifts?.filter((id: number) => id !== shiftId)
+    // TODO:                                                                         // number
+    jobsStore.state.byId[jobId].shifts = jobsStore.state.byId[jobId].shifts?.filter((id: any) => id !== shiftId)
 
     Vue.delete(state.byId, shiftId)
     Vue.delete(
@@ -107,7 +113,8 @@ const getters = {
     if (!shift) return null
 
     if (shift.tasks) {
-      shift.tasks = shift.tasks.map((taskId: number) => {
+      // TODO:                              number
+      shift.tasks = shift.tasks.map((taskId: any) => {
         return getters.task(taskId)
       })
     }
