@@ -4,43 +4,42 @@ v-container.dashboard.d-flex.flex-column
 
   upcoming-shift-list
   
-  
-  .d-flex.gap-small
-    .flex-1
-      v-toolbar.pa-0.flex-grow-0(flat color='transparent')
-        v-toolbar-title
-          h6.text-h6 Your week
-      v-card.soft-shadow.flex-1(outlined)
-        .pa-4
-          h4.text-h4.green--text $256.32
-          p.text-caption earned
+  //- .d-flex.gap-small
+  //-   .flex-1
+  //-     v-toolbar.pa-0.flex-grow-0(flat color='transparent')
+  //-       v-toolbar-title
+  //-         h6.text-h6 Your week
+  //-     v-card.soft-shadow.flex-1(outlined)
+  //-       .pa-4
+  //-         h4.text-h4.green--text $256.32
+  //-         p.text-caption earned
 
 
-        v-card-text.d-flex.align-center.justify-center(style='height: 300px') A graph or something
+  //-       v-card-text.d-flex.align-center.justify-center(style='height: 300px') A graph or something
 
-    .flex-1
-      v-toolbar.pa-0.flex-grow-0(flat color='transparent')
-        v-toolbar-title
-          h6.text-h6 Payments
+  //-   .flex-1
+  //-     v-toolbar.pa-0.flex-grow-0(flat color='transparent')
+  //-       v-toolbar-title
+  //-         h6.text-h6 Payments
 
-      v-card.soft-shadow.flex-1(outlined)
-        v-list
-          v-list-item
-            v-list-item-content
-              v-list-item-title $256.32
-              v-list-item-subtitle 2021-12-19
-            v-list-item-action
-              v-btn(text color='primary' icon)
-                v-icon(left) mdi-chevron-right
+  //-     v-card.soft-shadow.flex-1(outlined)
+  //-       v-list
+  //-         v-list-item
+  //-           v-list-item-content
+  //-             v-list-item-title $256.32
+  //-             v-list-item-subtitle 2021-12-19
+  //-           v-list-item-action
+  //-             v-btn(text color='primary' icon)
+  //-               v-icon(left) mdi-chevron-right
 
-      .my-4.d-flex.justify-center
-        v-btn(text outlined color='primary' to='payments') View more
+  //-     .my-4.d-flex.justify-center
+  //-       v-btn(text outlined color='primary' to='payments') View more
 
   //- Activity timeline
-  div
-    v-toolbar.pa-0.flex-grow-0(flat color='transparent')
-      v-toolbar-title
-        h6.text-h6 Your activity
+  //- div
+  //-   v-toolbar.pa-0.flex-grow-0(flat color='transparent')
+  //-     v-toolbar-title
+  //-       h6.text-h6 Your activity
 
     //- v-card.clock-history.soft-shadow.mt-4.align-self-center.d-flex.flex-column(
     //-   outlined

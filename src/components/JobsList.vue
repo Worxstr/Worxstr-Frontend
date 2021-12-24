@@ -23,7 +23,7 @@
             icon
             color='primary'
             @click.stop='openEditJobDialog(job)'
-            data-cy='edit-shift-button'
+            data-cy='edit-job-button'
           )
             v-icon mdi-pencil
             
@@ -32,7 +32,7 @@
             icon
             color='error'
             @click.stop='openCloseJobDialog(job)'
-            data-cy='delete-shift-button'
+            data-cy='close-job-button'
           )
             v-icon mdi-delete
 

@@ -6,9 +6,14 @@
 
   shift-list(:shifts='upcomingShifts')
 
-  //-// TODO: Pagination
-  //- .my-4.d-flex.justify-center
-  //-   v-btn(text outlined color='primary') View more
+  .my-4.d-flex.justify-center
+    v-btn(
+      text
+      outlined
+      color='primary'
+      @click='loadUpcomingShifts'
+      :loading='loading'
+    ) View more
 
 </template>
 
@@ -25,13 +30,27 @@ import { getUpcomingShifts } from '@/services/shifts'
 })
 export default class UpcomingShiftList extends Vue {
   
+  offset = 0
+  loading = false
+
   async mounted() {
     console.log(getUpcomingShifts)
-    await getUpcomingShifts(this.$store)
+    this.loadUpcomingShifts()
   }
 
   get upcomingShifts() {
     return this.$store.getters.upcomingShifts
+  }
+
+  async loadUpcomingShifts() {
+    this.loading = true
+    try {
+      await getUpcomingShifts(this.$store, this.offset)
+      this.offset++
+    }
+    finally {
+      this.loading = false
+    }
   }
 
 }

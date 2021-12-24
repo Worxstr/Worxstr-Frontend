@@ -100,7 +100,10 @@ export async function signUp({ commit }: any, form: any) {
     const { data } = await api({
       method: 'POST',
       url: `/auth/sign-up/${form.accountType}`,
-      data: form,
+      data: {
+        ...form,
+        color: '#2196F3' // TODO: Generate color by hash of id
+      },
     })
     router.push({ name: 'home' })
     showToast(

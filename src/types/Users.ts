@@ -72,7 +72,7 @@ export function defaultRoute() {
 
 	switch (user?.roles[0]?.id) {
 		case UserRole.Contractor:
-			return 'clock'
+			return 'dashboard'
 		case UserRole.ContractorManager:
 		case UserRole.OrganizationManager:
 			return 'jobs'

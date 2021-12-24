@@ -32,6 +32,7 @@ v-dialog(
             v-model='editedShift.time_begin'
             outlined
             label='Start'
+            hide-details
           )
           //- End date
           datetime-input(
@@ -151,7 +152,7 @@ v-dialog(
           color='green'
           @click='updateShift'
           :disabled='!isValid'
-          data-cy='create-shift-button'
+          data-cy='save-shift-button'
         ) {{ editing ? 'Save' : 'Assign' }}
 </template>
 

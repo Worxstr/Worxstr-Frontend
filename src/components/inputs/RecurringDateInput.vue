@@ -315,6 +315,7 @@ export default class RecurringDateInput extends Vue {
     bymonth: 1,
     byweekday: this.weekdayOptions[1].value,
     until: monthFromNowFormatted,
+    tzid: Intl.DateTimeFormat().resolvedOptions().timeZone, // Pass current time zone for context
   }
   end = hourFromNowFormatted
 

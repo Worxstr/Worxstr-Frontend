@@ -60,12 +60,12 @@ describe('jobs', () => {
     cy.get('main').should('contain', job.name)
 
     // Update
-    cy.listMenuButton(job.name, 'Edit')
+    cy.button('edit-job-button').first().click()
     cy.editJob(job)
     cy.get('main').should('contain', `${job.name} (edited)`)
 
     // Delete
-    cy.listMenuButton(job.name, 'Close')
+    cy.button('close-job-button').first().click()
     cy.closeJob(job)
     cy.get('main').should('not.contain', `${job.name} (edited)`)
   })
@@ -81,12 +81,15 @@ describe('jobs', () => {
 
     // Assign shift
     const shiftLocation = 'Cypress site location'
+    cy.button('assign-shift-button').click()
     cy.assignShift(shiftLocation)
 
     // TODO: Check shift is displayed on page
 
     // Edit shift
     cy.contains(shiftLocation).click()
+    cy.wait(1000)
+    cy.button('edit-shift-button').click()
     cy.editShift()
 
     // TODO: Check shift was updated
@@ -122,8 +125,10 @@ describe('payments', () => {
     cy.logout()
   })
 
-  it('should add funds', () => {
-    cy.wait(10000) // Wait for funding sources to load
+  it('should add funds', {
+    defaultCommandTimeout: 30000
+  }, () => {
+    cy.wait(5000) // Wait for funding sources to come in
     cy.button('add-funds-button').click()
     cy.transferFunds(5000)
   })
@@ -137,7 +142,7 @@ describe('payments', () => {
   })
 })
 
-describe('clock', {
+describe.only('clock', {
   defaultCommandTimeout: 30000
 }, () => {
 
@@ -146,7 +151,7 @@ describe('clock', {
     /* Assign a shift to contractor */
 
     cy.login('manager')
-    cy.visit(`${localUrl}/clock`)
+    cy.visit(`${localUrl}/jobs`)
     
     cy.button('add-job-button').click()
     cy.createJob(job)
@@ -158,17 +163,20 @@ describe('clock', {
       
       // Assign shift
       const shiftLocation = 'Cypress site location'
+      cy.button('assign-shift-button').click()
       cy.assignShift(shiftLocation)
+      cy.wait(1000)
 
       cy.logout()
-
 
       /* Switch to contractor and clock in and out */
 
       cy.login('contractor')
 
-      cy.visit(`${localUrl}/clock`)
-      cy.get('main').should('contain', 'Clock in')
+      cy.visit(`${localUrl}/dashboard`)
+      cy.get('main').should('contain', shiftLocation)
+
+      cy.contains(shiftLocation).click()
       
       // Generate 4 timecards
       for (let i = 0; i < 4; i++) {

@@ -4,7 +4,7 @@
     @input='updateValue'
     dense
     :value='raw'
-    v-bind='$attrs'
+    v-bind='attrsModified'
   )
 </template>
 
@@ -22,6 +22,12 @@ export default class DatetimeInput extends Vue {
 
   get raw() {
     return dayjs(this.value).format('YYYY-MM-DDTHH:mm')
+  }
+
+  get attrsModified() {
+    const attrs = this.$attrs
+    delete attrs['data-cy']
+    return attrs
   }
 
   updateValue(value: string) {

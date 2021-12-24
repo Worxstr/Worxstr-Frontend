@@ -20,7 +20,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
       :icon='$vuetify.breakpoint.xs'
       color='primary'
       @click='editShiftDialog = true'
-      data-cy='edit-job-button'
+      data-cy='edit-shift-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
       span(v-if='!$vuetify.breakpoint.xs') Edit
@@ -31,7 +31,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
       :icon='$vuetify.breakpoint.xs'
       color='error'
       @click='deleteShiftDialog = true'
-      data-cy='edit-job-button'
+      data-cy='delete-shift-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
       span(v-if='!$vuetify.breakpoint.xs') Delete
