@@ -96,6 +96,22 @@ v-dialog(
             v-model.number='editedUser.contractor_info.hourly_rate'
             required
           )
+
+          .d-flex
+            p.mr-4 Assigned color
+            v-menu(offset-y content-class='color-picker' v-if='editedUser && editedUser.contractor_info')
+              template(v-slot:activator='{ on, attrs }')
+                .mb-3(v-bind='attrs' v-on='on')
+                  v-badge.soft-shadow(:color="editedUser.contractor_info.color || '#4285f4'" bordered)
+                  
+              v-color-picker(
+                v-model='editedUser.contractor_info.color'
+                show-swatches
+                hide-canvas
+                hide-sliders
+                hide-inputs
+                swatches-max-height='350'
+              )
       
       v-spacer
 

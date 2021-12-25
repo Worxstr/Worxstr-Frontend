@@ -13,13 +13,23 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
     v-spacer
 
     v-select.ma-2.flex-grow-0(
-      v-model="type",
-      :items="types",
-      :item-text="(t) => t.charAt(0).toUpperCase() + t.slice(1)",
-      dense,
-      solo,
-      hide-details,
-      label="View"
+      v-model='colorBy'
+      :items='colorByOptions'
+      dense
+      outlined
+      hide-details
+      label='Color by'
+      @change='updateColorBy'
+    )
+
+    v-select.ma-2.flex-grow-0(
+      v-model='type'
+      :items='types'
+      :item-text='(t) => t.charAt(0).toUpperCase() + t.slice(1)'
+      dense
+      outlined
+      hide-details
+      label='View'
     )
 
   v-card.soft-shadow.flex-grow-1
@@ -41,10 +51,12 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import { currentUserIs, Managers } from '@/types/Users'
 import * as schedule from '@/services/schedule'
 import { CalendarEvent } from '@/types/Schedule'
+import { loadWorkforce } from '@/services/users'
+import { loadJobs } from '@/services/jobs'
 
 @Component({
   metaInfo: {
@@ -57,8 +69,31 @@ export default class Schedule extends Vue {
   types = ['month', 'week', 'day', '4day']
   value = ''
 
+  colorBy = 'job'
+  colorByOptions = ['job', 'user']
+
+  mounted() {
+    const colorBy = localStorage.getItem('colorScheduleBy')
+    if (colorBy) {
+      this.colorBy = colorBy
+    }
+  }
+
+  @Watch('colorBy')
+  updateColorBy() {
+    switch (this.colorBy) {
+      case 'job':
+        loadJobs(this.$store)
+        break
+      case 'user':
+        loadWorkforce(this.$store)
+        break
+    }
+    localStorage.setItem('colorScheduleBy', this.colorBy)
+  }
+
   get calendarEvents() {
-    return this.$store.getters.calendarEvents
+    return this.$store.getters.calendarEvents(this.colorBy)
   }
 
   async getEvents({ start, end }: any) {
@@ -82,8 +117,7 @@ export default class Schedule extends Vue {
     // nativeEvent is the browser click event, event is the calendar event data
     // TODO: Use hasRole defined in User.ts
 
-    if (currentUserIs(...Managers))
-      this.$router.push({ name: 'job', params: { jobId: event.job_id.toString() } })
+    this.$router.push({ name: 'shift', params: { shiftId: event.id.toString() } })
   }
 }
 </script>

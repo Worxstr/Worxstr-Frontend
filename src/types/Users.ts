@@ -7,6 +7,7 @@ export type User = {
 	email: string;
 	roles: Role[];
 	contractor_info?: {
+		color: string;
 		dwolla_customer_url: string;
 		dwolla_customer_status: string;
 		[key: string]: any;

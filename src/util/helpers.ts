@@ -1,4 +1,3 @@
-import { deleteTask } from '@/services/shifts';
 import colors from 'vuetify/lib/util/colors'
 
 export function normalizeRelations(data: any, fields: any) {
@@ -38,10 +37,20 @@ delete colorsToUse.brown
 delete colorsToUse['blueGrey']
 
 const colorList = Object.keys(colorsToUse)
-const shades = ['base', 'accent1', 'accent2', 'accent3', 'accent4']
+const shades = ['base', /* 'accent1', */ 'accent2', 'accent3', 'accent4']
 
-export function numberToColor(id: number) {
-  const i = Math.floor(Math.PI * 1.8 * id) % (colorList.length * shades.length)
+export function hashColor(input: number | string) {
+
+  if (!input) return 'blue'
+
+  let num = input
+  if (typeof input === 'string') {
+    // Add up ASCII codes of each character and multiply by random prime
+    num = input.split('').reduce((prev, curr) => prev + curr.charCodeAt(0), 0) * 8641
+  }
+  else num = input
+
+  const i = Math.floor(Math.PI * 1.8 * num) % (colorList.length * shades.length)
   const color = colorList[i % colorList.length]
   const shade = shades[Math.floor(i / colorList.length)]
 
