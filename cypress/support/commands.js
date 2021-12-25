@@ -49,12 +49,12 @@ Cypress.Commands.add('logout', () => {
 })
 
 function getContainer(insideDialog) {
-  return cy.get(insideDialog ? '.v-dialog--active' : 'main')
+  return cy.get(insideDialog ? '.v-dialog--active' : 'body')
 }
 
 // Commands for user inputs
 Cypress.Commands.add('textField', (name, input, insideDialog = false) => {
-  cy.get(`[data-cy=${name}]`).type(input)
+  getContainer(insideDialog).get(`[data-cy=${name}]`).type(input)
 })
 
 Cypress.Commands.add('selectField', (name, index, multiple = false, insideDialog = false) => {
@@ -105,15 +105,13 @@ Cypress.Commands.add('closeJob', (job) => {
 })
 
 Cypress.Commands.add('assignShift', (shiftLocation) => {
-  cy.button('assign-shift-button').click()
   cy.wait(3000)
   cy.selectField('shift-contractors', 0, true, true)
   cy.textField('shift-site-location-0', shiftLocation, true)
-  cy.button('create-shift-button', true).click()
+  cy.button('save-shift-button', true).click()
 })
 
 Cypress.Commands.add('editShift', () => {
-  cy.button('edit-shift-button').click()
   cy.textField('shift-site-location', ' (edited)', true)
   // TODO: Change start and end dates
   cy.button('save-shift-button', true).click()

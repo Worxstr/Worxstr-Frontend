@@ -87,6 +87,7 @@ import { Capacitor } from '@capacitor/core'
 import { signUp } from '@/services/auth'
 import ContractorForm from './ContractorForm.vue'
 import ManagerForm from './ManagerForm.vue'
+import { hashColor } from '@/util/helpers'
 
 @Component({
   metaInfo: {
@@ -148,11 +149,16 @@ export default class SignUp extends Vue {
   async signUp() {
     this.loading = true
     try {
-      await signUp(this.$store, {
+      const data = {
         ...this.form,
         ...(this.accountType === 'org' ? this.managerForm : this.contractorForm),
         accountType: this.accountType,
-      })
+      }
+
+      if (this.accountType === 'contractor')
+        data.color = hashColor(Date.now())
+
+      await signUp(this.$store, data)
     } finally {
       this.loading = false
     }

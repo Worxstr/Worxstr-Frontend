@@ -8,6 +8,8 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
 import usersStore from '@/store/users'
 import { socket } from '@/util/socket-io'
+import { hashColor } from '@/util/helpers'
+
 
 export function shouldUseSandbox(email: string) {
   return email?.includes('+test')

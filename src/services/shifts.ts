@@ -66,8 +66,9 @@ export async function getUpcomingShifts({ commit }: any, offset = 0, limit = 10)
   data.shifts.forEach((shift: Shift) => {
     commit('ADD_SHIFT', shift)
   })
-  console.log(data.shifts.map((shift: Shift) => shift.id))
-  commit('SET_UPCOMING_SHIFTS', data.shifts.map((shift: Shift) => shift.id))
+  data.shifts.forEach((shift: Shift) => {
+    commit('ADD_UPCOMING_SHIFT', shift.id)
+  })
 
   return data
 }

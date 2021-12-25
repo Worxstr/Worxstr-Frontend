@@ -1,6 +1,26 @@
 <template lang="pug">
 .clock-buttons
   clock-in-dialog(:opened.sync='clockInDialog' :shift='shift')
+  v-dialog(
+    v-model='tasksNotCompletedDialog'
+    :fullscreen='$vuetify.breakpoint.smAndDown'
+    max-width='500'
+    persistent
+  )
+    v-card.d-flex.flex-column
+      v-card-title.headline You haven't completed all your tasks!
+      v-card-text Are you sure you want to clock out now?
+
+      v-spacer
+      
+      v-card-actions
+        v-spacer
+        v-btn(text @click='tasksNotCompletedDialog = false') Cancel
+        v-btn(text color='success' @click='clockOut(true)' data-cy='confirm-clock-out-button') Yes, clock out
+        
+      v-fade-transition
+        v-overlay(v-if="loading", absolute, opacity=".2")
+          v-progress-circular(indeterminate)
 
   .d-flex.flex-row.justify-center.gap-small
 
@@ -56,6 +76,7 @@ export default class ClockButtons extends Vue {
   @Prop({ default: false }) readonly large!: boolean
 
   clockInDialog = false
+  tasksNotCompletedDialog = false
   togglingClock = false
   togglingBreak = false
 
@@ -63,10 +84,26 @@ export default class ClockButtons extends Vue {
     this.clockInDialog = true
   }
 
-  async clockOut() {
+  async clockOut(forceOut = false) {
     this.togglingClock = true
-    await shifts.clockOut(this.$store, this.shift.id)
-    this.togglingClock = false
+    
+    console.log(this.shift.tasks)
+    const allTasksCompleted = this.shift.tasks.reduce((acc, task) => {
+      return acc && task.complete
+    }, true)
+
+    try {
+      if (!allTasksCompleted && !forceOut) {
+        this.tasksNotCompletedDialog = true
+      } else {
+        await shifts.clockOut(this.$store, this.shift.id)
+        this.tasksNotCompletedDialog = false
+        this.togglingClock = false
+      }
+    }
+    finally {
+      this.togglingClock = false
+    }
   }
 
   async toggleBreak() {

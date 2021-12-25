@@ -20,7 +20,7 @@ v-dialog(
         v-toolbar-title.text-h6 {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
       
       v-divider
-
+      pre {{defaultJobColor}}
       v-card-text.py-0
         v-subheader Job details
         .d-flex.flex-column.flex-sm-row
@@ -53,7 +53,7 @@ v-dialog(
               v-menu(offset-y content-class='color-picker')
                 template(v-slot:activator='{ on, attrs }')
                   .mb-3(v-bind='attrs' v-on='on')
-                    v-badge.soft-shadow(:color="editedJob.color || '#4285f4'" bordered)
+                    v-badge.soft-shadow(:color="editedJob.color || defaultJobColor" bordered)
                     
                 v-color-picker(
                   v-model='editedJob.color'
@@ -158,6 +158,7 @@ import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import JobsMap from '@/components/JobsMap.vue'
 import { loadManagers } from '@/services/users'
 import { createJob, updateJob } from '@/services/jobs'
+import { hashColor } from '@/util/helpers'
 
 @Component({
   components: {
@@ -173,7 +174,7 @@ export default class EditJobDialog extends Vue {
   @Prop(Object) readonly job: Job | undefined
 
   editedJob: any = {
-    color: colors.red.base,
+    color: hashColor(Date.now()),
     address: null,
   } // TODO: add type
   isValid = false

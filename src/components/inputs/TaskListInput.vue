@@ -7,6 +7,8 @@
     v-bind='{animation: 200}'
     @start='dragStart'
     @end='dragEnd'
+    :disabled='!orderable'
+    handle='.handle'
   )
     div(
       v-for='(task, i) in localTasks'
@@ -41,6 +43,15 @@
 
         .d-flex
           v-btn(
+            v-if='editingTask !== null'
+            text
+            color='success'
+            @click='exitEditMode'
+          )
+            v-icon(left) mdi-check
+            | Save task
+
+          v-btn(
             text
             color='primary'
             @click='addTask'
@@ -49,20 +60,10 @@
             v-icon(left) mdi-plus
             | Add another task
 
-          v-btn(
-            v-if='editingTask !== null'
-            text
-            color='primary'
-            @click='exitEditMode'
-          )
-            v-icon(left) mdi-check
-            | Done
-
       v-sheet.d-flex(
         v-else
         outlined
         rounded
-        style='cursor: move'
       )
         v-card-text.px-4.py-2
           h5.text-subtitle-1 {{ task.title }}
@@ -73,6 +74,13 @@
             v-icon mdi-pencil
           v-btn(icon color='error' @click='removeTask(i)')
             v-icon mdi-delete
+          v-btn.handle(
+            v-if='orderable'
+            icon
+            @click='removeTask(i)'
+            style='cursor: move'
+          )
+            v-icon mdi-drag-horizontal
 
   .d-flex
     v-btn(
@@ -146,6 +154,7 @@ export default class TaskListInput extends Vue {
   exitEditMode() {
     this.localTasks = this.localTasks.filter((task: Task) => !!task.title)
     this.editingTask = null
+    this.update()
   }
 
   dragStart() {

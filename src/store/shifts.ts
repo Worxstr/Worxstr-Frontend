@@ -9,7 +9,7 @@ import jobsStore from '@/store/jobs'
 // TODO ---------------------
 
 export interface ShiftsState {
-  upcoming: number[] | null;
+  upcoming: number[];
   all: number[];
   byId: {
     [key: number]: Shift;
@@ -23,7 +23,7 @@ export interface ShiftsState {
 }
 
 export const initialState = (): ShiftsState => ({
-  upcoming: null,
+  upcoming: [],
   all: [],
   byId: {},
   tasks: {
@@ -34,8 +34,9 @@ export const initialState = (): ShiftsState => ({
 
 const mutations = {
 
-  SET_UPCOMING_SHIFTS(state: ShiftsState, shiftIds: number[]) {
-    state.upcoming = shiftIds
+  ADD_UPCOMING_SHIFT(state: ShiftsState, shiftId: number) {
+    if (!state.upcoming?.includes(shiftId))
+      state.upcoming?.push(shiftId)
   },
 
   // TODO: REMOVE ANY TYPES

@@ -10,7 +10,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
   delete-shift-dialog(
     :opened.sync='deleteShiftDialog'
     :shift.sync='shift'
-    :contractorName='"Contractor name"'
+    :contractorName='contractor.first_name'
   )
   
   portal(to='toolbarActions')
@@ -20,7 +20,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
       :icon='$vuetify.breakpoint.xs'
       color='primary'
       @click='editShiftDialog = true'
-      data-cy='edit-job-button'
+      data-cy='edit-shift-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
       span(v-if='!$vuetify.breakpoint.xs') Edit
@@ -31,7 +31,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
       :icon='$vuetify.breakpoint.xs'
       color='error'
       @click='deleteShiftDialog = true'
-      data-cy='edit-job-button'
+      data-cy='delete-shift-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
       span(v-if='!$vuetify.breakpoint.xs') Delete
@@ -42,12 +42,14 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
 
       //- Shift name
       h6.text-h6.text-center
-        | {{ isMyShift ? 'Your' : '{Contractor name}\'s' }} shift at&nbsp;
+        span(v-if='isMyShift') Your
+        router-link.alt-style.font-weight-black(v-else :to="{name: 'user', params: {userId: contractor.id}}")
+          | {{contractor.first_name}}'s
+        span &nbsp;shift at&nbsp;
         span.font-weight-bold {{ shift.site_location }}
         | &nbsp;for&nbsp;
-        router-link.alt-style.font-weight-black(
-          :to="{name: 'job', params: { jobId: shift.job_id }}"
-        ) {{ job.name }}
+        router-link.alt-style.font-weight-black(:to="{name: 'job', params: { jobId: shift.job_id }}")
+          | {{ job.name }}
         | &nbsp;{{ shift.shiftActive ? "ends" : "begins" }} at
 
       //- Shift time
@@ -78,6 +80,22 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
             span That's right now!
     
       clock-buttons(v-if='isMyShift' :shift='shift' large)
+
+      .d-flex.justify-center.mt-4.gap-small
+        v-btn(
+          text
+          outlined
+          color='primary'
+          :to="{name: 'job', params: {jobId: this.shift.job_id}}"
+        ) View job details
+
+        v-btn(
+          v-if='userIsManager'
+          text
+          outlined
+          color='primary'
+          :to="{name: 'user', params: {userId: this.shift.contractor_id}}"
+        ) View {{ this.contractor.first_name }}'s profile
       
     //- Loader
     div(
@@ -157,14 +175,8 @@ export default class Shift extends Vue {
     return this.$store.getters.shift(parseInt(this.$route.params.shiftId))
   }
 
-  get userIsManager() {
-    return currentUserIs(...Managers)
-  }
-  // For some fucking reason the view won't rerender when we delete a shift and socket.io pushes the new next shift.
-  // This forces the view to rerender when that mutation occurs.
-  @Socket('SET_NEXT_SHIFT')
-  update() {
-    this.$forceUpdate()
+  get contractor() {
+    return this.$store.getters.user(this.shift.contractor_id)
   }
 
   get clock() {
@@ -174,14 +186,6 @@ export default class Shift extends Vue {
   get job() {
     if (!this.shift) return null
     return this.$store.getters.job(this.shift.job_id)
-  }
-
-  get iAmVerified() {
-    return this.$store.getters.iAmVerified
-  }
-
-  get me() {
-    return this.$store.getters.me
   }
 
   get isMyShift() {
@@ -203,6 +207,18 @@ export default class Shift extends Vue {
 
   get allTasksComplete() {
     return this.tasksComplete == this.totalTasks
+  }
+
+  get me() {
+    return this.$store.getters.me
+  }
+
+  get iAmVerified() {
+    return this.$store.getters.iAmVerified
+  }
+
+  get userIsManager() {
+    return currentUserIs(...Managers)
   }
 
   async loadShift() {
