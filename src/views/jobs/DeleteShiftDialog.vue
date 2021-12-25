@@ -56,7 +56,7 @@ export default class DeleteShiftDialog extends Vue {
         )
         this.closeDialog()
         if (this.$route.name === 'shift')
-          this.$router.push({name: 'job', params: {jobId}})
+          this.$router.push({name: 'job', params: {jobId: jobId.toString()}})
       }
       finally {
         this.loading = false

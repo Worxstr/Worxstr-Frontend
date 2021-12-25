@@ -8,6 +8,7 @@
     @start='dragStart'
     @end='dragEnd'
     :disabled='!orderable'
+    handle='.handle'
   )
     div(
       v-for='(task, i) in localTasks'
@@ -63,7 +64,6 @@
         v-else
         outlined
         rounded
-        :style="{cursor: orderable ? 'move' : 'unset'}"
       )
         v-card-text.px-4.py-2
           h5.text-subtitle-1 {{ task.title }}
@@ -74,6 +74,13 @@
             v-icon mdi-pencil
           v-btn(icon color='error' @click='removeTask(i)')
             v-icon mdi-delete
+          v-btn.handle(
+            v-if='orderable'
+            icon
+            @click='removeTask(i)'
+            style='cursor: move'
+          )
+            v-icon mdi-drag-horizontal
 
   .d-flex
     v-btn(
