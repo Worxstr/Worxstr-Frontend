@@ -19,6 +19,7 @@ dayjs.extend(utc)
 export default class DatetimeInput extends Vue {
 
   @Prop({ type: [String, Date], required: true }) readonly value?: string | Date
+  @Prop({ default: false }) readonly localized!: boolean
 
   get raw() {
     return dayjs(this.value).format('YYYY-MM-DDTHH:mm')
@@ -32,7 +33,9 @@ export default class DatetimeInput extends Vue {
 
   updateValue(value: string) {
     if (!value) return
-    this.$emit('input', dayjs(value).utc().format('YYYY-MM-DDTHH:mm:ssZ'))
+    let date = dayjs(value)
+    if (!this.localized) date = date.utc()
+    this.$emit('input', date.format('YYYY-MM-DDTHH:mm:ssZ'))
   }
 }
 </script>

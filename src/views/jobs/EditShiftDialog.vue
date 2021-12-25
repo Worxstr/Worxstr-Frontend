@@ -24,23 +24,7 @@ v-dialog(
 
         v-subheader Date and time
 
-        recurring-date-input.mt-4(v-if='!editing' v-model='recurData')
-
-        .d-flex.flex-column.flex-md-row.gap-small(v-else)
-          //- Start date
-          datetime-input(
-            v-model='editedShift.time_begin'
-            outlined
-            label='Start'
-            hide-details
-          )
-          //- End date
-          datetime-input(
-            v-model='editedShift.time_end'
-            outlined
-            label='End'
-          )
-
+        recurring-date-input.my-4(v-model='recurData' :recurrable='!editing')
 
         v-divider.mb-4
 
@@ -140,7 +124,7 @@ v-dialog(
 
         //- pre {{editedShift.tasks}}
         v-subheader Tasks
-        task-list-input.mb-4(v-model='editedShift.tasks' editable orderable)
+        task-list-input.mb-4(v-model='editedShift.tasks' editable :orderable='!editing')
 
       v-spacer
 
@@ -283,16 +267,18 @@ export default class EditShiftDialog extends Vue {
 
     // TODO: Validate shifts so that end time is after start time
     try {
+      const editedShift = {
+        ...this.editedShift,
+        ...this.recurData
+      }
+
       if (this.editing) {
-        await updateShift(this.$store, this.editedShift)
+        await updateShift(this.$store, editedShift)
       }
       else {
         await createShift(
           this.$store,
-          {
-            ...this.editedShift,
-            ...this.recurData,
-          },
+          editedShift,
           parseInt(this.$route.params.jobId),
         )
       }

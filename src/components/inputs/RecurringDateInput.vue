@@ -4,7 +4,7 @@
   .d-flex.flex-column.flex-md-row.gap-small
     //- Start date
     datetime-input(
-      v-model='recurData.dtstart'
+      v-model='start'
       outlined
       label='Start'
       hide-details
@@ -20,7 +20,7 @@
     )
 
   //- Recurrence section
-  v-checkbox(label='Recurring' v-model='recurring')
+  v-checkbox(label='Recurring' v-model='recurring' v-if='recurrable')
 
   v-expand-transition
     .d-flex.flex-column.gap-medium(v-if='recurring')
@@ -164,6 +164,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import { RRule } from 'rrule'
@@ -182,6 +183,8 @@ const nowFormatted = dayjs(now).format('YYYY-MM-DDTHH:mm:ssZ')
 const hourFromNowFormatted = dayjs(hourFromNow).utc().format('YYYY-MM-DDTHH:mm:ssZ')
 const monthFromNowFormatted = dayjs(monthFromNow).utc().format('YYYY-MM-DD')
 
+let lastDuration = 60 * 60
+
 @Component({
   components: {
     DatetimeInput,
@@ -190,14 +193,26 @@ const monthFromNowFormatted = dayjs(monthFromNow).utc().format('YYYY-MM-DD')
 export default class RecurringDateInput extends Vue {
   
   @Prop({ type: Object }) readonly value: any
+  @Prop({ default: false }) readonly recurrable!: boolean
 
-  @Watch('rrule')
+  @Watch('start')
   onrruleChanged() {
+
+    this.end = dayjs(this.start).add(lastDuration, 'seconds').utc().format('YYYY-MM-DDTHH:mm:ssZ')
+    this.recurData.until = dayjs(this.start).add(1, 'months').format('YYYY-MM-DD')
     this.updateValue()
+    
+    lastDuration = this.duration
   }
 
   @Watch('end')
   endDateChanged() {
+    this.updateValue()
+    lastDuration = this.duration
+  }
+
+  @Watch('rrule')
+  rruleChanged() {
     this.updateValue()
   }
 
@@ -206,8 +221,14 @@ export default class RecurringDateInput extends Vue {
   }
 
   updateValue() {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const start = dayjs(this.start).format('YYYYMMDDTHHmmss')
+    const rrule = `DTSTART;TZID=${timezone}:${start}\n${this.rrule.toString()}`
+    
     this.$emit('input', {
-      rrule: this.rrule.toString(),
+      start_time: this.start,
+      end_time: this.end,
+      rrule,
       duration: this.duration,
     })
   }
@@ -223,20 +244,18 @@ export default class RecurringDateInput extends Vue {
       start: [
         exists('Start date required'),
         (v: string) => {
-          console.log(this.duration)
           return this.duration > 0 || 'Start date must be before end date'
         },
       ],
       end: [
         exists('End date required'),
         (v: string) => {
-          console.log(this.duration)
           return this.duration > 0 || 'End date must be after start date'
         },
       ],
       until: [
         exists('End date required'),
-        (v: string) => dayjs(v).isAfter(dayjs(this.recurData.dtstart)) || 'End date must be after start date',
+        (v: string) => dayjs(v).isAfter(dayjs(this.start)) || 'End date must be after start date',
       ],
       count: [exists('Occurences required'), (v: number) => v > 0],
     }
@@ -306,7 +325,7 @@ export default class RecurringDateInput extends Vue {
 
   // Default form data
   recurData: any = {
-    dtstart: nowFormatted,
+    // dtstart: nowFormatted,
     freq: RRule.DAILY,
     interval: 1,
     count: 10,
@@ -315,8 +334,9 @@ export default class RecurringDateInput extends Vue {
     bymonth: 1,
     byweekday: this.weekdayOptions[1].value,
     until: monthFromNowFormatted,
-    tzid: Intl.DateTimeFormat().resolvedOptions().timeZone, // Pass current time zone for context
+    // tzid: Intl.DateTimeFormat().resolvedOptions().timeZone, // Pass current time zone for context
   }
+  start = nowFormatted
   end = hourFromNowFormatted
 
   // Process form data and output clean object
@@ -325,15 +345,16 @@ export default class RecurringDateInput extends Vue {
     const recurData = {...this.recurData}
 
     if (!this.recurring) return {
-      dtstart: new Date(recurData.dtstart),
+      // dtstart: new Date(start),
       freq: RRule.DAILY,
       count: 1,
+      // tzid: Intl.DateTimeFormat().resolvedOptions().timeZone, // Pass current time zone for context
     }
 
     // Convert date strings into date objects
-    if (recurData.dtstart) {
-      recurData.dtstart = new Date(recurData.dtstart)
-    }
+    // if (recurData.dtstart) {
+      // // recurData.dtstart = new Date(recurData.dtstart)
+    // }
     if (recurData.until) {
       recurData.until = new Date(recurData.until)
     }
@@ -378,7 +399,7 @@ export default class RecurringDateInput extends Vue {
 
   // Compute duration of event in seconds
   get duration() {
-    return ((new Date(this.end)).getTime() - (new Date(this.recurData.dtstart)).getTime()) / 1000
+    return ((new Date(this.end)).getTime() - (new Date(this.start)).getTime()) / 1000
   }
 
   get showWeekdays() {

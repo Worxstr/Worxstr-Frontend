@@ -7,6 +7,7 @@
     v-bind='{animation: 200}'
     @start='dragStart'
     @end='dragEnd'
+    :disabled='!orderable'
   )
     div(
       v-for='(task, i) in localTasks'
@@ -62,7 +63,7 @@
         v-else
         outlined
         rounded
-        style='cursor: move'
+        :style="{cursor: orderable ? 'move' : 'unset'}"
       )
         v-card-text.px-4.py-2
           h5.text-subtitle-1 {{ task.title }}
