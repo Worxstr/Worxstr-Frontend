@@ -81,13 +81,21 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
     
       clock-buttons(v-if='isMyShift' :shift='shift' large)
 
-      .d-flex.justify-center.mt-4
+      .d-flex.justify-center.mt-4.gap-small
         v-btn(
           text
           outlined
           color='primary'
           :to="{name: 'job', params: {jobId: this.shift.job_id}}"
         ) View job details
+
+        v-btn(
+          v-if='userIsManager'
+          text
+          outlined
+          color='primary'
+          :to="{name: 'user', params: {userId: this.shift.contractor_id}}"
+        ) View {{ this.contractor.first_name }}'s profile
       
     //- Loader
     div(
