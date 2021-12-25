@@ -8,6 +8,8 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
 import usersStore from '@/store/users'
 import { socket } from '@/util/socket-io'
+import { numberToColor } from '@/util/helpers'
+
 
 export function shouldUseSandbox(email: string) {
   return email?.includes('+test')
@@ -102,7 +104,7 @@ export async function signUp({ commit }: any, form: any) {
       url: `/auth/sign-up/${form.accountType}`,
       data: {
         ...form,
-        color: '#2196F3' // TODO: Generate color by hash of id
+        color: numberToColor(Date.now()) // Assign random color
       },
     })
     router.push({ name: 'home' })

@@ -43,6 +43,15 @@
 
         .d-flex
           v-btn(
+            v-if='editingTask !== null'
+            text
+            color='success'
+            @click='exitEditMode'
+          )
+            v-icon(left) mdi-check
+            | Save task
+
+          v-btn(
             text
             color='primary'
             @click='addTask'
@@ -50,15 +59,6 @@
           )
             v-icon(left) mdi-plus
             | Add another task
-
-          v-btn(
-            v-if='editingTask !== null'
-            text
-            color='primary'
-            @click='exitEditMode'
-          )
-            v-icon(left) mdi-check
-            | Done
 
       v-sheet.d-flex(
         v-else
@@ -154,6 +154,7 @@ export default class TaskListInput extends Vue {
   exitEditMode() {
     this.localTasks = this.localTasks.filter((task: Task) => !!task.title)
     this.editingTask = null
+    this.update()
   }
 
   dragStart() {

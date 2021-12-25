@@ -4,16 +4,21 @@
     v-toolbar-title
       h6.text-h6 Upcoming shifts
 
-  shift-list(:shifts='upcomingShifts')
+  div(v-if='!upcomingShifts.length')
+    p.text-center
+      | You have no shifts assigned. Go have fun! 🥂🎉
 
-  .my-4.d-flex.justify-center
-    v-btn(
-      text
-      outlined
-      color='primary'
-      @click='loadUpcomingShifts'
-      :loading='loading'
-    ) View more
+  div(v-else)
+    shift-list(:shifts='upcomingShifts')
+
+    .my-4.d-flex.justify-center
+      v-btn(
+        text
+        outlined
+        color='primary'
+        @click='loadUpcomingShifts'
+        :loading='loading'
+      ) View more
 
 </template>
 
