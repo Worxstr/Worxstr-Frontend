@@ -29,7 +29,7 @@ div
         v-list-item-content
           v-list-item-title
             router-link.alt-style.my-1.font-weight-medium(
-              :to="{name: 'shift', params: {shiftId: shift.id}}"
+              :to="{name: 'shift', params: {jobId: shift.job_id, shiftId: shift.id}}"
             ) {{ shift.site_location }}
 
           v-list-item-subtitle

@@ -16,6 +16,14 @@ v-breadcrumbs.nav-breadcrumbs.pl-1.d-flex.flex-nowrap(
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
+// Find a nested object by dot-syntax string
+// ex. lookup(obj, 'a.b.c') => obj.a.b.c
+function lookup(obj: any, path: string): any {
+  return path.split('.').reduce((prev, curr) => {
+    return prev ? prev[curr] : undefined
+  }, obj)
+}
+
 @Component
 export default class Breadcrumbs extends Vue {
   get breadcrumbs() {
@@ -26,21 +34,24 @@ export default class Breadcrumbs extends Vue {
        the route metadata can be used to map the parameter name to an item
        in the store state. For example, the metadata
        meta: {
-         paramMap: {
-           jobId: 'jobs',
+         paramMap: [{
+           param: 'jobId',
+           store: 'jobs',
            prop: 'name'
-         }
+         }]
        }
        will replace the :jobId param with the 'name' property of the job in state.jobs
        that matches the id given.
        paramMap can also contain a prop 'propBuilder' that will specify how to build
        the text string
     */
-
+   
+    // ex. ['jobs', '114']
     const segments = this.$route.path
       .replace('/', '')
       .split('/')
 
+    // ex. ['jobs', ':jobId]
     const matched = this.$route.matched[this.$route.matched.length - 1].path
       .replace('/', '')
       .split('/')
@@ -48,31 +59,22 @@ export default class Breadcrumbs extends Vue {
     return segments.map((pathSegment, i) => {
       let dynamicName
       try {
-        // Get param mapping from route metadata
-        const paramMap = this.$route.meta?.paramMap
         // Extract the param name
+        // ex. jobId
         const param = matched[i].replace(':', '')
-
-        // Get the path in the state of the object
-        const defaultStatePath = segments[0]
-        const customStatePath = paramMap[param]?.split('.') // Split the param map into an array of the nested state keys
+        
+        // Get param mapping from route metadata
+        // ex. { param: 'jobId', store: 'jobs', prop: 'name' }
+        const paramMap = this.$route.meta?.paramMap.find((m: any) => m.param === param)
 
         // Find the item in the store state
-        let item = this.$store.state
-        if (customStatePath) {
-          // A custom path in the store was defined, ex. 'messages.conversations'
-          customStatePath.forEach((key: string) => {
-            item = item[key]
-          })
-        }
-        else {
-          // Use the first name in the path
-          item = item[defaultStatePath]
-        }
-        item = item.byId[pathSegment]
+        const item = lookup(this.$store.state, paramMap.store)
+          .byId[this.$route.params[param]]
 
         // Use the specified prop or propBuilder to get the name of the object
-        dynamicName = paramMap.propBuilder ? paramMap.propBuilder(item) : item[paramMap.prop || 'name']
+        dynamicName = paramMap.propBuilder
+          ? paramMap.propBuilder(item)
+          : lookup(item, paramMap.prop || 'name')
       }
       catch (e) {
         dynamicName = pathSegment

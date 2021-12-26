@@ -39,7 +39,6 @@ export default class UpcomingShiftList extends Vue {
   loading = false
 
   async mounted() {
-    console.log(getUpcomingShifts)
     this.loadUpcomingShifts()
   }
 
