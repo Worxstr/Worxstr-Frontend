@@ -3,6 +3,7 @@ v-breadcrumbs.nav-breadcrumbs.pl-1.d-flex.flex-nowrap(
   :items="breadcrumbs",
   large,
   v-if="!$route.meta.landing"
+  ref='scrollContainer'
 )
   template(v-slot:item="{ item }")
     v-breadcrumbs-item.subtitle-1.font-weight-medium(
@@ -14,7 +15,7 @@ v-breadcrumbs.nav-breadcrumbs.pl-1.d-flex.flex-nowrap(
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 
 // Find a nested object by dot-syntax string
 // ex. lookup(obj, 'a.b.c') => obj.a.b.c
@@ -26,6 +27,13 @@ function lookup(obj: any, path: string): any {
 
 @Component
 export default class Breadcrumbs extends Vue {
+
+  @Watch('breadcrumbs')
+  breadcrumbsChanged(newVal: any, oldVal: any) {
+    console.log(this.$refs.scrollContainer)
+    this.$refs.scrollContainer.$el.scrollLeft = this.$refs.scrollContainer.$el.scrollWidth
+  }
+
   get breadcrumbs() {
 
     /* This generates breadcrumbs for the toolbar dynamically
@@ -99,7 +107,8 @@ export default class Breadcrumbs extends Vue {
 
 <style lang="scss">
 .nav-breadcrumbs {
-  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: scroll;
   
   li {
     white-space: nowrap;
