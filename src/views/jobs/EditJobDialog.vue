@@ -12,9 +12,9 @@ v-dialog(
 
     v-form.flex-grow-1.d-flex.flex-column(
       v-if="editedJob",
-      @submit.prevent="updateJob",
-      ref="form",
-      v-model="isValid"
+      @submit.prevent='updateJob'
+      ref='form'
+      v-model='isValid'
     )
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title.text-h6 {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
@@ -37,9 +37,9 @@ v-dialog(
 
           vuetify-google-autocomplete#map(
             outlined,
-            dense,
-            label="Address",
-            v-on:placechanged="setPlace",
+            dense
+            label='Job address'
+            v-on:placechanged='setPlace'
             :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''",
             :rules="rules.address"
             data-cy='job-address'

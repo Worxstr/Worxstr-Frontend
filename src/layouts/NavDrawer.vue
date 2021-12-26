@@ -101,7 +101,7 @@ export default class NavDrawer extends Vue {
   }
   
   get mini() {
-    return this.$store.state.app.preferences.miniNav
+    return this.$vuetify.breakpoint.mdAndUp ? this.$store.state.app.preferences.miniNav : false
   }
 
   toggleMiniNav() {

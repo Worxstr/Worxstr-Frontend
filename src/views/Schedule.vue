@@ -95,7 +95,8 @@ import * as schedule from '@/services/schedule'
 import { CalendarEvent } from '@/types/Schedule'
 import { loadWorkforce } from '@/services/users'
 import { loadJobs } from '@/services/jobs'
-import { currentUserIs, Managers, User, userIs, UserRole } from '../types/Users'
+import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
+import { Job } from '@/types/Jobs'
 
 @Component({
   metaInfo: {
@@ -112,8 +113,8 @@ export default class Schedule extends Vue {
   colorBy = 'job'
   colorByOptions = ['job', 'contractor']
 
-  activeUsers = []
-  activeJobs = []
+  activeUsers: number[] = []
+  activeJobs: number[] = []
 
   async mounted() {
     const colorBy = localStorage.getItem('colorScheduleBy')
@@ -132,12 +133,12 @@ export default class Schedule extends Vue {
 
   async loadJobs() {
     const { jobs } = await loadJobs(this.$store)
-    this.activeJobs = jobs.map(j => j.id)
+    this.activeJobs = jobs.map((j: Job) => j.id)
   }
   
   async loadWorkforce() {
     const { users } = await loadWorkforce(this.$store)
-    this.activeUsers = users.map(u => u.id)
+    this.activeUsers = users.map((u: User) => u.id)
   }
 
   updateColorBy(val: string) {
@@ -159,10 +160,8 @@ export default class Schedule extends Vue {
     
     return this.allCalendarEvents.filter(
       (event: CalendarEvent) => {
-        if (this.activeJobs.includes(event.job_id) && this.activeUsers.includes(event.contractor_id)) {
-          return true
-        }
-        return false
+        return this.activeJobs.includes(event.job_id)
+            && this.activeUsers.includes(event.contractor_id)
       }
     )
   }

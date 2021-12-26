@@ -30,7 +30,7 @@ export default class Breadcrumbs extends Vue {
 
   @Watch('breadcrumbs')
   breadcrumbsChanged(newVal: any, oldVal: any) {
-    console.log(this.$refs.scrollContainer)
+    // Scroll to right of container automatically
     this.$refs.scrollContainer.$el.scrollLeft = this.$refs.scrollContainer.$el.scrollWidth
   }
 
@@ -108,7 +108,7 @@ export default class Breadcrumbs extends Vue {
 <style lang="scss">
 .nav-breadcrumbs {
   overflow-y: hidden;
-  overflow-x: scroll;
+  overflow-x: auto;
   
   li {
     white-space: nowrap;

@@ -40,13 +40,14 @@ div
           
             //- span(v-if='!userIsManager') {Job name} &bull; {n} tasks
 
-        v-chip.mx-4.px-2.flex-grow-0(
-          v-if="shift.active",
-          label,
-          outlined,
-          small,
-          color="green"
-        ) Active
+        //- // TODO
+        //- v-chip.mx-4.px-2.flex-grow-0(
+        //-   v-if="shift.active",
+        //-   label,
+        //-   outlined,
+        //-   small,
+        //-   color="green"
+        //- ) Active
                   
         v-list-item-action(v-if='userIsManager || i != 0')
           .d-flex.flex-column.align-end
