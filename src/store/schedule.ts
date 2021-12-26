@@ -50,9 +50,9 @@ const getters = {
           else
             color = hashColor(event.job_id)
           break
-        case 'user':
-          if (rootState.users.byId[event.contractor_id]?.contractor_info?.color)
-            color = rootState.users.byId[event.contractor_id]?.contractor_info?.color
+        case 'contractor':
+          if (rootState.users.byId[event.contractor_id]?.additional_info?.color)
+            color = rootState.users.byId[event.contractor_id]?.additional_info?.color
           else
             color = hashColor(event.contractor_id)
           break

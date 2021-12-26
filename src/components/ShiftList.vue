@@ -29,7 +29,7 @@ div
         v-list-item-content
           v-list-item-title
             router-link.alt-style.my-1.font-weight-medium(
-              :to="{name: 'shift', params: {shiftId: shift.id}}"
+              :to="{name: 'shift', params: {jobId: shift.job_id, shiftId: shift.id}}"
             ) {{ shift.site_location }}
 
           v-list-item-subtitle
@@ -40,13 +40,14 @@ div
           
             //- span(v-if='!userIsManager') {Job name} &bull; {n} tasks
 
-        v-chip.mx-4.px-2.flex-grow-0(
-          v-if="shift.active",
-          label,
-          outlined,
-          small,
-          color="green"
-        ) Active
+        //- // TODO
+        //- v-chip.mx-4.px-2.flex-grow-0(
+        //-   v-if="shift.active",
+        //-   label,
+        //-   outlined,
+        //-   small,
+        //-   color="green"
+        //- ) Active
                   
         v-list-item-action(v-if='userIsManager || i != 0')
           .d-flex.flex-column.align-end
@@ -77,7 +78,7 @@ div
         v-list-item-action(:class="{'ml-0': userIsManager}")
           v-btn(
             icon
-            :to="{name: 'shift', params: {shiftId: shift.id}}"
+            :to="{name: 'shift', params: {jobId: shift.job_id, shiftId: shift.id}}"
           )
             v-icon mdi-chevron-right
 </template>

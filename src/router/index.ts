@@ -201,22 +201,27 @@ const routes = [
     name: 'job',
     component: Job,
     meta: {
-      paramMap: {
-        jobId: 'jobs',
+      paramMap: [{
+        param: 'jobId',
+        store: 'jobs',
         prop: 'name'
-      }
+      }]
     }
   },
   {
-    path: '/shifts/:shiftId',
+    path: '/jobs/:jobId/shifts/:shiftId',
     name: 'shift',
     component: Shift,
     meta: {
-      paramMap: {
-        // TODO: Need to use a getter for this. Come back to it
-        // shiftId: 'shifts',
-        // prop: ''
-      }
+      paramMap: [{
+        param: 'jobId',
+        store: 'jobs',
+        prop: 'name'
+      }, {
+        param: 'shiftId',
+        store: 'shifts',
+        prop: 'site_location'
+      }]
     }
   },
   {
@@ -233,7 +238,6 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      fullHeight: true,
       hideNav: true,
     }
   },
@@ -251,10 +255,11 @@ const routes = [
     name: 'user',
     component: User,
     meta: {
-      paramMap: {
-        userId: 'users',
+      paramMap: [{
+        param: 'userId',
+        store: 'users',
         propBuilder: fullName
-      },
+      }],
     }
   },
   {
@@ -272,12 +277,13 @@ const routes = [
         component: Conversation,
         meta: {
           fullHeight: true,
-          paramMap: {
-            conversationId: 'messages.conversations',
+          paramMap: [{
+            param: 'conversationId',
+            store: 'messages.conversations',
             propBuilder(conversation: MessagesTypes.Conversation) {
               return groupNameList(conversation, usersStore.getters.me(usersStore.state))
             },
-          },
+          }],
         },
       },
     ],

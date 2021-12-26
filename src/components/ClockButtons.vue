@@ -19,7 +19,7 @@
         v-btn(text color='success' @click='clockOut(true)' data-cy='confirm-clock-out-button') Yes, clock out
         
       v-fade-transition
-        v-overlay(v-if="loading", absolute, opacity=".2")
+        v-overlay(v-if='togglingClock' absolute opacity='.2')
           v-progress-circular(indeterminate)
 
   .d-flex.flex-row.justify-center.gap-small
