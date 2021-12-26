@@ -77,7 +77,7 @@ div
         v-list-item-action(:class="{'ml-0': userIsManager}")
           v-btn(
             icon
-            :to="{name: 'shift', params: {shiftId: shift.id}}"
+            :to="{name: 'shift', params: {jobId: shift.job_id, shiftId: shift.id}}"
           )
             v-icon mdi-chevron-right
 </template>

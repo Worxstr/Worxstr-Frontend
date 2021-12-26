@@ -202,7 +202,10 @@ export default class Schedule extends Vue {
     // nativeEvent is the browser click event, event is the calendar event data
     // TODO: Use hasRole defined in User.ts
 
-    this.$router.push({ name: 'shift', params: { shiftId: event.id.toString() } })
+    this.$router.push({ name: 'shift', params: {
+      jobId: event.job_id.toString(),
+      shiftId: event.id.toString()
+    }})
   }
 }
 </script>

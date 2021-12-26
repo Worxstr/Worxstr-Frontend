@@ -80,9 +80,11 @@ export default class Breadcrumbs extends Vue {
         dynamicName = pathSegment
       }
 
+      // Build link text and path
       const text = matched[i]?.includes(':') ? dynamicName : pathSegment
       const to = '/' + segments.slice(0, i + 1).join('/')
 
+      // Check if the link exists. If not, we only send back the text with no link
       const link = this.$router.resolve(to)
       const hasActiveRoute = link?.resolved?.name !== 'notFound'
 
