@@ -32,22 +32,56 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
       label='View'
     )
 
-  v-card.soft-shadow.flex-grow-1
-    v-fade-transition
-      v-overlay(v-if="loading && !calendarEvents.length" absolute :color='$vuetify.theme.dark ? "black" : "white"')
-        v-progress-circular(indeterminate :color='$vuetify.theme.dark ? "white" : "black"')
+  .flex-grow-1.d-flex.flex-column.flex-md-row
 
-    v-calendar(
-      ref="calendar",
-      v-model="value",
-      :type="type",
-      :events="calendarEvents",
-      event-overlap-mode="stack",
-      :event-overlap-threshold="30",
-      :event-color="getEventColor",
-      @change="getEvents",
-      @click:event="openEvent"
-    )
+    //- View toggle options
+    v-card.soft-shadow(outlined)
+      v-list
+        v-subheader Contractors
+        v-list-item(v-for='(user, index) in users' :key='user.id')
+          template(v-slot:default='{ active }')
+            v-list-item-action
+              v-checkbox(
+                :input-value='active'
+                v-model='activeUsers'
+                :value='user.id'
+                :color='user.additional_info.color'
+              )
+            
+            v-list-item-content
+              v-list-item-title {{ user | fullName }}
+      
+        v-subheader Jobs
+        v-list-item(v-for='(job, index) in jobs' :key='job.id')
+          template(v-slot:default='{ active }')
+            v-list-item-action
+              v-checkbox(
+                :input-value='active'
+                v-model='activeJobs'
+                :value='job.id'
+                :color='job.color'
+              )
+            
+            v-list-item-content
+              v-list-item-title {{ job.name }}  
+  
+    //- Calendar
+    .flex-1
+      v-fade-transition
+        v-overlay(v-if="loading && !calendarEvents.length" absolute :color='$vuetify.theme.dark ? "black" : "white"')
+          v-progress-circular(indeterminate :color='$vuetify.theme.dark ? "white" : "black"')
+
+      v-calendar(
+        ref="calendar",
+        v-model="value",
+        :type="type",
+        :events="calendarEvents",
+        event-overlap-mode="stack",
+        :event-overlap-threshold="30",
+        :event-color="getEventColor",
+        @change="getEvents",
+        @click:event="openEvent"
+      )
 </template>
 
 <script lang="ts">
@@ -57,6 +91,7 @@ import * as schedule from '@/services/schedule'
 import { CalendarEvent } from '@/types/Schedule'
 import { loadWorkforce } from '@/services/users'
 import { loadJobs } from '@/services/jobs'
+import { User, userIs, UserRole } from '../types/Users'
 
 @Component({
   metaInfo: {
@@ -70,30 +105,60 @@ export default class Schedule extends Vue {
   value = ''
 
   colorBy = 'job'
-  colorByOptions = ['job', 'user']
+  colorByOptions = ['job', 'contractor']
+
+  activeUsers = []
+  activeJobs = []
 
   mounted() {
     const colorBy = localStorage.getItem('colorScheduleBy')
     if (colorBy) {
       this.colorBy = colorBy
     }
+    this.loadJobs()
+    this.loadWorkforce()
+  }
+
+  async loadJobs() {
+    const { jobs } = await loadJobs(this.$store)
+    console.log(jobs)
+    this.activeJobs = jobs.map(j => j.id)
+  }
+  
+  async loadWorkforce() {
+    const { users } = await loadWorkforce(this.$store)
+    console.log(users)
+    this.activeUsers = users.map(u => u.id)
   }
 
   @Watch('colorBy')
-  updateColorBy() {
-    switch (this.colorBy) {
-      case 'job':
-        loadJobs(this.$store)
-        break
-      case 'user':
-        loadWorkforce(this.$store)
-        break
-    }
-    localStorage.setItem('colorScheduleBy', this.colorBy)
+  updateColorBy(val: string) {
+    localStorage.setItem('colorScheduleBy', val)
+  }
+  
+  get allCalendarEvents() {
+    return this.$store.getters.calendarEvents(this.colorBy)
   }
 
   get calendarEvents() {
-    return this.$store.getters.calendarEvents(this.colorBy)
+    return this.allCalendarEvents.filter(
+      (event: CalendarEvent) => {
+        if (this.activeJobs.includes(event.job_id) && this.activeUsers.includes(event.contractor_id)) {
+          return true
+        }
+        return false
+      }
+    )
+  }
+
+  get users() {
+    return this.$store.getters.workforce.filter((u: User) => {
+      return userIs(u, UserRole.Contractor)
+    })
+  }
+
+  get jobs() {
+    return this.$store.getters.jobs
   }
 
   async getEvents({ start, end }: any) {
@@ -123,8 +188,8 @@ export default class Schedule extends Vue {
 </script>
 
 <style lang="scss">
-#calendar-container {
-  width: 100%;
-  height: 100%;
-}
+// #calendar-container {
+//   width: 100%;
+//   height: 100%;
+// }
 </style>

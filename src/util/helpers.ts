@@ -34,7 +34,7 @@ const colorsToUse: any = {...colors}
 delete colorsToUse.grey
 delete colorsToUse.shades
 delete colorsToUse.brown
-delete colorsToUse['blueGrey']
+delete colorsToUse.blueGrey
 
 const colorList = Object.keys(colorsToUse)
 const shades = ['base', /* 'accent1', */ 'accent2', 'accent3', 'accent4']
@@ -50,7 +50,7 @@ export function hashColor(input: number | string) {
   }
   else num = input
 
-  const i = Math.floor(Math.PI * 1.8 * num) % (colorList.length * shades.length)
+  const i = Math.floor(Math.PI * 3548 * num) % (colorList.length * shades.length)
   const color = colorList[i % colorList.length]
   const shade = shades[Math.floor(i / colorList.length)]
 

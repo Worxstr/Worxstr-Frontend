@@ -233,7 +233,6 @@ const routes = [
     component: Schedule,
     meta: {
       icon: 'mdi-calendar-multiselect',
-      fullHeight: true,
       hideNav: true,
     }
   },

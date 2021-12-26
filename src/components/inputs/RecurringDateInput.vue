@@ -8,7 +8,6 @@
       outlined
       label='Start'
       hide-details
-      :rules='rules.start'
     )
     //- End date
     datetime-input(
@@ -241,12 +240,6 @@ export default class RecurringDateInput extends Vue {
       bymonthday: [exists('Day required')],
       bysetpos: [exists('Ordinal required')],
       byweekday: [exists('Day required')],
-      start: [
-        exists('Start date required'),
-        (v: string) => {
-          return this.duration > 0 || 'Start date must be before end date'
-        },
-      ],
       end: [
         exists('End date required'),
         (v: string) => {
