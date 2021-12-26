@@ -13,6 +13,7 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
     v-spacer
 
     v-select.ma-2.flex-grow-0(
+      v-if='userIsManager'
       v-model='colorBy'
       :items='colorByOptions'
       dense
@@ -36,7 +37,7 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
   .flex-grow-1.d-flex.flex-column.flex-md-row
 
     //- View toggle options
-    v-card.soft-shadow(outlined)
+    v-card.soft-shadow(outlined v-if='userIsManager')
       v-list
         v-subheader Contractors
         v-list-item(v-for='(user, index) in users' :key='user.id')
@@ -94,7 +95,7 @@ import * as schedule from '@/services/schedule'
 import { CalendarEvent } from '@/types/Schedule'
 import { loadWorkforce } from '@/services/users'
 import { loadJobs } from '@/services/jobs'
-import { User, userIs, UserRole } from '../types/Users'
+import { currentUserIs, Managers, User, userIs, UserRole } from '../types/Users'
 
 @Component({
   metaInfo: {
@@ -123,8 +124,10 @@ export default class Schedule extends Vue {
     if (view) {
       this.view = view
     }
-    this.loadJobs()
-    this.loadWorkforce()
+    if (this.userIsManager) {
+      this.loadJobs()
+      this.loadWorkforce()
+    }
   }
 
   async loadJobs() {
@@ -150,6 +153,10 @@ export default class Schedule extends Vue {
   }
 
   get calendarEvents() {
+    if (!this.userIsManager) {
+      return this.allCalendarEvents
+    }
+    
     return this.allCalendarEvents.filter(
       (event: CalendarEvent) => {
         if (this.activeJobs.includes(event.job_id) && this.activeUsers.includes(event.contractor_id)) {
@@ -185,6 +192,10 @@ export default class Schedule extends Vue {
 
   getEventColor(event: CalendarEvent) {
     return event.color
+  }
+
+  get userIsManager() {
+    return currentUserIs(...Managers)
   }
 
   openEvent({ /* nativeEvent, */ event }: { event: CalendarEvent }) {
