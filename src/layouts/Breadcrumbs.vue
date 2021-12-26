@@ -80,10 +80,16 @@ export default class Breadcrumbs extends Vue {
         dynamicName = pathSegment
       }
 
-      return {
-        text: matched[i]?.includes(':') ? dynamicName : pathSegment,
-        to: '/' + segments.slice(0, i + 1).join('/'),
+      const text = matched[i]?.includes(':') ? dynamicName : pathSegment
+      const to = '/' + segments.slice(0, i + 1).join('/')
+
+      const link = this.$router.resolve(to)
+      const hasActiveRoute = link?.resolved?.name !== 'notFound'
+
+      if (hasActiveRoute) {
+        return { text, to }
       }
+      return { text }
     })
   }
 }
