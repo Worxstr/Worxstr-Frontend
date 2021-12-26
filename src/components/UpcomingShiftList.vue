@@ -4,12 +4,12 @@
     v-toolbar-title
       h6.text-h6 Upcoming shifts
 
-  div(v-if='!upcomingShifts.length')
+  div(v-if='!loading && !upcomingShifts.length')
     p.text-center
       | You have no shifts assigned. Go have fun! 🥂🎉
 
   div(v-else)
-    shift-list(:shifts='upcomingShifts')
+    shift-list(:shifts='upcomingShifts' :loading='loading')
 
     .my-4.d-flex.justify-center
       v-btn(

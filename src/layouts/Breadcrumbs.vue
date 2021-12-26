@@ -31,7 +31,8 @@ export default class Breadcrumbs extends Vue {
   @Watch('breadcrumbs')
   breadcrumbsChanged(newVal: any, oldVal: any) {
     // Scroll to right of container automatically
-    this.$refs.scrollContainer.$el.scrollLeft = this.$refs.scrollContainer.$el.scrollWidth
+    const container: any = this.$refs.scrollContainer
+    container.$el.scrollLeft = container.$el.scrollWidth
   }
 
   get breadcrumbs() {
