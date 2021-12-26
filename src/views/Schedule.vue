@@ -1,7 +1,7 @@
 <template lang="pug">
 v-container.home.d-flex.flex-column.align-stretch.pb-3(
   fluid,
-  :fill-height="type == 'month'"
+  :fill-height="view == 'month'"
 )
   v-toolbar.flex-grow-0(flat, color="transparent")
     v-btn.ma-2(icon, @click="$refs.calendar.prev()")
@@ -23,13 +23,14 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
     )
 
     v-select.ma-2.flex-grow-0(
-      v-model='type'
-      :items='types'
+      v-model='view'
+      :items='views'
       :item-text='(t) => t.charAt(0).toUpperCase() + t.slice(1)'
       dense
       outlined
       hide-details
       label='View'
+      @change='updateView'
     )
 
   .flex-grow-1.d-flex.flex-column.flex-md-row
@@ -49,7 +50,9 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
               )
             
             v-list-item-content
-              v-list-item-title {{ user | fullName }}
+              v-list-item-title
+                router-link.alt-style(:to="{ name: 'user', params: { userId: user.id } }")
+                  | {{ user | fullName }}
       
         v-subheader Jobs
         v-list-item(v-for='(job, index) in jobs' :key='job.id')
@@ -63,7 +66,8 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
               )
             
             v-list-item-content
-              v-list-item-title {{ job.name }}  
+                router-link.alt-style(:to="{ name: 'job', params: { jobId: job.id } }")
+                  | {{ job.name }}
   
     //- Calendar
     .flex-1
@@ -74,7 +78,7 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
       v-calendar(
         ref="calendar",
         v-model="value",
-        :type="type",
+        :type="view",
         :events="calendarEvents",
         event-overlap-mode="stack",
         :event-overlap-threshold="30",
@@ -85,8 +89,7 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
-import { currentUserIs, Managers } from '@/types/Users'
+import { Vue, Component } from 'vue-property-decorator'
 import * as schedule from '@/services/schedule'
 import { CalendarEvent } from '@/types/Schedule'
 import { loadWorkforce } from '@/services/users'
@@ -100,9 +103,10 @@ import { User, userIs, UserRole } from '../types/Users'
 })
 export default class Schedule extends Vue {
   loading = false
-  type = 'month'
-  types = ['month', 'week', 'day', '4day']
   value = ''
+
+  view = 'month'
+  views = ['month', 'week', 'day', '4day']
 
   colorBy = 'job'
   colorByOptions = ['job', 'contractor']
@@ -110,10 +114,14 @@ export default class Schedule extends Vue {
   activeUsers = []
   activeJobs = []
 
-  mounted() {
+  async mounted() {
     const colorBy = localStorage.getItem('colorScheduleBy')
+    const view = localStorage.getItem('scheduleView')
     if (colorBy) {
       this.colorBy = colorBy
+    }
+    if (view) {
+      this.view = view
     }
     this.loadJobs()
     this.loadWorkforce()
@@ -121,19 +129,20 @@ export default class Schedule extends Vue {
 
   async loadJobs() {
     const { jobs } = await loadJobs(this.$store)
-    console.log(jobs)
     this.activeJobs = jobs.map(j => j.id)
   }
   
   async loadWorkforce() {
     const { users } = await loadWorkforce(this.$store)
-    console.log(users)
     this.activeUsers = users.map(u => u.id)
   }
 
-  @Watch('colorBy')
   updateColorBy(val: string) {
     localStorage.setItem('colorScheduleBy', val)
+  }
+
+  updateView(val: string) {
+    localStorage.setItem('scheduleView', val)
   }
   
   get allCalendarEvents() {
