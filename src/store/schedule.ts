@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import { CalendarEvent } from '@/types/Schedule'
+import { hashColor } from '@/util/helpers'
+import { RootState } from '.'
 
 export interface ScheduleState {
   events: {
@@ -36,46 +38,32 @@ const getters = {
   calendarEvent: (state: ScheduleState) => (id: number) => {
     return state.events.byId[id]
   },
-  calendarEvents: (state: ScheduleState, getters: any) => {
-    let colorCounter = 0
-    const eventColors = [
-      'blue',
-      'green',
-      'purple',
-      'indigo',
-      'orange darken-1',
-      'deep-purple',
-      'red',
-      'light-blue',
-      'yellow darken-2',
-      'light-green',
-      'cyan',
-      'pink',
-      'teal',
-      'lime',
-    ]
-    const colorMap: {
-      [key: number]: string;
-    } = {} // Map job ID to color
-
+  calendarEvents: (state: ScheduleState, getters: any, rootState: RootState) => (colorBy: string) => {
     return state.events.all.map((eventId) => {
       const event = getters.calendarEvent(eventId)
 
-      let color
-      if (colorMap[event.job_id]) {
-        color = colorMap[event.job_id]
-      } else {
-        color = eventColors[colorCounter % eventColors.length]
-        colorMap[event.job_id] = color
-        colorCounter++
+      let color: any = 'blue'
+      switch (colorBy) {
+        case 'job':
+          if (rootState.jobs.byId[event.job_id]?.color)
+            color = rootState.jobs.byId[event.job_id]?.color
+          else
+            color = hashColor(event.job_id)
+          break
+        case 'contractor':
+          if (rootState.users.byId[event.contractor_id]?.additional_info?.color)
+            color = rootState.users.byId[event.contractor_id]?.additional_info?.color
+          else
+            color = hashColor(event.contractor_id)
+          break
       }
 
       return {
         name: event.site_location,
         start: new Date(event.time_begin),
         end: new Date(event.time_end),
-        color,
         timed: true,
+        color,
         ...event,
       }
     })

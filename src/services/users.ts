@@ -6,6 +6,7 @@ import usersStore from '@/store/users'
 import { clearUserData } from './auth'
 
 export async function getMe({ commit }: any) {
+
   try {
     const { data } = await api({
       method: 'GET',
@@ -20,7 +21,6 @@ export async function getMe({ commit }: any) {
   }
   catch (error) {
     if (error.response.status === 401) {
-      
       clearUserData({ commit })
       return {}
     }

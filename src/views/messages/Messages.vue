@@ -13,6 +13,7 @@ div.pa-2
           @click="newConversationDialog = true"
           v-bind="attrs"
           v-on="on"
+          data-cy='new-conversation-button'
         )
           v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
           span(v-if='$vuetify.breakpoint.smAndUp') New
@@ -20,10 +21,10 @@ div.pa-2
   v-card.messages.pa-0.d-flex.flex-row.fill-height.align-start.soft-shadow
     div(
       v-if="$route.name == 'messages' || $vuetify.breakpoint.mdAndUp",
-      :style="`width: ${$route.name == 'conversation' ? '35%' : '100%'}`",
+      :style="`width: ${$route.name == 'conversation' ? '35%' : '100%'}; height: 100%`",
       :max-width="$vuetify.breakpoint.mdAndUp ? '35%' : '100%'"
     )
-      conversations
+      conversations(@newConversation='newConversationDialog = true')
   
     v-divider(vertical)
 

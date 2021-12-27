@@ -2,8 +2,24 @@
 
 v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line')
 
-.conversations(v-else-if='conversations')
-  v-list(color="transparent")
+
+
+.conversations.d-flex.flex-column(v-else-if='conversations' style='height: 100%')
+  
+  // TODO: Make empty state UI into component
+  .align-self-center.d-flex.flex-column.justify-center(v-if='!conversations.length' style='height: 100%')
+    v-icon.text-h2.ma-5 mdi-forum
+    p.text-center.text-body-1 No messages yet
+    v-btn(
+      outlined
+      color='primary'
+      class='ma-2 white--text'
+      @click="$emit('newConversation')"
+    )
+      v-icon(left) mdi-plus
+      | Start new conversation
+
+  v-list.flex-grow-1(v-else color="transparent" style='overflow-y: scroll')
     div(
       v-for="(conversation, i) in conversations",
       :key="conversation.id",
@@ -13,6 +29,7 @@ v-skeleton-loader(v-if="loading && !conversations.length" type='list-item-two-li
         link
         active-class="primary--text"
         :to="{ name: 'conversation', params: { conversationId: conversation.id } }"
+        data-cy='conversation'
       )
         v-list-item-content
           v-list-item-title {{ conversation | groupNameList(me) }}

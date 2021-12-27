@@ -96,12 +96,12 @@ export async function configureAxios(store: any) {
   baseUrl.set()
 
   api.interceptors.request.use(
-    async (config: any) => {
-      if (!checkOnline(config)) {
-        showToast(store, { text: 'You are offline.' })
-        return false
-      }
-      sendGtagEvent(config)
+    (config: any) => {
+      // if (!checkOnline(config)) {
+      //   showToast(store, { text: 'You are offline.' })
+      //   return false
+      // }
+      // sendGtagEvent(config)
       return config
     },
     (error: any) => {
@@ -114,13 +114,12 @@ export async function configureAxios(store: any) {
       return response
     },
     (error: any) => {
-      console.log('network error', error)
       // if (error.config.hideErrorMessage) return
 
       // TODO: this is stupid, don't keep this. use custom api config
       // We are ignoring an error message if we are trying to access /users/me without being logged in.
       // This request is made on app load.
-      if (error.request.responseURL.includes('/users/me')) return
+      if (error.request.responseURL.includes('/users/me')) return Promise.reject(error)
 
       checkLoggedIn(error)
       const message = getErrorMessage(error)

@@ -15,7 +15,7 @@ v-dialog(
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="red", @click="closeJob") Yes, Close
+      v-btn(text, color="error", @click="closeJob" data-cy="confirm-close-job-button") Yes, close
       
     v-fade-transition
       v-overlay(v-if="loading", absolute, opacity=".2")
@@ -45,7 +45,8 @@ export default class CloseJobDialog extends Vue {
     try {
       await closeJob(this.$store, this.job.id)
       this.closeDialog()
-      this.$router.push({name: 'jobs'})
+      if (this.$route.name !== 'jobs')
+        this.$router.push({name: 'jobs'})
     }
     finally {
       this.loading = false

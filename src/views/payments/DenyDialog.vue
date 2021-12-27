@@ -25,7 +25,13 @@ v-dialog(
     v-card-actions
       v-spacer
       v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="red", @click="denyPayments" :loading='loading') Deny
+      v-btn(
+        text
+        color="red"
+        @click="denyPayments"
+        :loading='loading'
+        data-cy='confirm-deny-payment-button'
+      ) Deny
 </template>
 
 <script lang="ts">
