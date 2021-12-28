@@ -1,4 +1,5 @@
 import * as Geo from '@capacitor/geolocation'
+import { api } from '@/util/axios'
 
 export type Position = {
   lat: number;
@@ -30,8 +31,13 @@ function setCurrentLocation({ commit }: any, position: Geo.Position) {
     heading: coords.heading,
     timestamp,
   }
-  // TODO: Report this location to the backend
   commit('SET_USER_LOCATION', p)
+  // Send location to API
+  api({
+    method: 'POST',
+    url: 'users/me/location',
+    data: p,
+  })
   return p
 }
 

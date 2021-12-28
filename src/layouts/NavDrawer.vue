@@ -1,8 +1,8 @@
 <template lang="pug">
 v-navigation-drawer#nav.d-flex.flex-column(
   app,
-  v-model='value'
-  v-bind:value='value'
+  v-model='opened'
+  v-bind:value='opened'
   v-on:input="$emit('input', $event)"
   :mini-variant="mini && $vuetify.breakpoint.mdAndUp",
   mini-variant-width="68",
@@ -10,7 +10,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
   :temporary='$vuetify.breakpoint.smAndDown'
   :bottom='$vuetify.breakpoint.smAndDown'
   touchless
-  v-touch='{down: () => { value = false }}'
+  v-touch="{down: () => { opened = false }}"
 )
 
   //- Logo and collapse button
@@ -24,7 +24,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
     v-spacer
 
-    v-btn(icon, @click.stop="$vuetify.breakpoint.mdAndUp ? toggleMiniNav() : (value = !value)")
+    v-btn(icon, @click.stop="$vuetify.breakpoint.mdAndUp ? toggleMiniNav() : opened = !opened")
       v-icon mdi-chevron-{{$vuetify.breakpoint.mdAndUp ? 'left' : 'down'}}
 
   v-divider
@@ -82,7 +82,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { User, Role, UserRole } from '@/types/Users'
 import { signOut } from '@/services/auth'
 import { miniNav } from '@/services/app'
@@ -90,7 +90,14 @@ import { miniNav } from '@/services/app'
 @Component
 export default class NavDrawer extends Vue {
 
+  opened = false
+  
   @Prop({ default: false }) value!: boolean
+
+  @Watch('value')
+  onValueChange(val: boolean) {
+    this.opened = val
+  }
 
   signOut(): void {
     signOut(this.$store)

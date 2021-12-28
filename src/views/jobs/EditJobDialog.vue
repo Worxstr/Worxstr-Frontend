@@ -20,7 +20,7 @@ v-dialog(
         v-toolbar-title.text-h6 {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
       
       v-divider
-      pre {{defaultJobColor}}
+
       v-card-text.py-0
         v-subheader Job details
         .d-flex.flex-column.flex-sm-row
