@@ -30,7 +30,13 @@ v-dialog(
     v-card-actions
       v-spacer
       v-btn(text @click='closeDialog') Cancel
-      v-btn(text color='success' @click='completePayments' :loading='loading') Complete
+      v-btn(
+        text
+        color='success'
+        @click='completePayments'
+        :loading='loading'
+        data-cy='confirm-complete-payment-button'
+      ) Complete
 </template>
 
 <script lang="ts">

@@ -72,10 +72,6 @@ export async function loadBalance({ commit }: any) {
   })
 }
 
-export async function openPlaidLink({ commit }: any, name: string) {
-  return await Plaid.openPlaidLink(name)
-}
-
 export async function getPlaidLinkToken({ commit }: any) {
   const { data } = await api({
     method: 'POST',

@@ -9,13 +9,17 @@ import { SplashScreen } from '@capacitor/splash-screen'
 
 import './styles/style.scss'
 import './util/filters'
+import 'tiptap-vuetify/dist/main.css'
 
 import VueMask from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
+import { TiptapVuetifyPlugin } from 'tiptap-vuetify'
+import VueSanitize from 'vue-sanitize'
 import VueGtag from 'vue-gtag'
+
 import { configureDwolla } from './util/dwolla'
 import { configureAxios } from './util/axios'
 import { initDarkMode } from './util/theme'
@@ -30,6 +34,11 @@ function configurePlugins() {
   Vue.use(VueMask)
   Vue.use(PortalVue)
   Vue.use(VueChatScroll)
+  Vue.use(VueSanitize)
+
+  Vue.use(VueGtag, {
+    config: { id: process.env.VUE_APP_GTAG_API },
+  })
 
   Vue.use(VueGoogleMaps, {
     load: {
@@ -42,8 +51,9 @@ function configurePlugins() {
     vueGoogleMapsCompatibility: true,
   })
 
-  Vue.use(VueGtag, {
-    config: { id: process.env.VUE_APP_GTAG_API },
+  Vue.use(TiptapVuetifyPlugin, {
+    vuetify,
+    iconsGroup: 'mdi'
   })
 }
 

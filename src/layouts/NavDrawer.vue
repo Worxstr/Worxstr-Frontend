@@ -15,7 +15,7 @@ v-navigation-drawer#nav.d-flex.flex-column(
 
   //- Logo and collapse button
   v-app-bar(flat, :color="$vuetify.theme.dark ? 'grey darken-4' : 'white'")
-    a(@click="toggleMiniNav", text)
+    a(@click="$vuetify.breakpoint.mdAndUp ? toggleMiniNav() : null", text)
       v-avatar.mb-1(tile, :size="mini ? 40 : 130")
         img(
           :src="require(`@/assets/logos/${mini ? 'icon' : $vuetify.theme.dark ? 'logotype-dark' : 'logotype'}.svg`)"
@@ -101,7 +101,7 @@ export default class NavDrawer extends Vue {
   }
   
   get mini() {
-    return this.$store.state.app.preferences.miniNav
+    return this.$vuetify.breakpoint.mdAndUp ? this.$store.state.app.preferences.miniNav : false
   }
 
   toggleMiniNav() {

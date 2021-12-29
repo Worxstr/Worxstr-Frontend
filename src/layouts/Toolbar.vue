@@ -110,7 +110,7 @@ export default class Toolbar extends Vue {
       {
         text: 'Sign in',
         to: 'sign-in',
-        hide: !this.mobileLayout || this.authenticated,
+        hide: this.authenticated,
       },
       {
         text: 'Sign up',

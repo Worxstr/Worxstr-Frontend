@@ -18,12 +18,14 @@
               elevation='0'
               color='accent'
               :to='{ name: defaultRoute }'
+              large
             ) Enter app
 
             v-btn.mr-3(
               outlined
               color='accent'
               @click='signOut'
+              large
             )
               span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") Sign out
 
@@ -32,12 +34,14 @@
               elevation='0'
               color="accent"
               :to="{ name: `signUp` }"
+              large
             ) Start now
 
             v-btn.mr-3(
               outlined
               color="accent"
               :to="{ name: `signIn` }"
+              large
             )
               span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") Sign in
 

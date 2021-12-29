@@ -5,8 +5,8 @@ import Vuex, { StoreOptions } from 'vuex'
 import * as app from './app'
 import * as users from './users'
 import * as organizations from './organizations'
-import * as clock from './clock'
 import * as jobs from './jobs'
+import * as shifts from './shifts'
 import * as payments from './payments'
 import * as schedule from './schedule'
 import * as messages from './messages'
@@ -16,12 +16,12 @@ Vue.use(Vuex)
 // TODO: Find standardized way to normalize data, perhaps with this library:
 // https://github.com/paularmstrong/normalizr
 
-interface RootState {
+export interface RootState {
   app: app.AppState;
   users: users.UsersState;
   organizations: organizations.OrganizationsState;
-  clock: clock.ClockState;
   jobs: jobs.JobsState;
+  shifts: shifts.ShiftsState;
   payments: payments.PaymentsState;
   schedule: schedule.ScheduleState;
   messages: messages.MessagesState;
@@ -33,8 +33,8 @@ const storeConfig: StoreOptions<RootState> = {
       Object.assign(state.app, app.initialState())
       Object.assign(state.users, users.initialState())
       Object.assign(state.organizations, organizations.initialState())
-      Object.assign(state.clock, clock.initialState())
       Object.assign(state.jobs, jobs.initialState())
+      Object.assign(state.shifts, shifts.initialState())
       Object.assign(state.payments, payments.initialState())
       Object.assign(state.schedule, schedule.initialState())
       Object.assign(state.messages, messages.initialState())
@@ -44,8 +44,8 @@ const storeConfig: StoreOptions<RootState> = {
     app: app.default,
     users: users.default,
     organizations: organizations.default,
-    clock: clock.default,
     jobs: jobs.default,
+    shifts: shifts.default,
     payments: payments.default,
     schedule: schedule.default,
     messages: messages.default,

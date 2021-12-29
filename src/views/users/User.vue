@@ -53,10 +53,19 @@
 					v-list-item-actions
 						clipboard-copy(:text='user.manager_info.reference_number')
 
-				v-list-item(v-if='user.contractor_info')
-					v-list-item-content
-						v-list-item-subtitle Hourly wage
-						v-list-item-title {{ user.contractor_info.hourly_rate | currency }} / hour
+				div(v-if='user.contractor_info')
+					v-list-item
+						v-list-item-content
+							v-list-item-subtitle Hourly wage
+							v-list-item-title {{ user.contractor_info.hourly_rate | currency }} / hour
+
+				div(v-if='user.additional_info')
+					v-list-item
+						v-list-item-content
+							v-list-item-subtitle Assigned color
+							v-list-item-title
+								v-badge.soft-shadow.ml-1.mr-5(:color="user.additional_info.color || '#4285f4'" bordered)
+								span {{ user.additional_info.color }}
 
 </template>
 
@@ -110,3 +119,11 @@ export default class User extends Vue {
 	}
 }
 </script>
+
+<style lang="scss">
+.color {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+}
+</style>

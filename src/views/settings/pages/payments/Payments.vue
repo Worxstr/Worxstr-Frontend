@@ -2,7 +2,10 @@
 div
   retry-verification-dialog(:opened.sync='retryVerificationDialog')
   document-upload-dialog(:opened.sync='documentUploadDialog')
-  add-funding-source-dialog(:opened.sync="addFundingSourceDialog")
+  add-funding-source-dialog(
+    :opened.sync="addFundingSourceDialog"
+    @updateFundingSourceLoader='val => loadingNewFundingSource = val'
+  )
   edit-funding-source-dialog(
     :opened.sync="editFundingSourceDialog",
     :fundingSource="selectedFundingSource"
@@ -68,7 +71,12 @@ div
         v-btn(text, color="error", @click="removeFundingSource(fundingSource)") Remove
 
     v-list-item
-      v-btn(text, color="primary", @click="addFundingSourceDialog = true")
+      v-btn(
+        text
+        color='primary'
+        @click='addFundingSourceDialog = true'
+        :loading='loadingNewFundingSource'
+      )
         v-icon(left) mdi-plus
         span Add funding source
 </template>
@@ -105,6 +113,7 @@ export default class Payments extends Vue {
 
 
   loadingFundingSources = false
+  loadingNewFundingSource = false
 	selectedFundingSource: any = null
 	
   retryVerificationDialog = false

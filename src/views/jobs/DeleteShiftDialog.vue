@@ -13,11 +13,16 @@ v-dialog(
     
     v-card-actions
       v-spacer
-      v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="red", @click="deleteShift") Yes, Delete
+      v-btn(text @click="closeDialog") Cancel
+      v-btn(
+        text
+        color="error"
+        @click="deleteShift"
+        data-cy="confirm-delete-shift-button"
+      ) Yes, Delete
       
     v-fade-transition
-      v-overlay(v-if="loading", absolute, opacity=".2")
+      v-overlay(v-if="loading" absolute opacity=".2")
         v-progress-circular(indeterminate)
 
 </template>
@@ -25,7 +30,7 @@ v-dialog(
 <script lang="ts">
 import { Shift } from '@/types/Jobs';
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { deleteShift } from '@/services/jobs'
+import { deleteShift } from '@/services/shifts'
 
 @Component
 export default class DeleteShiftDialog extends Vue {
@@ -43,11 +48,15 @@ export default class DeleteShiftDialog extends Vue {
     this.loading = true
     if (this.shift) {
       try {
+        const jobId = this.shift.job_id
         await deleteShift(
           this.$store,
-          this.shift.id
+          this.shift.id,
+          jobId,
         )
         this.closeDialog()
+        if (this.$route.name === 'shift')
+          this.$router.push({name: 'job', params: {jobId: jobId.toString()}})
       }
       finally {
         this.loading = false

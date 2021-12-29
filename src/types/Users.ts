@@ -7,6 +7,7 @@ export type User = {
 	email: string;
 	roles: Role[];
 	contractor_info?: {
+		color: string;
 		dwolla_customer_url: string;
 		dwolla_customer_status: string;
 		[key: string]: any;
@@ -72,7 +73,7 @@ export function defaultRoute() {
 
 	switch (user?.roles[0]?.id) {
 		case UserRole.Contractor:
-			return 'clock'
+			return 'dashboard'
 		case UserRole.ContractorManager:
 		case UserRole.OrganizationManager:
 			return 'jobs'

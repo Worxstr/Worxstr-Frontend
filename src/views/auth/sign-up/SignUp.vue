@@ -25,9 +25,9 @@ div
 
             v-window-item(:value='1' :style='$vuetify.breakpoint.xs && `min-height: calc(80vh - 70px)`')
               p(v-if="accountType == 'org'")
-                | Are you a contractor? Click
-                a(@click="accountType = 'contractor'") &nbsp;here&nbsp;
-                | to create your account.
+                | Are you a contractor?
+                a(@click="accountType = 'contractor'") &nbsp;Create your account here
+                | .
 
                 
               v-alert(
@@ -87,6 +87,7 @@ import { Capacitor } from '@capacitor/core'
 import { signUp } from '@/services/auth'
 import ContractorForm from './ContractorForm.vue'
 import ManagerForm from './ManagerForm.vue'
+import { hashColor } from '@/util/helpers'
 
 @Component({
   metaInfo: {
@@ -148,11 +149,16 @@ export default class SignUp extends Vue {
   async signUp() {
     this.loading = true
     try {
-      await signUp(this.$store, {
+      const data = {
         ...this.form,
         ...(this.accountType === 'org' ? this.managerForm : this.contractorForm),
         accountType: this.accountType,
-      })
+      }
+
+      if (this.accountType === 'contractor')
+        data.color = hashColor(Date.now())
+
+      await signUp(this.$store, data)
     } finally {
       this.loading = false
     }
