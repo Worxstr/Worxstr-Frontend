@@ -158,7 +158,7 @@ const timeValidate = (errorMessage: string) => (value: any) =>
   /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(value)
 
 interface UnassignedContractor {
-  id: number;
+  id: number
 }
 
 const now = new Date()

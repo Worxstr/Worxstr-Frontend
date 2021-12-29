@@ -7,7 +7,7 @@ import { baseUrl, showToast } from '@/services/app'
 const dwolla = mitt()
 declare global {
   interface Window {
-    dwolla: any;
+    dwolla: any
   }
 }
 

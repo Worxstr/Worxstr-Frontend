@@ -1,14 +1,14 @@
 import * as Geo from '@capacitor/geolocation'
 
 export type Position = {
-  lat: number;
-  lng: number;
-  accuracy?: number;
-  altitudeAccuracy?: number | null | undefined;
-  altitude?: number | null;
-  speed?: number | null;
-  heading?: number | null;
-  timestamp?: number;
+  lat: number
+  lng: number
+  accuracy?: number
+  altitudeAccuracy?: number | null | undefined
+  altitude?: number | null
+  speed?: number | null
+  heading?: number | null
+  timestamp?: number
 }
 
 let watcher: string | null = null

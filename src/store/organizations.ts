@@ -2,11 +2,11 @@ import Vue from 'vue'
 import { Organization } from '@/types/Organizations'
 
 export interface OrganizationsState {
-  all: number[];
+  all: number[]
   byId: {
-    [key: number]: Organization;
-  };
-  myOrganization: number | null;
+    [key: number]: Organization
+  }
+  myOrganization: number | null
 }
 
 export const initialState = (): OrganizationsState => ({
