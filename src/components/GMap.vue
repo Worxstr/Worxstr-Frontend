@@ -19,15 +19,20 @@ GmapMap.gmap(
   )
   
   //- User markers
-  GmapMarker(
-    v-for='(user, i) in users'
-    :key='user.id'
-    v-if='user.location && user.location.latitude && user.location.longitude'
-    class-name='user-marker'
-    :position='gmapMarker(user.location)'
-    :icon="{ url: `https://avatars.dicebear.com/api/initials/${fullName(user)}.svg`, scaledSize: { width: 50, height: 50 }}"
-  )
-  
+  div(v-for='(user, i) in users' :key='user.id')
+    GmapMarker(
+      v-if='user.location && user.location.latitude && user.location.longitude'
+      class-name='user-marker'
+      :position='gmapMarker(user.location)'
+      :icon="{ url: `https://avatars.dicebear.com/api/initials/${fullName(user)}.svg`, scaledSize: { width: 50, height: 50 }, anchor: {x: 25, y: 25}}"
+    )
+    GmapCircle(
+      v-if='user.location && user.location.latitude && user.location.longitude'
+      :center='gmapMarker(user.location)'
+      :radius='user.location.accuracy'
+      :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
+    )
+
   //- Job markers
   div(v-for='(job, i) in jobs' :key='job.id')
     GmapCircle(
@@ -119,7 +124,7 @@ export default class GMap extends Vue {
         .filter((job: Job) => !!job)
         .map((job: Job) => ({lat: job.latitude, lng: job.longitude})),
       
-      (this.deviceLocation ? {
+      (this.showDeviceLocation && this.deviceLocation ? {
         lat: this.deviceLocation.lat,
         lng: this.deviceLocation.lng,
       } : null),

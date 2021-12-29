@@ -71,7 +71,8 @@
 					v-list-item-content
 						v-list-item-subtitle Location
 						v-list-item-title
-							g-map(:users='[user]')
+							v-card.soft-shadow
+								g-map(:users='[user]')
 
 </template>
 
