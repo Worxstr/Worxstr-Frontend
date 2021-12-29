@@ -16,14 +16,7 @@ v-breadcrumbs.nav-breadcrumbs.pl-1.d-flex.flex-nowrap(
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-
-// Find a nested object by dot-syntax string
-// ex. lookup(obj, 'a.b.c') => obj.a.b.c
-function lookup(obj: any, path: string): any {
-  return path.split('.').reduce((prev, curr) => {
-    return prev ? prev[curr] : undefined
-  }, obj)
-}
+import { lookup } from '@/util/helpers'
 
 @Component
 export default class Breadcrumbs extends Vue {

@@ -101,7 +101,7 @@ import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
 })
 export default class ShiftList extends Vue {
   
-  @Prop({ default: [] }) shifts!: Shift[]
+  @Prop({ default: () => [] }) shifts!: Shift[]
   @Prop({ default: false }) loading!: boolean
 
   selectedShift: Shift | {} = {}

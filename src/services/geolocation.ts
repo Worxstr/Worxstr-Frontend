@@ -2,8 +2,8 @@ import * as Geo from '@capacitor/geolocation'
 import { api } from '@/util/axios'
 
 export type Position = {
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
   accuracy?: number;
   altitudeAccuracy?: number | null | undefined;
   altitude?: number | null;
@@ -19,11 +19,11 @@ export async function permissionGranted() {
   return permissions.location === 'granted'
 }
 
-function setCurrentLocation({ commit }: any, position: Geo.Position) {
+function setDeviceLocation({ commit }: any, position: Geo.Position) {
   const { coords, timestamp } = position
   const p: Position = {
-    lat: coords.latitude,
-    lng: coords.longitude,
+    latitude: coords.latitude,
+    longitude: coords.longitude,
     accuracy: coords.accuracy,
     altitudeAccuracy: coords.altitudeAccuracy,
     altitude: coords.altitude,
@@ -31,7 +31,7 @@ function setCurrentLocation({ commit }: any, position: Geo.Position) {
     heading: coords.heading,
     timestamp,
   }
-  commit('SET_USER_LOCATION', p)
+  commit('SET_DEVICE_LOCATION', p)
   // Send location to API
   api({
     method: 'POST',
@@ -44,7 +44,7 @@ function setCurrentLocation({ commit }: any, position: Geo.Position) {
 function onLocationChanged(store: any) {
   return (position: Geo.Position | null, err?: any) => {
     if (position) {
-      setCurrentLocation(store, position)
+      setDeviceLocation(store, position)
     }
     if (err) {
       console.error(err)
@@ -70,5 +70,5 @@ export async function get(store: any) {
   const position = await Geo.Geolocation.getCurrentPosition({
     enableHighAccuracy: true
   })
-  return setCurrentLocation(store, position)
+  return setDeviceLocation(store, position)
 }

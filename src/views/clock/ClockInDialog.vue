@@ -204,7 +204,7 @@ export default class ClockInDialog extends Vue {
   async getUserLocation() {
     const location = await geolocation.get(this.$store)
     showToast(this.$store, {
-      text: `${location.lat} ${location.lng}`,
+      text: `${location.latitude} ${location.longitude}`,
     })
     this.closeDialog()
     // TODO: Clock in with location

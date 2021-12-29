@@ -1,3 +1,4 @@
+import { Position } from '@/services/geolocation'
 import usersStore from '@/store/users'
 
 export type User = {
@@ -6,6 +7,7 @@ export type User = {
 	last_name: string;
 	email: string;
 	roles: Role[];
+	location?: Position;
 	contractor_info?: {
 		color: string;
 		dwolla_customer_url: string;
@@ -57,7 +59,7 @@ export function isAuthenticated() {
 // Take a list of roles as parameters
 // and a user and determine if the user has one of those roles
 export function userIs(user: User, ...roles: UserRole[]): boolean {
-	if (!user.roles) return false
+	if (!user?.roles) return false
 	return roles.some((role) => user.roles.map((r) => r.id).includes(role))
 }
 

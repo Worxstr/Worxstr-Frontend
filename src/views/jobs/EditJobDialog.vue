@@ -75,7 +75,7 @@ v-dialog(
             p.mt-1 {{ editedJob.radius | distance }}
 
           v-card.soft-shadow
-            jobs-map(:jobs='[editedJob]')
+            g-map(:jobs='[editedJob]')
 
         v-subheader Managers
         .d-flex.flex-column.flex-sm-row
@@ -155,7 +155,7 @@ import { Job } from '@/types/Jobs';
 import { exists, phoneRules, emailRules } from '@/util/inputValidation'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
-import JobsMap from '@/components/JobsMap.vue'
+import GMap from '@/components/GMap.vue'
 import { loadManagers } from '@/services/users'
 import { createJob, updateJob } from '@/services/jobs'
 import { hashColor } from '@/util/helpers'
@@ -164,7 +164,7 @@ import { hashColor } from '@/util/helpers'
   components: {
     RichtextField,
     PhoneInput,
-    JobsMap,
+    GMap,
   }
 })
 export default class EditJobDialog extends Vue {
