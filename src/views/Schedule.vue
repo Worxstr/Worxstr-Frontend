@@ -3,6 +3,11 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
   fluid,
   :fill-height="view == 'month'"
 )
+  edit-shift-dialog(
+    :opened.sync='createShiftDialog'
+    :time.sync='newEventTime'
+  )
+
   v-toolbar.flex-grow-0(flat, color="transparent")
     v-btn.ma-2(icon, @click="$refs.calendar.prev()")
       v-icon mdi-chevron-left
@@ -77,15 +82,18 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
           v-progress-circular(indeterminate :color='$vuetify.theme.dark ? "white" : "black"')
 
       v-calendar(
-        ref="calendar",
-        v-model="value",
-        :type="view",
-        :events="calendarEvents",
-        event-overlap-mode="stack",
-        :event-overlap-threshold="30",
-        :event-color="getEventColor",
-        @change="getEvents",
-        @click:event="openEvent"
+        ref='calendar'
+        v-model='value'
+        :type='view'
+        :events='calendarEvents'
+        event-overlap-mode='stack'
+        :event-overlap-threshold='30'
+        :event-color='getEventColor'
+        @change='getEvents'
+        @click:event='openEvent'
+        @mousedown:time='createEventDragStart'
+        @mousemove:time='createEventDragMove'
+        @mouseup:time='createEventDragEnd'
       )
 </template>
 
@@ -97,17 +105,72 @@ import { loadWorkforce } from '@/services/users'
 import { loadJobs } from '@/services/jobs'
 import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
 import { Job } from '@/types/Jobs'
+import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
+
+
 
 @Component({
   metaInfo: {
     title: 'Schedule',
   },
+  components: {
+    EditShiftDialog,
+  },
 })
 export default class Schedule extends Vue {
+
+  createShiftDialog = false
+  virtualEvent: any = null
+  newEventTime: any = null
+  creatingEventDrag = false
+
+  createEventDragStart(timeData: any, e: MouseEvent) {
+    const startTime = this.roundDate(this.toDate(timeData))
+
+    this.creatingEventDrag = true
+
+    this.virtualEvent = {
+      name: 'New shift',
+      color: 'primary',
+      start: startTime,
+      end: startTime,
+      timed: true,
+    }
+  }
+
+  createEventDragMove(timeData: any, e: MouseEvent) {
+    if (this.creatingEventDrag) {
+      const endTime = this.roundDate(this.toDate(timeData))
+      this.virtualEvent.end = endTime
+    }
+  }
+
+  createEventDragEnd(timeData: any, e: MouseEvent) {
+    this.newEventTime = {
+      start: this.virtualEvent?.start,
+      end: this.roundDate(this.toDate(timeData)),
+    }
+    this.creatingEventDrag = false
+    this.createShiftDialog = true
+    this.virtualEvent = null
+  }
+
+  toDate(timeData: any) {
+    return new Date(timeData.year, timeData.month - 1, timeData.day, timeData.hour, timeData.minute)
+  }
+
+  // Round date to nearest 15 minutes
+  roundDate(date: Date) {
+    const minutes = date.getMinutes()
+    const newMinutes = Math.round(minutes / 15) * 15
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), newMinutes)
+  }
+
+
   loading = false
   value = ''
 
-  view = 'month'
+  view = 'week'
   views = ['month', 'week', 'day', '4day']
 
   colorBy = 'job'
@@ -154,16 +217,21 @@ export default class Schedule extends Vue {
   }
 
   get calendarEvents() {
-    if (!this.userIsManager) {
-      return this.allCalendarEvents
+
+    let events = this.allCalendarEvents
+
+    if (this.userIsManager) {
+      events = events.filter(
+        (event: CalendarEvent) => {
+          return this.activeJobs.includes(event.job_id)
+              && this.activeUsers.includes(event.contractor_id)
+        }
+      )
     }
-    
-    return this.allCalendarEvents.filter(
-      (event: CalendarEvent) => {
-        return this.activeJobs.includes(event.job_id)
-            && this.activeUsers.includes(event.contractor_id)
-      }
-    )
+
+    if (this.virtualEvent) events.push(this.virtualEvent)
+
+    return events
   }
 
   get users() {

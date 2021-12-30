@@ -8,6 +8,7 @@
       outlined
       label='Start'
       hide-details
+      autofocus
     )
     //- End date
     datetime-input(
@@ -167,10 +168,12 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import { RRule } from 'rrule'
-
 import { exists } from '@/util/inputValidation'
-
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
+
+function formatDate(date: Date) {
+  return dayjs(date).utc().format('YYYY-MM-DDTHH:mm:ssZ')
+}
 
 const now = new Date()
 if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
@@ -178,8 +181,8 @@ now.setSeconds(0, 0)
 now.setMinutes(0)
 const hourFromNow = new Date(now.getTime() + 60 * 60 * 1000)
 const monthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
-const nowFormatted = dayjs(now).format('YYYY-MM-DDTHH:mm:ssZ')
-const hourFromNowFormatted = dayjs(hourFromNow).utc().format('YYYY-MM-DDTHH:mm:ssZ')
+const nowFormatted = formatDate(now)
+const hourFromNowFormatted = formatDate(hourFromNow)
 const monthFromNowFormatted = dayjs(monthFromNow).utc().format('YYYY-MM-DD')
 
 let lastDuration = 60 * 60
@@ -193,11 +196,30 @@ export default class RecurringDateInput extends Vue {
   
   @Prop({ type: Object }) readonly value: any
   @Prop({ default: false }) readonly recurrable!: boolean
+  // Option for default start and end times
+  @Prop({ type: Object }) readonly time?: {
+    start: Date
+    end: Date
+  }
+
+  autoChangeEndTime = true
+
+  @Watch('time')
+  timeChanged() {
+    if (this.time) {
+      this.autoChangeEndTime = false
+      this.start = formatDate(this.time.start)
+      this.end = formatDate(this.time.end)
+      setTimeout(() => {
+        this.autoChangeEndTime = true
+      }, 100)
+    }
+  }
 
   @Watch('start')
   onrruleChanged() {
-
-    this.end = dayjs(this.start).add(lastDuration, 'seconds').utc().format('YYYY-MM-DDTHH:mm:ssZ')
+    if (this.autoChangeEndTime)
+      this.end = dayjs(this.start).add(lastDuration, 'seconds').utc().format('YYYY-MM-DDTHH:mm:ssZ')
     this.recurData.until = dayjs(this.start).add(1, 'months').format('YYYY-MM-DD')
     this.updateValue()
     
@@ -212,10 +234,6 @@ export default class RecurringDateInput extends Vue {
 
   @Watch('rrule')
   rruleChanged() {
-    this.updateValue()
-  }
-
-  mounted() {
     this.updateValue()
   }
 
