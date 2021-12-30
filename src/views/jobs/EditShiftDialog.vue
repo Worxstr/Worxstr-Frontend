@@ -327,7 +327,7 @@ export default class EditShiftDialog extends Vue {
         await createShift(
           this.$store,
           editedShift,
-          this.jobId ?? this.selectedJob?.id,
+          this.jobId ?? this.selectedJob,
         )
       }
 

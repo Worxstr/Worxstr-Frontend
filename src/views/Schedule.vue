@@ -1,8 +1,5 @@
 <template lang="pug">
-v-container.home.d-flex.flex-column.align-stretch.pb-3(
-  fluid,
-  :fill-height="view == 'month'"
-)
+v-container.d-flex.flex-column.align-stretch(fluid)
   edit-shift-dialog(
     :opened.sync='createShiftDialog'
     :time.sync='newEventTime'
@@ -39,11 +36,10 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
       @change='updateView'
     )
 
-  .flex-grow-1.d-flex.flex-column.flex-md-row
-
+  v-card.flex-1.d-flex.flex-column.flex-md-row.soft-shadow(outlined)
     //- View toggle options
-    v-card.soft-shadow(outlined v-if='userIsManager')
-      v-list
+    div(v-if='userIsManager')
+      v-list.pr-4
         v-subheader Contractors
         v-list-item(v-for='(user, index) in users' :key='user.id')
           template(v-slot:default='{ active }')
@@ -76,12 +72,13 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
                   | {{ job.name }}
   
     //- Calendar
-    .flex-1
+    .flex-1(style='position: relative')
       v-fade-transition
         v-overlay(v-if="loading && !calendarEvents.length" absolute :color='$vuetify.theme.dark ? "black" : "white"')
           v-progress-circular(indeterminate :color='$vuetify.theme.dark ? "white" : "black"')
-
+      
       v-calendar(
+        style='position: absolute; height:100%; width: 100%'
         ref='calendar'
         v-model='value'
         :type='view'
@@ -95,6 +92,7 @@ v-container.home.d-flex.flex-column.align-stretch.pb-3(
         @mousemove:time='createEventDragMove'
         @mouseup:time='createEventDragEnd'
       )
+      
 </template>
 
 <script lang="ts">
