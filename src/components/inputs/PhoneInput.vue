@@ -22,9 +22,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { phoneRules, phoneRulesOptional } from '@/util/inputValidation'
 
 type PhoneObject = {
-  countryCode: string;
-  areaCode: string;
-  phoneNumber: string;
+  countryCode: string
+  areaCode: string
+  phoneNumber: string
 }
 
 @Component

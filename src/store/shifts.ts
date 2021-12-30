@@ -9,17 +9,17 @@ import jobsStore from '@/store/jobs'
 // TODO ---------------------
 
 export interface ShiftsState {
-  upcoming: number[];
-  all: number[];
+  upcoming: number[]
+  all: number[]
   byId: {
-    [key: number]: Shift;
-  };
+    [key: number]: Shift
+  }
   tasks: {
-    all: number[];
+    all: number[]
     byId: {
-      [key: number]: Task;
-    };
-  };
+      [key: number]: Task
+    }
+  }
 }
 
 export const initialState = (): ShiftsState => ({
