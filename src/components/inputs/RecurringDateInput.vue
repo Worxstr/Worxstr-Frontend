@@ -204,6 +204,10 @@ export default class RecurringDateInput extends Vue {
 
   autoChangeEndTime = true
 
+  mounted() {
+    this.timeChanged()
+  }
+
   @Watch('time')
   timeChanged() {
     if (this.time) {

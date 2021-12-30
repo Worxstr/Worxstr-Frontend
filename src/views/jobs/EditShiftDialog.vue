@@ -29,12 +29,13 @@ v-dialog(
             v-model='selectedJob'
             :items='jobs'
             item-text='name'
-            :item-value='job => job'
+            item-value='id'
             outlined
             dense
             required
             label='Job'
             autofocus
+            @change='onSelectedJob'
           )
 
         v-subheader Date and time
@@ -243,17 +244,22 @@ export default class EditShiftDialog extends Vue {
 
     if (!this.jobId) {
       // Pick first job for selector
-      this.selectedJob = this.jobs[0] ?? null
+      this.selectedJob = this.jobs[0].id ?? null
+      this.onSelectedJob(this.selectedJob)
     }
   }
 
-  @Watch('selectedJob')
-  async onSelectedJob({id}: Job) {
+  async onSelectedJob(jobId: number) {
+    if (!jobId) return
+
     this.loadingJob = true
     // Query job to get the contractors data
     // TODO: Make route for only the contractors of a job
     try {
-      await loadJob(this.$store, id)
+      await loadJob(this.$store, jobId)
+      // When the job loads, for some reason the selected job gets cleared.
+      // For now, just set it again. This method gets called again on change but there are no params passed, so no infinite loop.
+      this.selectedJob = jobId
     }
     finally {
       this.loadingJob = false
@@ -270,12 +276,8 @@ export default class EditShiftDialog extends Vue {
   }
 
   get contractors() {
-    if (this.jobId) {
-      return this.$store.getters.job(this.jobId)?.contractors ?? []
-    }
-    else {
-      return this.selectedJob?.contractors ?? []
-    }
+    const jobId = this.jobId ?? this.selectedJob
+    return this.$store.getters.job(jobId)?.contractors ?? []
 
     // TODO: Sort
     // return this.contractors.sort((a: any, b: any) => {
