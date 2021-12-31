@@ -17,14 +17,14 @@ Vue.use(Vuex)
 // https://github.com/paularmstrong/normalizr
 
 export interface RootState {
-  app: app.AppState;
-  users: users.UsersState;
-  organizations: organizations.OrganizationsState;
-  jobs: jobs.JobsState;
-  shifts: shifts.ShiftsState;
-  payments: payments.PaymentsState;
-  schedule: schedule.ScheduleState;
-  messages: messages.MessagesState;
+  app: app.AppState
+  users: users.UsersState
+  organizations: organizations.OrganizationsState
+  jobs: jobs.JobsState
+  shifts: shifts.ShiftsState
+  payments: payments.PaymentsState
+  schedule: schedule.ScheduleState
+  messages: messages.MessagesState
 }
 
 const storeConfig: StoreOptions<RootState> = {

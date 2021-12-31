@@ -3,10 +3,10 @@ import Vue from 'vue'
 import { Job, Shift } from '@/types/Jobs'
 
 export interface JobsState {
-  all: number[];
+  all: number[]
   byId: {
-    [key: number]: Job;
-  };
+    [key: number]: Job
+  }
 }
 
 export const initialState = (): JobsState => ({

@@ -4,19 +4,19 @@ import * as theme from '@/util/theme'
 
 export interface AppState {
   snackbar: {
-    show: boolean;
-    text: string;
-    timeout: number;
+    show: boolean
+    text: string
+    timeout: number
     action?: {
-      text: string;
-      action: Function;
-      color?: string;
-    };
-  };
+      text: string
+      action: Function
+      color?: string
+    }
+  }
   preferences: {
-    darkMode: DarkPreference;
-    miniNav: boolean;
-  };
+    darkMode: DarkPreference
+    miniNav: boolean
+  }
 }
 
 export const initialState = (): AppState => ({

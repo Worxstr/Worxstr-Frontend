@@ -86,13 +86,7 @@ export async function createShift({ commit }: any, shift: Shift, jobId: number) 
   return data
 }
 
-export async function updateShift({ commit }: any, shift: {
-  id: number | null; // TODO: Remove null
-  contractor_id: number | null; // TODO:
-  site_location: string;
-  time_begin: string;
-  time_end: string;
-}) {
+export async function updateShift({ commit }: any, shift: any) {
   const { data } = await api({
     method: 'PUT',
     url: `shifts/${shift.id}`,

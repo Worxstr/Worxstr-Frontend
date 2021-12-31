@@ -239,6 +239,7 @@ const routes = [
     meta: {
       icon: 'mdi-calendar-multiselect',
       hideNav: true,
+      fullHeight: true,
     }
   },
   {
