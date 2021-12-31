@@ -88,9 +88,10 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         :event-color='getEventColor'
         @change='getEvents'
         @click:event='openEvent'
+        @mousedown:event='moveEventDragStart'
         @mousedown:time='createEventDragStart'
-        @mousemove:time='createEventDragMove'
-        @mouseup:time='createEventDragEnd'
+        @mousemove:time='eventDragMove'
+        @mouseup:time='eventDragEnd'
       )
       
 </template>
@@ -118,39 +119,94 @@ import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 export default class Schedule extends Vue {
 
   createShiftDialog = false
-  virtualEvent: any = null
-  newEventTime: any = null
-  creatingEventDrag = false
 
-  createEventDragStart(timeData: any, e: MouseEvent) {
-    const startTime = this.roundDate(this.toDate(timeData))
+  virtualEvent: any = null // The event that is shown when creating a new event by dragging
+  newEventTime: any = null // The start and end time used to pass to shift create dialog
+  creatingEventDrag = false // User is creating an event by drag
+  movingEventDrag = false // User is moving an event by drag
 
-    this.creatingEventDrag = true
+  // We use these to track the difference of time between start and end of drag
+  dragStartTime: any = null // Timestamp when the user started drag
+  dragEndTime: any = null // Timestamp when the user ended drag
 
-    this.virtualEvent = {
-      name: 'New shift',
-      color: 'primary',
-      start: startTime,
-      end: startTime,
-      timed: true,
-    }
+  openEvent({ /* nativeEvent, */ event }: { event: CalendarEvent }) {
+    
+    // nativeEvent is the browser click event, event is the calendar event data
+    // TODO: Use hasRole defined in User.ts
+
+    // this.$router.push({ name: 'shift', params: {
+    //   jobId: event.job_id.toString(),
+    //   shiftId: event.id.toString()
+    // }})
   }
 
-  createEventDragMove(timeData: any, e: MouseEvent) {
+  // User started dragging to create an event
+  createEventDragStart(timeData: any, e: MouseEvent) {
+
+    const startTime = this.roundDate(this.toDate(timeData))
+    
+    if (this.movingEventDrag) {
+      this.dragStartTime = startTime
+    }
+
+    else {
+      this.creatingEventDrag = true
+      this.dragStartTime = startTime 
+
+      this.virtualEvent = {
+        name: 'New shift',
+        color: 'primary',
+        start: startTime,
+        end: startTime,
+        timed: true,
+      }
+    }
+  }
+  // User started dragging to move an event
+  moveEventDragStart(data: any) {
+    const { event, day } = data
+    console.log('moveEventDragStart')
+
+    this.movingEventDrag = true
+    this.virtualEvent = event
+    // Save the original start and end time for updating the drag position
+    this.virtualEvent.originalStart = event.start
+    this.virtualEvent.originalEnd = event.end
+  }
+  // User is already dragging and moved the mouse
+  eventDragMove(timeData: any, e: MouseEvent) {
+    
+    const endTime = this.roundDate(this.toDate(timeData))
+    this.dragEndTime = endTime
+
+    if (this.movingEventDrag) {
+      console.log(this.dragEndTime.getTime() - this.dragStartTime.getTime())
+      const delta = this.dragEndTime.getTime() - this.dragStartTime.getTime()
+      this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
+      this.virtualEvent.end = new Date(this.virtualEvent.originalEnd.getTime() + delta)
+    }
+
+    
     if (this.creatingEventDrag) {
-      const endTime = this.roundDate(this.toDate(timeData))
       this.virtualEvent.end = endTime
     }
   }
-
-  createEventDragEnd(timeData: any, e: MouseEvent) {
-    this.newEventTime = {
-      start: this.virtualEvent?.start,
-      end: this.roundDate(this.toDate(timeData)),
+  // User stopped dragging
+  eventDragEnd(timeData: any, e: MouseEvent) {
+    console.log('eventDragEnd')
+    
+    if (this.creatingEventDrag) {
+      this.newEventTime = {
+        start: this.virtualEvent?.start,
+        end: this.virtualEvent?.end,
+      }
+      this.createShiftDialog = true
+  
+      this.virtualEvent = null
     }
+    
     this.creatingEventDrag = false
-    this.createShiftDialog = true
-    this.virtualEvent = null
+    this.movingEventDrag = false
   }
 
   toDate(timeData: any) {
@@ -227,7 +283,8 @@ export default class Schedule extends Vue {
       )
     }
 
-    if (this.virtualEvent) events.push(this.virtualEvent)
+    // Add virtual event when creating an event on calendar by dragging
+    if (this.virtualEvent && this.creatingEventDrag) events.push(this.virtualEvent)
 
     return events
   }
@@ -261,16 +318,6 @@ export default class Schedule extends Vue {
 
   get userIsManager() {
     return currentUserIs(...Managers)
-  }
-
-  openEvent({ /* nativeEvent, */ event }: { event: CalendarEvent }) {
-    // nativeEvent is the browser click event, event is the calendar event data
-    // TODO: Use hasRole defined in User.ts
-
-    this.$router.push({ name: 'shift', params: {
-      jobId: event.job_id.toString(),
-      shiftId: event.id.toString()
-    }})
   }
 }
 </script>
