@@ -46,13 +46,13 @@ div
 import { Component, Vue } from 'vue-property-decorator'
 
 type Article = {
-  id: string;
-  title: string;
+  id: string
+  title: string
 }
 
 type Category = {
-  title: string;
-  articles: Article[];
+  title: string
+  articles: Article[]
 }
 
 @Component({

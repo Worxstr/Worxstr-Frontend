@@ -67,7 +67,7 @@ export async function loadJob({ commit }: any, jobId: number) {
   })
 
   normalizeJob(commit, data.job)
-  return data
+  return data.job
 }
 
 export async function createJob({ commit }: any, job: Job) {

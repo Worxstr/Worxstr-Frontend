@@ -93,9 +93,9 @@ export async function loadFundingSources({ commit }: any) {
 }
 
 export async function addPlaidFundingSource({ commit }: any, { name, publicToken, accountId }: {
-  name: string;
-  publicToken: string;
-  accountId: string;
+  name: string
+  publicToken: string
+  accountId: string
 }) {
   const { data } = await api({
     method: 'POST',

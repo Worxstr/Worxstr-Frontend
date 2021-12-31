@@ -126,9 +126,9 @@ export default class Payments extends Vue {
 
   verificationStatuses: {
     [key: string]: {
-      color: string;
-      text: string;
-    };
+      color: string
+      text: string
+    }
   } = {
     verified: {
       color: 'success',
