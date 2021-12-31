@@ -213,7 +213,7 @@ export default class EditShiftDialog extends Vue {
 
   ends = 'on'
   editedShift: any = this.initialState()
-  selectedJob: Job | null = null
+  selectedJob: number | null = null
   recurData: any = {}
   isValid = false
   loading = false
@@ -249,7 +249,7 @@ export default class EditShiftDialog extends Vue {
     }
   }
 
-  async onSelectedJob(jobId: number) {
+  async onSelectedJob(jobId: number | null) {
     if (!jobId) return
 
     this.loadingJob = true
