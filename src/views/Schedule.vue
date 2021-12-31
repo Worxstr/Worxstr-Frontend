@@ -93,20 +93,29 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         @mousemove:time='eventDragMove'
         @mouseup:time='eventDragEnd'
       )
+        template(v-slot:event='{ event, timed, eventSummary }')
+          .v-event-draggable
+            div(v-html='eventSummary()')
+
+          .v-event-drag-bottom(v-if='timed' @mousedown='extendBottom(event)')
       
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/camelcase */
+
 import { Vue, Component } from 'vue-property-decorator'
-import * as schedule from '@/services/schedule'
-import { CalendarEvent } from '@/types/Schedule'
-import { loadWorkforce } from '@/services/users'
-import { loadJobs } from '@/services/jobs'
-import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
-import { Job } from '@/types/Jobs'
+
 import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 
+import { CalendarEvent } from '@/types/Schedule'
+import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
+import { Job } from '@/types/Jobs'
 
+import * as schedule from '@/services/schedule'
+import { updateShift } from '@/services/shifts'
+import { loadJobs } from '@/services/jobs'
+import { loadWorkforce } from '@/services/users'
 
 @Component({
   metaInfo: {
@@ -124,6 +133,7 @@ export default class Schedule extends Vue {
   newEventTime: any = null // The start and end time used to pass to shift create dialog
   creatingEventDrag = false // User is creating an event by drag
   movingEventDrag = false // User is moving an event by drag
+  extendingEventDrag = false // User is extending an event by drag
 
   // We use these to track the difference of time between start and end of drag
   dragStartTime: any = null // Timestamp when the user started drag
@@ -148,7 +158,6 @@ export default class Schedule extends Vue {
     if (this.movingEventDrag) {
       this.dragStartTime = startTime
     }
-
     else {
       this.creatingEventDrag = true
       this.dragStartTime = startTime 
@@ -165,7 +174,6 @@ export default class Schedule extends Vue {
   // User started dragging to move an event
   moveEventDragStart(data: any) {
     const { event, day } = data
-    console.log('moveEventDragStart')
 
     this.movingEventDrag = true
     this.virtualEvent = event
@@ -182,18 +190,18 @@ export default class Schedule extends Vue {
     if (this.movingEventDrag) {
       console.log(this.dragEndTime.getTime() - this.dragStartTime.getTime())
       const delta = this.dragEndTime.getTime() - this.dragStartTime.getTime()
-      this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
+      if (!this.extendingEventDrag) {
+        this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
+      }
       this.virtualEvent.end = new Date(this.virtualEvent.originalEnd.getTime() + delta)
     }
-
     
     if (this.creatingEventDrag) {
       this.virtualEvent.end = endTime
     }
   }
   // User stopped dragging
-  eventDragEnd(timeData: any, e: MouseEvent) {
-    console.log('eventDragEnd')
+  async eventDragEnd(timeData: any, e: MouseEvent) {
     
     if (this.creatingEventDrag) {
       this.newEventTime = {
@@ -201,12 +209,35 @@ export default class Schedule extends Vue {
         end: this.virtualEvent?.end,
       }
       this.createShiftDialog = true
-  
       this.virtualEvent = null
+      this.cancelDrag()
     }
-    
+    else {
+      try {
+        const newShift = {
+          ...this.virtualEvent,
+          time_begin: this.virtualEvent.start,
+          time_end: this.virtualEvent.end,
+        }
+        this.cancelDrag()
+        await updateShift(this.$store, newShift)
+      }
+      catch {
+        // If update fails, revert the event
+        this.virtualEvent.start = this.virtualEvent.originalStart
+        this.virtualEvent.end = this.virtualEvent.originalEnd
+      }
+    }
+  }
+
+  cancelDrag() {
     this.creatingEventDrag = false
     this.movingEventDrag = false
+    this.extendingEventDrag = false
+  }
+
+  extendBottom(event: any) {
+    this.extendingEventDrag = true
   }
 
   toDate(timeData: any) {
@@ -322,9 +353,40 @@ export default class Schedule extends Vue {
 }
 </script>
 
+
 <style lang="scss">
-// #calendar-container {
-//   width: 100%;
-//   height: 100%;
-// }
+.v-event-draggable {
+  padding-left: 6px;
+}
+
+.v-event-timed {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.v-event-drag-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 4px;
+  cursor: ns-resize;
+
+  &::after {
+    display: none;
+    position: absolute;
+    left: 50%;
+    height: 4px;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+    width: 16px;
+    margin-left: -8px;
+    opacity: 0.8;
+    content: '';
+  }
+
+  &:hover::after {
+    display: block;
+  }
+}
 </style>
