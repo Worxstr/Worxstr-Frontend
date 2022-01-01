@@ -4,6 +4,11 @@ v-container.d-flex.flex-column.align-stretch(fluid)
     :opened.sync='createShiftDialog'
     :time.sync='newEventTime'
   )
+  edit-shift-dialog(
+    :opened.sync='editShiftDialog'
+    :shift.sync='selectedShift'
+    :editing='true'
+  )
 
   v-toolbar.flex-grow-0(flat, color="transparent")
     v-btn.ma-2(icon, @click="$refs.calendar.prev()")
@@ -117,7 +122,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
             v-list-item-title Duplicate shift
 
           v-list-item(
-            @click='duplicateEvent'
+            @click='editShift(ctxMenu.event)'
           )
             v-list-item-icon.mr-2
               v-icon(small) mdi-pencil
@@ -160,6 +165,7 @@ import * as schedule from '@/services/schedule'
 import { updateShift } from '@/services/shifts'
 import { loadJobs } from '@/services/jobs'
 import { loadWorkforce } from '@/services/users'
+import Shift from './shifts/Shift.vue'
 
 @Component({
   metaInfo: {
@@ -172,6 +178,8 @@ import { loadWorkforce } from '@/services/users'
 export default class Schedule extends Vue {
 
   createShiftDialog = false
+  editShiftDialog = false
+  selectedShift: Shift = null
 
   virtualEvent: any = null // The event that is shown when creating a new event by dragging
   newEventTime: any = null // The start and end time used to pass to shift create dialog
@@ -279,26 +287,6 @@ export default class Schedule extends Vue {
     this.extendingEventDrag = false
   }
 
-  ctxMenu: any = {
-    show: false,
-    x: 0,
-    y: 0,
-    event: null
-  }
-
-  contextMenu({nativeEvent, event}: any) {
-    nativeEvent.preventDefault()
-
-    this.ctxMenu.show = false
-    this.ctxMenu.x = nativeEvent.clientX
-    this.ctxMenu.y = nativeEvent.clientY
-    // make event useable by menuClick items
-    this.ctxMenu.event = event
-    this.$nextTick(() => {
-      this.ctxMenu.show = true
-    })
-  }
-
   toDate(timeData: any) {
     return new Date(timeData.year, timeData.month - 1, timeData.day, timeData.hour, timeData.minute)
   }
@@ -346,14 +334,6 @@ export default class Schedule extends Vue {
   async loadWorkforce() {
     const { users } = await loadWorkforce(this.$store)
     this.activeUsers = users.map((u: User) => u.id)
-  }
-
-  updateColorBy(val: string) {
-    localStorage.setItem('colorScheduleBy', val)
-  }
-
-  updateView(val: string) {
-    localStorage.setItem('scheduleView', val)
   }
   
   get allCalendarEvents() {
@@ -408,6 +388,39 @@ export default class Schedule extends Vue {
 
   get userIsManager() {
     return currentUserIs(...Managers)
+  }
+  
+  ctxMenu: any = {
+    show: false,
+    x: 0,
+    y: 0,
+    event: null
+  }
+
+  contextMenu({nativeEvent, event}: any) {
+    nativeEvent.preventDefault()
+
+    this.ctxMenu.show = false
+    this.ctxMenu.x = nativeEvent.clientX
+    this.ctxMenu.y = nativeEvent.clientY
+    // make event useable by menuClick items
+    this.ctxMenu.event = event
+    this.$nextTick(() => {
+      this.ctxMenu.show = true
+    })
+  }
+
+  updateColorBy(val: string) {
+    localStorage.setItem('colorScheduleBy', val)
+  }
+
+  updateView(val: string) {
+    localStorage.setItem('scheduleView', val)
+  }
+
+  editShift(shift: Shift) {
+    this.selectedShift = shift
+    this.editShiftDialog = true
   }
 }
 </script>
