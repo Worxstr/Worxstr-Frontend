@@ -92,6 +92,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         @mousedown:time='createEventDragStart'
         @mousemove:time='eventDragMove'
         @mouseup:time='eventDragEnd'
+        @contextmenu:event='contextMenu'
       )
         template(v-slot:event='{ event, timed, eventSummary }')
           .v-event-draggable
@@ -99,6 +100,49 @@ v-container.d-flex.flex-column.align-stretch(fluid)
 
           .v-event-drag-bottom(v-if='timed' @mousedown='extendBottom(event)')
       
+      v-menu(
+        v-model='ctxMenu.show'
+        :position-x='ctxMenu.x'
+        :position-y='ctxMenu.y'
+        absolute
+        offset-y
+        style='max-width: 600px'
+      )
+        v-list(dense v-if='ctxMenu.event')
+          v-list-item(
+            @click='duplicateEvent'
+          )
+            v-list-item-icon.mr-2
+              v-icon(small) mdi-content-copy
+            v-list-item-title Duplicate shift
+
+          v-list-item(
+            @click='duplicateEvent'
+          )
+            v-list-item-icon.mr-2
+              v-icon(small) mdi-pencil
+            v-list-item-title Edit shift
+            
+          v-divider
+
+          v-list-item(
+            exact
+            :to="{name: 'shift', params: { jobId: ctxMenu.event.job_id, shiftId: ctxMenu.event.id }}"
+          )
+            v-list-item-title View shift
+
+          v-list-item(
+            exact
+            :to="{name: 'job', params: { jobId: ctxMenu.event.job_id }}"
+          )
+            v-list-item-title View job
+
+          v-list-item(
+            exact
+            :to="{name: 'user', params: { userId: ctxMenu.event.contractor_id }}"
+          )
+            v-list-item-title View contractor
+
 </template>
 
 <script lang="ts">
@@ -140,14 +184,10 @@ export default class Schedule extends Vue {
   dragEndTime: any = null // Timestamp when the user ended drag
 
   openEvent({ /* nativeEvent, */ event }: { event: CalendarEvent }) {
-    
-    // nativeEvent is the browser click event, event is the calendar event data
-    // TODO: Use hasRole defined in User.ts
-
-    // this.$router.push({ name: 'shift', params: {
-    //   jobId: event.job_id.toString(),
-    //   shiftId: event.id.toString()
-    // }})
+    this.$router.push({ name: 'shift', params: {
+      jobId: event.job_id.toString(),
+      shiftId: event.id.toString()
+    }})
   }
 
   // User started dragging to create an event
@@ -188,7 +228,6 @@ export default class Schedule extends Vue {
     this.dragEndTime = endTime
 
     if (this.movingEventDrag) {
-      console.log(this.dragEndTime.getTime() - this.dragStartTime.getTime())
       const delta = this.dragEndTime.getTime() - this.dragStartTime.getTime()
       if (!this.extendingEventDrag) {
         this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
@@ -230,14 +269,34 @@ export default class Schedule extends Vue {
     }
   }
 
+  extendBottom(event: any) {
+    this.extendingEventDrag = true
+  }
+
   cancelDrag() {
     this.creatingEventDrag = false
     this.movingEventDrag = false
     this.extendingEventDrag = false
   }
 
-  extendBottom(event: any) {
-    this.extendingEventDrag = true
+  ctxMenu: any = {
+    show: false,
+    x: 0,
+    y: 0,
+    event: null
+  }
+
+  contextMenu({nativeEvent, event}: any) {
+    nativeEvent.preventDefault()
+
+    this.ctxMenu.show = false
+    this.ctxMenu.x = nativeEvent.clientX
+    this.ctxMenu.y = nativeEvent.clientY
+    // make event useable by menuClick items
+    this.ctxMenu.event = event
+    this.$nextTick(() => {
+      this.ctxMenu.show = true
+    })
   }
 
   toDate(timeData: any) {
