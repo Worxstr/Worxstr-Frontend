@@ -206,7 +206,22 @@ export default class Schedule extends Vue {
   // User started dragging to create an event
   createEventDragStart(timeData: any, e: MouseEvent) {
 
-    if (this.duplicatingEvent || e.which === 3) return
+    console.log("createEventDragStart", this.duplicatingEvent, e.which)
+    if (e.which === 3) return
+
+    if (this.duplicatingEvent) {
+
+      console.log('duplicating event')
+      // User has placed the duplicated event
+      this.newEventTime = {
+        start: this.virtualEvent?.start,
+        end: this.virtualEvent?.end,
+      }
+      console.log(this.newEventTime)
+      this.createShiftDialog = true
+      this.cancelDrag()
+      return
+    }
 
     const startTime = this.roundDate(this.toDate(timeData))
     
@@ -229,18 +244,9 @@ export default class Schedule extends Vue {
   // User pressed their mouse on an event (started drag)
   moveEventDragStart(data: any) {
     const { event, nativeEvent } = data
+    console.log('moveEventDragStart')
 
-    if (this.duplicatingEvent) {
-
-      // User has placed the duplicated event
-      this.newEventTime = {
-        start: this.virtualEvent?.start,
-        end: this.virtualEvent?.end,
-      }
-      console.log(this.newEventTime)
-      this.createShiftDialog = true
-      return
-    }
+    if (this.duplicatingEvent) return
 
     this.isRightClick = nativeEvent.which === 3
     this.movingEventDrag = true
@@ -296,7 +302,7 @@ export default class Schedule extends Vue {
       this.cancelDrag()
     }
     // User clicked existing shift
-    else {
+    else if (this.movingEventDrag) {
       if (this.virtualEvent.start === this.virtualEvent.originalStart &&
           this.virtualEvent.end === this.virtualEvent.originalEnd) {
         this.openEvent({
@@ -310,7 +316,6 @@ export default class Schedule extends Vue {
             time_end: this.virtualEvent.end,
           }
           this.cancelDrag()
-          console.log("updating")
           await updateShift(this.$store, newShift)
         }
         catch {
