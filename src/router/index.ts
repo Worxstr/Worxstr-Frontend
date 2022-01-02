@@ -15,6 +15,8 @@ import NativeHome from '@/views/landing/NativeHome.vue'
 import About from '@/views/landing/About.vue'
 import Pricing from '@/views/landing/Pricing.vue'
 import Contact from '@/views/landing/Contact.vue'
+import Blog from '@/views/landing/Blog.vue'
+import BlogPost from '@/views/landing/BlogPost.vue'
 import Support from '@/views/support/Support.vue'
 import SupportArticle from '@/views/support/SupportArticle.vue'
 import Privacy from '@/views/landing/Privacy.vue'
@@ -73,7 +75,7 @@ const routes = [
       noSkeleton: true,
       fullHeight: true,
       bleedSafeAreaBottom: true,
-    }
+    },
   },
   {
     path: '/about',
@@ -81,7 +83,7 @@ const routes = [
     component: About,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/pricing',
@@ -89,7 +91,7 @@ const routes = [
     component: Pricing,
     meta: {
       landing: true
-    }
+    },
   },
   {
     path: '/contact',
@@ -97,15 +99,23 @@ const routes = [
     component: Contact,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/blog',
     name: 'blog',
-    component: Support,
+    component: Blog,
     meta: {
       landing: true,
-    }
+    },
+  },
+  {
+    path: '/blog/:blogPostId',
+    name: 'blogPost',
+    component: BlogPost,
+    meta: {
+      landing: true,
+    },
   },
   {
     path: '/support',
@@ -113,7 +123,7 @@ const routes = [
     component: Support,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/support/:articleId',
@@ -121,7 +131,7 @@ const routes = [
     component: SupportArticle,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/privacy',
@@ -129,7 +139,7 @@ const routes = [
     component: Privacy,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/terms',
@@ -137,7 +147,7 @@ const routes = [
     component: Terms,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/sign-in',
@@ -146,7 +156,7 @@ const routes = [
     meta: {
       landing: true,
       fullHeight: true,
-    }
+    },
   },
   {
     path: '/sign-up',
@@ -156,7 +166,7 @@ const routes = [
     meta: {
       landing: true,
       fullHeight: true,
-    }
+    },
   },
   {
     path: '/reset-password',
@@ -166,7 +176,7 @@ const routes = [
     meta: {
       landing: true,
       fullHeight: true,
-    }
+    },
   },
   {
     path: '/confirm-email',
@@ -175,7 +185,7 @@ const routes = [
     meta: {
       landing: true,
       fullHeight: true,
-    }
+    },
   },
   {
     path: '/dashboard',

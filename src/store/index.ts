@@ -3,6 +3,7 @@ import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 
 import * as app from './app'
+import * as blog from './blog'
 import * as users from './users'
 import * as organizations from './organizations'
 import * as jobs from './jobs'
@@ -18,6 +19,7 @@ Vue.use(Vuex)
 
 export interface RootState {
   app: app.AppState
+  blog: blog.BlogState
   users: users.UsersState
   organizations: organizations.OrganizationsState
   jobs: jobs.JobsState
@@ -31,6 +33,7 @@ const storeConfig: StoreOptions<RootState> = {
   mutations: {
     RESET_STATE(state) {
       Object.assign(state.app, app.initialState())
+      Object.assign(state.blog, blog.initialState())
       Object.assign(state.users, users.initialState())
       Object.assign(state.organizations, organizations.initialState())
       Object.assign(state.jobs, jobs.initialState())
@@ -42,6 +45,7 @@ const storeConfig: StoreOptions<RootState> = {
   },
   modules: {
     app: app.default,
+    blog: blog.default,
     users: users.default,
     organizations: organizations.default,
     jobs: jobs.default,
