@@ -259,17 +259,18 @@ export default class Schedule extends Vue {
     
     if (this.creatingEventDrag) {
       this.virtualEvent.end = endTime
+      return
     }
 
     if (!this.dragStartTime || !this.dragEndTime) return
-    const delta = this.dragEndTime.getTime() - this.dragStartTime.getTime()
+    const delta = endTime.getTime() - this.dragStartTime.getTime()
 
     if (this.duplicatingEvent) {
       this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
       this.virtualEvent.end = new Date(this.virtualEvent.originalEnd.getTime() + delta)
     }
     
-    if (this.movingEventDrag) {
+    else if (this.movingEventDrag) {
       if (!this.extendingEventDrag) {
         this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
       }
@@ -309,6 +310,7 @@ export default class Schedule extends Vue {
             time_end: this.virtualEvent.end,
           }
           this.cancelDrag()
+          console.log("updating")
           await updateShift(this.$store, newShift)
         }
         catch {
