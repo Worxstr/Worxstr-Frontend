@@ -100,6 +100,14 @@ const routes = [
     }
   },
   {
+    path: '/blog',
+    name: 'blog',
+    component: Support,
+    meta: {
+      landing: true,
+    }
+  },
+  {
     path: '/support',
     name: 'support',
     component: Support,

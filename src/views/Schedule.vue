@@ -4,15 +4,22 @@ v-container.d-flex.flex-column.align-stretch(fluid)
     :opened.sync='createShiftDialog'
     :time.sync='newEventTime'
   )
+  edit-shift-dialog(
+    :opened.sync='editShiftDialog'
+    :shift.sync='selectedShift'
+    :editing='true'
+  )
 
-  v-toolbar.flex-grow-0(flat, color="transparent")
-    v-btn.ma-2(icon, @click="$refs.calendar.prev()")
+  portal(to='toolbarTitle')
+    v-btn.ma-2(icon small @click="$refs.calendar.prev()")
       v-icon mdi-chevron-left
 
-    v-btn.ma-2(icon, @click="$refs.calendar.next()")
+    v-btn.ma-2(icon small @click="$refs.calendar.next()")
       v-icon mdi-chevron-right
+    
+    v-toolbar-title.text-subtitle-1(v-if='$refs.calendar') {{ $refs.calendar.title }}
 
-    v-spacer
+  portal(to='toolbarActions')
 
     v-select.ma-2.flex-grow-0(
       v-if='userIsManager'
@@ -87,11 +94,11 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         :event-overlap-threshold='30'
         :event-color='getEventColor'
         @change='getEvents'
-        @click:event='openEvent'
         @mousedown:event='moveEventDragStart'
         @mousedown:time='createEventDragStart'
         @mousemove:time='eventDragMove'
         @mouseup:time='eventDragEnd'
+        @contextmenu:event='contextMenu'
       )
         template(v-slot:event='{ event, timed, eventSummary }')
           .v-event-draggable
@@ -99,6 +106,56 @@ v-container.d-flex.flex-column.align-stretch(fluid)
 
           .v-event-drag-bottom(v-if='timed' @mousedown='extendBottom(event)')
       
+      v-menu(
+        v-model='ctxMenu.show'
+        :position-x='ctxMenu.x'
+        :position-y='ctxMenu.y'
+        absolute
+        offset-y
+        style='max-width: 600px'
+      )
+        v-list(dense v-if='ctxMenu.event')
+          v-list-item(
+            @click='duplicateEvent(ctxMenu.event)'
+          )
+            v-list-item-icon.mr-2
+              v-icon(small) mdi-content-copy
+            v-list-item-title Duplicate shift
+
+          v-list-item(
+            @click='editShift(ctxMenu.event)'
+          )
+            v-list-item-icon.mr-2
+              v-icon(small) mdi-pencil
+            v-list-item-title Edit shift
+          
+          v-list-item(
+            @click='deleteShift(ctxMenu.event)'
+          )
+            v-list-item-icon.mr-2
+              v-icon(small) mdi-delete
+            v-list-item-title Delete shift
+            
+          v-divider
+
+          v-list-item(
+            exact
+            :to="{name: 'shift', params: { jobId: ctxMenu.event.job_id, shiftId: ctxMenu.event.id }}"
+          )
+            v-list-item-title View shift
+
+          v-list-item(
+            exact
+            :to="{name: 'job', params: { jobId: ctxMenu.event.job_id }}"
+          )
+            v-list-item-title View job
+
+          v-list-item(
+            exact
+            :to="{name: 'user', params: { userId: ctxMenu.event.contractor_id }}"
+          )
+            v-list-item-title View contractor
+
 </template>
 
 <script lang="ts">
@@ -110,10 +167,10 @@ import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 
 import { CalendarEvent } from '@/types/Schedule'
 import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
-import { Job } from '@/types/Jobs'
+import { Job, Shift } from '@/types/Jobs'
 
 import * as schedule from '@/services/schedule'
-import { updateShift } from '@/services/shifts'
+import { updateShift, deleteShift } from '@/services/shifts'
 import { loadJobs } from '@/services/jobs'
 import { loadWorkforce } from '@/services/users'
 
@@ -127,31 +184,29 @@ import { loadWorkforce } from '@/services/users'
 })
 export default class Schedule extends Vue {
 
-  createShiftDialog = false
-
   virtualEvent: any = null // The event that is shown when creating a new event by dragging
   newEventTime: any = null // The start and end time used to pass to shift create dialog
   creatingEventDrag = false // User is creating an event by drag
   movingEventDrag = false // User is moving an event by drag
   extendingEventDrag = false // User is extending an event by drag
+  duplicatingEvent = false // User is duplicating an event
+  isRightClick = false
 
   // We use these to track the difference of time between start and end of drag
   dragStartTime: any = null // Timestamp when the user started drag
   dragEndTime: any = null // Timestamp when the user ended drag
 
   openEvent({ /* nativeEvent, */ event }: { event: CalendarEvent }) {
-    
-    // nativeEvent is the browser click event, event is the calendar event data
-    // TODO: Use hasRole defined in User.ts
-
-    // this.$router.push({ name: 'shift', params: {
-    //   jobId: event.job_id.toString(),
-    //   shiftId: event.id.toString()
-    // }})
+    this.$router.push({ name: 'shift', params: {
+      jobId: event.job_id.toString(),
+      shiftId: event.id.toString()
+    }})
   }
 
   // User started dragging to create an event
   createEventDragStart(timeData: any, e: MouseEvent) {
+
+    if (this.duplicatingEvent || e.which === 3) return
 
     const startTime = this.roundDate(this.toDate(timeData))
     
@@ -171,10 +226,23 @@ export default class Schedule extends Vue {
       }
     }
   }
-  // User started dragging to move an event
+  // User pressed their mouse on an event (started drag)
   moveEventDragStart(data: any) {
-    const { event, day } = data
+    const { event, nativeEvent } = data
 
+    if (this.duplicatingEvent) {
+
+      // User has placed the duplicated event
+      this.newEventTime = {
+        start: this.virtualEvent?.start,
+        end: this.virtualEvent?.end,
+      }
+      console.log(this.newEventTime)
+      this.createShiftDialog = true
+      return
+    }
+
+    this.isRightClick = nativeEvent.which === 3
     this.movingEventDrag = true
     this.virtualEvent = event
     // Save the original start and end time for updating the drag position
@@ -183,26 +251,41 @@ export default class Schedule extends Vue {
   }
   // User is already dragging and moved the mouse
   eventDragMove(timeData: any, e: MouseEvent) {
-    
+
+    if (this.isRightClick) return
+
     const endTime = this.roundDate(this.toDate(timeData))
     this.dragEndTime = endTime
+    
+    if (this.creatingEventDrag) {
+      this.virtualEvent.end = endTime
+      return
+    }
 
-    if (this.movingEventDrag) {
-      console.log(this.dragEndTime.getTime() - this.dragStartTime.getTime())
-      const delta = this.dragEndTime.getTime() - this.dragStartTime.getTime()
+    if (!this.dragStartTime || !this.dragEndTime) return
+    const delta = endTime.getTime() - this.dragStartTime.getTime()
+
+    if (this.duplicatingEvent) {
+      this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
+      this.virtualEvent.end = new Date(this.virtualEvent.originalEnd.getTime() + delta)
+    }
+    
+    else if (this.movingEventDrag) {
       if (!this.extendingEventDrag) {
         this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
       }
       this.virtualEvent.end = new Date(this.virtualEvent.originalEnd.getTime() + delta)
     }
-    
-    if (this.creatingEventDrag) {
-      this.virtualEvent.end = endTime
-    }
   }
   // User stopped dragging
   async eventDragEnd(timeData: any, e: MouseEvent) {
+
+    if (this.isRightClick || this.duplicatingEvent) {
+      this.cancelDrag()
+      return
+    }
     
+    // User created new shift
     if (this.creatingEventDrag) {
       this.newEventTime = {
         start: this.virtualEvent?.start,
@@ -212,32 +295,52 @@ export default class Schedule extends Vue {
       this.virtualEvent = null
       this.cancelDrag()
     }
+    // User clicked existing shift
     else {
-      try {
-        const newShift = {
-          ...this.virtualEvent,
-          time_begin: this.virtualEvent.start,
-          time_end: this.virtualEvent.end,
+      if (this.virtualEvent.start === this.virtualEvent.originalStart &&
+          this.virtualEvent.end === this.virtualEvent.originalEnd) {
+        this.openEvent({
+          event: this.virtualEvent
+        })
+      } else {
+        try {
+          const newShift = {
+            ...this.virtualEvent,
+            time_begin: this.virtualEvent.start,
+            time_end: this.virtualEvent.end,
+          }
+          this.cancelDrag()
+          console.log("updating")
+          await updateShift(this.$store, newShift)
         }
-        this.cancelDrag()
-        await updateShift(this.$store, newShift)
-      }
-      catch {
-        // If update fails, revert the event
-        this.virtualEvent.start = this.virtualEvent.originalStart
-        this.virtualEvent.end = this.virtualEvent.originalEnd
+        catch {
+          // If update fails, revert the event
+          this.virtualEvent.start = this.virtualEvent.originalStart
+          this.virtualEvent.end = this.virtualEvent.originalEnd
+        }
       }
     }
+  }
+
+  extendBottom(event: any) {
+    this.extendingEventDrag = true
+  }
+
+  duplicateEvent(event: any) {
+    this.duplicatingEvent = true
+    this.isRightClick = false
+    this.dragStartTime = event.start
+    this.virtualEvent = {...event}
+    // Virtual event is created, and will follow the mouse until placed
   }
 
   cancelDrag() {
     this.creatingEventDrag = false
     this.movingEventDrag = false
     this.extendingEventDrag = false
-  }
-
-  extendBottom(event: any) {
-    this.extendingEventDrag = true
+    this.duplicatingEvent = false
+    this.isRightClick = false
+    this.virtualEvent = null
   }
 
   toDate(timeData: any) {
@@ -252,7 +355,12 @@ export default class Schedule extends Vue {
   }
 
 
+  createShiftDialog = false
+  editShiftDialog = false
+  selectedShift: Shift | null = null
+
   loading = false
+  deletingShift = false
   value = ''
 
   view = 'week'
@@ -288,14 +396,6 @@ export default class Schedule extends Vue {
     const { users } = await loadWorkforce(this.$store)
     this.activeUsers = users.map((u: User) => u.id)
   }
-
-  updateColorBy(val: string) {
-    localStorage.setItem('colorScheduleBy', val)
-  }
-
-  updateView(val: string) {
-    localStorage.setItem('scheduleView', val)
-  }
   
   get allCalendarEvents() {
     return this.$store.getters.calendarEvents(this.colorBy)
@@ -315,7 +415,8 @@ export default class Schedule extends Vue {
     }
 
     // Add virtual event when creating an event on calendar by dragging
-    if (this.virtualEvent && this.creatingEventDrag) events.push(this.virtualEvent)
+    if (this.virtualEvent && (this.creatingEventDrag || this.duplicatingEvent))
+      events.push(this.virtualEvent)
 
     return events
   }
@@ -350,6 +451,50 @@ export default class Schedule extends Vue {
   get userIsManager() {
     return currentUserIs(...Managers)
   }
+
+  ctxMenu: any = {
+    show: false,
+    x: 0,
+    y: 0,
+    event: null
+  }
+
+  contextMenu({nativeEvent, event}: any) {
+    nativeEvent.preventDefault()
+
+    this.ctxMenu.show = false
+    this.ctxMenu.x = nativeEvent.clientX
+    this.ctxMenu.y = nativeEvent.clientY
+    // make event useable by menuClick items
+    this.ctxMenu.event = event
+    this.$nextTick(() => {
+      this.ctxMenu.show = true
+    })
+  }
+
+  updateColorBy(val: string) {
+    localStorage.setItem('colorScheduleBy', val)
+  }
+
+  updateView(val: string) {
+    localStorage.setItem('scheduleView', val)
+  }
+
+  editShift(shift: Shift) {
+    this.selectedShift = shift
+    this.editShiftDialog = true
+  }
+
+  async deleteShift(shift: Shift) {
+    this.deletingShift = true
+    try {
+      await deleteShift(this.$store, shift.id, shift.job_id)
+    }
+    finally {
+      this.deletingShift = false
+    }
+  }
+
 }
 </script>
 
