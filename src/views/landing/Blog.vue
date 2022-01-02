@@ -21,7 +21,9 @@ v-container.d-flex.flex-column.gap-medium.py-12
       v-card.soft-shadow
         v-img(v-if='post.image' :src='post.image')
         
-        v-card-title.text-h6.font-weight-black {{ post.title }}
+        v-card-title.text-h6.font-weight-black
+          router-link(:to="{name: 'blogPost', params: {blogPostId: post.id}}")
+            | {{ post.title }}
 
         v-card-text {{ post.description }}
     
