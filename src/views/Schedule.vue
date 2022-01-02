@@ -92,7 +92,6 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         :event-overlap-threshold='30'
         :event-color='getEventColor'
         @change='getEvents'
-        @click:event='openEvent'
         @mousedown:event='moveEventDragStart'
         @mousedown:time='createEventDragStart'
         @mousemove:time='eventDragMove'
@@ -115,7 +114,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
       )
         v-list(dense v-if='ctxMenu.event')
           v-list-item(
-            @click='duplicateEvent'
+            @click='duplicateEvent(ctxMenu.event)'
           )
             v-list-item-icon.mr-2
               v-icon(small) mdi-content-copy
@@ -127,6 +126,13 @@ v-container.d-flex.flex-column.align-stretch(fluid)
             v-list-item-icon.mr-2
               v-icon(small) mdi-pencil
             v-list-item-title Edit shift
+          
+          v-list-item(
+            @click='deleteShift(ctxMenu.event)'
+          )
+            v-list-item-icon.mr-2
+              v-icon(small) mdi-delete
+            v-list-item-title Delete shift
             
           v-divider
 
@@ -159,13 +165,12 @@ import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 
 import { CalendarEvent } from '@/types/Schedule'
 import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
-import { Job } from '@/types/Jobs'
+import { Job, Shift } from '@/types/Jobs'
 
 import * as schedule from '@/services/schedule'
-import { updateShift } from '@/services/shifts'
+import { updateShift, deleteShift } from '@/services/shifts'
 import { loadJobs } from '@/services/jobs'
 import { loadWorkforce } from '@/services/users'
-import Shift from './shifts/Shift.vue'
 
 @Component({
   metaInfo: {
@@ -177,15 +182,13 @@ import Shift from './shifts/Shift.vue'
 })
 export default class Schedule extends Vue {
 
-  createShiftDialog = false
-  editShiftDialog = false
-  selectedShift: Shift = null
-
   virtualEvent: any = null // The event that is shown when creating a new event by dragging
   newEventTime: any = null // The start and end time used to pass to shift create dialog
   creatingEventDrag = false // User is creating an event by drag
   movingEventDrag = false // User is moving an event by drag
   extendingEventDrag = false // User is extending an event by drag
+  duplicatingEvent = false // User is duplicating an event
+  isRightClick = false
 
   // We use these to track the difference of time between start and end of drag
   dragStartTime: any = null // Timestamp when the user started drag
@@ -200,6 +203,8 @@ export default class Schedule extends Vue {
 
   // User started dragging to create an event
   createEventDragStart(timeData: any, e: MouseEvent) {
+
+    if (this.duplicatingEvent) return
 
     const startTime = this.roundDate(this.toDate(timeData))
     
@@ -219,10 +224,23 @@ export default class Schedule extends Vue {
       }
     }
   }
-  // User started dragging to move an event
+  // User pressed their mouse on an event (started drag)
   moveEventDragStart(data: any) {
-    const { event, day } = data
+    const { event, nativeEvent } = data
 
+    if (this.duplicatingEvent) {
+
+      // User has placed the duplicated event
+      this.newEventTime = {
+        start: this.virtualEvent?.start,
+        end: this.virtualEvent?.end,
+      }
+      console.log(this.newEventTime)
+      this.createShiftDialog = true
+      return
+    }
+
+    this.isRightClick = nativeEvent.which === 3
     this.movingEventDrag = true
     this.virtualEvent = event
     // Save the original start and end time for updating the drag position
@@ -231,25 +249,40 @@ export default class Schedule extends Vue {
   }
   // User is already dragging and moved the mouse
   eventDragMove(timeData: any, e: MouseEvent) {
-    
+
+    if (this.isRightClick) return
+
     const endTime = this.roundDate(this.toDate(timeData))
     this.dragEndTime = endTime
+    
+    if (this.creatingEventDrag) {
+      this.virtualEvent.end = endTime
+    }
 
+    if (!this.dragStartTime || !this.dragEndTime) return
+    const delta = this.dragEndTime.getTime() - this.dragStartTime.getTime()
+
+    if (this.duplicatingEvent) {
+      this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
+      this.virtualEvent.end = new Date(this.virtualEvent.originalEnd.getTime() + delta)
+    }
+    
     if (this.movingEventDrag) {
-      const delta = this.dragEndTime.getTime() - this.dragStartTime.getTime()
       if (!this.extendingEventDrag) {
         this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
       }
       this.virtualEvent.end = new Date(this.virtualEvent.originalEnd.getTime() + delta)
     }
-    
-    if (this.creatingEventDrag) {
-      this.virtualEvent.end = endTime
-    }
   }
   // User stopped dragging
   async eventDragEnd(timeData: any, e: MouseEvent) {
+
+    if (this.isRightClick || this.duplicatingEvent) {
+      this.cancelDrag()
+      return
+    }
     
+    // User created new shift
     if (this.creatingEventDrag) {
       this.newEventTime = {
         start: this.virtualEvent?.start,
@@ -259,20 +292,28 @@ export default class Schedule extends Vue {
       this.virtualEvent = null
       this.cancelDrag()
     }
+    // User clicked existing shift
     else {
-      try {
-        const newShift = {
-          ...this.virtualEvent,
-          time_begin: this.virtualEvent.start,
-          time_end: this.virtualEvent.end,
+      if (this.virtualEvent.start === this.virtualEvent.originalStart &&
+          this.virtualEvent.end === this.virtualEvent.originalEnd) {
+        this.openEvent({
+          event: this.virtualEvent
+        })
+      } else {
+        try {
+          const newShift = {
+            ...this.virtualEvent,
+            time_begin: this.virtualEvent.start,
+            time_end: this.virtualEvent.end,
+          }
+          this.cancelDrag()
+          await updateShift(this.$store, newShift)
         }
-        this.cancelDrag()
-        await updateShift(this.$store, newShift)
-      }
-      catch {
-        // If update fails, revert the event
-        this.virtualEvent.start = this.virtualEvent.originalStart
-        this.virtualEvent.end = this.virtualEvent.originalEnd
+        catch {
+          // If update fails, revert the event
+          this.virtualEvent.start = this.virtualEvent.originalStart
+          this.virtualEvent.end = this.virtualEvent.originalEnd
+        }
       }
     }
   }
@@ -281,10 +322,21 @@ export default class Schedule extends Vue {
     this.extendingEventDrag = true
   }
 
+  duplicateEvent(event: any) {
+    this.duplicatingEvent = true
+    this.isRightClick = false
+    this.dragStartTime = event.start
+    this.virtualEvent = {...event}
+    // Virtual event is created, and will follow the mouse until placed
+  }
+
   cancelDrag() {
     this.creatingEventDrag = false
     this.movingEventDrag = false
     this.extendingEventDrag = false
+    this.duplicatingEvent = false
+    this.isRightClick = false
+    this.virtualEvent = null
   }
 
   toDate(timeData: any) {
@@ -299,7 +351,12 @@ export default class Schedule extends Vue {
   }
 
 
+  createShiftDialog = false
+  editShiftDialog = false
+  selectedShift: Shift | null = null
+
   loading = false
+  deletingShift = false
   value = ''
 
   view = 'week'
@@ -354,7 +411,8 @@ export default class Schedule extends Vue {
     }
 
     // Add virtual event when creating an event on calendar by dragging
-    if (this.virtualEvent && this.creatingEventDrag) events.push(this.virtualEvent)
+    if (this.virtualEvent && (this.creatingEventDrag || this.duplicatingEvent))
+      events.push(this.virtualEvent)
 
     return events
   }
@@ -422,6 +480,17 @@ export default class Schedule extends Vue {
     this.selectedShift = shift
     this.editShiftDialog = true
   }
+
+  async deleteShift(shift: Shift) {
+    this.deletingShift = true
+    try {
+      await deleteShift(this.$store, shift.id, shift.job_id)
+    }
+    finally {
+      this.deletingShift = false
+    }
+  }
+
 }
 </script>
 

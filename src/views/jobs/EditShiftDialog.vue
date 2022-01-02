@@ -161,7 +161,7 @@ v-dialog(
 import dayjs from 'dayjs'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { User } from '@/types/Users'
-import { Job, Shift } from '@/types/Jobs'
+import { Shift } from '@/types/Jobs'
 import { createShift, updateShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
 import { exists } from '@/util/inputValidation'
@@ -197,6 +197,11 @@ export default class EditShiftDialog extends Vue {
   @Prop({ type: Object }) readonly time?: {
     start: Date
     end: Date
+  }
+
+  @Watch('time')
+  onTimeChange(time: any) {
+    console.log('time changed', time)
   }
 
   initialState() {
