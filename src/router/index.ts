@@ -15,6 +15,7 @@ import NativeHome from '@/views/landing/NativeHome.vue'
 import About from '@/views/landing/About.vue'
 import Pricing from '@/views/landing/Pricing.vue'
 import Contact from '@/views/landing/Contact.vue'
+import Blog from '@/views/landing/Blog.vue'
 import Support from '@/views/support/Support.vue'
 import SupportArticle from '@/views/support/SupportArticle.vue'
 import Privacy from '@/views/landing/Privacy.vue'
@@ -102,7 +103,7 @@ const routes = [
   {
     path: '/blog',
     name: 'blog',
-    component: Support,
+    component: Blog,
     meta: {
       landing: true,
     }
