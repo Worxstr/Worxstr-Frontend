@@ -11,11 +11,13 @@ v-container.d-flex.flex-column.align-stretch(fluid)
   )
 
   portal(to='toolbarTitle')
-    v-btn.ma-2(icon, @click="$refs.calendar.prev()")
+    v-btn.ma-2(icon small @click="$refs.calendar.prev()")
       v-icon mdi-chevron-left
 
-    v-btn.ma-2(icon, @click="$refs.calendar.next()")
+    v-btn.ma-2(icon small @click="$refs.calendar.next()")
       v-icon mdi-chevron-right
+    
+    v-toolbar-title.text-subtitle-1(v-if='$refs.calendar') {{ $refs.calendar.title }}
 
   portal(to='toolbarActions')
 
@@ -204,7 +206,7 @@ export default class Schedule extends Vue {
   // User started dragging to create an event
   createEventDragStart(timeData: any, e: MouseEvent) {
 
-    if (this.duplicatingEvent) return
+    if (this.duplicatingEvent || e.which === 3) return
 
     const startTime = this.roundDate(this.toDate(timeData))
     
@@ -447,7 +449,7 @@ export default class Schedule extends Vue {
   get userIsManager() {
     return currentUserIs(...Managers)
   }
-  
+
   ctxMenu: any = {
     show: false,
     x: 0,
