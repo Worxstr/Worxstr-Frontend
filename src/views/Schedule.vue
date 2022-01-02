@@ -10,14 +10,14 @@ v-container.d-flex.flex-column.align-stretch(fluid)
     :editing='true'
   )
 
-  v-toolbar.flex-grow-0(flat, color="transparent")
+  portal(to='toolbarTitle')
     v-btn.ma-2(icon, @click="$refs.calendar.prev()")
       v-icon mdi-chevron-left
 
     v-btn.ma-2(icon, @click="$refs.calendar.next()")
       v-icon mdi-chevron-right
 
-    v-spacer
+  portal(to='toolbarActions')
 
     v-select.ma-2.flex-grow-0(
       v-if='userIsManager'

@@ -29,9 +29,11 @@
 
       breadcrumbs
 
+      portal-target.d-flex.align-center(name="toolbarTitle")
+
       v-spacer
 
-      portal-target.d-flex(name="toolbarActions")
+      portal-target.d-flex.align-center(name="toolbarActions")
 
       div(v-if="$route.meta.landing")
         v-btn(v-if='mobileLayout' icon @click='menu = true')
