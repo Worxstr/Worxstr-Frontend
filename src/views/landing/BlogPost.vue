@@ -7,13 +7,21 @@ v-container.pt-8
 
   h4.mt-3.text-h4.font-weight-bold.mb-2 {{ blogPost.title }}
   h6.text-body-1.mb-2 {{ blogPost.description }}
-  h6.text-caption.mb-4 {{ blogPost.date | date('MMM DD, YYYY') }}
+
+  v-list-item.pl-0.mb-4
+    v-list-item-avatar
+      v-img(:src='blogPost.author.image')
+  
+    v-list-item-content
+      v-list-item-title.text-body-2.font-weight-medium {{ blogPost.author.name }}
+      v-list-item-subtitle.text-caption {{ blogPost.date | date('MMM DD, YYYY') }}
   
   v-row
     v-col(cols='12' md='9')
       v-card.soft-shadow
         v-img(v-if='blogPost.image' :src='blogPost.image' max-height='200')
         vue-markdown.pa-8.mb-10(:source='blogPost.content')
+
     v-col(cols='12' md='3')
       aside(style='position: sticky; top: 100px')
         .mb-3           
