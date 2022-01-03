@@ -36,14 +36,23 @@ import { Vue, Component } from 'vue-property-decorator'
 import VueMarkdown from 'vue-markdown'
 
 @Component({
-  metaInfo: {
-    title: 'Blog post',
-  },
   components: {
     VueMarkdown,
   },
 })
 export default class BlogPost extends Vue {
+
+  metaInfo() {
+    return {
+      title: `${this.blogPost.title} | Blog`,
+      meta: [
+        {
+          name: 'description',
+          content: this.blogPost.description,
+        },
+      ],
+    }
+  }
   
   get blogPost() {
     return this.$store.getters.blogPost(this.$route.params.blogPostId)
