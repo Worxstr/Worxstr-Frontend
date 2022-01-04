@@ -25,6 +25,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
       v-if='userIsManager'
       v-model='colorBy'
       :items='colorByOptions'
+      :item-text='(i) => i.charAt(0).toUpperCase() + i.slice(1)'
       dense
       outlined
       hide-details
@@ -35,7 +36,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
     v-select.ma-2.flex-grow-0(
       v-model='view'
       :items='views'
-      :item-text='(t) => t.charAt(0).toUpperCase() + t.slice(1)'
+      :item-text='(i) => i.charAt(0).toUpperCase() + i.slice(1)'
       dense
       outlined
       hide-details
@@ -119,21 +120,21 @@ v-container.d-flex.flex-column.align-stretch(fluid)
             @click='duplicateEvent(ctxMenu.event)'
           )
             v-list-item-icon.mr-2
-              v-icon(small) mdi-content-copy
+              v-icon(small color='primary') mdi-content-copy
             v-list-item-title Duplicate shift
 
           v-list-item(
             @click='editShift(ctxMenu.event)'
           )
             v-list-item-icon.mr-2
-              v-icon(small) mdi-pencil
+              v-icon(small color='primary') mdi-pencil
             v-list-item-title Edit shift
           
           v-list-item(
             @click='deleteShift(ctxMenu.event)'
           )
             v-list-item-icon.mr-2
-              v-icon(small) mdi-delete
+              v-icon(small color='error') mdi-delete
             v-list-item-title Delete shift
             
           v-divider
