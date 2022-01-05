@@ -105,7 +105,8 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
       style='width: 300px'
     )
       v-skeleton-loader(type='sentences')
-
+  
+  //- // TODO: Use better masonry library
   masonry(:cols='{default: 2, 959: 1}' :gutter='30')
 
     //- Shift notes
@@ -126,7 +127,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
           | {{tasksComplete}}/{{totalTasks}} completed
 
       task-list(:tasks='tasks')
-      
+    
     //- Shift history
     .mb-4.d-flex.flex-column.gap-small(v-if='shift.clock_history.length')
       h5.text-h5 History
