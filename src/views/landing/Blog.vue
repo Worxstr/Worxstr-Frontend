@@ -4,10 +4,9 @@ v-container.d-flex.flex-column.gap-medium.py-12
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0')
 
   //- What is Worxstr?
-  v-sheet
-    .d-flex.flex-column.justify-center.align-center
-      h3.text-h3.font-weight-black.mb-8 The Worxstr Blog
-      p Find out about the latest updates from Worxstr here. We post about new features, version updates, and news.
+  .d-flex.flex-column.justify-center.align-center
+    h3.text-h3.font-weight-black.mb-4 The Worxstr Blog
+    p Find out about the latest updates from Worxstr here. We post about new features, version updates, and news.
 
   v-row
     v-col(
@@ -18,17 +17,15 @@ v-container.d-flex.flex-column.gap-medium.py-12
       lg='4'
       xl='3'
     )
-      v-card.soft-shadow
+      v-card.soft-shadow(:to="{name: 'blogPost', params: {blogPostId: post.id}}")
         v-img(v-if='post.image' :src='post.image')
         
-        v-card-title.text-h6.font-weight-black
-          router-link(:to="{name: 'blogPost', params: {blogPostId: post.id}}")
-            | {{ post.title }}
+        v-card-title.text-h6.font-weight-black {{ post.title }}
 
         v-card-text {{ post.description }}
     
         v-card-actions
-          v-list-item.grow
+          v-list-item.pl-2
             v-list-item-avatar
               v-img(:src='post.author.image')
           
