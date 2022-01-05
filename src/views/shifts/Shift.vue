@@ -31,6 +31,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
       :icon='$vuetify.breakpoint.xs'
       color='error'
       @click='deleteShiftDialog = true'
+      :disabled='shift.clock_history.length'
       data-cy='delete-shift-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
@@ -105,11 +106,10 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
     )
       v-skeleton-loader(type='sentences')
 
-
-  .d-flex.flex-column.flex-md-row.gap-medium
+  masonry(:cols='2' :gutter='30')
 
     //- Shift notes
-    .flex-1.d-flex.flex-column.gap-small(v-if='shift.notes')
+    .mb-4.d-flex.flex-column.gap-small(v-if='shift.notes')
       h5.text-h5 Notes
       v-sheet(outlined rounded)
         v-card-text
@@ -119,13 +119,21 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
           div(v-html='shift.notes')
           
     //- Task list
-    .flex-1.d-flex.flex-column.gap-small(v-if='totalTasks > 0')
+    .mb-4.d-flex.flex-column.gap-small(v-if='totalTasks > 0')
       div
         h5.text-h5 {{ isMyShift ? 'Your' : 'Shift' }} tasks
         h6.text-caption(:class="{'success--text font-weight-bold': allTasksComplete}")
           | {{tasksComplete}}/{{totalTasks}} completed
 
       task-list(:tasks='tasks')
+      
+    //- Shift history
+    .mb-4.d-flex.flex-column.gap-small(v-if='shift.clock_history.length')
+      h5.text-h5 History
+
+      v-card(outlined flat)
+        clock-events(:events='shift.clock_history')
+      
 </template>
 
 <script lang="ts">
@@ -142,6 +150,7 @@ import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
 import TaskList from '@/components/TaskList.vue'
 import ClockButtons from '@/components/ClockButtons.vue'
+import ClockEvents from '@/components/ClockEvents.vue'
 
 Vue.use(vueAwesomeCountdown, "vac");
 
@@ -154,6 +163,7 @@ Vue.use(vueAwesomeCountdown, "vac");
     DeleteShiftDialog,
     TaskList,
     ClockButtons,
+    ClockEvents,
   },
 })
 export default class Shift extends Vue {
