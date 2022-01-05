@@ -206,6 +206,19 @@ export default class Home extends Vue {
 
   carousel = [
     {
+      reverse: true,
+      gradient: 'secondary',
+      icon: 'mdi-cash-lock',
+      title: 'Payments',
+      description:
+        'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
+      image: 'approvals.svg',
+      style: {
+        md: 'transform: scale(1) translate(0px,100px)',
+        xs: 'transform: scale(3.5) translateY(30%)',
+      },
+    },
+    {
       gradient: 'primary',
       icon: 'mdi-clock-fast',
       title: 'Scheduling',
@@ -219,9 +232,9 @@ export default class Home extends Vue {
     },
     {
       reverse: true,
-      gradient: 'secondary',
+      gradient: 'tertiary',
       icon: 'mdi-clock-check-outline',
-      title: 'Time Approvals',
+      title: 'Communication',
       description:
         'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
       image: 'approvals.svg',
@@ -240,18 +253,6 @@ export default class Home extends Vue {
       style: {
         md: 'transform: scale(1.7) translatex(20%)',
         xs: 'transform: scale(6) translate(20px, 10%)',
-      },
-    },
-    {
-      gradient: 'secondary',
-      icon: 'mdi-cash-lock',
-      title: 'Payments',
-      description:
-        'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
-      image: 'approvals.svg',
-      style: {
-        md: 'transform: scale(1) translate(0px,100px)',
-        xs: 'transform: scale(3.5) translateY(30%)',
       },
     },
   ]
