@@ -106,7 +106,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
     )
       v-skeleton-loader(type='sentences')
 
-  masonry(:cols='2' :gutter='30')
+  masonry(:cols='{default: 2, 959: 1}' :gutter='30')
 
     //- Shift notes
     .mb-4.d-flex.flex-column.gap-small(v-if='shift.notes')
