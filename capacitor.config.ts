@@ -11,7 +11,10 @@ const config: CapacitorConfig = {
       androidScaleType: 'CENTER_INSIDE',
       // showSpinner: true,
       backgroundColor: '#e7edf7'
-    }
+    },
+    PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert'],
+    },
   },
   cordova: {},
   server: {
