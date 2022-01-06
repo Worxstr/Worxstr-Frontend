@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:71803800375:android:9d9d66e063588d38e668b2",
+        "mobilesdk_app_id": "1:71803800375:android:b257de6c7c46c74de668b2",
         "android_client_info": {
-          "package_name": "com.worxstr.app"
+          "package_name": "com.worxstr.worxstr"
         }
       },
       "oauth_client": [
@@ -29,6 +29,14 @@
             {
               "client_id": "71803800375-ghp5a1o5dc8d1q6qbg5u7u4km60dpcsp.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "71803800375-k8bg000654t7ofastuet8p8e8eco17sj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.worxstr.app",
+                "app_store_id": "1571853545"
+              }
             }
           ]
         }

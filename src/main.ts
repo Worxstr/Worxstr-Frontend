@@ -86,6 +86,8 @@ function configureBackButtonPress() {
   })
 }
 
+import { requestPushPermission } from '@/services/notifications'
+
 async function init() {
   Vue.config.productionTip = false
 
@@ -105,6 +107,8 @@ async function init() {
   await SplashScreen.hide()
   configureBackButtonPress()
   configureDwolla(store)
+
+  requestPushPermission()
 }
 
 init()

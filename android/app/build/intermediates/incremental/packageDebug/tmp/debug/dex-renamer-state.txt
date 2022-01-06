@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-#Mon Dec 27 00:16:32 EST 2021
-=======
-<<<<<<< Updated upstream
-#Wed Oct 27 10:12:46 EDT 2021
-=======
-#Fri Dec 31 15:16:27 EST 2021
->>>>>>> Stashed changes
->>>>>>> 56bde746edce0d817e09c273f1910ce2f66ace17
+#Wed Jan 05 23:42:53 EST 2022
 path.4=14/classes.dex
 path.3=13/classes.dex
 path.2=12/classes.dex
@@ -30,7 +22,7 @@ base.0=C\:\\Users\\owner\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\buil
 renamed.3=classes4.dex
 path.12=0/classes.dex
 renamed.2=classes3.dex
-path.13=11/classes.dex
+path.13=12/classes.dex
 renamed.1=classes2.dex
 path.10=8/classes.dex
 renamed.0=classes.dex
@@ -45,7 +37,7 @@ renamed.5=classes6.dex
 base.6=C\:\\Users\\owner\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\3\\classes.dex
 renamed.4=classes5.dex
 base.5=C\:\\Users\\owner\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\2\\classes.dex
-base.13=C\:\\Users\\owner\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
+base.13=C\:\\Users\\owner\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\12\\classes.dex
 base.12=C\:\\Users\\owner\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
 base.11=C\:\\Users\\owner\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\9\\classes.dex
 base.10=C\:\\Users\\owner\\Desktop\\Worxstr\\Worxstr-Frontend\\android\\app\\build\\intermediates\\dex\\debug\\mergeLibDexDebug\\8\\classes.dex
