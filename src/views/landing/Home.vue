@@ -230,19 +230,20 @@ export default class Home extends Vue {
         xs: 'transform: rotate(-2.5deg) scale(3.5) translateY(50px)',
       },
     },
-    {
-      reverse: true,
-      gradient: 'tertiary',
-      icon: 'mdi-clock-check-outline',
-      title: 'Communication',
-      description:
-        'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
-      image: 'approvals.svg',
-      style: {
-        md: 'transform: scale(1) translate(0px,100px)',
-        xs: 'transform: scale(3.5) translateY(30%)',
-      },
-    },
+    // TODO: Create "communication" graphic
+    // {
+    //   reverse: true,
+    //   gradient: 'tertiary',
+    //   icon: 'mdi-clock-check-outline',
+    //   title: 'Communication',
+    //   description:
+    //     'Worxstr’s live time clock feature provides verified in and out times making the time approval process more effective and less time consuming.',
+    //   image: 'approvals.svg',
+    //   style: {
+    //     md: 'transform: scale(1) translate(0px,100px)',
+    //     xs: 'transform: scale(3.5) translateY(30%)',
+    //   },
+    // },
     {
       gradient: 'tertiary',
       icon: 'mdi-badge-account',
