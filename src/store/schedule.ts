@@ -5,11 +5,11 @@ import { RootState } from '.'
 
 export interface ScheduleState {
   events: {
-    all: number[];
+    all: number[]
     byId: {
-      [key: number]: CalendarEvent;
-    };
-  };
+      [key: number]: CalendarEvent
+    }
+  }
 }
 
 export const initialState = (): ScheduleState => ({

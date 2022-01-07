@@ -5,12 +5,12 @@ import { User } from '@/types/Users'
 
 export interface MessagesState {
   conversations: {
-    all: number[];
+    all: number[]
     byId: {
-      [key: number]: Conversation;
-    };
-  };
-  contacts: User[];
+      [key: number]: Conversation
+    }
+  }
+  contacts: User[]
 }
 
 export const initialState = (): MessagesState => ({

@@ -101,9 +101,9 @@ import RichtextField from '@/components/inputs/RichtextField.vue'
 import draggable from 'vuedraggable'
 
 type Task = {
-  id?: number;
-  title: string;
-  description: string;
+  id?: number
+  title: string
+  description: string
 }
 
 @Component({

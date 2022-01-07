@@ -2,33 +2,33 @@ import { Position } from '@/services/geolocation'
 import usersStore from '@/store/users'
 
 export type User = {
-	id: number;
-	first_name: string;
-	last_name: string;
-	email: string;
-	roles: Role[];
-	location?: Position;
+	id: number
+	first_name: string
+	last_name: string
+	email: string
+	roles: Role[]
+	location?: Position
 	contractor_info?: {
-		color: string;
-		dwolla_customer_url: string;
-		dwolla_customer_status: string;
-		[key: string]: any;
-	};
+		color: string
+		dwolla_customer_url: string
+		dwolla_customer_status: string
+		[key: string]: any
+	}
 	organization_info?: {
-		dwolla_customer_url: string;
-		dwolla_customer_status: string;
-		[key: string]: any;
-	};
+		dwolla_customer_url: string
+		dwolla_customer_status: string
+		[key: string]: any
+	}
 	manager_info?: {
-		reference_number: string;
-		[key: string]: any;
-	};
-	[key: string]: any;
+		reference_number: string
+		[key: string]: any
+	}
+	[key: string]: any
 }
 
 export type Role = {
-	id: UserRole;
-	name: string;
+	id: UserRole
+	name: string
 }
 
 export enum UserRole {

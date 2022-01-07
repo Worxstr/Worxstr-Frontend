@@ -3,18 +3,18 @@ import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
 import { Position } from '@/services/geolocation'
 
 export interface UsersState {
-  all: number[];
+  all: number[]
   byId: {
-    [key: number]: User;
-  };
+    [key: number]: User
+  }
   
-  me: number | null;
-  deviceLocation: Position | null;
+  me: number | null
+  deviceLocation: Position | null
 
-  workforce: number[];
+  workforce: number[]
   managers: {
-    [key: string]: User[];
-  };
+    [key: string]: User[]
+  }
 }
 
 export const initialState = (): UsersState => ({

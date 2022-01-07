@@ -23,7 +23,8 @@
           .mb-3           
             h6.text-h6.mb-4 More resources
             .d-flex.flex-column
-              router-link.mb-2(:to="{name: 'support'}") Contact us
+              router-link.mb-2(:to="{name: 'contact'}") Contact us
+              router-link.mb-2(:to="{name: 'blog'}") Blog
               router-link.mb-2(:to="{name: 'pricing'}") Pricing
 
 </template>

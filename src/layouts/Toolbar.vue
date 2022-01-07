@@ -17,8 +17,8 @@
         v-icon mdi-menu
       
       router-link.mb-2.mr-2(
-        to="/",
-        style="text-decoration: none",
+        to="/"
+        style="text-decoration: none"
         v-if="$route.meta.landing"
       )
         v-avatar(tile, size="130")
@@ -29,19 +29,21 @@
 
       breadcrumbs
 
+      portal-target.d-flex.align-center(name="toolbarTitle")
+
       v-spacer
 
-      portal-target.d-flex(name="toolbarActions")
+      portal-target.d-flex.align-center(name="toolbarActions")
 
       div(v-if="$route.meta.landing")
         v-btn(v-if='mobileLayout' icon @click='menu = true')
           v-icon mdi-menu
         div(v-else)
-          v-btn(v-for="(link, i) in links" :key='i' text :to="link.to" v-if='!link.hide') {{ link.text }}
+          v-btn(v-for="(link, i) in links" :key='i' text :to="{name: link.to}" v-if='!link.hide') {{ link.text }}
 
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
       v-list.mobile-nav-items(nav)
-        v-list-item(v-for="(link, i) in links" :key='i' text :to="link.to" link v-if='!link.hide')
+        v-list-item(v-for="(link, i) in links" :key='i' text :to="{name: link.to}" link v-if='!link.hide')
           v-list-item-content
             v-list-item-title {{ link.text }}
 </template>
@@ -87,12 +89,16 @@ export default class Toolbar extends Vue {
     return [
       {
         text: 'Home',
-        to: '/',
+        to: 'home',
         hide: !this.mobileLayout,
       },
       {
         text: 'About',
         to: 'about',
+      },
+      {
+        text: 'Blog',
+        to: 'blog',
       },
       {
         text: 'Contact us',
@@ -109,12 +115,12 @@ export default class Toolbar extends Vue {
       },
       {
         text: 'Sign in',
-        to: 'sign-in',
+        to: 'signIn',
         hide: this.authenticated,
       },
       {
         text: 'Sign up',
-        to: 'sign-up',
+        to: 'signUp',
         hide: !this.mobileLayout || this.authenticated,
       },
     ]

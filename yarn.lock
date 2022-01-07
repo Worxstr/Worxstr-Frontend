@@ -15241,6 +15241,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vue-masonry-css@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "vue-masonry-css@npm:1.0.3"
+  checksum: 19d5e2069ae15cbfcb6b47b8dbbc103fa2bdbd8c4fcc973e8c977c9b7cb117ed4f6d0bae239c0fd6db224097e0e66f24958038a2bad950815df6e94cb77dd5f6
+  languageName: node
+  linkType: hard
+
 "vue-meta@npm:^2.4.0":
   version: 2.4.0
   resolution: "vue-meta@npm:2.4.0"
@@ -15374,11 +15381,11 @@ __metadata:
   linkType: hard
 
 "vuetify@npm:^2.2.11":
-  version: 2.4.0
-  resolution: "vuetify@npm:2.4.0"
+  version: 2.6.2
+  resolution: "vuetify@npm:2.6.2"
   peerDependencies:
     vue: ^2.6.4
-  checksum: a694ba775886b75a253be794f870e5e8ebe76fe43a2e9bdb2fe13eaf84b705106bbb51192cf5548d99333f541d6fb844d2a8f362033c64bfe1aacbecf0c1f679
+  checksum: 1f0075fdf7442d62a955d72b89cfce1e3dfdb8306f7c8cac62a9096962770f8a4d1ec1495140b41aaee696884e67301bd05b326e5388c04eee13b2254aae8dc7
   languageName: node
   linkType: hard
 
@@ -15986,6 +15993,7 @@ __metadata:
     vue-cli-plugin-vuetify: ~2.0.8
     vue-gtag: ^1.16.1
     vue-markdown: ^2.2.4
+    vue-masonry-css: ^1.0.3
     vue-meta: ^2.4.0
     vue-property-decorator: ^9.1.2
     vue-qrcode-reader: ^2.3.16

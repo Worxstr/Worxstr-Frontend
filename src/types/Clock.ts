@@ -1,10 +1,10 @@
 export type ClockEvent = {
-	id: number;
-	action: number;
-	time: string;
-	timecard_id: number;
-	contractor_id: number;
-	job_id: number;
+	id: number
+	action: number
+	time: string
+	timecard_id: number
+	contractor_id: number
+	job_id: number
 }
 
 export enum ClockAction {

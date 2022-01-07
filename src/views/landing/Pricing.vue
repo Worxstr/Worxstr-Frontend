@@ -53,18 +53,18 @@ import { Component, Vue } from 'vue-property-decorator'
 import Arrows from '@/components/Arrows.vue'
 
 type Tier = {
-  name: string;
-  price: number | null;
-  description?: string;
-  contractors: number;
-  support: string;
-  buttonText: string;
+  name: string
+  price: number | null
+  description?: string
+  contractors: number
+  support: string
+  buttonText: string
   to: {
-    name: string;
+    name: string
     params: {
-      [key: string]: string;
-    };
-  };
+      [key: string]: string
+    }
+  }
 }
 
 @Component({

@@ -2,30 +2,30 @@ import Vue from 'vue'
 import { FundingSource, Timecard, Transfer } from '@/types/Payments'
 
 export interface PaymentsState {
-  beneficialOwnersCertified: boolean;
+  beneficialOwnersCertified: boolean
   balance: {
-    value: number;
-    currency: string;
-    location: string | null;
-  };
+    value: number
+    currency: string
+    location: string | null
+  }
   fundingSources: {
-    all: string[];
+    all: string[]
     byLocation: {
-      [key: string]: FundingSource[];
-    };
-  };
+      [key: string]: FundingSource[]
+    }
+  }
   timecards: {
-    all: number[];
+    all: number[]
     byId: {
-      [key: number]: Timecard;
-    };
-  };
+      [key: number]: Timecard
+    }
+  }
   transfers: {
-    all: string[];
+    all: string[]
     byId: {
-      [key: string]: Transfer;
-    };
-  };
+      [key: string]: Transfer
+    }
+  }
 }
 
 export const initialState = (): PaymentsState => ({
@@ -52,9 +52,9 @@ export const initialState = (): PaymentsState => ({
 const mutations = {
 
   SET_BALANCE(state: PaymentsState, { value, currency, location }: {
-    value: string | number;
-    currency: string;
-    location: string;
+    value: string | number
+    currency: string
+    location: string
   }) {
     state.balance = {
       value: typeof(value) === 'number' ? value : parseFloat(value),
