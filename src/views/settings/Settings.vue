@@ -1,6 +1,7 @@
 <template lang="pug">
 v-container(v-touch='onSwipe')
   v-card.d-flex.soft-shadow(
+    outlined
     rounded
     :class="{'flex-column': $vuetify.breakpoint.smAndDown}"
   )
@@ -19,7 +20,7 @@ v-container(v-touch='onSwipe')
         v-icon(left) {{ route.meta.icon }}
         | {{ route.path | capitalize }}
 
-    v-divider(vertical)
+    v-divider(:vertical='$vuetify.breakpoint.mdAndUp')
 
     router-view.flex-grow-1
         

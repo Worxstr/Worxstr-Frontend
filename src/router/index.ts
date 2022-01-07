@@ -37,11 +37,12 @@ import Schedule from '@/views/Schedule.vue'
 import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
 import Settings from '@/views/settings/Settings.vue'
-import SettingsMe from "@/views/settings/pages/me/Me.vue"
-import SettingsOrganization from "@/views/settings/pages/organization/Organization.vue"
-import SettingsPayments from "@/views/settings/pages/payments/Payments.vue"
-import SettingsSecurity from "@/views/settings/pages/security/Security.vue"
-import SettingsPreferences from "@/views/settings/pages/preferences/Preferences.vue"
+import SettingsMe from '@/views/settings/pages/me/Me.vue'
+import SettingsOrganization from '@/views/settings/pages/organization/Organization.vue'
+import SettingsNotifications from '@/views/settings/pages/notifications/Notifications.vue'
+import SettingsPayments from '@/views/settings/pages/payments/Payments.vue'
+import SettingsSecurity from '@/views/settings/pages/security/Security.vue'
+import SettingsPreferences from '@/views/settings/pages/preferences/Preferences.vue'
 import NotFound from '@/views/errors/NotFound.vue'
 
 Vue.use(VueRouter)
@@ -331,6 +332,15 @@ const routes = [
         component: SettingsOrganization,
         meta: {
           icon: 'mdi-account-group',
+          restrict: [UserRole.OrganizationManager],
+        }
+      },
+      {
+        name: 'settings/notifications',
+        path: 'notifications',
+        component: SettingsNotifications,
+        meta: {
+          icon: 'mdi-bell',
           restrict: [UserRole.OrganizationManager],
         }
       },
