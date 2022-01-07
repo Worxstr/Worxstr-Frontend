@@ -5,7 +5,7 @@
 			type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
 		)
 
-	div(v-else)
+	div(v-else-if='user')
 		edit-user-dialog(:opened.sync='editUserDialog' :user='user')
 		delete-user-dialog(:opened.sync='deleteUserDialog' :user='user')
 		
@@ -50,9 +50,9 @@
 					v-list-item-content
 						v-list-item-subtitle Manager reference number
 						v-list-item-title {{ user.manager_info.reference_number }}
-					v-list-item-actions
+					v-list-item-action
 						clipboard-copy(:text='user.manager_info.reference_number')
-
+				
 				div(v-if='user.contractor_info')
 					v-list-item
 						v-list-item-content
@@ -66,6 +66,13 @@
 							v-list-item-title
 								v-badge.soft-shadow.ml-1.mr-5(:color="user.additional_info.color || '#4285f4'" bordered)
 								span {{ user.additional_info.color }}
+			
+				v-list-item(v-if='user.location')
+					v-list-item-content
+						v-list-item-subtitle Location
+						v-list-item-title
+							v-card.soft-shadow
+								g-map(:users='[user]')
 
 </template>
 
@@ -73,6 +80,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import EditUserDialog from './EditUserDialog.vue'
 import DeleteUserDialog from './DeleteUserDialog.vue'
+import GMap from '@/components/GMap.vue'
 import Roles from '@/components/Roles.vue'
 import { Managers, userIs, currentUserIs, UserRole } from '@/types/Users'
 import { loadUser } from '@/services/users'
@@ -84,6 +92,7 @@ import ClipboardCopy from '@/components/ClipboardCopy.vue'
     DeleteUserDialog,
     Roles,
 		ClipboardCopy,
+		GMap,
   },
 })
 export default class User extends Vue {

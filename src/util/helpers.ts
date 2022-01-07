@@ -56,3 +56,25 @@ export function hashColor(input: number | string) {
 
   return colorsToUse[color][shade]
 }
+
+export function darkenColor(color: string, amount: number) {
+  if (!color) return color
+  const c = /^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/.exec(color)!
+  return `#${c[1] +
+    (~~Math.min(Math.max(parseInt(c[2], 16) + amount, 0), 255)).toString(
+      16
+    )}${c[3]}`
+}
+
+// Find a nested object by dot-syntax string
+// ex. lookup(obj, 'a.b.c') => obj.a.b.c
+export function lookup(obj: any, path: string, defaultVal?: any): any {
+  return path.split('.').reduce((prev, curr) => {
+    return prev ? prev[curr] : (defaultVal ?? undefined)
+  }, obj)
+}
+
+// Map lookup on an array
+export function mapProps(object: any, path: string, defaultVal?: any) {
+  return object.map((o: any) => lookup(o, path, defaultVal))
+}
