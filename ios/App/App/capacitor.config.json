@@ -8,6 +8,13 @@
 			"launchAutoHide": false,
 			"androidScaleType": "CENTER_INSIDE",
 			"backgroundColor": "#e7edf7"
+		},
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert"
+			]
 		}
 	},
 	"cordova": {},

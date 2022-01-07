@@ -1,6 +1,7 @@
 <template lang="pug">
 v-container(v-touch='onSwipe')
   v-card.d-flex.soft-shadow(
+    outlined
     rounded
     :class="{'flex-column': $vuetify.breakpoint.smAndDown}"
   )
@@ -13,13 +14,13 @@ v-container(v-touch='onSwipe')
       v-tab.justify-start(
         v-for='(route, i) in childRoutes'
         :key='i'
-        :to='route.path'
+        :to='{name: `settings/${route.path}`}'
         v-if='!routeIsRestricted(route)'
       )
         v-icon(left) {{ route.meta.icon }}
         | {{ route.path | capitalize }}
 
-    v-divider(vertical)
+    v-divider(:vertical='$vuetify.breakpoint.mdAndUp')
 
     router-view.flex-grow-1
         
@@ -36,7 +37,7 @@ import { currentUserIs } from "@/types/Users"
 })
 export default class Settings extends Vue {
 
-  tab = 'me'
+  tab = 'settings/me'
   onSwipe = {
     left: this.prevTab,
     right: this.nextTab,
@@ -52,9 +53,10 @@ export default class Settings extends Vue {
   }
   
   nextTab() {
-    let index = this.tabs.indexOf(this.tab) - 1
-    if (index < 0) index = 0
+    let index = this.tabs.indexOf(this.tab.replace('/settings/', '')) - 1
+    if (index < 0) index = this.tabs.length - 1
     this.tab = this.tabs[index]
+
     if (!this.navigateToRoute(`settings/${this.tab}`)) {
       // Try again if the attempted route is restricted
       this.nextTab()
@@ -62,9 +64,10 @@ export default class Settings extends Vue {
   }
 
   prevTab() {
-    let index = this.tabs.indexOf(this.tab) + 1
-    if (index > this.tabs.length - 1) index = this.tabs.length - 1
+    let index = this.tabs.indexOf(this.tab.replace('/settings/', '')) + 1
+    if (index > this.tabs.length - 1) index = 0
     this.tab = this.tabs[index]
+
     if (!this.navigateToRoute(`settings/${this.tab}`)) {
       // Try again if the attempted route is restricted
       this.prevTab()

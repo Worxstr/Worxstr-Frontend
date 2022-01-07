@@ -9,6 +9,7 @@ import { Capacitor } from '@capacitor/core'
 import usersStore from '@/store/users'
 import { socket } from '@/util/socket-io'
 import { hashColor } from '@/util/helpers'
+import { requestPushPermission } from '@/services/notifications'
 
 
 export function shouldUseSandbox(email: string) {
@@ -68,26 +69,14 @@ export async function signIn({ commit }: any, email: string, password: string, r
     if (authToken) {
       setAuthToken(authToken)
     }
-    // Use authentication token in subsequent requests
-    // Set token in secure storage on iOS/Android
-    // await SecureStoragePlugin.set({
-    //   key: 'authToken',
-    //   value: authToken
-    // })
 
     await getMe({ commit })
     router.push({ name: defaultRoute() })
+
+    // Show prompt for notification permission, if user hasn't already granted it
+    requestPushPermission()
+
     return data
-  // } catch (err) {
-  //   if ((err as any).response.status === 400) {
-  //     // Already signed in
-  //     await getAuthenticatedUser({ commit })
-  //     router.push({ name: defaultRoute() })
-  //   } else {
-  //     commit('UNSET_AUTHENTICATED_USER')
-  //     return err
-  //   }
-  // }
 }
 
 /*

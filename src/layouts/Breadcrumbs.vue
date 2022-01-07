@@ -89,8 +89,9 @@ export default class Breadcrumbs extends Vue {
       // Check if the link exists. If not, we only send back the text with no link
       const link = this.$router.resolve(to)
       const hasActiveRoute = link?.resolved?.name !== 'notFound'
+      const linkDisabled = link.route?.meta?.disableBreadcrumbs?.includes(text) || false
 
-      if (hasActiveRoute) {
+      if (hasActiveRoute && !linkDisabled) {
         return { text, to }
       }
       return { text }

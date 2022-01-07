@@ -1572,6 +1572,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/push-notifications@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "@capacitor/push-notifications@npm:1.0.7"
+  peerDependencies:
+    "@capacitor/core": ^3.0.0
+  checksum: 57a61660f39da52ffa0bbe5597edfa7276ba0dc4e3c903ddd15e5503eac6f4aeba46c951546ce28ec0754159538a033a09679ee535afe90c1c8744d5294de432
+  languageName: node
+  linkType: hard
+
 "@capacitor/splash-screen@npm:^1.1.5":
   version: 1.1.5
   resolution: "@capacitor/splash-screen@npm:1.1.5"
@@ -15942,6 +15951,7 @@ __metadata:
     "@capacitor/geolocation": ^1.0.0
     "@capacitor/ios": ^3.2.3
     "@capacitor/network": ^1.0.3
+    "@capacitor/push-notifications": ^1.0.7
     "@capacitor/splash-screen": ^1.1.5
     "@capacitor/status-bar": ^1.0.3
     "@chenfengyuan/vue-qrcode": 1

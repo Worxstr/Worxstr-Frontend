@@ -1,6 +1,7 @@
 import { DarkPreference } from "@/util/theme"
 import { miniNav } from '@/services/app'
 import * as theme from '@/util/theme'
+import * as notifications from '@/services/notifications'
 
 export interface AppState {
   snackbar: {
@@ -51,7 +52,7 @@ const mutations = {
 
   SET_MINI_NAV(state: AppState, mini: boolean) {
     state.preferences.miniNav = mini
-  }
+  },
 }
 
 export default {
