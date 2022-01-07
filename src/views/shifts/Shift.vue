@@ -37,74 +37,72 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
       span(v-if='!$vuetify.breakpoint.xs') Delete
 
-  .mt-8.d-flex.flex-column
-
-    .clock-display(v-if='shift && shift.time_begin && shift.time_end' style='width: 100%')
-
-      //- Shift name
-      h6.text-h6.text-center
-        span(v-if='isMyShift') Your
-        router-link.alt-style.font-weight-black(v-else :to="{name: 'user', params: {userId: contractor.id}}")
-          | {{contractor.first_name}}'s
-        span &nbsp;shift at&nbsp;
-        span.font-weight-bold {{ shift.site_location }}
-        | &nbsp;for&nbsp;
-        router-link.alt-style.font-weight-black(:to="{name: 'job', params: { jobId: shift.job_id }}")
-          | {{ job.name }}
-        | &nbsp;{{ shift.shiftActive ? "ends" : "begins" }} at
-
-      //- Shift time
-      h3.text-h3.py-2.font-weight-bold.text-center
-        | {{
-        | (shift.shiftActive ? (new Date(shift.time_end)) : (new Date(shift.time_begin)))
-        | .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        | .replace(/^0(?:0:0?)?/, "")
-        | }}
-
-
-      //- Countdown clock
-      p.text-subtitle-2.text-center
-
-        countdown(:end-time='\
-        shift.shiftActive ? shift.time_end : shift.time_begin\
-        ')
-          template(v-slot:process='props')
-            span
-              | That's in &nbsp;
-              span(v-if='props.timeObj.d != 0')
-                | {{ props.timeObj.d }} days,&nbsp;
-              span(v-if='props.timeObj.h != 0')
-                | {{ props.timeObj.h }} hours,&nbsp;
-              span(v-if='props.timeObj.m != 0')
-                | {{ props.timeObj.m }} minutes, {{ props.timeObj.s }} seconds.
-          template(v-slot:finish)
-            span That's right now!
-    
-      clock-buttons(v-if='isMyShift' :shift='shift' large)
-
-      .d-flex.justify-center.mt-4.gap-small
-        v-btn(
-          text
-          outlined
-          color='primary'
-          :to="{name: 'job', params: {jobId: this.shift.job_id}}"
-          exact
-        ) View job details
-
-        v-btn(
-          v-if='userIsManager'
-          text
-          outlined
-          color='primary'
-          :to="{name: 'user', params: {userId: this.shift.contractor_id}}"
-        ) View {{ this.contractor.first_name }}'s profile
-      
+  .mt-8 
     //- Loader
     div(
-      v-else
+      v-if='!(shift && shift.time_begin && shift.time_end)'
       style='width: 300px'
     )
       v-skeleton-loader(type='sentences')
+
+    .d-flex.flex-column.flex-md-row.justify-space-between.gap-small(v-else)
+
+      .d-flex.flex-column
+
+        h4.text-h4 {{ shift.site_location }}
+        h6.text-body-1
+          router-link.alt-style(
+            :to="{name: 'job', params: { jobId: job.id }}"
+          ) {{ job.name }}
+
+          span(v-if='!isMyShift') &nbsp;- Assigned to&nbsp;
+
+          router-link.alt-style(
+            v-if='!isMyShift'
+            :to="{name: 'user', params: { userId: contractor.id }}"
+          ) {{ contractor | fullName }}
+
+        .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
+        .text-body-2 {{ shift.time_begin | date('MMM D, YYYY') }}
+
+        //- Countdown clock
+        .text-h6
+
+          countdown(:end-time='\
+          shift.shiftActive ? shift.time_end : shift.time_begin\
+          ')
+            template(v-slot:process='props')
+              span
+                | That's in &nbsp;
+                span(v-if='props.timeObj.d != 0')
+                  | {{ props.timeObj.d }} days,&nbsp;
+                span(v-if='props.timeObj.h != 0')
+                  | {{ props.timeObj.h }} hours,&nbsp;
+                span(v-if='props.timeObj.m != 0')
+                  | {{ props.timeObj.m }} minutes, {{ props.timeObj.s }} seconds.
+            template(v-slot:finish)
+              span Shift is active since {{ shift.time_begin | time }}
+      
+      .d-flex.flex-column.align-md-end.gap-small
+        clock-buttons(v-if='isMyShift' :shift='shift' large)
+
+        .d-flex.flex-md-column.align-stretch.gap-small
+          v-btn(
+            text
+            outlined
+            color='primary'
+            :to="{name: 'job', params: {jobId: this.shift.job_id}}"
+            exact
+          ) View job details
+
+          v-btn(
+            v-if='userIsManager'
+            text
+            outlined
+            color='primary'
+            :to="{name: 'user', params: {userId: this.shift.contractor_id}}"
+          ) View {{ this.contractor.first_name }}'s profile
+       
   
   //- // TODO: Use better masonry library
   masonry(:cols='{default: 2, 959: 1}' :gutter='30')
