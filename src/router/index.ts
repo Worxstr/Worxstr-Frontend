@@ -312,6 +312,9 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: Settings,
+    meta: {
+      disableBreadcrumbs: ['settings']
+    },
     beforeEnter: (_to: any, _from: any, next: any) => {
       // Default to /me if no sub-route is specified
       if (_to.matched.length === 1) next({name: 'settings/me'})
@@ -336,15 +339,6 @@ const routes = [
         }
       },
       {
-        name: 'settings/notifications',
-        path: 'notifications',
-        component: SettingsNotifications,
-        meta: {
-          icon: 'mdi-bell',
-          restrict: [UserRole.OrganizationManager],
-        }
-      },
-      {
         name: 'settings/payments',
         path: 'payments',
         component: SettingsPayments,
@@ -365,7 +359,7 @@ const routes = [
         path: 'preferences',
         component: SettingsPreferences,
         meta: {
-          icon: 'mdi-palette',
+          icon: 'mdi-tune-variant',
         }
       },
     ]
