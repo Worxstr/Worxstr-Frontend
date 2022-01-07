@@ -3,7 +3,7 @@ v-footer.worxstr-footer(padless)
   v-card.text-center(flat, tile, width="100%" :class="`${$vuetify.theme.dark ? 'dark' : 'light'}-color`")
 
     .my-2
-      v-btn.my-2(v-for='(link, i) in links', :key='i', text, :to='link.to') {{ link.text }}
+      v-btn.my-2(v-for='(link, i) in links', :key='i', text, :to='{name: link.to}' :exact="link.to == 'home'") {{ link.text }}
 
     .mb-3
       v-btn(v-for='(social, i) in socials' :key='i' icon :href="social.link" target="_blank" rel="noreferrer")
@@ -23,8 +23,16 @@ export default {
   data: () => ({
     links: [
       {
+        to: 'home',
+        text: 'Home',
+      },
+      {
         to: 'about',
         text: 'About',
+      },
+      {
+        to: 'blog',
+        text: 'Blog',
       },
       {
         to: 'contact',

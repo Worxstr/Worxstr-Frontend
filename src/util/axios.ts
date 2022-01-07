@@ -52,7 +52,7 @@ function getErrorMessage(error: any): string {
 }
 
 function checkLoggedIn(error: any) {
-  if (error.response.data?.login_required) {
+  if (error.response?.data?.login_required) {
     router.push({
       name: 'signIn',
     })

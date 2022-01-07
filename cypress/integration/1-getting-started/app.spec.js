@@ -142,7 +142,7 @@ describe('payments', () => {
   })
 })
 
-describe.only('clock', {
+describe('clock', {
   defaultCommandTimeout: 30000
 }, () => {
 

@@ -19,6 +19,7 @@ import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import { TiptapVuetifyPlugin } from 'tiptap-vuetify'
 import VueSanitize from 'vue-sanitize'
 import VueGtag from 'vue-gtag'
+import VueMasonry from 'vue-masonry-css'
 
 import { configureDwolla } from './util/dwolla'
 import { configureAxios } from './util/axios'
@@ -35,6 +36,7 @@ function configurePlugins() {
   Vue.use(PortalVue)
   Vue.use(VueChatScroll)
   Vue.use(VueSanitize)
+  Vue.use(VueMasonry)
 
   Vue.use(VueGtag, {
     config: { id: process.env.VUE_APP_GTAG_API },

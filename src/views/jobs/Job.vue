@@ -52,9 +52,10 @@ div(v-else)
       :style='`border-top: 3px solid ${job.color}`'
     )
       
-      jobs-map(
+      g-map(
         :jobs='[job]'
-        :show-user-location='true'
+        :users='job.contractors'
+        :show-device-location='true'
         :style='$vuetify.breakpoint.lgAndUp && `width: 50%`'
       )
 
@@ -169,7 +170,7 @@ import CloseJobDialog from './CloseJobDialog.vue'
 import EditShiftDialog from './EditShiftDialog.vue'
 import QrCodeDialog from './QrCodeDialog.vue'
 
-import JobsMap from '@/components/JobsMap.vue'
+import GMap from '@/components/GMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
 import ClipboardCopy from '@/components/ClipboardCopy.vue'
 import TaskList from '@/components/TaskList.vue'
@@ -186,7 +187,7 @@ import * as geolocation from '@/services/geolocation'
     CloseJobDialog,
     EditShiftDialog,
     QrCodeDialog,
-    JobsMap,
+    GMap,
     ClockEvents,
     ClipboardCopy,
     TaskList,

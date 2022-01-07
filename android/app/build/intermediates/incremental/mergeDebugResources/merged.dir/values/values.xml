@@ -879,11 +879,13 @@
     <string name="confirm_device_credential_password">Use password</string>
     <string name="custom_url_scheme">com.worxstr.worxstr</string>
     <string name="default_error_msg">Unknown error</string>
+    <string name="default_web_client_id" translatable="false">71803800375-ghp5a1o5dc8d1q6qbg5u7u4km60dpcsp.apps.googleusercontent.com</string>
     <string name="define_zxingandroidembedded" translatable="false"/>
     <string name="error_icon_content_description">Error</string>
     <string name="exposed_dropdown_menu_content_description">Show dropdown menu</string>
     <string name="fab_transformation_scrim_behavior" translatable="false">com.google.android.material.transformation.FabTransformationScrimBehavior</string>
     <string name="fab_transformation_sheet_behavior" translatable="false">com.google.android.material.transformation.FabTransformationSheetBehavior</string>
+    <string name="fcm_fallback_notification_channel_label">Miscellaneous</string>
     <string name="fingerprint_dialog_touch_sensor">Touch the fingerprint sensor</string>
     <string name="fingerprint_error_hw_not_available">Fingerprint hardware not available.</string>
     <string name="fingerprint_error_hw_not_present">This device does not have a fingerprint sensor</string>
@@ -892,7 +894,12 @@
     <string name="fingerprint_error_user_canceled">Fingerprint operation canceled by user.</string>
     <string name="fingerprint_not_recognized">Not recognized</string>
     <string name="first_fragment_label">First Fragment</string>
+    <string name="gcm_defaultSenderId" translatable="false">71803800375</string>
     <string name="generic_error_user_canceled">Authentication canceled by user.</string>
+    <string name="google_api_key" translatable="false">AIzaSyB-xnSSukATC9X56DkpEqpIZin37KAdydE</string>
+    <string name="google_app_id" translatable="false">1:71803800375:android:b257de6c7c46c74de668b2</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyB-xnSSukATC9X56DkpEqpIZin37KAdydE</string>
+    <string name="google_storage_bucket" translatable="false">push-notifications-ea99b.appspot.com</string>
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="hide_bottom_view_on_scroll_behavior" translatable="false">com.google.android.material.behavior.HideBottomViewOnScrollBehavior</string>
@@ -953,6 +960,7 @@
     <string name="path_password_strike_through" translatable="false">M3.27,4.27 L19.74,20.74</string>
     <string name="picture">Picture</string>
     <string name="previous">Previous</string>
+    <string name="project_id" translatable="false">push-notifications-ea99b</string>
     <string name="request_permission">Allow this app to take pictures</string>
     <string name="search_menu_title">Search</string>
     <string name="second_fragment_label">Second Fragment</string>

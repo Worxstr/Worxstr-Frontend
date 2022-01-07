@@ -59,18 +59,19 @@ div
 
         v-list-item-action.ml-3(v-if='userIsManager')
           v-btn(
+            @click.stop='openEditShiftDialog(shift)'
             icon
             color='primary'
-            @click.stop='openEditShiftDialog(shift)'
             data-cy='edit-shift-button'
           )
             v-icon mdi-pencil
             
         v-list-item-action(v-if='userIsManager')
           v-btn(
+            @click.stop='openDeleteShiftDialog(shift)'
+            :disabled='shift.clock_history.length'
             icon
             color='error'
-            @click.stop='openDeleteShiftDialog(shift)'
             data-cy='delete-shift-button'
           )
             v-icon mdi-delete
@@ -101,7 +102,7 @@ import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
 })
 export default class ShiftList extends Vue {
   
-  @Prop({ default: [] }) shifts!: Shift[]
+  @Prop({ default: () => [] }) shifts!: Shift[]
   @Prop({ default: false }) loading!: boolean
 
   selectedShift: Shift | {} = {}

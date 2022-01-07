@@ -4,7 +4,7 @@ v-app
 
   toolbar(@toggleDrawer="drawer = !drawer" v-if='showHeader')
   
-  nav-drawer(v-if="showNavDrawer", v-model="drawer")
+  nav-drawer(v-if="showNavDrawer" v-model="drawer")
 
   v-main#main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
