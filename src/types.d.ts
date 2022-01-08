@@ -1,4 +1,4 @@
-declare module 'vue2-google-maps'
+declare module 'gmap-vue'
 declare module 'vuetify-google-autocomplete'
 declare module 'vue-masonry-css'
 declare module 'tiptap-vuetify'

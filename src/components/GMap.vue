@@ -5,33 +5,16 @@ GmapMap.gmap(
   :style='`min-height: ${height}`'
   :options='mapOptions'
 )
-  //- Device gps location and accuracy
-  GmapCircle(
-    v-if='deviceLocation && showDeviceLocation'
-    :center='deviceLocation'
-    :radius='deviceLocation.accuracy'
-    :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
-  )
-  GmapMarker(
-    v-if='deviceLocation && showDeviceLocation'
-    :position="deviceLocation"
-    :icon="{ url: require('@/assets/icons/current-location-marker.svg') }"
-  )
-  
+
   //- User markers
   div(v-for='(user, i) in users' :key='user.id')
-    GmapMarker(
-      v-if='user.location && user.location.latitude && user.location.longitude'
-      class-name='user-marker'
-      :position='gmapMarker(user.location)'
-      :icon="{ url: `https://avatars.dicebear.com/api/initials/${fullName(user)}.svg`, scaledSize: { width: 50, height: 50 }, anchor: {x: 25, y: 25}}"
-    )
-    GmapCircle(
-      v-if='user.location && user.location.latitude && user.location.longitude'
-      :center='gmapMarker(user.location)'
-      :radius='user.location.accuracy'
-      :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
-    )
+    div(v-if='user.location && user.location.latitude && user.location.longitude && user.additional_info')
+      user-marker(:user='user')
+
+      
+  //- Device gps location and accuracy
+  user-marker(:location='deviceLocation' solid-ring)
+    
 
   //- Job markers
   div(v-for='(job, i) in jobs' :key='job.id')
@@ -62,6 +45,7 @@ GmapMap.gmap(
         br
         | {{ infoContent.city }}, {{ infoContent.state }} {{ infoContent.zip_code }}
       router-link(:to="{name: 'job', params: {jobId: infoContent.id}}") View job
+      
 </template>
 
 <script lang="ts">
@@ -76,8 +60,14 @@ import { User } from '../types/Users'
 import { Job } from '@/types/Jobs'
 import { Position } from '@/services/geolocation'
 
+import UserMarker from '@/components/UserMarker.vue'
 
-@Component
+
+@Component({
+  components: {
+    UserMarker,
+  },
+})
 export default class GMap extends Vue {
   locationAccuracy: number | null = null
   infoWindowPos: geolocation.Position | null = null
@@ -103,9 +93,7 @@ export default class GMap extends Vue {
   defaultZoom = 16
 
   get deviceLocation() {
-    const location = this.$store.state.users.deviceLocation
-    if (!location) return this.defaultPosition
-    return this.gmapMarker(location)
+    return this.$store.state.users.deviceLocation
   }
 
   get mapOptions() {
@@ -125,8 +113,8 @@ export default class GMap extends Vue {
         .map((job: Job) => ({lat: job.latitude, lng: job.longitude})),
       
       (this.showDeviceLocation && this.deviceLocation ? {
-        lat: this.deviceLocation.lat,
-        lng: this.deviceLocation.lng,
+        lat: this.deviceLocation.latitude,
+        lng: this.deviceLocation.longitude,
       } : null),
 
     ].filter((coord: any) => coord && coord.lat && coord.lng)
@@ -226,11 +214,3 @@ export default class GMap extends Vue {
   }
 }
 </script>
-
-<style lang="scss">
-.gmap {
-  .user-marker {
-    border-radius: 50%;
-  }
-}
-</style>
