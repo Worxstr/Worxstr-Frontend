@@ -22,7 +22,7 @@
         v-overlay(v-if='togglingClock' absolute opacity='.2')
           v-progress-circular(indeterminate)
 
-  .d-flex.flex-row.justify-center.gap-small
+  .d-flex.flex-row.gap-small
 
     v-expand-x-transition
       div(v-if='!onBreak')
