@@ -98,7 +98,8 @@ export default class Preferences extends Vue {
         break
       
       default:
-        requestPushPermission()
+        // TODO:
+        // requestPushPermission()
         break
     }
   }
