@@ -14,7 +14,7 @@
     .marker-dot(
       @mouseenter='hover = true'
       :style='`background: ${markerColor}`'
-      :class="{'solid-ring': solidRing}"
+      :class="{'solid-ring': isDeviceLocation}"
     )
     v-scale-transition
       //- Container for scale transition
@@ -22,11 +22,15 @@
         .marker-details.px-3.py-1(
           @mouseleave='hover = false'
           :style='`background: ${markerColor}`'
-          :class="{'solid-ring': solidRing}"
+          :class="{'solid-ring': isDeviceLocation}"
         )
           .text-caption
-            .font-weight-bold(v-if='user') {{ user | fullName }}
-            | {{ lastUpdated | date('MMM D') }} at {{ lastUpdated | time }}
+            .font-weight-bold
+              span(v-if='isDeviceLocation') Your location
+              span(v-else-if='user') {{ user | fullName }}
+
+            div {{ lastUpdated | date('MMM D') }} at {{ lastUpdated | time }}
+            div.text-xs Accuracy: {{ markerAccuracy | numberFormat }}m
 
 </template>
 
@@ -49,7 +53,7 @@ export default class UserMarker extends Vue {
   @Prop(Object) user?: User
   @Prop(Object) location?: Position
   @Prop(String) color?: string
-  @Prop(Boolean) solidRing?: boolean
+  @Prop(Boolean) isDeviceLocation?: boolean // If true, location is the device location
 
   hover = false
 
