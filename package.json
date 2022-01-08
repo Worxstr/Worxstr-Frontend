@@ -46,7 +46,6 @@
     "ua-parser-js": "^0.7.28",
     "v-mask": "^2.2.4",
     "vue": "^2.6.11",
-    "vue-awesome-countdown": "^1.1.4",
     "vue-chat-scroll": "^1.4.0",
     "vue-class-component": "^7.2.3",
     "vue-gtag": "^1.16.1",

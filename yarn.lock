@@ -15124,13 +15124,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-awesome-countdown@npm:^1.1.4":
-  version: 1.1.4
-  resolution: "vue-awesome-countdown@npm:1.1.4"
-  checksum: df3300d5580c07b267b97faa8bb29e2db42443015b6eae25063ea5930b0736357ea433990980c8b6d3ea2448901b58cdb00c2f0cef7beea6bba025c60719bf6a
-  languageName: node
-  linkType: hard
-
 "vue-chat-scroll@npm:^1.4.0":
   version: 1.4.0
   resolution: "vue-chat-scroll@npm:1.4.0"
@@ -15997,7 +15990,6 @@ __metadata:
     ua-parser-js: ^0.7.28
     v-mask: ^2.2.4
     vue: ^2.6.11
-    vue-awesome-countdown: ^1.1.4
     vue-chat-scroll: ^1.4.0
     vue-class-component: ^7.2.3
     vue-cli-plugin-vuetify: ~2.0.8
