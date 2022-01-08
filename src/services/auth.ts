@@ -9,7 +9,7 @@ import { Capacitor } from '@capacitor/core'
 import usersStore from '@/store/users'
 import { socket } from '@/util/socket-io'
 import { hashColor } from '@/util/helpers'
-import { requestPushPermission } from '@/services/notifications'
+import { registerNotifications, unregisterNotifications } from '@/services/notifications'
 
 
 export function shouldUseSandbox(email: string) {
@@ -74,7 +74,7 @@ export async function signIn({ commit }: any, email: string, password: string, r
     router.push({ name: defaultRoute() })
 
     // Show prompt for notification permission, if user hasn't already granted it
-    requestPushPermission()
+    registerNotifications()
 
     return data
 }
@@ -124,6 +124,7 @@ export async function signOut({ state, commit }: any) {
     url: `/auth/logout`,
   })
   clearUserData({ commit })
+  unregisterNotifications()
   router.push({ name: 'home' })
 }
 
