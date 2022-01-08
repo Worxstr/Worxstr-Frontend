@@ -29,7 +29,7 @@
               span(v-if='isDeviceLocation') Your location
               span(v-else-if='user') {{ user | fullName }}
 
-            div {{ lastUpdated | date('MMM D') }} at {{ lastUpdated | time }}
+            div {{ lastUpdated | timeAgo }}
             div.text-xs Accuracy: {{ markerAccuracy | numberFormat }}m
 
 </template>
