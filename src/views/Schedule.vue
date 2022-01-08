@@ -102,7 +102,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
       )
         template(v-slot:event='{ event, timed, eventSummary }')
           .v-event-draggable
-            div(v-html='eventSummary()')
+            div(v-html='eventSummary()' :class='`${textColor(event.color)}--text`')
 
           .v-event-drag-bottom(v-if='timed' @mousedown='extendBottom(event)')
       
@@ -168,6 +168,7 @@ import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 import { CalendarEvent } from '@/types/Schedule'
 import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
 import { Job, Shift } from '@/types/Jobs'
+import { textColor } from '@/util/helpers'
 
 import * as schedule from '@/services/schedule'
 import { updateShift, deleteShift } from '@/services/shifts'
@@ -206,18 +207,16 @@ export default class Schedule extends Vue {
   // User started dragging to create an event
   createEventDragStart(timeData: any, e: MouseEvent) {
 
-    console.log("createEventDragStart", this.duplicatingEvent, e.which)
     if (e.which === 3) return
 
     if (this.duplicatingEvent) {
 
-      console.log('duplicating event')
       // User has placed the duplicated event
       this.newEventTime = {
         start: this.virtualEvent?.start,
         end: this.virtualEvent?.end,
       }
-      console.log(this.newEventTime)
+
       this.createShiftDialog = true
       this.cancelDrag()
       return
@@ -244,7 +243,6 @@ export default class Schedule extends Vue {
   // User pressed their mouse on an event (started drag)
   moveEventDragStart(data: any) {
     const { event, nativeEvent } = data
-    console.log('moveEventDragStart')
 
     if (this.duplicatingEvent) return
 
@@ -451,6 +449,10 @@ export default class Schedule extends Vue {
 
   getEventColor(event: CalendarEvent) {
     return event.color
+  }
+
+  textColor(color: string) {
+    return textColor(color)
   }
 
   get userIsManager() {

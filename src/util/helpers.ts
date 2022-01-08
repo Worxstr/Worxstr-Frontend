@@ -66,6 +66,19 @@ export function darkenColor(color: string, amount: number) {
     )}${c[3]}`
 }
 
+// Determine light or dark text color based on background color
+export function textColor(color: string) {
+  if (!color) return 'white'
+  const c = /^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/.exec(color)!
+  const brightness =
+    (parseInt(c[1], 16) * 299 +
+      parseInt(c[2], 16) * 587 +
+      parseInt(c[3], 16) * 114) /
+    1000
+  return brightness > 126 ? 'black' : 'white'
+}
+
+
 // Find a nested object by dot-syntax string
 // ex. lookup(obj, 'a.b.c') => obj.a.b.c
 export function lookup(obj: any, path: string, defaultVal?: any): any {

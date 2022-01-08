@@ -19,18 +19,19 @@
     v-scale-transition
       //- Container for scale transition
       div(v-show='hover')
-        .marker-details.px-3.py-1(
-          @mouseleave='hover = false'
-          :style='`background: ${markerColor}`'
-          :class="{'solid-ring': isDeviceLocation}"
-        )
-          .text-caption
-            .font-weight-bold
-              span(v-if='isDeviceLocation') Your location
-              span(v-else-if='user') {{ user | fullName }}
+        v-theme-provider(light)
+          .marker-details.px-3.py-1(
+            @mouseleave='hover = false'
+            :style='`background: ${markerColor}`'
+            :class="{'solid-ring': isDeviceLocation}"
+          )
+            .text-caption(:class='`${textColor(markerColor)}--text`')
+              .font-weight-bold
+                span(v-if='isDeviceLocation') Your location
+                span(v-else-if='user') {{ user | fullName }}
 
-            div {{ lastUpdated | timeAgo }}
-            div.text-xs Accuracy: {{ markerAccuracy | numberFormat }}m
+              div {{ lastUpdated | timeAgo }}
+              div.text-xs Accuracy: {{ markerAccuracy | numberFormat }}m
 
 </template>
 
@@ -39,7 +40,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 
 import { Position } from '@/services/geolocation'
 import { User } from '@/types/Users'
-import { darkenColor } from '@/util/helpers'
+import { darkenColor, textColor } from '@/util/helpers'
 
 import GmapCustomMarker from 'vue2-gmap-custom-marker'
 
@@ -105,6 +106,10 @@ export default class UserMarker extends Vue {
   darkenColor(color: string, amount: number) {
     return darkenColor(color, amount)
   }
+
+  textColor(color: string) {
+    return textColor(color)
+  }
 }
 </script>
 
@@ -113,9 +118,9 @@ $userMarkerWidth: 18px;
 
 .marker-dot, .marker-details {
   border-radius: $userMarkerWidth;
-  box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 40%),
-              0px 4px 5px 0px rgb(0 0 0 / 30%),
-              0px 1px 10px 0px rgb(0 0 0 / 25%) !important;
+  box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+              0px 4px 5px 0px rgb(0 0 0 / 10%),
+              0px 1px 10px 0px rgb(0 0 0 / 15%) !important;
   border: #{$userMarkerWidth / 6} solid rgba(255, 255, 255, 0.3);
 
   &.solid-ring {
