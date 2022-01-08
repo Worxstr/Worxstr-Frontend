@@ -12,14 +12,21 @@
     :marker='markerLocation'
   )
     .marker-dot(
+      @mouseenter='hover = true'
       :style='`background: ${markerColor}`'
       :class="{'solid-ring': solidRing}"
-      @mouseenter='hover = true'
-      @mouseleave='hover = false'
     )
-    v-fade-transition
-      .marker-details.pa-2(v-show='hover' v-if='user' :style='`background: ${markerColor}`')
-        span {{ user | fullName }}
+    v-scale-transition
+      //- Container for scale transition
+      div(v-show='hover')
+        .marker-details.px-3.py-1(
+          @mouseleave='hover = false'
+          :style='`background: ${markerColor}`'
+          :class="{'solid-ring': solidRing}"
+        )
+          .text-caption
+            .font-weight-bold(v-if='user') {{ user | fullName }}
+            | {{ lastUpdated | date('MMM D') }} at {{ lastUpdated | time }}
 
 </template>
 
@@ -45,6 +52,16 @@ export default class UserMarker extends Vue {
   @Prop(Boolean) solidRing?: boolean
 
   hover = false
+
+  get lastUpdated() {
+    if (this.location?.timestamp) {
+      return this.location.timestamp
+    }
+    if (this.user?.location?.timestamp) {
+      return this.user.location.timestamp
+    }
+    return ''
+  }
 
   get markerAccuracy() {
     if (this.location?.accuracy) return this.location.accuracy
@@ -90,31 +107,32 @@ export default class UserMarker extends Vue {
 <style lang="scss">
 $userMarkerWidth: 18px;
 
-.marker-dot {
+.marker-dot, .marker-details {
   border-radius: $userMarkerWidth;
-  width: $userMarkerWidth;
-  height: $userMarkerWidth;
   box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 40%),
               0px 4px 5px 0px rgb(0 0 0 / 30%),
               0px 1px 10px 0px rgb(0 0 0 / 25%) !important;
   border: #{$userMarkerWidth / 6} solid rgba(255, 255, 255, 0.3);
-  transform: translateY(8px);
 
   &.solid-ring {
     border-color: white;
   }
 }
 
+.marker-dot {
+  width: $userMarkerWidth;
+  height: $userMarkerWidth;
+  transform: translateY(8px);
+}
 
 .marker-details {
-  border-radius: $userMarkerWidth;
-  box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 40%),
-              0px 4px 5px 0px rgb(0 0 0 / 30%),
-              0px 1px 10px 0px rgb(0 0 0 / 25%) !important;
-  border: #{$userMarkerWidth / 6} solid rgba(255, 255, 255, 0.3);
   position: absolute;
   white-space: nowrap;
   left: 50%;
-  transform: translate(-50%, #{$userMarkerWidth / 2});
+  transform: translate(-50%, -50%);
+
+  .text-caption {
+    line-height: 1rem !important;
+  }
 }
 </style>
