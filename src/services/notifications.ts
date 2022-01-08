@@ -11,10 +11,6 @@ export async function registerNotifications() {
 
   if (!pushAvailable) return
 
-  const { receive } = await PushNotifications.checkPermissions()
-
-  if (receive === 'granted' || receive === 'denied') return
-
   const permission = await PushNotifications.requestPermissions()
 
   if (permission.receive === 'granted') {

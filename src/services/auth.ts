@@ -118,13 +118,13 @@ export async function signOut({ state, commit }: any) {
     { commit },
     shouldUseSandbox(usersStore.getters.me(usersStore.state)?.email as string)
   )
-
+  
+  unregisterNotifications()
   await api({
     method: 'POST',
     url: `/auth/logout`,
   })
   clearUserData({ commit })
-  unregisterNotifications()
   router.push({ name: 'home' })
 }
 

@@ -99,7 +99,7 @@ export default class Preferences extends Vue {
       
       default:
         // TODO:
-        // registerNotifications()
+        registerNotifications()
         break
     }
   }
