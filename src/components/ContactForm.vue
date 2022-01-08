@@ -191,11 +191,6 @@ export default class ContactForm extends Vue {
     let request: any = {...this.form}
 
     if (this.form.phone) {
-      request.phone = {
-        country_code: '1',
-        area_code: this.form.phone.substring(1,4),
-        phone_number: this.form.phone.substring(6,9) + this.form.phone.substring(10,14)
-      }
       delete request.email
     }
     else {
