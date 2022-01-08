@@ -46,7 +46,7 @@ import { DarkPreference } from '@/util/theme'
 import { PushNotifications } from '@capacitor/push-notifications'
 import { Capacitor } from '@capacitor/core'
 import { showToast } from '@/services/app'
-import { requestPushPermission } from '@/services/notifications'
+import { registerNotifications } from '@/services/notifications'
 
 @Component({
   metaInfo: {
@@ -98,7 +98,8 @@ export default class Preferences extends Vue {
         break
       
       default:
-        requestPushPermission()
+        // TODO:
+        registerNotifications()
         break
     }
   }

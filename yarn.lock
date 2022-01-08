@@ -1455,6 +1455,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor-community/fcm@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@capacitor-community/fcm@npm:2.0.2"
+  dependencies:
+    "@capacitor/core": ^3.0.1
+  checksum: 443f5bc3be261911898b877cd7d27a5d414390567cd58716af04e50a3512b660bce12a185f10884c7a08109c3c9d657d8c485cf7c2ca6bdaa71a60a716685332
+  languageName: node
+  linkType: hard
+
 "@capacitor/android@npm:^3.0.0-rc.4":
   version: 3.0.0-rc.4
   resolution: "@capacitor/android@npm:3.0.0-rc.4"
@@ -1533,6 +1542,15 @@ __metadata:
   dependencies:
     tslib: ^2.1.0
   checksum: 5f7cfa45197a3f0da22f9a94ae27e083f8a3a213bbb30b49caeadb15214f0de49b4028758dbbcc3b55e9513b1064f079c179e88016ac8aca0c3a1adc9244fbd7
+  languageName: node
+  linkType: hard
+
+"@capacitor/core@npm:^3.0.1":
+  version: 3.3.4
+  resolution: "@capacitor/core@npm:3.3.4"
+  dependencies:
+    tslib: ^2.1.0
+  checksum: 0542173a3d858fbc4b4bc799d6182845e7817a7a4a75cc5824843f9d3eacba9af315790a284572940f978e57c220dba8bacf7c13b86278e69d4a4dc5ecd73aaf
   languageName: node
   linkType: hard
 
@@ -16092,6 +16110,7 @@ __metadata:
   resolution: "worxstr@workspace:."
   dependencies:
     "@capacitor-community/barcode-scanner": ^2.0.1
+    "@capacitor-community/fcm": ^2.0.2
     "@capacitor/android": ^3.0.0-rc.4
     "@capacitor/app": ^1.0.2
     "@capacitor/cli": latest
