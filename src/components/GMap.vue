@@ -6,6 +6,16 @@ GmapMap.gmap(
   :options='mapOptions'
 )
 
+  //- User markers
+  div(v-for='(user, i) in users' :key='user.id')
+    div(v-if='user.location && user.location.latitude && user.location.longitude && user.additional_info')
+      user-marker(:user='user')
+
+      
+  //- Device gps location and accuracy
+  user-marker(:location='deviceLocation' solid-ring)
+    
+
   //- Job markers
   div(v-for='(job, i) in jobs' :key='job.id')
     GmapCircle(
@@ -36,38 +46,10 @@ GmapMap.gmap(
         | {{ infoContent.city }}, {{ infoContent.state }} {{ infoContent.zip_code }}
       router-link(:to="{name: 'job', params: {jobId: infoContent.id}}") View job
       
-  //- Device gps location and accuracy
-  GmapCircle(
-    v-if='deviceLocation && showDeviceLocation'
-    :center='deviceLocation'
-    :radius='deviceLocation.accuracy'
-    :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
-  )
-  GmapCustomMarker(
-    v-if='deviceLocation && showDeviceLocation'
-    :marker='deviceLocation'
-  )
-    .user-marker.solid-ring
-
-  //- User markers
-  div(v-for='(user, i) in users' :key='user.id')
-    div(v-if='user.location && user.location.latitude && user.location.longitude && user.additional_info')
-
-      GmapCustomMarker(
-        :marker='gmapMarker(user.location)'
-      )
-        .user-marker(:style='`background: ${user.additional_info.color}`')
-
-      GmapCircle(
-        :center='gmapMarker(user.location)'
-        :radius='user.location.accuracy'
-        :options="{fillColor: user.additional_info.color, fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
-      )
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import GmapCustomMarker from 'vue2-gmap-custom-marker'
 
 import * as geolocation from '@/services/geolocation'
 import { darkenColor } from '@/util/helpers'
@@ -78,10 +60,12 @@ import { User } from '../types/Users'
 import { Job } from '@/types/Jobs'
 import { Position } from '@/services/geolocation'
 
+import UserMarker from '@/components/UserMarker.vue'
+
 
 @Component({
   components: {
-    GmapCustomMarker,
+    UserMarker,
   },
 })
 export default class GMap extends Vue {
@@ -109,9 +93,7 @@ export default class GMap extends Vue {
   defaultZoom = 16
 
   get deviceLocation() {
-    const location = this.$store.state.users.deviceLocation
-    if (!location) return this.defaultPosition
-    return this.gmapMarker(location)
+    return this.$store.state.users.deviceLocation
   }
 
   get mapOptions() {
@@ -131,8 +113,8 @@ export default class GMap extends Vue {
         .map((job: Job) => ({lat: job.latitude, lng: job.longitude})),
       
       (this.showDeviceLocation && this.deviceLocation ? {
-        lat: this.deviceLocation.lat,
-        lng: this.deviceLocation.lng,
+        lat: this.deviceLocation.latitude,
+        lng: this.deviceLocation.longitude,
       } : null),
 
     ].filter((coord: any) => coord && coord.lat && coord.lng)
@@ -232,25 +214,3 @@ export default class GMap extends Vue {
   }
 }
 </script>
-
-<style lang="scss">
-$userMarkerWidth: 18px;
-
-.gmap {
-  .user-marker {
-    border-radius: 50%;
-    width: $userMarkerWidth;
-    height: $userMarkerWidth;
-    background: #4285f4;
-    box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 40%),
-                0px 4px 5px 0px rgb(0 0 0 / 30%),
-                0px 1px 10px 0px rgb(0 0 0 / 25%) !important;
-    border: #{$userMarkerWidth / 6} solid rgba(255, 255, 255, 0.3);
-    transform: translateY(8px);
-
-    &.solid-ring {
-      border-color: white;
-    }
-  }
-}
-</style>
