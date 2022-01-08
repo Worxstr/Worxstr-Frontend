@@ -5,33 +5,6 @@ GmapMap.gmap(
   :style='`min-height: ${height}`'
   :options='mapOptions'
 )
-  //- Device gps location and accuracy
-  GmapCircle(
-    v-if='deviceLocation && showDeviceLocation'
-    :center='deviceLocation'
-    :radius='deviceLocation.accuracy'
-    :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
-  )
-  GmapMarker(
-    v-if='deviceLocation && showDeviceLocation'
-    :position="deviceLocation"
-    :icon="{ url: require('@/assets/icons/current-location-marker.svg') }"
-  )
-  
-  //- User markers
-  div(v-for='(user, i) in users' :key='user.id')
-    GmapMarker(
-      v-if='user.location && user.location.latitude && user.location.longitude'
-      class-name='user-marker'
-      :position='gmapMarker(user.location)'
-      :icon="{ url: `https://avatars.dicebear.com/api/initials/${fullName(user)}.svg`, scaledSize: { width: 50, height: 50 }, anchor: {x: 25, y: 25}}"
-    )
-    GmapCircle(
-      v-if='user.location && user.location.latitude && user.location.longitude'
-      :center='gmapMarker(user.location)'
-      :radius='user.location.accuracy'
-      :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
-    )
 
   //- Job markers
   div(v-for='(job, i) in jobs' :key='job.id')
@@ -62,10 +35,39 @@ GmapMap.gmap(
         br
         | {{ infoContent.city }}, {{ infoContent.state }} {{ infoContent.zip_code }}
       router-link(:to="{name: 'job', params: {jobId: infoContent.id}}") View job
+      
+  //- Device gps location and accuracy
+  GmapCircle(
+    v-if='deviceLocation && showDeviceLocation'
+    :center='deviceLocation'
+    :radius='deviceLocation.accuracy'
+    :options="{fillColor: '#4285f4',fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
+  )
+  GmapCustomMarker(
+    v-if='deviceLocation && showDeviceLocation'
+    :marker='deviceLocation'
+  )
+    .user-marker.solid-ring
+
+  //- User markers
+  div(v-for='(user, i) in users' :key='user.id')
+    div(v-if='user.location && user.location.latitude && user.location.longitude && user.additional_info')
+
+      GmapCustomMarker(
+        :marker='gmapMarker(user.location)'
+      )
+        .user-marker(:style='`background: ${user.additional_info.color}`')
+
+      GmapCircle(
+        :center='gmapMarker(user.location)'
+        :radius='user.location.accuracy'
+        :options="{fillColor: user.additional_info.color, fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
+      )
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import GmapCustomMarker from 'vue2-gmap-custom-marker'
 
 import * as geolocation from '@/services/geolocation'
 import { darkenColor } from '@/util/helpers'
@@ -77,7 +79,11 @@ import { Job } from '@/types/Jobs'
 import { Position } from '@/services/geolocation'
 
 
-@Component
+@Component({
+  components: {
+    GmapCustomMarker,
+  },
+})
 export default class GMap extends Vue {
   locationAccuracy: number | null = null
   infoWindowPos: geolocation.Position | null = null
@@ -228,9 +234,23 @@ export default class GMap extends Vue {
 </script>
 
 <style lang="scss">
+$userMarkerWidth: 18px;
+
 .gmap {
   .user-marker {
     border-radius: 50%;
+    width: $userMarkerWidth;
+    height: $userMarkerWidth;
+    background: #4285f4;
+    box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 40%),
+                0px 4px 5px 0px rgb(0 0 0 / 30%),
+                0px 1px 10px 0px rgb(0 0 0 / 25%) !important;
+    border: #{$userMarkerWidth / 6} solid rgba(255, 255, 255, 0.3);
+    transform: translateY(8px);
+
+    &.solid-ring {
+      border-color: white;
+    }
   }
 }
 </style>

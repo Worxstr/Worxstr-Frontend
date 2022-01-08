@@ -1692,6 +1692,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@google/markerclustererplus@npm:^5.1.0":
+  version: 5.1.3
+  resolution: "@google/markerclustererplus@npm:5.1.3"
+  checksum: 4e441946b3dc77c7d9f7a797bdcee0c9151340a193b50acda787b2f0b2e26b893d03fd22e9d3bc2d8546faa1eee0c8d09d235dfa53d0c18324582a0fa01fb57e
+  languageName: node
+  linkType: hard
+
 "@googlemaps/markerclusterer@npm:^1.0.13":
   version: 1.0.19
   resolution: "@googlemaps/markerclusterer@npm:1.0.19"
@@ -7564,6 +7571,17 @@ __metadata:
     lodash: ~4.17.10
     minimatch: ~3.0.2
   checksum: 2e79c8c0bb8405c92abe43d633b737a511b4791fbca21646adf0dae2ff27c2a95a702347808cd4292e7730668e95fa5de164811f40f86f1774b7a9ff8ed0d1ec
+  languageName: node
+  linkType: hard
+
+"gmap-vue@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "gmap-vue@npm:1.5.0"
+  dependencies:
+    "@google/markerclustererplus": ^5.1.0
+  peerDependencies:
+    vue: ^2.6.11
+  checksum: 744eced92423be8552eeed163bf0e391a4ed5b438a468b1cd33c142c64f7827ffe5e537d910b3fbf29d3295166ed7a8220bbf3a8f01f7de38f960a956867f077
   languageName: node
   linkType: hard
 
@@ -15465,10 +15483,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vue2-gmap-custom-marker@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "vue2-gmap-custom-marker@npm:6.0.1"
+  dependencies:
+    gmap-vue: ^1.5.0
+    vue: ^2.x
+  checksum: b4c051ad36cb897bf5089dbbc5265c0ee48b89e1bb3bbf1b8249ef0180659c7c8e960b4915dff3a3fbd750f655fda11edc92fc1b11dba20717b10d17b2cd5eca
+  languageName: node
+  linkType: hard
+
 "vue@npm:^2.6.11":
   version: 2.6.12
   resolution: "vue@npm:2.6.12"
   checksum: a8959e30990c5464131e451d3f9c2a6e6964c2d1137a30fbcd2bc66174a6c2d6f63e4dcec9c17fa0f236580953ff1ad44c25437c5e02ee1cf74b588bbac1a0bf
+  languageName: node
+  linkType: hard
+
+"vue@npm:^2.x":
+  version: 2.6.14
+  resolution: "vue@npm:2.6.14"
+  checksum: 23524a1bdca094d62cb3491a46317eed75184b5d61d28fa846ea5d2b241c1cc7084fc67ee259d47a50a6d0bbc33ecaceb7bb52bff81312fe7da07263f3419942
   languageName: node
   linkType: hard
 
@@ -16126,6 +16161,7 @@ __metadata:
     vue-sanitize: ^0.2.1
     vue-socket.io-extended: ^4.2.0
     vue-template-compiler: ^2.6.11
+    vue2-gmap-custom-marker: ^6.0.1
     vuedraggable: ^2.24.3
     vuetify: ^2.2.11
     vuetify-google-autocomplete: ^2.0.4
