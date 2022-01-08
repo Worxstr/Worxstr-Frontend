@@ -26,7 +26,8 @@
         )
           .text-caption
             .font-weight-bold(v-if='user') {{ user | fullName }}
-            | {{ lastUpdated | date('MMM D') }} at {{ lastUpdated | time }}
+            div {{ lastUpdated | date('MMM D') }} at {{ lastUpdated | time }}
+            div.text-xs Accuracy: {{ markerAccuracy | numberFormat }}m
 
 </template>
 
