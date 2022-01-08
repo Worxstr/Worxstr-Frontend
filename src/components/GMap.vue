@@ -13,7 +13,7 @@ GmapMap.gmap(
 
       
   //- Device gps location and accuracy
-  user-marker(:location='deviceLocation' solid-ring)
+  user-marker(:location='deviceLocation' is-device-location)
     
 
   //- Job markers
