@@ -130,6 +130,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
             v-list-item-title Edit shift
           
           v-list-item(
+            v-if='ctxMenu.event && ctxMenu.event.clock_history.length === 0'
             @click='deleteShift(ctxMenu.event)'
           )
             v-list-item-icon.mr-2
