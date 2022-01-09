@@ -69,7 +69,7 @@ div
         v-list-item-action(v-if='userIsManager')
           v-btn(
             @click.stop='openDeleteShiftDialog(shift)'
-            :disabled='shift.clock_history.length'
+            :disabled='!!shift.clock_history.length'
             icon
             color='error'
             data-cy='delete-shift-button'

@@ -46,37 +46,6 @@ v-dialog(
           )
         richtext-field(placeholder='Job notes' v-model='editedJob.notes')
 
-        div(v-if='showMap')
-          .d-flex.align-center
-            .d-flex.align-center
-              p.mr-4.mb-3 Job color
-              v-menu(offset-y content-class='color-picker')
-                template(v-slot:activator='{ on, attrs }')
-                  .mb-3(v-bind='attrs' v-on='on')
-                    v-badge.soft-shadow(:color="editedJob.color || defaultJobColor" bordered)
-                    
-                v-color-picker(
-                  v-model='editedJob.color'
-                  show-swatches
-                  hide-canvas
-                  hide-sliders
-                  hide-inputs
-                  swatches-max-height='350'
-                )
-
-            .mx-4
-            
-            v-slider.mt-3(
-              v-model='editedJob.radius'
-              label='Radius'
-              min='75'
-              max='1000'
-            )
-            p.mt-1 {{ editedJob.radius | distance }}
-
-          v-card.soft-shadow
-            g-map(:jobs='[editedJob]')
-
         v-subheader Managers
         .d-flex.flex-column.flex-sm-row
           v-select.mr-sm-4(
@@ -130,6 +99,37 @@ v-dialog(
           data-cy='job-consultant-email'
           required
         )
+        
+        div(v-if='showMap')
+          .d-flex.align-center
+            .d-flex.align-center
+              p.mr-4.mb-3 Job color
+              v-menu(offset-y content-class='color-picker')
+                template(v-slot:activator='{ on, attrs }')
+                  .mb-3(v-bind='attrs' v-on='on')
+                    v-badge.soft-shadow(:color="editedJob.color || defaultJobColor" bordered)
+                    
+                v-color-picker(
+                  v-model='editedJob.color'
+                  show-swatches
+                  hide-canvas
+                  hide-sliders
+                  hide-inputs
+                  swatches-max-height='350'
+                )
+
+            .mx-4
+            
+            v-slider.mt-3(
+              v-model='editedJob.radius'
+              label='Radius'
+              min='75'
+              max='1000'
+            )
+            p.mt-1 {{ editedJob.radius | distance }}
+
+          v-card.soft-shadow
+            g-map(:jobs='[editedJob]')
 
       v-spacer
 

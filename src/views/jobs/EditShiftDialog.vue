@@ -40,7 +40,7 @@ v-dialog(
 
         v-subheader Date and time
 
-        recurring-date-input.my-4(v-model='recurData' :recurrable='!editing' :time='time')
+        recurring-date-input.my-4(v-model='recurData' :recurrable='!editing' :time='startEndTimes')
 
         v-divider.mb-4
 
@@ -202,6 +202,17 @@ export default class EditShiftDialog extends Vue {
   @Watch('time')
   onTimeChange(time: any) {
     console.log('time changed', time)
+  }
+
+  get startEndTimes() {
+    if (this.time) {
+      return this.time
+    }
+    else if (this.shift) return {
+      start: this.shift.time_begin,
+      end: this.shift.time_end,
+    }
+    return undefined
   }
 
   initialState() {
