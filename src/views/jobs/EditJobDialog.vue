@@ -1,17 +1,17 @@
 <template lang="pug">
 v-dialog(
-  v-model="opened",
-  :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="700",
+  v-model="opened"
+  :fullscreen="$vuetify.breakpoint.smAndDown"
+  max-width="700"
   persistent
 )
   v-card.d-flex.flex-column(v-if="editedJob")
     v-fade-transition
-      v-overlay(v-if="loading", absolute, opacity=".2")
+      v-overlay(v-if="loading" absolute opacity=".2")
         v-progress-circular(indeterminate)
 
     v-form.flex-grow-1.d-flex.flex-column(
-      v-if="editedJob",
+      v-if="editedJob"
       @submit.prevent='updateJob'
       ref='form'
       v-model='isValid'
@@ -28,7 +28,7 @@ v-dialog(
             autofocus
             outlined
             dense
-            label="Job name",
+            label="Job name"
             v-model="editedJob.name"
             :rules="rules.name"
             required
@@ -36,11 +36,11 @@ v-dialog(
           )
 
           vuetify-google-autocomplete#map(
-            outlined,
+            outlined
             dense
             label='Job address'
             v-on:placechanged='setPlace'
-            :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''",
+            :value="editedJob.address ? `${editedJob.address}, ${editedJob.city}, ${editedJob.state} ${editedJob.zip_code}` : ''"
             :rules="rules.address"
             data-cy='job-address'
           )
@@ -49,37 +49,37 @@ v-dialog(
         v-subheader Managers
         .d-flex.flex-column.flex-sm-row
           v-select.mr-sm-4(
-            v-if="managers.organization && managers.organization.length",
-            v-model="editedJob.organization_manager_id",
-            :items="managers.organization",
-            :item-text="(m) => `${m.first_name} ${m.last_name}`",
-            :item-value="'id'",
-            outlined,
-            dense,
-            required,
+            v-if="managers.organization && managers.organization.length"
+            v-model="editedJob.organization_manager_id"
+            :items="managers.organization"
+            :item-text="(m) => `${m.first_name} ${m.last_name}`"
+            :item-value="'id'"
+            outlined
+            dense
+            required
             label="Organizational manager"
             data-cy='job-org-manager'
           )
           v-select(
-            v-if="managers.contractor && managers.contractor.length",
-            v-model="editedJob.contractor_manager_id",
-            :items="managers.contractor",
-            :item-text="(m) => `${m.first_name} ${m.last_name}`",
-            :item-value="'id'",
-            outlined,
-            dense,
-            required,
+            v-if="managers.contractor && managers.contractor.length"
+            v-model="editedJob.contractor_manager_id"
+            :items="managers.contractor"
+            :item-text="(m) => `${m.first_name} ${m.last_name}`"
+            :item-value="'id'"
+            outlined
+            dense
+            required
             label="Contractor manager"
             data-cy='job-contractor-manager'
           )
         v-subheader Consultant info
         .d-flex.flex-column.flex-sm-row
           v-text-field.mr-sm-4(
-            outlined,
-            dense,
+            outlined
+            dense
             label="Name",
-            v-model="editedJob.consultant_name",
-            :rules="rules.consultantName",
+            v-model="editedJob.consultant_name"
+            :rules="rules.consultantName"
             data-cy='job-consultant-name'
             required
           )
@@ -90,16 +90,45 @@ v-dialog(
             :required='true'
           )
         v-text-field(
-          outlined,
-          dense,
-          label="Email",
-          type="email",
-          v-model="editedJob.consultant_email",
-          :rules="rules.consultantEmail",
+          outlined
+          dense
+          label="Email"
+          type="email"
+          v-model="editedJob.consultant_email"
+          :rules="rules.consultantEmail"
           data-cy='job-consultant-email'
           required
         )
-        
+
+        v-subheader Clock-in restrictions
+
+        v-checkbox(
+          v-model='editedJob.restrictByCode'
+          label='Restrict by code'
+          hide-details
+        )
+        v-checkbox(
+          v-model='editedJob.restrictByLocation'
+          label='Restrict by location'
+          hide-details
+        )
+        v-checkbox(
+          v-model='editedJob.restrictByTime'
+          label='Restrict by time'
+          :hide-details='!editedJob.restrictByTime'
+        )
+        v-text-field(
+          v-show='editedJob.restrictByTime'
+          v-model.number="editedJob.restrictByTimeWindow"
+          outlined
+          dense
+          label="Time window"
+          type='number'
+          min='1'
+          data-cy='job-restrict-by-time-start'
+          suffix='minutes'
+        )
+
         div(v-if='showMap')
           .d-flex.align-center
             .d-flex.align-center
@@ -176,6 +205,7 @@ export default class EditJobDialog extends Vue {
   editedJob: any = {
     color: hashColor(Date.now()),
     address: null,
+    notes: '',
   } // TODO: add type
   isValid = false
   loading = false
