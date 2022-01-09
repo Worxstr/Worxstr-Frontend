@@ -202,6 +202,7 @@ export default class RecurringDateInput extends Vue {
     end: Date
   }
 
+  // Don't change the end time if the 'time' prop was just modified
   autoChangeEndTime = true
 
   mounted() {
@@ -210,7 +211,8 @@ export default class RecurringDateInput extends Vue {
 
   @Watch('time')
   timeChanged(time: any) {
-    if (this.time) {
+    console.log(time)
+    if (time) {
       this.autoChangeEndTime = false
       this.start = formatDate(time.start)
       this.end = formatDate(time.end)

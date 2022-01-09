@@ -1,4 +1,5 @@
 import colors from 'vuetify/lib/util/colors'
+import Vuetify from 'vuetify'
 
 export function normalizeRelations(data: any, fields: any) {
   return {
@@ -68,8 +69,14 @@ export function darkenColor(color: string, amount: number) {
 
 // Determine light or dark text color based on background color
 export function textColor(color: string) {
+
   if (!color) return 'white'
-  const c = /^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/.exec(color)!
+  color = color.replace('#', '')
+
+  // If non-alphanumeric, return white
+  if (!/^[a-fA-F0-9]+$/.test(color)) return 'white'
+
+  const c = /^([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/.exec(color)!
   const brightness =
     (parseInt(c[1], 16) * 299 +
       parseInt(c[2], 16) * 587 +
