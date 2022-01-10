@@ -21,7 +21,7 @@ v-dialog(
     v-form.d-flex.flex-column.fill-height(
       ref='form'
       v-model="isValid"
-      @submit.prevent='submitCode(code)'
+      @submit.prevent='clockIn'
     )
       v-card-title.text-h6 Verify your presence
 
@@ -30,15 +30,15 @@ v-dialog(
       v-card-text
 
         .d-flex.flex-column
-          //- v-btn.mb-2(
-          //-   @click='getUserLocation'
-          //-   text
-          //-   color='primary'
-          //-   outlined
-          //-   x-large
-          //- )
-          //-   v-icon(left) mdi-map-marker-radius
-          //-   span Use my location
+          v-btn.mb-2(
+            @click='getDeviceLocation'
+            text
+            color='primary'
+            outlined
+            x-large
+          )
+            v-icon(left) mdi-map-marker-radius
+            span Use my location
 
           v-btn(
             v-if='!allowedLocation && !webQrEnabled && !cameraFailed'
@@ -130,25 +130,7 @@ export default class ClockInDialog extends Vue {
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ type: Object }) readonly shift!: Shift
 
-  get dialogOpened() {
-    return this.opened && !this.hideDialogForQr
-  }
-
-  closeDialog() {
-    this.$emit('update:opened', false)
-  }
-
-  async submitCode(code: string) {
-    // TODO: Handle incorrect code
-    try {
-      this.loading = true
-      await clock.clockIn(this.$store, code, this.shift.id)
-      this.closeDialog()
-    }
-    finally {
-      this.loading = false
-    }
-  }
+  // Some hacky stuff to make the native camera view show in the app
 
   @Watch('opened')
   async onOpened(opened: boolean) {
@@ -157,6 +139,62 @@ export default class ClockInDialog extends Vue {
       this.initQr()
     }
   }
+
+  get dialogOpened() {
+    return this.opened && !this.hideDialogForQr
+  }
+
+  closeDialog() {
+    this.$emit('update:opened', false)
+  }
+
+  // Logic for form submission
+
+  get deviceLocation() {
+    return this.$store.state.users.deviceLocation
+  }
+
+  async getDeviceLocation() {
+    this.loading = true
+
+    const location = await geolocation.get(this.$store)
+    
+    // If location permission was not granted, do not allow
+    const permissionGranted = await geolocation.permissionGranted()
+
+    if (!permissionGranted || !this.deviceLocation) {
+      showToast(this.$store, {
+        text: `${location.latitude} ${location.longitude}`,
+      })
+      this.loading = false
+      return
+    }
+
+    this.closeDialog()
+    this.clockIn()
+  }
+
+  submitCode(code: string) {
+    this.code = code
+    this.clockIn()
+  }
+
+  async clockIn() {
+    // TODO: Handle incorrect code
+    try {
+      this.loading = true
+      await clock.clockIn(this.$store, this.shift.id, {
+        code: this.code,
+        location: this.deviceLocation,
+      })
+      this.closeDialog()
+    }
+    finally {
+      this.loading = false
+    }
+  }
+
+  // QR code scanner related methods
 
   async initQr() {
     if (!Capacitor.isNativePlatform()) {
@@ -199,19 +237,6 @@ export default class ClockInDialog extends Vue {
     } finally {
       this.cameraLoading = false
     }
-  }
-
-  async getUserLocation() {
-    const location = await geolocation.get(this.$store)
-    showToast(this.$store, {
-      text: `${location.latitude} ${location.longitude}`,
-    })
-    this.closeDialog()
-    // TODO: Clock in with location
-    // Dialog.alert({
-    //   title: 'Got location',
-    //   message: `Lat: ${coords.latitude}, Long: ${coords.longitude}`,
-    // })
   }
 
   async webCameraPermissionGranted() {

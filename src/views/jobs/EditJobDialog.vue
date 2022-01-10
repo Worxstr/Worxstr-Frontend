@@ -103,23 +103,23 @@ v-dialog(
         v-subheader Clock-in restrictions
 
         v-checkbox(
-          v-model='editedJob.restrictByCode'
+          v-model='editedJob.restrict_by_code'
           label='Restrict by code'
           hide-details
         )
         v-checkbox(
-          v-model='editedJob.restrictByLocation'
+          v-model='editedJob.restrict_by_location'
           label='Restrict by location'
           hide-details
         )
+        //- // TODO: Add option for requiring background location permission
         v-checkbox(
-          v-model='editedJob.restrictByTime'
+          v-model='editedJob.restrict_by_time'
           label='Restrict by time'
-          :hide-details='!editedJob.restrictByTime'
         )
         v-text-field(
-          v-show='editedJob.restrictByTime'
-          v-model.number="editedJob.restrictByTimeWindow"
+          v-show='editedJob.restrict_by_time'
+          v-model.number="editedJob.restrict_by_time_window"
           outlined
           dense
           label="Time window"
