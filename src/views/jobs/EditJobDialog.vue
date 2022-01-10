@@ -100,65 +100,83 @@ v-dialog(
           required
         )
 
-        v-subheader Clock-in restrictions
+        v-subheader Clock-in restriction options
 
-        v-checkbox(
+        v-checkbox.mt-0(
           v-model='editedJob.restrict_by_code'
-          label='Restrict by code'
           hide-details
         )
-        v-checkbox(
-          v-model='editedJob.restrict_by_location'
-          label='Restrict by location'
-          hide-details
-        )
+          template(v-slot:label)
+            div
+              .text-body-1 Restrict by code
+              .text-caption.font-italic If checked, the contractor can clock by scanning or typing in the clock-in code.
+
         //- // TODO: Add option for requiring background location permission
         v-checkbox(
+          v-model='editedJob.restrict_by_location'
+          hide-details
+        )
+          template(v-slot:label)
+            div
+              .text-body-1 Restrict by location
+              .text-caption.font-italic If checked, the contractor can clock in when they are on the job site.
+
+        v-checkbox(
           v-model='editedJob.restrict_by_time'
-          label='Restrict by time'
         )
-        v-text-field(
-          v-show='editedJob.restrict_by_time'
-          v-model.number="editedJob.restrict_by_time_window"
-          outlined
-          dense
-          label="Time window"
-          type='number'
-          min='1'
-          data-cy='job-restrict-by-time-start'
-          suffix='minutes'
-        )
+          template(v-slot:label)
+            div
+              .text-body-1 Restrict by time
+              .text-caption.font-italic If checked, the contractor can clock in when the shift is active.
 
-        div(v-if='showMap')
-          .d-flex.align-center
-            .d-flex.align-center
-              p.mr-4.mb-3 Job color
-              v-menu(offset-y content-class='color-picker')
-                template(v-slot:activator='{ on, attrs }')
-                  .mb-3(v-bind='attrs' v-on='on')
-                    v-badge.soft-shadow(:color="editedJob.color || defaultJobColor" bordered)
-                    
-                v-color-picker(
-                  v-model='editedJob.color'
-                  show-swatches
-                  hide-canvas
-                  hide-sliders
-                  hide-inputs
-                  swatches-max-height='350'
-                )
-
-            .mx-4
-            
-            v-slider.mt-3(
-              v-model='editedJob.radius'
-              label='Radius'
-              min='75'
-              max='1000'
+        v-slide-y-transition
+          div(v-show='editedJob.restrict_by_time')
+            v-text-field(
+              v-model.number="editedJob.restrict_by_time_window"
+              outlined
+              dense
+              label="Time window"
+              type='number'
+              min='1'
+              data-cy='job-restrict-by-time-start'
+              suffix='minutes'
+              hide-details
             )
-            p.mt-1 {{ editedJob.radius | distance }}
+            .text-caption.mt-1.font-italic(style='opacity: .7') The amount of time before a shift starts that the contractor can clock in.
 
-          v-card.soft-shadow
-            g-map(:jobs='[editedJob]')
+        v-slide-y-transition
+          .mt-4(v-if='showMap')
+            v-subheader Location, radius, and color
+
+            .d-flex.align-center
+              .d-flex.align-center
+                p.mr-4.mb-3 Job color
+                v-menu(offset-y content-class='color-picker')
+                  template(v-slot:activator='{ on, attrs }')
+                    .mb-3(v-bind='attrs' v-on='on')
+                      v-badge.soft-shadow(:color="editedJob.color || defaultJobColor" bordered)
+                      
+                  v-color-picker(
+                    v-model='editedJob.color'
+                    show-swatches
+                    hide-canvas
+                    hide-sliders
+                    hide-inputs
+                    swatches-max-height='350'
+                  )
+
+              .mx-4
+              
+              v-slider.mt-3(
+                v-model='editedJob.radius'
+                label='Radius'
+                min='75'
+                max='1000'
+              )
+              p.mt-1 {{ editedJob.radius | distance }}
+
+            v-card.soft-shadow
+              g-map(:jobs='[editedJob]')
 
       v-spacer
 

@@ -179,8 +179,8 @@ export default class ClockInDialog extends Vue {
   }
 
   @Watch('job')
-  onJobLoaded(job: Job) {
-    if (job?.id && this.dialogOpened) {
+  onJobLoaded(newVal: Job, oldVal: Job) {
+    if (!(oldVal?.id) && newVal?.id && this.dialogOpened) {
       this.autoClockIn()
     }
   }
