@@ -17,13 +17,20 @@ v-dialog(
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
       span(v-if='!$vuetify.breakpoint.xs') Cancel
 
-  v-card.sign-in.fill-height
+  v-card
+
+    .d-flex.justify-center.py-8(v-if='!job || !job.id')
+      v-progress-circular(indeterminate)
+
     v-form.d-flex.flex-column.fill-height(
+      v-else
       ref='form'
       v-model="isValid"
       @submit.prevent='clockIn'
     )
-      v-card-title.text-h6 Verify your presence
+      v-card-title.d-flex.flex-column.align-start
+        .text-h6 Verify your presence
+        .text-caption Clocking in to {{ job.name }}
 
       v-spacer
 
@@ -31,17 +38,19 @@ v-dialog(
 
         .d-flex.flex-column
           v-btn.mb-2(
+            v-if='job.restrict_by_location'
             @click='getDeviceLocation'
             text
             color='primary'
             outlined
             x-large
+            :loading='loadingLocation'
           )
             v-icon(left) mdi-map-marker-radius
             span Use my location
 
           v-btn(
-            v-if='!allowedLocation && !webQrEnabled && !cameraFailed'
+            v-if='job.restrict_by_code && !webQrEnabled && !cameraFailed'
             @click='startScan'
             text
             color='primary'
@@ -51,7 +60,7 @@ v-dialog(
             v-icon(left) mdi-qrcode
             span Scan clock-in code
 
-      div(v-if='opened && !allowedLocation && webQrEnabled && !cameraFailed')
+      div(v-if='opened && job.restrict_by_code && webQrEnabled && !cameraFailed')
 
         qrcode-stream(@init='webQrInit' @decode='submitCode')
           v-fade-transition
@@ -65,6 +74,7 @@ v-dialog(
 
       v-card-text
         v-text-field(
+          v-if='job.restrict_by_code'
           label='Or enter your clock-in code'
           v-model='code'
           dense
@@ -96,8 +106,9 @@ import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 import * as geolocation from '@/services/geolocation'
 
 import * as clock from '@/services/shifts'
+import * as job from '@/services/jobs'
 import { showToast } from '@/services/app'
-import { Shift } from '@/types/Jobs'
+import { Job, Shift } from '@/types/Jobs'
 
 /*
   We are using two difference QR code scanner libraries here.
@@ -114,6 +125,8 @@ import { Shift } from '@/types/Jobs'
 export default class ClockInDialog extends Vue {
   code = ''
   loading = false
+  loadingJob = false
+  loadingLocation = false
   isValid = false
   webQrEnabled = false
   cameraFailed = false
@@ -137,6 +150,17 @@ export default class ClockInDialog extends Vue {
     if (opened) {
       (this.$refs.form as HTMLFormElement)?.reset()
       this.initQr()
+
+      if (this.job?.id) this.autoClockIn()
+
+      this.loadingJob = true
+      try {
+        await job.loadJob(this.$store, this.shift.job_id)
+      }
+      finally {
+        this.loadingJob = false
+      }
+
     }
   }
 
@@ -150,21 +174,65 @@ export default class ClockInDialog extends Vue {
 
   // Logic for form submission
 
+  get job() {
+    return this.$store.getters.job(this.shift.job_id)
+  }
+
+  @Watch('job')
+  onJobLoaded(job: Job) {
+    if (job?.id && this.dialogOpened) {
+      this.autoClockIn()
+    }
+  }
+
+  autoClockIn() {
+    // There are no clock in restrictions, clock in automatically
+    if (!this.job.restrict_by_time && !this.job.restrict_by_location && !this.job.restrict_by_code) {
+      this.clockIn()
+      return
+    }
+
+    // If job is active, clock in automatically
+    if (this.job.restrict_by_time) {
+      const now = (new Date()).getTime()
+      const window = this.job.restrict_by_time_window
+      const start = (new Date(this.shift.time_begin)).getTime() - (window * 60 * 1000)
+      if (now >= start) {
+        this.clockIn()
+        return
+      }
+      else {
+        if (!this.job.restrict_by_location && !this.job.restrict_by_code) {
+          showToast(this.$store, {
+            text: 'You can only clock in when this shift is active',
+          })
+        }
+      }
+    }
+    
+    // If user is at job site, clock in automatically
+    if (this.job.restrict_by_location) {
+      this.getDeviceLocation()
+    }
+  }
+
   get deviceLocation() {
     return this.$store.state.users.deviceLocation
   }
 
   async getDeviceLocation() {
-    this.loading = true
+    this.loadingLocation = true
 
     const location = await geolocation.get(this.$store)
+
+    this.loadingLocation = false
     
     // If location permission was not granted, do not allow
     const permissionGranted = await geolocation.permissionGranted()
 
     if (!permissionGranted || !this.deviceLocation) {
       showToast(this.$store, {
-        text: `${location.latitude} ${location.longitude}`,
+        text: `Unable to get location. Check your location permissions.`,
       })
       this.loading = false
       return

@@ -206,6 +206,9 @@ export default class EditJobDialog extends Vue {
     color: hashColor(Date.now()),
     address: null,
     notes: '',
+    restrict_by_code: true,
+    restrict_by_location: true,
+    restrict_by_time: true,
   } // TODO: add type
   isValid = false
   loading = false
