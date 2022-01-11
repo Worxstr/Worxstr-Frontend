@@ -58,6 +58,7 @@ v-dialog(
               placeholder='123456789'
               maxlength='9'
               required
+              pattern='[0-9]*'
             )
 
             v-text-field(
@@ -70,6 +71,7 @@ v-dialog(
               minlength='6'
               maxlength='17'
               required
+              pattern='[0-9]*'
             )
 
             v-radio-group.mt-0(v-model='form.accountType' mandatory)
