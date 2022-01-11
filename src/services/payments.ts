@@ -92,8 +92,28 @@ export async function loadFundingSources({ commit }: any) {
   return data
 }
 
-export async function addPlaidFundingSource({ commit }: any, { name, publicToken, accountId }: {
-  name: string;
+export async function addFundingSource({ commit }: any, { accountName, routingNumber, accountNumber, accountType }: {
+  accountName: string;
+  routingNumber: string;
+  accountNumber: string;
+  accountType: 'checking' | 'savings';
+}) {
+  const { data } = await api({
+    method: 'POST',
+    url: 'payments/accounts',
+    data: {
+      name: accountName,
+      routing_number: routingNumber,
+      account_number: accountNumber,
+      account_type: accountType,
+    },
+  })
+  commit('ADD_FUNDING_SOURCE', data)
+  return data
+}
+
+export async function addPlaidFundingSource({ commit }: any, { accountName, publicToken, accountId }: {
+  accountName: string;
   publicToken: string;
   accountId: string;
 }) {
@@ -101,7 +121,7 @@ export async function addPlaidFundingSource({ commit }: any, { name, publicToken
     method: 'POST',
     url: 'payments/accounts',
     data: {
-      name,
+      name: accountName,
       public_token: publicToken,
       account_id: accountId,
     },
