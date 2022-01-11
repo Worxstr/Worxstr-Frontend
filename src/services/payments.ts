@@ -109,6 +109,9 @@ export async function addFundingSource({ commit }: any, { accountName, routingNu
     },
   })
   commit('ADD_FUNDING_SOURCE', data)
+  commit('SHOW_SNACKBAR', {
+    text: 'Deposit transfer initiated. Check your online banking in 2-3 business days to verify this deposit.'
+  })
   return data
 }
 
@@ -144,6 +147,7 @@ export async function verifyFundingSource({ commit }: any, { fundingSourceUrl, a
       amount2: amount2.toFixed(2),
     },
   })
+  commit('ADD_FUNDING_SOURCE', data)
   return data
 }
 
