@@ -178,7 +178,7 @@ v-dialog(
               p.mt-1 {{ editedJob.radius | distance }}
 
             v-card.soft-shadow
-              g-map(:jobs='[editedJob]')
+              g-map(:jobs='[editedJob]' jobsDraggable @jobMoved='updateJobLocation')
 
       v-spacer
 
@@ -221,6 +221,7 @@ export default class EditJobDialog extends Vue {
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ default: false }) readonly create!: boolean
   @Prop(Object) readonly job: Job | undefined
+
 
   editedJob: any = {
     color: hashColor(Date.now()),
@@ -268,6 +269,15 @@ export default class EditJobDialog extends Vue {
 
   get managers(): User[] {
     return this.$store.state.users.managers
+  }
+
+  updateJobLocation({ job, index, position }: {
+    job: Job
+    index: number
+    position: { latitude: number; longitude: number }
+  }) {
+    this.editedJob.latitude = position.latitude
+    this.editedJob.longitude = position.longitude
   }
 
   closeDialog() {
