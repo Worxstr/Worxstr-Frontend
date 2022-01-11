@@ -52,7 +52,7 @@ GmapMap.gmap(
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 
 import * as geolocation from '@/services/geolocation'
 import { darkenColor } from '@/util/helpers'
@@ -95,11 +95,6 @@ export default class GMap extends Vue {
   @Prop({ default: '40vh' }) height!: string
   @Prop({ default: false }) showDeviceLocation!: boolean
   @Prop({ default: false }) jobsDraggable!: boolean
-
-  @Watch('jobs')
-  onJobsChanged() {
-    console.log('job changed')
-  }
 
   defaultPosition: LatLng = {
     lat: 0,

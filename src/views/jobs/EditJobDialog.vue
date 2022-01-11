@@ -198,7 +198,6 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
-import colors from 'vuetify/lib/util/colors'
 import { User } from '@/types/Users'
 import { Job } from '@/types/Jobs';
 import { exists, phoneRules, emailRules } from '@/util/inputValidation'
