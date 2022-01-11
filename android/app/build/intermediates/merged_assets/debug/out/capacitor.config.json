@@ -19,12 +19,6 @@
 	},
 	"cordova": {},
 	"server": {
-<<<<<<< Updated upstream
 		"hostname": "worxstr.com"
-=======
-		"hostname": "worxstr.com",
-		"url": "http://192.168.86.27:8080",
-		"cleartext": true
->>>>>>> Stashed changes
 	}
 }
