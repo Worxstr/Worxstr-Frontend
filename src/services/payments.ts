@@ -130,6 +130,23 @@ export async function addPlaidFundingSource({ commit }: any, { accountName, publ
   return data
 }
 
+export async function verifyFundingSource({ commit }: any, { fundingSourceUrl, amount1, amount2 }: {
+  fundingSourceUrl: string;
+  amount1: number;
+  amount2: number;
+}) {
+  const { data } = await api({
+    method: 'POST',
+    url: 'payments/accounts/verify',
+    data: {
+      funding_source: fundingSourceUrl,
+      amount1: amount1.toFixed(2),
+      amount2: amount2.toFixed(2),
+    },
+  })
+  return data
+}
+
 export async function updateFundingSource({ commit }: any, fundingSource: FundingSource) {
   const { data } = await api({
     method: 'PUT',

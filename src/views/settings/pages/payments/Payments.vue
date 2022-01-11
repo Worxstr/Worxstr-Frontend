@@ -6,6 +6,10 @@ div
     :opened.sync="addFundingSourceDialog"
     @updateFundingSourceLoader='val => loadingNewFundingSource = val'
   )
+  verify-funding-source-dialog(
+    :opened.sync="verifyFundingSourceDialog"
+    :fundingSource="selectedFundingSource"
+  )
   edit-funding-source-dialog(
     :opened.sync="editFundingSourceDialog",
     :fundingSource="selectedFundingSource"
@@ -43,7 +47,7 @@ div
       v-list-item-content
         v-list-item-title Certify beneficial owners
       v-list-item-action
-        v-btn(text, color="primary", @click="beneficialOwnersDialog = true") Certify
+        v-btn(text color="primary" @click="beneficialOwnersDialog = true") Certify
 
     v-subheader.text-subtitle-1 Funding sources
 
@@ -58,17 +62,24 @@ div
 
     v-list-item(
       v-else
-      two-line,
-      v-for="fundingSource in fundingSources",
+      three-line
+      v-for="fundingSource in fundingSources"
       :key="fundingSource.id"
     )
       v-list-item-content
         v-list-item-title {{ fundingSource.name }}
         v-list-item-subtitle {{ fundingSourceId(fundingSource._links.self.href) }}
+        v-list-item-subtitle
+          v-chip(label :color='verificationStatuses[fundingSource.status].color' small) {{ verificationStatuses[fundingSource.status].text }}
+
+      v-list-item-action(v-if='fundingSource.status !== "verified"')
+        v-btn(text color="success" @click="verifyFundingSource(fundingSource)") Verify
+        
       v-list-item-action
-        v-btn(text, color="primary", @click="editFundingSource(fundingSource)") Edit
+        v-btn(text color="primary" @click="editFundingSource(fundingSource)") Edit
+
       v-list-item-action.ml-0
-        v-btn(text, color="error", @click="removeFundingSource(fundingSource)") Remove
+        v-btn(text color="error" @click="removeFundingSource(fundingSource)") Remove
 
     v-list-item(v-if='fundingSources.length < 2')
       v-btn(
@@ -87,6 +98,7 @@ import { Vue, Component } from "vue-property-decorator"
 import RetryVerificationDialog from "./RetryVerificationDialog.vue"
 import DocumentUploadDialog from "./DocumentUploadDialog.vue"
 import AddFundingSourceDialog from "./AddFundingSourceDialog.vue"
+import VerifyFundingSourceDialog from "./VerifyFundingSourceDialog.vue"
 import EditFundingSourceDialog from "./EditFundingSourceDialog.vue"
 import RemoveFundingSourceDialog from "./RemoveFundingSourceDialog.vue"
 import BeneficialOwnersDialog from "./BeneficialOwnersDialog.vue"
@@ -100,6 +112,7 @@ import { dwollaCustomerIdFromUrl, dwollaFundingSourceIdFromUrl } from "@/util/dw
     RetryVerificationDialog,
     DocumentUploadDialog,
     AddFundingSourceDialog,
+    VerifyFundingSourceDialog,
     EditFundingSourceDialog,
     RemoveFundingSourceDialog,
     BeneficialOwnersDialog,
@@ -121,6 +134,7 @@ export default class Payments extends Vue {
 
   addFundingSourceDialog = false
 	editFundingSourceDialog = false
+  verifyFundingSourceDialog = false
 	removeFundingSourceDialog = false
 	beneficialOwnersDialog = false
 
@@ -233,12 +247,17 @@ export default class Payments extends Vue {
 		}
 	}
 
-	async editFundingSource(fundingSource: FundingSource) {
+  verifyFundingSource(fundingSource: FundingSource) {
+		this.selectedFundingSource = fundingSource
+		this.verifyFundingSourceDialog = true
+  }
+
+	editFundingSource(fundingSource: FundingSource) {
 		this.selectedFundingSource = fundingSource
 		this.editFundingSourceDialog = true
 	}
 
-	async removeFundingSource(fundingSource: FundingSource) {
+	removeFundingSource(fundingSource: FundingSource) {
 		this.selectedFundingSource = fundingSource
 		this.removeFundingSourceDialog = true
 	}
