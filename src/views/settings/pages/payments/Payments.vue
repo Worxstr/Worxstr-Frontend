@@ -81,7 +81,7 @@ div
       v-list-item-action.ml-0
         v-btn(text color="error" @click="removeFundingSource(fundingSource)") Remove
 
-    v-list-item(v-if='fundingSources.length < 2')
+    v-list-item(v-if='fundingSources.length < 1')
       v-btn(
         text
         color='primary'
