@@ -34,7 +34,6 @@ v-dialog(
             dense
             required
             label='Job'
-            autofocus
             @change='onSelectedJob'
           )
 
