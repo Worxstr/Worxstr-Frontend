@@ -8,7 +8,6 @@
       outlined
       label='Start'
       hide-details
-      autofocus
     )
     //- End date
     datetime-input(
@@ -207,6 +206,7 @@ export default class RecurringDateInput extends Vue {
 
   mounted() {
     this.timeChanged(this.time)
+    this.updateValue()
   }
 
   @Watch('time')
