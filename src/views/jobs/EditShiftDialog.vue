@@ -40,7 +40,7 @@ v-dialog(
 
         v-subheader Date and time
 
-        recurring-date-input.my-4(v-model='recurData' :recurrable='!editing' :time='startEndTimes')
+        recurring-date-input.my-4(v-model='recurData' :recurrable='!editing' :time='startEndTimes' :autofocus='!isIos')
 
         v-divider.mb-4
 
@@ -159,6 +159,7 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import dayjs from 'dayjs'
+import { Capacitor } from '@capacitor/core'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { User } from '@/types/Users'
 import { Shift } from '@/types/Jobs'
@@ -285,6 +286,10 @@ export default class EditShiftDialog extends Vue {
   closeDialog() {
     this.editedShift = this.initialState()
     this.$emit('update:opened', false)
+  }
+
+  get isIos() {
+    return Capacitor.getPlatform() === 'ios'
   }
 
   get jobs() {
