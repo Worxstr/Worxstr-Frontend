@@ -8,7 +8,6 @@
       outlined
       label='Start'
       hide-details
-      :autofocus='autofocus'
     )
     //- End date
     datetime-input(
@@ -196,7 +195,6 @@ export default class RecurringDateInput extends Vue {
   
   @Prop({ type: Object }) readonly value: any
   @Prop({ default: false }) readonly recurrable!: boolean
-  @Prop({ default: false }) readonly autofocus!: boolean
   // Option for default start and end times
   @Prop({ type: Object }) readonly time?: {
     start: Date
