@@ -133,6 +133,7 @@ v-dialog(
           div(v-show='editedJob.restrict_by_time')
             v-text-field(
               v-model.number="editedJob.restrict_by_time_window"
+              pattern='[0-9]*'
               outlined
               dense
               label="Time window"
@@ -141,6 +142,7 @@ v-dialog(
               data-cy='job-restrict-by-time-start'
               suffix='minutes'
               hide-details
+              :rules='rules.restrictByTimeWindow'
             )
             .text-caption.mt-1.font-italic(style='opacity: .7') The amount of time before a shift starts that the contractor can clock in.
 
@@ -227,6 +229,7 @@ export default class EditJobDialog extends Vue {
     restrict_by_code: true,
     restrict_by_location: true,
     restrict_by_time: true,
+    restrict_by_time_window: 0,
   } // TODO: add type
   isValid = false
   loading = false
@@ -238,6 +241,11 @@ export default class EditJobDialog extends Vue {
     consultantName: [exists("Consultant name required")],
     consultantPhone: phoneRules,
     consultantEmail: emailRules,
+    restrictByTimeWindow: [
+      exists("Time window required"),
+      (value: string) => !isNaN(parseInt(value)) || 'Time window must be a number',
+      (value: string) => parseInt(value) >= 0 || 'Time window is invalid',
+    ],
   }
 
   async mounted() {
