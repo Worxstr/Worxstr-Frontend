@@ -46,34 +46,35 @@ v-dialog(
                 .text-body-1 Micro-deposit verification
                 .text-caption.font-italic A small deposit will be made to your bank account, which will take about 2-3 business days. Use this if your bank does not support Plaid.
       
-        div(v-if='verificationMethod === "micro-deposit"')
-          v-subheader Account details
-          v-text-field(
-            outlined
-            dense
-            label='Routing number'
-            v-model="form.routingNumber"
-            :rules="rules.routingNumber"
-            placeholder='123456789'
-            maxlength='9'
-            required
-          )
+        v-slide-y-transition
+          div(v-if='verificationMethod === "micro-deposit"')
+            v-subheader Account details
+            v-text-field(
+              outlined
+              dense
+              label='Routing number'
+              v-model="form.routingNumber"
+              :rules="rules.routingNumber"
+              placeholder='123456789'
+              maxlength='9'
+              required
+            )
 
-          v-text-field(
-            outlined
-            dense
-            label='Account number'
-            v-model="form.accountNumber"
-            :rules="rules.accountNumber"
-            placeholder='1234567890'
-            minlength='6'
-            maxlength='17'
-            required
-          )
+            v-text-field(
+              outlined
+              dense
+              label='Account number'
+              v-model="form.accountNumber"
+              :rules="rules.accountNumber"
+              placeholder='1234567890'
+              minlength='6'
+              maxlength='17'
+              required
+            )
 
-          v-radio-group.mt-0(v-model='form.accountType' mandatory)
-            v-radio(value='checking' label='Checking account')
-            v-radio(value='savings' label='Savings account')
+            v-radio-group.mt-0(v-model='form.accountType' mandatory)
+              v-radio(value='checking' label='Checking account')
+              v-radio(value='savings' label='Savings account')
 
       v-spacer
 
