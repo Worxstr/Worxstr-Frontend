@@ -97,13 +97,17 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
   masonry(:cols='{default: 2, 959: 1}' :gutter='30')
 
     //- Shift notes
-    .mb-4.d-flex.flex-column.gap-small(v-if='shift.notes')
+    .mb-4.d-flex.flex-column.gap-small(v-if='job.notes || shift.notes')
       h5.text-h5 Notes
       v-sheet(outlined rounded)
-        v-card-text
+        v-card-text(v-if='job.notes')
+          h6.text-h6.mb-3 Job notes
           div(v-html='job.notes')
-        v-divider
-        v-card-text
+        
+        v-divider(v-if='job.notes && shift.notes')
+
+        v-card-text(v-if='shift.notes')
+          h6.text-h6.mb-3 Shift notes
           div(v-html='shift.notes')
           
     //- Task list
