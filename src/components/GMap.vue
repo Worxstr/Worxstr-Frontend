@@ -1,9 +1,10 @@
 <template lang="pug">
 GmapMap.gmap(
-  :center='centerLocation'
+  :center='autoFit ? centerLocation : undefined'
   :zoom='zoomLevel'
   :style='`min-height: ${height}`'
   :options='mapOptions'
+  @center_changed='centerChanged'
 )
 
   //- User markers
@@ -62,6 +63,10 @@ import { Position } from '@/services/geolocation'
 
 import UserMarker from '@/components/UserMarker.vue'
 
+type LatLng = {
+  lat: number
+  lng: number
+}
 
 @Component({
   components: {
@@ -69,7 +74,9 @@ import UserMarker from '@/components/UserMarker.vue'
   },
 })
 export default class GMap extends Vue {
+
   locationAccuracy: number | null = null
+  autoFit = true // Auto zoom and center items on the map
   infoWindowPos: geolocation.Position | null = null
   infoWinOpen = false
   currentMidx = null
@@ -86,7 +93,8 @@ export default class GMap extends Vue {
   @Prop({ default: '40vh' }) height!: string
   @Prop({ default: false }) showDeviceLocation!: boolean
 
-  defaultPosition = {
+
+  defaultPosition: LatLng = {
     lat: 0,
     lng: 0,
   }
@@ -165,7 +173,7 @@ export default class GMap extends Vue {
     return Math.sqrt(deltaA ** 2 + deltaB ** 2)
   }
 
-  get centerLocation() {
+  get centerLocation(): LatLng {
     
     const sumLats = this.allCoordinates.reduce((acc, curr) => acc + (curr?.lat || 0), 0)
     const sumLngs = this.allCoordinates.reduce((acc, curr) => acc + (curr?.lng || 0), 0)
@@ -179,6 +187,16 @@ export default class GMap extends Vue {
       lat: avgLats,
       lng: avgLngs,
     }
+  }
+
+  // User moved the map center
+  centerChanged(center: LatLng) {
+    this.autoFit = false
+  }
+
+  // User zoomed the map
+  zoomChanged(zoom: number) {
+    this.autoFit = false
   }
 
   darkenColor(color: string, amount: number) {

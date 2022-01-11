@@ -27,7 +27,7 @@
     v-expand-x-transition
       div(v-if='!onBreak')
         v-btn(
-          @click='clocked ? clockOut() : openVerifyDialog()'
+          @click='clocked ? clockOut() : clockIn()'
           :loading='togglingClock'
           :disabled='!iAmVerified'
           width='130px'
@@ -80,7 +80,7 @@ export default class ClockButtons extends Vue {
   togglingClock = false
   togglingBreak = false
 
-  openVerifyDialog() {
+  clockIn() {
     this.clockInDialog = true
   }
 

@@ -60,7 +60,7 @@ div(v-else)
       )
 
       .flex-grow-1
-        v-card-text.d-flex.pb-0.flex-column.flex-sm-row
+        v-card-text.d-flex.pb-0.flex-column.flex-sm-row.gap-small
           //- Address
           .d-flex
             .mt-1.mr-1
@@ -83,7 +83,7 @@ div(v-else)
           v-spacer
 
           //- Clock-in code
-          .d-flex.flex-row.align-center(v-if='userIsManager')
+          .d-flex.flex-row.align-center(v-if='userIsManager && job.restrict_by_code')
               
             .d-flex.flex-column
               p.text-sm-right.text-subtitle-2.mb-1 Clock-in code
@@ -110,6 +110,14 @@ div(v-else)
           v-sheet(outlined rounded)
             v-card-text
               div(v-html='job.notes')
+
+        v-card-text(v-if='job.restrict_by_code || job.restrict_by_time || job.restrict_by_location')
+          p.text-subtitle-2.mb-2 Presence verification options
+          .d-flex.gap-xs
+            v-chip(small label v-if='job.restrict_by_code') Clock-in code
+            v-chip(small label v-if='job.restrict_by_location') Location
+            v-chip(small label v-if='job.restrict_by_time') Time
+              .text-xs.font-weight-bold.ml-1 ({{ job.restrict_by_time_window }} min window)
 
         //- Job info fields
         v-card-text.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between(
