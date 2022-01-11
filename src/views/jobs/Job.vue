@@ -83,7 +83,7 @@ div(v-else)
           v-spacer
 
           //- Clock-in code
-          .d-flex.flex-row.align-center(v-if='userIsManager')
+          .d-flex.flex-row.align-center(v-if='userIsManager && job.restrict_by_code')
               
             .d-flex.flex-column
               p.text-sm-right.text-subtitle-2.mb-1 Clock-in code
@@ -103,6 +103,14 @@ div(v-else)
                     v-icon mdi-qrcode
 
               clipboard-copy(:text='job.consultant_code')
+
+        v-card-text(v-if='job.restrict_by_code || job.restrict_by_time || job.restrict_by_location')
+          p.text-subtitle-2.mb-2 Presence verification options
+          .d-flex.gap-xs
+            v-chip(small label v-if='job.restrict_by_code') Clock-in code
+            v-chip(small label v-if='job.restrict_by_location') Location
+            v-chip(small label v-if='job.restrict_by_time') Time
+              .text-xs.font-weight-bold.ml-1 ({{ job.restrict_by_time_window }} min window)
 
         //- Job notes
         v-card-text(v-if='job.notes')

@@ -100,7 +100,7 @@ v-dialog(
           required
         )
 
-        v-subheader Clock-in restriction options
+        v-subheader Presence verification options
 
         v-checkbox.mt-0(
           v-model='editedJob.restrict_by_code'
@@ -108,7 +108,7 @@ v-dialog(
         )
           template(v-slot:label)
             div
-              .text-body-1 Restrict by code
+              .text-body-1 Verify by code
               .text-caption.font-italic If checked, the contractor can clock by scanning or typing in the clock-in code.
 
         //- // TODO: Add option for requiring background location permission
@@ -118,7 +118,7 @@ v-dialog(
         )
           template(v-slot:label)
             div
-              .text-body-1 Restrict by location
+              .text-body-1 Verify by location
               .text-caption.font-italic If checked, the contractor can clock in when they are on the job site.
 
         v-checkbox(
@@ -126,7 +126,7 @@ v-dialog(
         )
           template(v-slot:label)
             div
-              .text-body-1 Restrict by time
+              .text-body-1 Verify by time
               .text-caption.font-italic If checked, the contractor can clock in when the shift is active.
 
         v-slide-y-transition
