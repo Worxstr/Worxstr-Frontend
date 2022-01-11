@@ -136,7 +136,7 @@ export async function verifyFundingSource({ commit }: any, { fundingSourceUrl, a
   amount2: number;
 }) {
   const { data } = await api({
-    method: 'POST',
+    method: 'PUT',
     url: 'payments/accounts/verify',
     data: {
       funding_source: fundingSourceUrl,
