@@ -10,38 +10,97 @@ v-container.d-flex.flex-column.align-stretch(fluid)
     :editing='true'
   )
 
-  portal(to='toolbarTitle')
-    v-btn.ma-2(icon small @click="$refs.calendar.prev()")
-      v-icon mdi-chevron-left
+  div(v-if='$vuetify.breakpoint.smAndUp')
+    portal(to='toolbarTitle')
+      v-btn.ma-2(icon small @click="$refs.calendar.prev()")
+        v-icon mdi-chevron-left
 
-    v-btn.ma-2(icon small @click="$refs.calendar.next()")
-      v-icon mdi-chevron-right
-    
-    v-toolbar-title.text-subtitle-1(v-if='$refs.calendar') {{ $refs.calendar.title }}
+      v-btn.ma-2(icon small @click="$refs.calendar.next()")
+        v-icon mdi-chevron-right
+      
+      v-toolbar-title.text-subtitle-1(v-if='$refs.calendar') {{ $refs.calendar.title }}
 
-  portal(to='toolbarActions')
+    portal(to='toolbarActions')
 
-    v-select.ma-2.flex-grow-0(
-      v-if='userIsManager'
-      v-model='colorBy'
-      :items='colorByOptions'
-      dense
-      outlined
-      hide-details
-      label='Color by'
-      @change='updateColorBy'
-    )
+      v-select.ma-2.flex-grow-0(
+        v-if='userIsManager'
+        v-model='colorBy'
+        :items='colorByOptions'
+        dense
+        outlined
+        hide-details
+        label='Color by'
+        @change='updateColorBy'
+      )
 
-    v-select.ma-2.flex-grow-0(
-      v-model='view'
-      :items='views'
-      :item-text='(t) => t.charAt(0).toUpperCase() + t.slice(1)'
-      dense
-      outlined
-      hide-details
-      label='View'
-      @change='updateView'
-    )
+      v-select.ma-2.flex-grow-0(
+        v-model='view'
+        :items='views'
+        :item-text='(t) => t.charAt(0).toUpperCase() + t.slice(1)'
+        dense
+        outlined
+        hide-details
+        label='View'
+        @change='updateView'
+      )
+  
+  div(v-else) 
+    portal(to='toolbarActions')
+      v-toolbar-title.text-subtitle-1(v-if='$refs.calendar') {{ $refs.calendar.title }}
+
+      v-menu(v-model='overflowMenu')
+        template(v-slot:activator='{ on, attrs }')
+          v-btn(icon v-bind='attrs' v-on='on')
+            v-icon mdi-dots-vertical
+        
+        v-list
+          v-list-item(@click="$refs.calendar.prev()")
+            v-list-item-icon
+              v-icon mdi-chevron-left
+            v-list-item-content
+              v-list-item-title Previous {{ view === 'month' ? 'month' : 'week' }}
+
+          v-list-item(@click="$refs.calendar.next()")
+            v-list-item-icon
+              v-icon mdi-chevron-right
+            v-list-item-content
+              v-list-item-title Next {{ view === 'month' ? 'month' : 'week' }}
+
+          v-menu
+            template(v-slot:activator='{ on, attrs }')
+              v-list-item(v-bind='attrs' v-on='on')
+                v-list-item-icon
+                  v-icon mdi-palette
+                v-list-item-content
+                  v-list-item-title Color by
+
+            v-list
+              v-list-item(@click="updateColorBy('contractor')")
+                v-list-item-content 
+                  v-list-item-title Contractor
+
+              v-list-item(@click="updateColorBy('job')")
+                v-list-item-content 
+                  v-list-item-title Job
+
+          v-menu
+            template(v-slot:activator='{ on, attrs }')
+              v-list-item(v-bind='attrs' v-on='on')
+                v-list-item-icon
+                  v-icon mdi-view-dashboard
+                v-list-item-content
+                  v-list-item-title Change view
+
+            v-list
+              v-list-item(
+                v-for="view in views"
+                @click="updateView(view)"
+              )
+                v-list-item-content 
+                  v-list-item-title {{ view | capitalize}}
+                  
+
+
 
   v-card.flex-1.d-flex.flex-column.flex-md-row.soft-shadow(outlined)
     //- View toggle options
@@ -366,9 +425,14 @@ export default class Schedule extends Vue {
   loading = false
   deletingShift = false
   value = ''
+  overflowMenu = false
 
   view = 'week'
-  views = ['month', 'week', 'day', '4day']
+  get views() {
+    const views = ['month', 'day', '4day']
+    if (this.$vuetify.breakpoint.smAndUp) views.splice(1, 0, 'week')
+    return views
+  }
 
   colorBy = 'job'
   colorByOptions = ['job', 'contractor']
@@ -481,10 +545,14 @@ export default class Schedule extends Vue {
   }
 
   updateColorBy(val: string) {
+    this.overflowMenu = false
+    if (this.colorBy !== val) this.colorBy = val
     localStorage.setItem('colorScheduleBy', val)
   }
 
   updateView(val: string) {
+    this.overflowMenu = false
+    if (this.view !== val) this.view = val
     localStorage.setItem('scheduleView', val)
   }
 
