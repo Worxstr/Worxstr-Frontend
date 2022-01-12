@@ -93,18 +93,59 @@ v-container.d-flex.flex-column.align-stretch(fluid)
 
             v-list
               v-list-item(
-                v-for="view in views"
+                v-for='view in views'
+                :key='view'
                 @click="updateView(view)"
               )
                 v-list-item-content 
                   v-list-item-title {{ view | capitalize}}
+          
+          v-menu(:close-on-content-click='false')
+            template(v-slot:activator='{ on, attrs }')
+              v-list-item(v-bind='attrs' v-on='on')
+                v-list-item-icon
+                  v-icon mdi-account-group
+                v-list-item-content
+                  v-list-item-title Toggle contractors
+
+            v-list
+              v-list-item(v-for='(user, index) in users' :key='user.id')
+                template(v-slot:default='{ active }')
+                  v-list-item-action
+                    v-checkbox(
+                      :input-value='active'
+                      v-model='activeUsers'
+                      :value='user.id'
+                      :color='user.additional_info.color'
+                    )
                   
+                  v-list-item-content
+                    v-list-item-title {{ user | fullName }}
+                  
+          v-menu(:close-on-content-click='false')
+            template(v-slot:activator='{ on, attrs }')
+              v-list-item(v-bind='attrs' v-on='on')
+                v-list-item-icon
+                  v-icon mdi-calendar-check
+                v-list-item-content
+                  v-list-item-title Toggle jobs
 
-
-
+            v-list
+              v-list-item(v-for='(job, index) in jobs' :key='job.id')
+                template(v-slot:default='{ active }')
+                  v-list-item-action
+                    v-checkbox(
+                      :input-value='active'
+                      v-model='activeJobs'
+                      :value='job.id'
+                      :color='job.color'
+                    )
+                  
+                  v-list-item-content {{ job.name }}
+                  
   v-card.flex-1.d-flex.flex-column.flex-md-row.soft-shadow(outlined)
     //- View toggle options
-    div(v-if='userIsManager')
+    div(v-if='userIsManager && $vuetify.breakpoint.smAndUp')
       v-list.pr-4
         v-subheader Contractors
         v-list-item(v-for='(user, index) in users' :key='user.id')
