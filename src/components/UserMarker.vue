@@ -3,8 +3,8 @@
 
   GmapCircle(
     v-if='markerAccuracy'
-    :center='markerLocation'
-    :radius='markerAccuracy || 75'
+    :center='gmapMarker(markerLocation)'
+    :radius='markerAccuracy'
     :options="{fillColor: markerColor, fillOpacity: .15, strokeColor: 'TRANSPARENT'}"
   )
 
@@ -96,6 +96,7 @@ export default class UserMarker extends Vue {
   }
 
   gmapMarker(position: Position) {
+    if (position.lat && position.lng) return position
     if (!position.latitude || !position.longitude) return null
     return {
       lat: position.latitude,
