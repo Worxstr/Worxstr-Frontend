@@ -15,7 +15,7 @@ function onSuccess(name: string, callback: (loading: boolean) => void) {
     const accountId = metadata.accounts[0].id
 
     const accessToken = await addPlaidFundingSource(store, {
-      name,
+      accountName: name,
       publicToken: public_token,
       accountId
     })

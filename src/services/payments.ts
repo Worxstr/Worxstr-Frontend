@@ -92,8 +92,31 @@ export async function loadFundingSources({ commit }: any) {
   return data
 }
 
-export async function addPlaidFundingSource({ commit }: any, { name, publicToken, accountId }: {
-  name: string
+export async function addFundingSource({ commit }: any, { accountName, routingNumber, accountNumber, accountType }: {
+  accountName: string
+  routingNumber: string
+  accountNumber: string
+  accountType: 'checking' | 'savings'
+}) {
+  const { data } = await api({
+    method: 'POST',
+    url: 'payments/accounts',
+    data: {
+      name: accountName,
+      routing_number: routingNumber,
+      account_number: accountNumber,
+      account_type: accountType,
+    },
+  })
+  commit('ADD_FUNDING_SOURCE', data)
+  commit('SHOW_SNACKBAR', {
+    text: 'Deposit transfer initiated. Check your online banking in 2-3 business days to verify this deposit.'
+  })
+  return data
+}
+
+export async function addPlaidFundingSource({ commit }: any, { accountName, publicToken, accountId }: {
+  accountName: string
   publicToken: string
   accountId: string
 }) {
@@ -101,9 +124,27 @@ export async function addPlaidFundingSource({ commit }: any, { name, publicToken
     method: 'POST',
     url: 'payments/accounts',
     data: {
-      name,
+      name: accountName,
       public_token: publicToken,
       account_id: accountId,
+    },
+  })
+  commit('ADD_FUNDING_SOURCE', data)
+  return data
+}
+
+export async function verifyFundingSource({ commit }: any, { fundingSourceUrl, amount1, amount2 }: {
+  fundingSourceUrl: string
+  amount1: number
+  amount2: number
+}) {
+  const { data } = await api({
+    method: 'PUT',
+    url: 'payments/accounts/verify',
+    data: {
+      funding_source: fundingSourceUrl,
+      amount1: amount1.toFixed(2),
+      amount2: amount2.toFixed(2),
     },
   })
   commit('ADD_FUNDING_SOURCE', data)
