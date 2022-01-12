@@ -200,7 +200,6 @@ import ShiftList from '@/components/ShiftList.vue'
 import { currentUserIs, UserRole, Managers } from '@/types/Users'
 import { Job } from '@/types/Jobs'
 import { loadJob, refreshClockInCode } from '@/services/jobs'
-import * as geolocation from '@/services/geolocation'
 
 @Component({
   components: {
@@ -237,7 +236,6 @@ export default class JobView extends Vue {
     } finally {
       this.loading = false
     }
-    await geolocation.init(this.$store)
   }
 
   get job(): Job {
