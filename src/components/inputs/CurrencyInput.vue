@@ -5,7 +5,7 @@
     @keydown='keydown'
     @focus='focus'
     :value='rawValue'
-    :rules='rules'
+    :rules='allRules'
     ref='input'
     prefix='$'
 
@@ -39,8 +39,14 @@ export default class CurrencyInput extends Vue {
   @Prop({ default: false }) readonly autofocus!: boolean
   @Prop({ default: false }) readonly outlined!: boolean
   @Prop({ default: false }) readonly disabled!: boolean
+  @Prop({ type: Array }) readonly rules?: any[]
 
-  rules = [currency]
+  get allRules() {
+    return this.rules ? [
+      ...this.rules,
+      currency,
+    ] : [currency]
+  }
 
   mounted() {
     if (typeof(this.value) === 'string')
