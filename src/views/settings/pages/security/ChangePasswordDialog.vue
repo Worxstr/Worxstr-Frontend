@@ -84,7 +84,9 @@ export default {
     },
     async updatePassword() {
       this.loading = true
+      console.log('resetting')
       try {
+        console.log("update password", this.password)
         await updatePassword(this.$store, this.password)
         showToast(this.$store, { text: "Password changed" })
         this.closeDialog()

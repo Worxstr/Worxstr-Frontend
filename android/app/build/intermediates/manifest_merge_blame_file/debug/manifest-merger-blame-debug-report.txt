@@ -1,8 +1,8 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.worxstr.worxstr"
-4    android:versionCode="16"
-5    android:versionName="0.3.1" >
+4    android:versionCode="17"
+5    android:versionName="0.3.2" >
 6
 7    <uses-sdk
 8        android:minSdkVersion="21"
@@ -243,27 +243,27 @@
 134            </intent-filter>
 135        </receiver>
 136
-137        <activity
-137-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\owner\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:23:9-26:75
-138            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-138-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\owner\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:24:13-79
-139            android:exported="false"
-139-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\owner\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:25:13-37
-140            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-140-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\owner\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:26:13-72
-141
-142        <provider
-142-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:26:9-31:39
-143            android:name="com.google.firebase.provider.FirebaseInitProvider"
-143-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:27:13-77
-144            android:authorities="com.worxstr.worxstr.firebaseinitprovider"
-144-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:28:13-72
-145            android:directBootAware="true"
-145-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:29:13-43
+137        <provider
+137-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:26:9-31:39
+138            android:name="com.google.firebase.provider.FirebaseInitProvider"
+138-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:27:13-77
+139            android:authorities="com.worxstr.worxstr.firebaseinitprovider"
+139-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:28:13-72
+140            android:directBootAware="true"
+140-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:29:13-43
+141            android:exported="false"
+141-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:30:13-37
+142            android:initOrder="100" />
+142-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:31:13-36
+143
+144        <activity
+144-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\owner\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:23:9-26:75
+145            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+145-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\owner\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:24:13-79
 146            android:exported="false"
-146-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:30:13-37
-147            android:initOrder="100" />
-147-->[com.google.firebase:firebase-common:19.5.0] C:\Users\owner\.gradle\caches\transforms-3\8c5c1e58ac9682e1fa2b1a5ce3b09a10\transformed\jetified-firebase-common-19.5.0\AndroidManifest.xml:31:13-36
+146-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\owner\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:25:13-37
+147            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+147-->[com.google.android.gms:play-services-base:17.3.0] C:\Users\owner\.gradle\caches\transforms-3\354c22f19628f6c7e8c77a34223aa7df\transformed\jetified-play-services-base-17.3.0\AndroidManifest.xml:26:13-72
 148
 149        <meta-data
 149-->[com.google.android.gms:play-services-basement:17.3.0] C:\Users\owner\.gradle\caches\transforms-3\8cef994e40aba8317bcfae94feb73e12\transformed\jetified-play-services-basement-17.3.0\AndroidManifest.xml:23:9-25:69
