@@ -73,7 +73,6 @@ export default class RetryVerificationDialog extends Vue {
   }
 
   contractorFormUpdate(form: any) {
-    console.log('managerFormUpdate', form)
     this.form = form
   }
 

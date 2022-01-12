@@ -211,7 +211,6 @@ export default class RecurringDateInput extends Vue {
 
   @Watch('time')
   timeChanged(time: any) {
-    console.log(time)
     if (time) {
       this.autoChangeEndTime = false
       this.start = formatDate(time.start)

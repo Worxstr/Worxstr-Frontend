@@ -66,7 +66,6 @@ export default class EditDefaultWageDialog extends Vue {
   @Watch('opened')
   onOpened(opened: boolean) {
     this.form.defaultWage = this.organization.minimum_wage
-    console.log('opened')
   }
 
   closeDialog() {

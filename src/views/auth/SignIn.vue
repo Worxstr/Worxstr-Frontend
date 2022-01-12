@@ -110,8 +110,6 @@ export default class SignIn extends Vue {
       if (!password) password = this.form.password
       if (rememberMe === undefined) rememberMe = this.form.rememberMe
 
-      console.log(email, password, rememberMe)
-
       const data = await signIn(this.$store, email, password, rememberMe)
 
       // TODO: Find better way to determine login success
