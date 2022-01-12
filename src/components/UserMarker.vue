@@ -10,12 +10,14 @@
 
   GmapCustomMarker(
     :marker='markerLocation'
+    :class="{'on-top': hover}"
   )
     .marker-dot(
       @mouseenter='hover = true'
       :style='`background: ${markerColor}`'
       :class="{'solid-ring': isDeviceLocation}"
     )
+
     v-scale-transition
       //- Container for scale transition
       div(v-show='hover')
@@ -95,7 +97,7 @@ export default class UserMarker extends Vue {
     return '#4285f4'
   }
 
-  gmapMarker(position: Position) {
+  gmapMarker(position: any) {
     if (position.lat && position.lng) return position
     if (!position.latitude || !position.longitude) return null
     return {
@@ -140,9 +142,14 @@ $userMarkerWidth: 18px;
   white-space: nowrap;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1000;
 
   .text-caption {
     line-height: 1rem !important;
   }
+}
+
+.on-top {
+  z-index: 51 !important;
 }
 </style>
