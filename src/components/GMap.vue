@@ -30,7 +30,9 @@ GmapMap.gmap(
       :position="gmapMarker(job)"
       :options="{icon: marker(job.color)}"
       :clickable='true'
+      :draggable='jobsDraggable'
       @click='toggleInfoWindow(job, i)'
+      @dragend='jobMoved($event, job, i)'
     )
   //- Info window for jobs
   GmapInfoWindow(
@@ -92,7 +94,7 @@ export default class GMap extends Vue {
   @Prop({ default: () => [] }) readonly users!: User[]
   @Prop({ default: '40vh' }) height!: string
   @Prop({ default: false }) showDeviceLocation!: boolean
-
+  @Prop({ default: false }) jobsDraggable!: boolean
 
   defaultPosition: LatLng = {
     lat: 0,
@@ -146,6 +148,13 @@ export default class GMap extends Vue {
       lat: position.latitude,
       lng: position.longitude,
     }
+  }
+
+  jobMoved({ latLng }: any, job: Job, i: number) {
+    this.$emit('jobMoved', { job, index: i, position: {
+      latitude: latLng.lat(),
+      longitude: latLng.lng(),
+    } })
   }
 
   fullName(user: User) {
