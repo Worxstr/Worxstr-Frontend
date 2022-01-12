@@ -18,7 +18,7 @@ div.pa-2
           v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
           span(v-if='$vuetify.breakpoint.smAndUp') New
       
-  v-card.messages.pa-0.d-flex.flex-row.fill-height.align-start.soft-shadow
+  v-card.messages.pa-0.d-flex.flex-row.fill-height.align-start.soft-shadow(outlined)
     div(
       v-if="$route.name == 'messages' || $vuetify.breakpoint.mdAndUp",
       :style="`width: ${$route.name == 'conversation' ? '35%' : '100%'}; height: 100%`",

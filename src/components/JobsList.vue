@@ -34,7 +34,7 @@
             @click.stop='openCloseJobDialog(job)'
             data-cy='close-job-button'
           )
-            v-icon mdi-delete
+            v-icon mdi-close
 
         v-list-item-action.ml-0
           v-btn(
