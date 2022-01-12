@@ -31,8 +31,6 @@ function sendGtagEvent(config: any) {
 
 function getErrorMessage(error: any): string {
 
-  console.log(error)
-
   const res = error?.response?.data
 
   if (res?.message) {

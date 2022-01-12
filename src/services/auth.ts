@@ -161,8 +161,6 @@ export async function resetPassword(
     router.push({
       name: defaultRoute(),
     })
-  } else {
-    console.log(response)
   }
 }
 
@@ -195,12 +193,12 @@ export async function resendEmailConfirmation({ commit }: any, email: string) {
 }
 
 export async function updatePassword(
-  { commit, state }: any,
+  { commit, getters }: any,
   newPassword: string
 ) {
   sandboxMode.toggle(
     { commit },
-    shouldUseSandbox(state.getters.me(usersStore.state).email)
+    shouldUseSandbox(getters.me.email)
   )
 
   const { data } = await api({

@@ -12,7 +12,7 @@ v-container
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-account-plus
       span(v-if='!$vuetify.breakpoint.xs') Add manager
 
-  v-card.soft-shadow
+  v-card.soft-shadow(outlined)
     v-data-table(
       :headers="headers",
       :items="workforce",

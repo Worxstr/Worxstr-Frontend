@@ -22,11 +22,6 @@ export default class RichtextField extends Vue {
 
   @Prop({ type: String, required: true }) readonly value?: string
 
-  @Watch('placeholder')
-  onPlaceholderChanged(newValue: string) {
-    console.log(newValue)
-  }
-
   input(value: string) {
     this.$emit('input', value)
   }

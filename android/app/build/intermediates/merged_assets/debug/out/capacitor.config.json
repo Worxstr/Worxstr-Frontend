@@ -19,6 +19,12 @@
 	},
 	"cordova": {},
 	"server": {
+<<<<<<< HEAD
 		"hostname": "worxstr.com"
+=======
+		"hostname": "worxstr.com",
+		"url": "http://192.168.86.27:8080",
+		"cleartext": true
+>>>>>>> f12db052ced593bcd05810727c1855302dcc3074
 	}
 }
