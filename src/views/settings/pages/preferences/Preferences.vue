@@ -74,7 +74,6 @@ export default class Preferences extends Vue {
   async mounted() {
     if (!Capacitor.isNativePlatform()) return
     const { receive } = await PushNotifications.checkPermissions()
-    console.log(receive)
     this.permissionStatus = receive
   }
 

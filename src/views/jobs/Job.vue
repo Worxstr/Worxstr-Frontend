@@ -105,7 +105,7 @@ div(v-else)
               clipboard-copy(:text='job.consultant_code')
 
               v-progress-circular.mx-2(indeterminate size='21' color='primary' v-if='refreshingClockInCode')
-              v-tooltip(v-else bottom)
+              v-tooltip(v-else-if='userIsManager' bottom)
                 span Refresh code
                 template(v-slot:activator='{ on, attrs }')
                   v-btn(

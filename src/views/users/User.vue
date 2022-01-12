@@ -31,48 +31,50 @@
 				span(v-if='!$vuetify.breakpoint.xs') Delete
 
 		v-container.d-flex.flex-column.justify-center
-			.py-5.px-4
-				h4.text-h4 {{ user | fullName }}
-				h6.text-h6
-					a(:href='`mailto:${user.email}`' target="_blank") {{ user.email }}
-				h6.text-h6
-					a(:href='`sms:${user.phone}`' target="_blank") {{ user.phone | phone }}
+			v-card.soft-shadow(outlined)
+				.py-5.px-4
+					h4.text-h4 {{ user | fullName }}
+					h6.text-h6
+						a(:href='`mailto:${user.email}`' target="_blank") {{ user.email }}
+					h6.text-h6
+						a(:href='`sms:${user.phone}`' target="_blank") {{ user.phone | phone }}
 
-				roles.mt-3(:roles='user.roles')
+					roles.mt-3(:roles='user.roles')
 
-			v-list(color='transparent')
-				v-list-item(v-if='user.manager_id')
-					v-list-item-content
-						v-list-item-subtitle Manager
-						v-list-item-title {{ user.manager_id }}
+				v-list.pb-0(color='transparent')
+					v-list-item(v-if='user.manager_id')
+						v-list-item-content
+							v-list-item-subtitle Manager
+							v-list-item-title {{ user.manager_id }}
 
-				v-list-item(v-if='user.manager_info')
-					v-list-item-content
-						v-list-item-subtitle Manager reference number
-						v-list-item-title {{ user.manager_info.reference_number }}
-					v-list-item-action
-						clipboard-copy(:text='user.manager_info.reference_number')
+					v-list-item(v-if='user.manager_info')
+						v-list-item-content
+							v-list-item-subtitle Manager reference number
+							v-list-item-title {{ user.manager_info.reference_number }}
+						v-list-item-action
+							clipboard-copy(:text='user.manager_info.reference_number')
+					
+					div(v-if='user.contractor_info')
+						v-list-item
+							v-list-item-content
+								v-list-item-subtitle Hourly wage
+								v-list-item-title {{ user.contractor_info.hourly_rate | currency }} / hour
+
+					div(v-if='user.additional_info')
+						v-list-item
+							v-list-item-content
+								v-list-item-subtitle Assigned color
+								v-list-item-title
+									v-badge.soft-shadow.ml-1.mr-5(:color="user.additional_info.color || '#4285f4'" bordered)
+									span {{ user.additional_info.color }}
 				
-				div(v-if='user.contractor_info')
-					v-list-item
-						v-list-item-content
-							v-list-item-subtitle Hourly wage
-							v-list-item-title {{ user.contractor_info.hourly_rate | currency }} / hour
-
-				div(v-if='user.additional_info')
-					v-list-item
-						v-list-item-content
-							v-list-item-subtitle Assigned color
-							v-list-item-title
-								v-badge.soft-shadow.ml-1.mr-5(:color="user.additional_info.color || '#4285f4'" bordered)
-								span {{ user.additional_info.color }}
-			
-				v-list-item(v-if='user.location')
-					v-list-item-content
-						v-list-item-subtitle Location
-						v-list-item-title
-							v-card.soft-shadow
-								g-map(:users='[user]')
+					v-list-item.px-0(v-if='user.location')
+						v-list-item-content.pb-0
+							v-list-item-subtitle.px-4 Location
+							v-list-item-title.px-4 Updated {{ user.location.timestamp | timeAgo }}, {{ user.location.timestamp | time }}
+							v-list-item-title.mt-4
+								v-card.soft-shadow
+									g-map(:users='[user]')
 
 </template>
 

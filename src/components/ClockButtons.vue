@@ -87,7 +87,6 @@ export default class ClockButtons extends Vue {
   async clockOut(forceOut = false) {
     this.togglingClock = true
     
-    console.log(this.shift.tasks)
     const allTasksCompleted = this.shift.tasks.reduce((acc, task) => {
       return acc && task.complete
     }, true)
@@ -107,7 +106,6 @@ export default class ClockButtons extends Vue {
   }
 
   async toggleBreak() {
-    console.log(this.shift.id)
     this.togglingBreak = true
     await shifts.toggleBreak(this.$store, this.shift.id, !this.onBreak)
     this.togglingBreak = false

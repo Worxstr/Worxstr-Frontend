@@ -161,8 +161,6 @@ export async function resetPassword(
     router.push({
       name: defaultRoute(),
     })
-  } else {
-    console.log(response)
   }
 }
 

@@ -14,13 +14,13 @@ div
           v-window.pt-2(v-model='step' touchless :style="step == 1 && 'padding-bottom: 20px'")
 
             v-window-item(:value='0')
-              .pa-1.d-flex.flex-column.flex-sm-row.justify-center
-                v-btn.pa-6(text @click="accountType = 'contractor'; step++")
-                  v-icon mdi-account
+              .pa-1.d-flex.flex-column.flex-sm-row.justify-center.gap-small
+                v-btn.pa-6(text outlined @click="accountType = 'contractor'; step++")
+                  v-icon(color='primary') mdi-account
                   span.ml-3.text-h6 I'm a contractor
 
-                v-btn.pa-6(text :to="{ name: 'pricing' }")
-                  v-icon mdi-domain
+                v-btn.pa-6(text outlined :to="{ name: 'pricing' }")
+                  v-icon(color='primary') mdi-domain
                   span.ml-3.text-h6 I have a business
 
             v-window-item(:value='1' :style='$vuetify.breakpoint.xs && `min-height: calc(80vh - 70px)`')

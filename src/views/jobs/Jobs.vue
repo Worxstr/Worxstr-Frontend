@@ -26,7 +26,7 @@ div
 
   v-container.approvals(v-else)
         
-    v-card.mb-3.d-flex.flex-column.soft-shadow
+    v-card.mb-3.d-flex.flex-column.soft-shadow(outlined)
       g-map(:jobs='allJobs')
       jobs-list(:jobs='directJobs')
 
@@ -34,7 +34,7 @@ div
       v-toolbar(flat, color="transparent")
         v-toolbar-title.text-h6 Other jobs
 
-      v-card.soft-shadow
+      v-card.soft-shadow(outlined)
         jobs-list(:jobs='indirectJobs')
 </template>
 
