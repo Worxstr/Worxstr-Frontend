@@ -104,6 +104,19 @@ div(v-else)
 
               clipboard-copy(:text='job.consultant_code')
 
+              v-progress-circular.mx-2(indeterminate size='21' color='primary' v-if='refreshingClockInCode')
+              v-tooltip(v-else bottom)
+                span Refresh code
+                template(v-slot:activator='{ on, attrs }')
+                  v-btn(
+                    icon
+                    color='primary'
+                    v-bind='attrs'
+                    v-on='on'
+                    @click='refreshClockInCode'
+                  )
+                    v-icon mdi-refresh
+
         //- Job notes
         v-card-text(v-if='job.notes')
           p.text-subtitle-2.mb-2 Notes
@@ -186,7 +199,7 @@ import ShiftList from '@/components/ShiftList.vue'
 
 import { currentUserIs, UserRole, Managers } from '@/types/Users'
 import { Job } from '@/types/Jobs'
-import { loadJob } from '@/services/jobs'
+import { loadJob, refreshClockInCode } from '@/services/jobs'
 import * as geolocation from '@/services/geolocation'
 
 @Component({
@@ -208,6 +221,7 @@ export default class JobView extends Vue {
   closeJobDialog = false
   createShiftDialog = false
   qrCodeDialog = false
+  refreshingClockInCode = false
   shifts = []
 
   metaInfo() {
@@ -250,6 +264,16 @@ export default class JobView extends Vue {
     const position = this.userLocation && `${this.userLocation.lat},${this.userLocation.lng}`
     const address = `${this.job.address}, ${this.job.city}, ${this.job.state} ${this.job.zip_code}`
     return `https://www.google.com/maps/dir/?api=1${position ? `&origin=${position}` : ''}&destination=${address}`
+  }
+
+  async refreshClockInCode() {
+    this.refreshingClockInCode = true
+    try {
+      await refreshClockInCode(this.$store, this.job.id)
+    }
+    finally {
+      this.refreshingClockInCode = false
+    }
   }
 }
 </script>
