@@ -98,7 +98,7 @@ export async function closeJob({ commit }: any, jobId: number) {
   commit('REMOVE_JOB', jobId)
 }
 
-export async function refreshClockInCode({ commit }, jobId: number) {
+export async function refreshClockInCode({ commit }: any, jobId: number) {
   const { data } = await api({
     method: 'PUT',
     url: `jobs/${jobId}/code`,
