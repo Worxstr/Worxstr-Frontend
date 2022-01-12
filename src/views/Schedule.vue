@@ -215,29 +215,31 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         style='max-width: 600px'
       )
         v-list(dense v-if='ctxMenu.event')
-          v-list-item(
-            @click='duplicateEvent(ctxMenu.event)'
-          )
-            v-list-item-icon.mr-2
-              v-icon(small) mdi-content-copy
-            v-list-item-title Duplicate shift
+        
+          div(v-if='userIsManager')
+            v-list-item(
+              @click='duplicateEvent(ctxMenu.event)'
+            )
+              v-list-item-icon.mr-2
+                v-icon(small color='primary') mdi-content-copy
+              v-list-item-title Duplicate shift
 
-          v-list-item(
-            @click='editShift(ctxMenu.event)'
-          )
-            v-list-item-icon.mr-2
-              v-icon(small) mdi-pencil
-            v-list-item-title Edit shift
-          
-          v-list-item(
-            v-if='ctxMenu.event && ctxMenu.event.clock_history.length === 0'
-            @click='deleteShift(ctxMenu.event)'
-          )
-            v-list-item-icon.mr-2
-              v-icon(small) mdi-delete
-            v-list-item-title Delete shift
+            v-list-item(
+              @click='editShift(ctxMenu.event)'
+            )
+              v-list-item-icon.mr-2
+                v-icon(small color='primary') mdi-pencil
+              v-list-item-title Edit shift
             
-          v-divider
+            v-list-item(
+              v-if='ctxMenu.event && ctxMenu.event.clock_history.length === 0'
+              @click='deleteShift(ctxMenu.event)'
+            )
+              v-list-item-icon.mr-2
+                v-icon(small color='error') mdi-delete
+              v-list-item-title Delete shift
+              
+            v-divider
 
           v-list-item(
             exact
@@ -318,8 +320,11 @@ export default class Schedule extends Vue {
         end: this.virtualEvent?.end,
       }
 
-      this.createShiftDialog = true
+      if (this.userIsManager)
+        this.createShiftDialog = true
+
       this.cancelDrag()
+
       return
     }
 
@@ -396,7 +401,8 @@ export default class Schedule extends Vue {
         start: this.virtualEvent?.start,
         end: this.virtualEvent?.end,
       }
-      this.createShiftDialog = true
+      if (this.userIsManager)
+        this.createShiftDialog = true
       this.virtualEvent = null
       this.cancelDrag()
     }
@@ -415,7 +421,8 @@ export default class Schedule extends Vue {
             time_end: this.virtualEvent.end,
           }
           this.cancelDrag()
-          await updateShift(this.$store, newShift)
+          if (this.userIsManager)
+            await updateShift(this.$store, newShift)
         }
         catch {
           // If update fails, revert the event
