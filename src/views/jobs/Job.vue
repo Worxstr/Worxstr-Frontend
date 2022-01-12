@@ -12,8 +12,8 @@ v-container(v-if="loading && !job")
 div(v-else)
 
   v-container.approvals.mb-16(v-if="job")
-    edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
-    close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
+    edit-job-dialog(:opened.sync="editJobDialog" :job.sync="job")
+    close-job-dialog(:opened.sync="closeJobDialog" :job.sync="job")
     edit-shift-dialog(
       :opened.sync='createShiftDialog',
       :contractors='job.contractors'
@@ -31,6 +31,7 @@ div(v-else)
         :icon='$vuetify.breakpoint.xs'
         color='primary'
         @click="editJobDialog = true"
+        :disabled='!job.id'
         data-cy='edit-job-button'
       )
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
@@ -42,6 +43,7 @@ div(v-else)
         :icon='$vuetify.breakpoint.xs'
         color="error"
         @click="closeJobDialog = true"
+        :disabled='!job.id'
         data-cy='close-job-button'
       ) 
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
@@ -170,6 +172,7 @@ div(v-else)
         text
         color='primary'
         @click='createShiftDialog = true'
+        :disabled='!job.id'
         data-cy='assign-shift-button'
       )
         v-icon(left) mdi-clipboard-plus-outline
