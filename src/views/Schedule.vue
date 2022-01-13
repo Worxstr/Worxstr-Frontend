@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container.d-flex.flex-column.align-stretch(fluid)
+v-container.schedule.d-flex.flex-column.align-stretch(fluid)
   edit-shift-dialog(
     :opened.sync='createShiftDialog'
     :time.sync='newEventTime'
@@ -10,8 +10,10 @@ v-container.d-flex.flex-column.align-stretch(fluid)
     :editing='true'
   )
 
-  div(v-if='$vuetify.breakpoint.smAndUp')
+  div(v-if='$vuetify.breakpoint.mdAndUp')
     portal(to='toolbarTitle')
+      v-btn.ml-2(text outlined color='primary' @click='changeDay(new Date())') Today
+
       v-btn.ma-2(icon small @click="$refs.calendar.prev()")
         v-icon mdi-chevron-left
 
@@ -46,7 +48,10 @@ v-container.d-flex.flex-column.align-stretch(fluid)
       )
   
   div(v-else) 
+
     portal(to='toolbarActions')
+      v-btn.mr-4(text outlined color='primary' @click='changeDay(new Date())') Today
+
       v-toolbar-title.text-subtitle-1(v-if='$refs.calendar') {{ $refs.calendar.title }}
 
       v-menu(v-model='overflowMenu')
@@ -67,7 +72,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
             v-list-item-content
               v-list-item-title Next {{ view === 'month' ? 'month' : 'week' }}
 
-          v-menu
+          v-menu(v-if='userIsManager')
             template(v-slot:activator='{ on, attrs }')
               v-list-item(v-bind='attrs' v-on='on')
                 v-list-item-icon
@@ -101,7 +106,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
                 v-list-item-content 
                   v-list-item-title {{ views[view].text }}
           
-          v-menu(:close-on-content-click='false')
+          v-menu(:close-on-content-click='false' v-if='userIsManager')
             template(v-slot:activator='{ on, attrs }')
               v-list-item(v-bind='attrs' v-on='on')
                 v-list-item-icon
@@ -123,7 +128,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
                   v-list-item-content
                     v-list-item-title {{ user | fullName }}
                   
-          v-menu(:close-on-content-click='false')
+          v-menu(:close-on-content-click='false' v-if='userIsManager')
             template(v-slot:activator='{ on, attrs }')
               v-list-item(v-bind='attrs' v-on='on')
                 v-list-item-icon
@@ -146,38 +151,49 @@ v-container.d-flex.flex-column.align-stretch(fluid)
                   
   v-card.flex-1.d-flex.flex-column.flex-md-row.soft-shadow(outlined)
     //- View toggle options
-    div(v-if='userIsManager && $vuetify.breakpoint.smAndUp')
-      v-list.pr-4
-        v-subheader Contractors
-        v-list-item(v-for='(user, index) in users' :key='user.id')
-          template(v-slot:default='{ active }')
-            v-list-item-action
-              v-checkbox(
-                :input-value='active'
-                v-model='activeUsers'
-                :value='user.id'
-                :color='user.additional_info.color'
-              )
-            
-            v-list-item-content
-              v-list-item-title
-                router-link.alt-style(:to="{ name: 'user', params: { userId: user.id } }")
-                  | {{ user | fullName }}
-      
-        v-subheader Jobs
-        v-list-item(v-for='(job, index) in jobs' :key='job.id')
-          template(v-slot:default='{ active }')
-            v-list-item-action
-              v-checkbox(
-                :input-value='active'
-                v-model='activeJobs'
-                :value='job.id'
-                :color='job.color'
-              )
-            
-            v-list-item-content
-                router-link.alt-style(:to="{ name: 'job', params: { jobId: job.id } }")
-                  | {{ job.name }}
+    div(v-if='userIsManager && $vuetify.breakpoint.mdAndUp')
+      v-list.pt-0
+
+        v-date-picker.mr-0(
+          v-model='datePicker'
+          color='primary'
+          show-adjacent-months
+          :events='calendarEvents'
+          no-title
+          @change='changeDay'
+        )
+
+        .pr-4
+          v-subheader Contractors
+          v-list-item(v-for='(user, index) in users' :key='user.id')
+            template(v-slot:default='{ active }')
+              v-list-item-action
+                v-checkbox(
+                  :input-value='active'
+                  v-model='activeUsers'
+                  :value='user.id'
+                  :color='user.additional_info.color'
+                )
+              
+              v-list-item-content
+                v-list-item-title
+                  router-link.alt-style(:to="{ name: 'user', params: { userId: user.id } }")
+                    | {{ user | fullName }}
+        
+          v-subheader Jobs
+          v-list-item(v-for='(job, index) in jobs' :key='job.id')
+            template(v-slot:default='{ active }')
+              v-list-item-action
+                v-checkbox(
+                  :input-value='active'
+                  v-model='activeJobs'
+                  :value='job.id'
+                  :color='job.color'
+                )
+              
+              v-list-item-content
+                  router-link.alt-style(:to="{ name: 'job', params: { jobId: job.id } }")
+                    | {{ job.name }}
   
     //- Calendar
     .flex-1(style='position: relative')
@@ -479,13 +495,17 @@ export default class Schedule extends Vue {
   createShiftDialog = false
   editShiftDialog = false
   selectedShift: Shift | null = null
+  datePicker: any = null
 
   loading = false
   ready = false
   deletingShift = false
   value = ''
   overflowMenu = false
-  
+
+  changeDay(date: string | Date) {
+    this.value = dayjs(date).format('YYYY-MM-DD')
+  }
 
   view = 'week'
   get views() {
@@ -532,7 +552,6 @@ export default class Schedule extends Vue {
   }
 
   get nowY() {
-    console.log(this.cal)
     return this.cal ? this.cal.timeToY(this.cal.times.now) + 'px' : '-10px'
   }
 
@@ -685,63 +704,71 @@ export default class Schedule extends Vue {
 
 
 <style lang="scss">
-.v-event-draggable {
-  padding-left: 6px;
-}
+.schedule {
 
-.v-event-timed {
-  user-select: none;
-  -webkit-user-select: none;
-}
+  .v-picker__body {
+    background-color: transparent !important;
+  }
+    
+  .v-event-draggable {
+    padding-left: 6px;
+  }
 
-.v-event-drag-bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 4px;
-  height: 4px;
-  cursor: ns-resize;
+  .v-event-timed {
+    user-select: none;
+    -webkit-user-select: none;
+  }
 
-  &::after {
-    display: none;
+  .v-event-drag-bottom {
     position: absolute;
-    left: 50%;
+    left: 0;
+    right: 0;
+    bottom: 4px;
     height: 4px;
-    border-top: 1px solid white;
-    border-bottom: 1px solid white;
-    width: 16px;
-    margin-left: -8px;
-    opacity: 0.8;
-    content: '';
+    cursor: ns-resize;
+
+    &::after {
+      display: none;
+      position: absolute;
+      left: 50%;
+      height: 4px;
+      border-top: 1px solid white;
+      border-bottom: 1px solid white;
+      width: 16px;
+      margin-left: -8px;
+      opacity: 0.8;
+      content: '';
+    }
+
+    &:hover::after {
+      display: block;
+    }
   }
 
-  &:hover::after {
-    display: block;
-  }
-}
-
-.v-current-time {
-  height: 2px;
-  background-color: #ea4335;
-  position: absolute;
-  left: -1px;
-  right: 0;
-  pointer-events: none;
-
-  &::before {
-    content: '';
-    position: absolute;
+  .v-current-time {
+    height: 2px;
     background-color: #ea4335;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-top: -5px;
-    margin-left: -6.5px;
+    position: absolute;
+    left: -1px;
+    right: 0;
+    pointer-events: none;
+
+    &::before {
+      content: '';
+      position: absolute;
+      background-color: #ea4335;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-top: -5px;
+      margin-left: -6.5px;
+    }
   }
-}
-.v-current-time, .v-current-time.first::before {
-  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
-              0px 2px 2px 0px rgb(0 0 0 / 14%),
-              0px 1px 5px 0px rgb(0 0 0 / 12%) !important;
+  .v-current-time, .v-current-time.first::before {
+    box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+                0px 2px 2px 0px rgb(0 0 0 / 14%),
+                0px 1px 5px 0px rgb(0 0 0 / 12%) !important;
+  }
+
 }
 </style>
