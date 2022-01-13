@@ -12,7 +12,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
 
   div(v-if='$vuetify.breakpoint.mdAndUp')
     portal(to='toolbarTitle')
-      v-btn.ml-2(text outlined color='primary' @click='changeDay(new Date())') Today
+      v-btn.ml-2(text outlined color='primary' @click='setToToday') Today
 
       v-btn.ma-2(icon small @click="$refs.calendar.prev()")
         v-icon mdi-chevron-left
@@ -50,7 +50,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
   div(v-else) 
 
     portal(to='toolbarActions')
-      v-btn.mr-4(text outlined color='primary' @click='changeDay(new Date())') Today
+      v-btn.mr-4(text outlined color='primary' @click='setToToday') Today
 
       v-toolbar-title.text-subtitle-1(v-if='$refs.calendar') {{ $refs.calendar.title }}
 
@@ -155,12 +155,10 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
       v-list.pt-0
 
         v-date-picker.mr-0(
-          v-model='datePicker'
+          v-model='value'
           color='primary'
           show-adjacent-months
-          :events='calendarEvents'
           no-title
-          @change='changeDay'
         )
 
         .pr-4
@@ -503,8 +501,8 @@ export default class Schedule extends Vue {
   value = ''
   overflowMenu = false
 
-  changeDay(date: string | Date) {
-    this.value = dayjs(date).format('YYYY-MM-DD')
+  setToToday() {
+    this.value = dayjs(new Date()).format('YYYY-MM-DD')
   }
 
   view = 'week'
