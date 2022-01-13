@@ -40,12 +40,12 @@ div
           
             //- span(v-if='!userIsManager') {Job name} &bull; {n} tasks
 
-        v-list-item-action(v-if='userIsManager || i != 0')
+        v-list-item-action(v-if='$vuetify.breakpoint.mdAndUp || userIsManager || !shiftIsActive(shift)')
           .d-flex.flex-column.align-end
             .text-body-2.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
             .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
-        v-list-item-action(v-if='!userIsManager && shiftIsActive(shift)')
+        v-list-item-action.ml-4(v-if='!userIsManager && shiftIsActive(shift)')
           clock-buttons(:shift='shift')
 
         v-list-item-action.ml-3(v-if='userIsManager')

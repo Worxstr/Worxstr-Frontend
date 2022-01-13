@@ -28,7 +28,6 @@ import { Vue, Component } from 'vue-property-decorator'
 import ShiftList from '@/components/ShiftList.vue'
 import { getUpcomingShifts } from '@/services/shifts'
 import { Shift } from '@/types/Jobs'
-import { Socket } from 'vue-socket.io-extended'
 
 @Component({
   components: {
@@ -39,11 +38,6 @@ export default class UpcomingShiftList extends Vue {
   
   offset = 0
   loading = false
-
-  @Socket('ADD_SHIFT')
-  ADD_SHIFT(shift: Shift) {
-    console.log(shift)
-  }
 
   async mounted() {
     this.loadUpcomingShifts()

@@ -189,7 +189,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         style='position: absolute; height:100%; width: 100%'
         ref='calendar'
         v-model='value'
-        :type='views[view].value'
+        :type="views[view] ? views[view].value : 'week'"
         :events='calendarEvents'
         event-overlap-mode='stack'
         :event-overlap-threshold='30'
