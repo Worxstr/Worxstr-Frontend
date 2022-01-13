@@ -28,6 +28,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import ShiftList from '@/components/ShiftList.vue'
 import { getUpcomingShifts } from '@/services/shifts'
 import { Shift } from '@/types/Jobs'
+import { Socket } from 'vue-socket.io-extended'
 
 @Component({
   components: {
@@ -39,12 +40,18 @@ export default class UpcomingShiftList extends Vue {
   offset = 0
   loading = false
 
+  @Socket('ADD_SHIFT')
+  ADD_SHIFT(shift: Shift) {
+    console.log(shift)
+  }
+
   async mounted() {
     this.loadUpcomingShifts()
   }
 
   get upcomingShifts() {
     return this.$store.getters.upcomingShifts.filter((shift: Shift) => {
+      if (!shift) return false
       // TODO: Add some type of watcher for when a shift ends, and update this computed value.
       return (new Date(shift.time_end)) > (new Date())
     })

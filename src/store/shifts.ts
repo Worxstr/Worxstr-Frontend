@@ -71,7 +71,8 @@ const mutations = {
 
     // Remove shift id from the job
     // TODO:                                                                         // number
-    jobsStore.state.byId[jobId].shifts = jobsStore.state.byId[jobId].shifts?.filter((id: any) => id !== shiftId)
+    if (jobsStore.state.byId[jobId])
+      jobsStore.state.byId[jobId].shifts = jobsStore.state.byId[jobId].shifts?.filter((id: any) => id !== shiftId)
 
     Vue.delete(state.byId, shiftId)
     Vue.delete(
