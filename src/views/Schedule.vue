@@ -33,10 +33,11 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         @change='updateColorBy'
       )
 
+      //- // TODO: item-text prop doesn't work for some reason?
       v-select.ma-2.flex-grow-0(
         v-model='view'
-        :items='views'
-        :item-text='(t) => t.charAt(0).toUpperCase() + t.slice(1)'
+        :items='Object.keys(views)'
+        :item-text='(t) => views[view].text'
         dense
         outlined
         hide-details
@@ -93,12 +94,12 @@ v-container.d-flex.flex-column.align-stretch(fluid)
 
             v-list
               v-list-item(
-                v-for='view in views'
+                v-for='view in Object.keys(views)'
                 :key='view'
                 @click="updateView(view)"
               )
                 v-list-item-content 
-                  v-list-item-title {{ view | capitalize}}
+                  v-list-item-title {{ views[view].text }}
           
           v-menu(:close-on-content-click='false')
             template(v-slot:activator='{ on, attrs }')
@@ -188,11 +189,12 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         style='position: absolute; height:100%; width: 100%'
         ref='calendar'
         v-model='value'
-        :type='view'
+        :type='views[view].value'
         :events='calendarEvents'
         event-overlap-mode='stack'
         :event-overlap-threshold='30'
         :event-color='getEventColor'
+        :weekdays='weekdays'
         @change='getEvents'
         @mousedown:event='moveEventDragStart'
         @mousedown:time='createEventDragStart'
@@ -474,12 +476,45 @@ export default class Schedule extends Vue {
   deletingShift = false
   value = ''
   overflowMenu = false
+  
 
   view = 'week'
   get views() {
-    const views = ['month', 'day', '4day']
-    if (this.$vuetify.breakpoint.smAndUp) views.splice(1, 0, 'week')
+    const views: any = {
+      month: {
+        text: 'Month',
+        value: 'month',
+      },
+      day: {
+        text: 'Day',
+        value: 'day',
+      },
+      '4 day': {
+        text: '4 day',
+        value: '4day',
+      },
+      weekdays: {
+        text: 'Weekdays',
+        value: 'week',
+      },
+    }
+    if (this.$vuetify.breakpoint.smAndUp) {
+      views['week'] = {
+        text: 'Week',
+        value: 'week',
+      }
+    }
     return views
+  }
+
+  get currentView() {
+    return this.views[this.view]
+  }
+
+  get weekdays() {
+    return this.view === 'weekdays'
+      ? [1,2,3,4,5]
+      : [0,1,2,3,4,5,6]
   }
 
   colorBy = 'job'

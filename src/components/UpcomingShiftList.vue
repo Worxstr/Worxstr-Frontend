@@ -27,7 +27,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import ShiftList from '@/components/ShiftList.vue'
 import { getUpcomingShifts } from '@/services/shifts'
-import Shift from '@/types/Job'
+import { Shift } from '@/types/Jobs'
 
 @Component({
   components: {
