@@ -8,7 +8,7 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
 import usersStore from '@/store/users'
 import { socket } from '@/util/socket-io'
-import { hashColor } from '@/util/helpers'
+import * as geolocation from '@/services/geolocation'
 import { registerNotifications, unregisterNotifications } from '@/services/notifications'
 
 
@@ -120,6 +120,7 @@ export async function signOut({ state, commit }: any) {
   )
   
   unregisterNotifications()
+  geolocation.stop()
   await api({
     method: 'POST',
     url: `/auth/logout`,
