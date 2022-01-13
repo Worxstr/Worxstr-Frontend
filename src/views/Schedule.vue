@@ -207,6 +207,13 @@ v-container.d-flex.flex-column.align-stretch(fluid)
             div(v-html='eventSummary()' :class='`${textColor(event.color)}--text`')
 
           .v-event-drag-bottom(v-if='timed' @mousedown='extendBottom(event)')
+        
+        template(v-slot:day-body='{ date, week }')
+          .v-current-time(
+            v-if='isToday(date)'
+            :class='{ first: date === week[0].date }'
+            :style='{ top: nowY }'
+          )
       
       v-menu(
         v-model='ctxMenu.show'
@@ -267,6 +274,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Vue, Component } from 'vue-property-decorator'
+import dayjs from 'dayjs'
 
 import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 
@@ -473,6 +481,7 @@ export default class Schedule extends Vue {
   selectedShift: Shift | null = null
 
   loading = false
+  ready = false
   deletingShift = false
   value = ''
   overflowMenu = false
@@ -517,6 +526,21 @@ export default class Schedule extends Vue {
       : [0,1,2,3,4,5,6]
   }
 
+  // Functions used for current day marker
+  get cal() {
+    return this.ready ? (this.$refs.calendar as any) : null
+  }
+
+  get nowY() {
+    console.log(this.cal)
+    return this.cal ? this.cal.timeToY(this.cal.times.now) + 'px' : '-10px'
+  }
+
+  // Check if date string YYYY-MM-DD is today
+  isToday(date: string) {
+    return dayjs(new Date()).format('YYYY-MM-DD') === date
+  }
+
   colorBy = 'job'
   colorByOptions = ['job', 'contractor']
 
@@ -524,6 +548,8 @@ export default class Schedule extends Vue {
   activeJobs: number[] = []
 
   async mounted() {
+    this.ready = true
+
     const colorBy = localStorage.getItem('colorScheduleBy')
     const view = localStorage.getItem('scheduleView')
     if (colorBy) {
@@ -692,5 +718,30 @@ export default class Schedule extends Vue {
   &:hover::after {
     display: block;
   }
+}
+
+.v-current-time {
+  height: 2px;
+  background-color: #ea4335;
+  position: absolute;
+  left: -1px;
+  right: 0;
+  pointer-events: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    background-color: #ea4335;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-top: -5px;
+    margin-left: -6.5px;
+  }
+}
+.v-current-time, .v-current-time.first::before {
+  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+              0px 2px 2px 0px rgb(0 0 0 / 14%),
+              0px 1px 5px 0px rgb(0 0 0 / 12%) !important;
 }
 </style>

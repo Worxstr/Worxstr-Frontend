@@ -12,7 +12,6 @@ GmapMap.gmap(
     div(v-if='user.location && user.location.latitude && user.location.longitude && user.additional_info')
       user-marker(:user='user')
 
-
   //- Job markers
   div(v-for='(job, i) in jobs' :key='job.id')
     GmapCircle(
