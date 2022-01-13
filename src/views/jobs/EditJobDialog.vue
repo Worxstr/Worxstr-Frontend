@@ -172,7 +172,7 @@ v-dialog(
               v-slider.mt-3(
                 v-model='editedJob.radius'
                 label='Radius'
-                min='75'
+                min='20'
                 max='1000'
               )
               p.mt-1 {{ editedJob.radius | distance }}
@@ -225,6 +225,7 @@ export default class EditJobDialog extends Vue {
   editedJob: any = {
     color: hashColor(Date.now()),
     address: null,
+    radius: 100,
     notes: '',
     restrict_by_code: true,
     restrict_by_location: true,

@@ -12,11 +12,6 @@ GmapMap.gmap(
     div(v-if='user.location && user.location.latitude && user.location.longitude && user.additional_info')
       user-marker(:user='user')
 
-      
-  //- Device gps location and accuracy
-  user-marker(:location='deviceLocation' is-device-location)
-    
-
   //- Job markers
   div(v-for='(job, i) in jobs' :key='job.id')
     GmapCircle(

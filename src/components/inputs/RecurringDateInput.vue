@@ -248,8 +248,8 @@ export default class RecurringDateInput extends Vue {
     const rrule = `DTSTART;TZID=${timezone}:${start}\n${this.rrule.toString()}`
     
     this.$emit('input', {
-      start_time: this.start,
-      end_time: this.end,
+      time_begin: this.start,
+      time_end: this.end,
       rrule,
       duration: this.duration,
     })

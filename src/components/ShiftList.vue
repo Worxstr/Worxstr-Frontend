@@ -40,21 +40,12 @@ div
           
             //- span(v-if='!userIsManager') {Job name} &bull; {n} tasks
 
-        //- // TODO
-        //- v-chip.mx-4.px-2.flex-grow-0(
-        //-   v-if="shift.active",
-        //-   label,
-        //-   outlined,
-        //-   small,
-        //-   color="green"
-        //- ) Active
-                  
-        v-list-item-action(v-if='userIsManager || i != 0')
+        v-list-item-action(v-if='$vuetify.breakpoint.mdAndUp || userIsManager || !shiftIsActive(shift)')
           .d-flex.flex-column.align-end
             .text-body-2.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
             .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
 
-        v-list-item-action(v-if='!userIsManager && i == 0')
+        v-list-item-action.ml-4(v-if='!userIsManager && shiftIsActive(shift)')
           clock-buttons(:shift='shift')
 
         v-list-item-action.ml-3(v-if='userIsManager')
@@ -88,6 +79,7 @@ div
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Shift } from '@/types/Jobs'
 import { Managers, currentUserIs } from '@/types/Users'
+import { ClockAction } from '@/types/Clock'
 
 import ClockButtons from '@/components/ClockButtons.vue'
 import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
@@ -121,6 +113,20 @@ export default class ShiftList extends Vue {
       if (a.time_end > b.time_end) return 1
       return 0
     })
+  }
+
+  shiftIsActive(shift: Shift) {
+    const now = new Date()
+    const start = new Date(shift.time_begin)
+    const end = new Date(shift.time_end)
+    const active = now >= start && now <= end
+
+    let clockedIn = false
+    if (shift.clock_state !== null) {
+      clockedIn = shift.clock_state != ClockAction.ClockOut
+    }
+
+    return clockedIn || active // TODO: || isOnSite || jobHasNoRestrictions
   }
 
   getContractor(contractorId: number) {

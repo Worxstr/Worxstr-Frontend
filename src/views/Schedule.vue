@@ -33,10 +33,11 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         @change='updateColorBy'
       )
 
+      //- // TODO: item-text prop doesn't work for some reason?
       v-select.ma-2.flex-grow-0(
         v-model='view'
-        :items='views'
-        :item-text='(t) => t.charAt(0).toUpperCase() + t.slice(1)'
+        :items='Object.keys(views)'
+        :item-text='(t) => views[view].text'
         dense
         outlined
         hide-details
@@ -93,12 +94,12 @@ v-container.d-flex.flex-column.align-stretch(fluid)
 
             v-list
               v-list-item(
-                v-for='view in views'
+                v-for='view in Object.keys(views)'
                 :key='view'
                 @click="updateView(view)"
               )
                 v-list-item-content 
-                  v-list-item-title {{ view | capitalize}}
+                  v-list-item-title {{ views[view].text }}
           
           v-menu(:close-on-content-click='false')
             template(v-slot:activator='{ on, attrs }')
@@ -188,11 +189,12 @@ v-container.d-flex.flex-column.align-stretch(fluid)
         style='position: absolute; height:100%; width: 100%'
         ref='calendar'
         v-model='value'
-        :type='view'
+        :type='views[view].value'
         :events='calendarEvents'
         event-overlap-mode='stack'
         :event-overlap-threshold='30'
         :event-color='getEventColor'
+        :weekdays='weekdays'
         @change='getEvents'
         @mousedown:event='moveEventDragStart'
         @mousedown:time='createEventDragStart'
@@ -205,6 +207,13 @@ v-container.d-flex.flex-column.align-stretch(fluid)
             div(v-html='eventSummary()' :class='`${textColor(event.color)}--text`')
 
           .v-event-drag-bottom(v-if='timed' @mousedown='extendBottom(event)')
+        
+        template(v-slot:day-body='{ date, week }')
+          .v-current-time(
+            v-if='isToday(date)'
+            :class='{ first: date === week[0].date }'
+            :style='{ top: nowY }'
+          )
       
       v-menu(
         v-model='ctxMenu.show'
@@ -265,6 +274,7 @@ v-container.d-flex.flex-column.align-stretch(fluid)
 /* eslint-disable @typescript-eslint/camelcase */
 
 import { Vue, Component } from 'vue-property-decorator'
+import dayjs from 'dayjs'
 
 import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 
@@ -471,15 +481,64 @@ export default class Schedule extends Vue {
   selectedShift: Shift | null = null
 
   loading = false
+  ready = false
   deletingShift = false
   value = ''
   overflowMenu = false
+  
 
   view = 'week'
   get views() {
-    const views = ['month', 'day', '4day']
-    if (this.$vuetify.breakpoint.smAndUp) views.splice(1, 0, 'week')
+    const views: any = {
+      month: {
+        text: 'Month',
+        value: 'month',
+      },
+      day: {
+        text: 'Day',
+        value: 'day',
+      },
+      '4 day': {
+        text: '4 day',
+        value: '4day',
+      },
+      weekdays: {
+        text: 'Weekdays',
+        value: 'week',
+      },
+    }
+    if (this.$vuetify.breakpoint.smAndUp) {
+      views['week'] = {
+        text: 'Week',
+        value: 'week',
+      }
+    }
     return views
+  }
+
+  get currentView() {
+    return this.views[this.view]
+  }
+
+  get weekdays() {
+    return this.view === 'weekdays'
+      ? [1,2,3,4,5]
+      : [0,1,2,3,4,5,6]
+  }
+
+  // Functions used for current day marker
+  get cal() {
+    return this.ready ? (this.$refs.calendar as any) : null
+  }
+
+  get nowY() {
+    console.log(this.cal)
+    return this.cal ? this.cal.timeToY(this.cal.times.now) + 'px' : '-10px'
+  }
+
+  // Check if date string YYYY-MM-DD is today
+  isToday(date: string) {
+    return dayjs(new Date()).format('YYYY-MM-DD') === date
   }
 
   colorBy = 'job'
@@ -489,6 +548,8 @@ export default class Schedule extends Vue {
   activeJobs: number[] = []
 
   async mounted() {
+    this.ready = true
+
     const colorBy = localStorage.getItem('colorScheduleBy')
     const view = localStorage.getItem('scheduleView')
     if (colorBy) {
@@ -657,5 +718,30 @@ export default class Schedule extends Vue {
   &:hover::after {
     display: block;
   }
+}
+
+.v-current-time {
+  height: 2px;
+  background-color: #ea4335;
+  position: absolute;
+  left: -1px;
+  right: 0;
+  pointer-events: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    background-color: #ea4335;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-top: -5px;
+    margin-left: -6.5px;
+  }
+}
+.v-current-time, .v-current-time.first::before {
+  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%),
+              0px 2px 2px 0px rgb(0 0 0 / 14%),
+              0px 1px 5px 0px rgb(0 0 0 / 12%) !important;
 }
 </style>

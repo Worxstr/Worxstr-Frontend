@@ -2,9 +2,9 @@
 import { Shift } from '@/types/Jobs'
 import { api } from '@/util/axios'
 import { Task } from '@/types/Jobs'
-import { Position } from '@/services/geolocation'
+import * as geolocation from '@/services/geolocation'
 
-export async function clockIn({ commit }: any, shiftId: number, { code, location }: { code: string; location: Position }) {
+export async function clockIn({ commit }: any, shiftId: number, { code, location }: { code: string; location: geolocation.Position }) {
   const { data } = await api({
     method: 'POST',
     url: `clock/clock-in`,
@@ -32,6 +32,7 @@ export async function clockOut({ commit }: any, shiftId: number) {
   })
   // commit('ADD_CLOCK_EVENT', data)
   commit('CLOCK_OUT', shiftId)
+  geolocation.stop()
   return data
 }
 
