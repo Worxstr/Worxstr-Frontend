@@ -24,7 +24,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
 
     portal(to='toolbarActions')
 
-      v-select.ma-2.flex-grow-0(
+      v-select.ma-2.flex-grow-0.fit(
         v-if='userIsManager'
         v-model='colorBy'
         :items='colorByOptions'
@@ -36,7 +36,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
       )
 
       //- // TODO: item-text prop doesn't work for some reason?
-      v-select.ma-2.flex-grow-0(
+      v-select.ma-2.flex-grow-0.fit(
         v-model='view'
         :items='Object.keys(views)'
         :item-text='(t) => views[view].text'
@@ -50,7 +50,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
   div(v-else) 
 
     portal(to='toolbarActions')
-      v-btn.mr-4(text outlined color='primary' @click='setToToday') Today
+      v-btn.mr-4(text outlined color='primary' @click='setToToday' v-if='$vuetify.breakpoint.smAndUp') Today
 
       v-toolbar-title.text-subtitle-1(v-if='$refs.calendar') {{ $refs.calendar.title }}
 
@@ -60,6 +60,12 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
             v-icon mdi-dots-vertical
         
         v-list
+          v-list-item(@click="setToToday" v-if='$vuetify.breakpoint.xs')
+            v-list-item-icon
+              v-icon mdi-calendar-today
+            v-list-item-content
+              v-list-item-title Today
+
           v-list-item(@click="$refs.calendar.prev()")
             v-list-item-icon
               v-icon mdi-chevron-left
