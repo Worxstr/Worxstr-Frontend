@@ -93,7 +93,10 @@
 48        android:testOnly="true"
 49        android:theme="@style/AppTheme" >
 49-->C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:11:9-40
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 50        <activity
 50-->C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:13:9-26:20
 51            android:name="com.worxstr.worxstr.MainActivity"
@@ -322,6 +325,7 @@
 176    </application>
 177
 178</manifest>
+<<<<<<< Updated upstream
 =======
 50        android:usesCleartextTraffic="true" >
 50-->[:capacitor-cordova-android-plugins] C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\capacitor-cordova-android-plugins\build\intermediates\merged_manifest\debug\AndroidManifest.xml:10:18-53
@@ -554,3 +558,5 @@
 178
 179</manifest>
 >>>>>>> f12db052ced593bcd05810727c1855302dcc3074
+=======
+>>>>>>> Stashed changes
