@@ -406,13 +406,7 @@ export default class Schedule extends Vue {
     this.dragEndTime = endTime
 
     if (this.creatingEventDrag) {
-      // Ensure end time is at least 15 minutes after start
-      if (endTime.getTime() - this.virtualEvent.start.getTime() < 15 * 60 * 1000) {
-        this.virtualEvent.end = new Date(this.virtualEvent.start.getTime() + 15 * 60 * 1000)
-      }
-      else {
-        this.virtualEvent.end = endTime
-      }
+      this.virtualEvent.end = endTime
       return
     }
 
