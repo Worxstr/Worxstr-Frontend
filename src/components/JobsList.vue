@@ -10,10 +10,9 @@
       :key="job.id"
     )
       v-list-item
-        v-list-item-avatar
-          v-badge(:color='job.color' dot)
+        v-badge.mt-1.ml-1(:color='job.color' dot)
 
-        v-list-item-content
+        v-list-item-content.ml-6
           v-list-item-title
             router-link.alt-style(:to="{name: 'job', params: {jobId: job.id}}") {{ job.name }}
           v-list-item-subtitle(v-text="job.address")
