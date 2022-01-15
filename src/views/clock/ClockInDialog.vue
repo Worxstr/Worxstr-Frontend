@@ -17,12 +17,12 @@ v-dialog(
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
       span(v-if='!$vuetify.breakpoint.xs') Cancel
 
-  v-card
+  v-card.d-flex.flex-column
 
-    .d-flex.justify-center.py-8(v-if='!job || !job.id')
+    .flex-grow-1.d-flex.align-center.justify-center(v-if='!job || !job.id || loadingJob')
       v-progress-circular(indeterminate)
 
-    v-form.d-flex.flex-column.fill-height(
+    v-form.d-flex.flex-column.fill-height.flex-grow-1(
       v-else
       ref='form'
       v-model="isValid"
@@ -45,9 +45,10 @@ v-dialog(
             outlined
             x-large
             :loading='loadingLocation'
+            :disabled='gotNewLocation'
           )
             v-icon(left) mdi-map-marker-radius
-            span Use my location
+            span {{ gotNewLocation ? (withinJobBounds ? 'At job site' : 'Not at job site') : 'Use my location' }}
 
           v-btn(
             v-if='job.restrict_by_code && !webQrEnabled && !cameraFailed'
@@ -105,10 +106,12 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 import * as geolocation from '@/services/geolocation'
 
+import { withinBounds } from '@/services/geolocation'
 import * as clock from '@/services/shifts'
 import * as job from '@/services/jobs'
 import { showToast } from '@/services/app'
 import { Job, Shift } from '@/types/Jobs'
+import dayjs from 'dayjs'
 
 /*
   We are using two difference QR code scanner libraries here.
@@ -127,6 +130,7 @@ export default class ClockInDialog extends Vue {
   loading = false
   loadingJob = false
   loadingLocation = false
+  gotNewLocation = false // Used to ensure we have a fresh location update
   isValid = false
   webQrEnabled = false
   cameraFailed = false
@@ -149,13 +153,11 @@ export default class ClockInDialog extends Vue {
   async onOpened(opened: boolean) {
     if (opened) {
       (this.$refs.form as HTMLFormElement)?.reset()
-      this.initQr()
-
-      if (this.job?.id) this.autoClockIn()
 
       this.loadingJob = true
       try {
         await job.loadJob(this.$store, this.shift.job_id)
+        this.autoClockIn()
       }
       finally {
         this.loadingJob = false
@@ -178,41 +180,54 @@ export default class ClockInDialog extends Vue {
     return this.$store.getters.job(this.shift.job_id)
   }
 
-  @Watch('job')
-  onJobLoaded(newVal: Job, oldVal: Job) {
-    if (!(oldVal?.id) && newVal?.id && this.dialogOpened) {
-      this.autoClockIn()
-    }
+  get withinJobBounds() {
+    if (!this.deviceLocation || !this.job) return false
+
+    return withinBounds(
+      [this.deviceLocation.latitude, this.deviceLocation.longitude],
+      this.deviceLocation.accuracy,
+      [this.job.latitude, this.job.longitude],
+      this.job.radius,
+    )
   }
 
-  autoClockIn() {
-    // There are no clock in restrictions, clock in automatically
-    if (!this.job.restrict_by_time && !this.job.restrict_by_location && !this.job.restrict_by_code) {
-      this.clockIn()
+  async autoClockIn() {
+
+    const exit = (message: string) => {
+      showToast(this.$store, {
+        text: message,
+      })
+      this.closeDialog()
       return
     }
 
-    // If job is active, clock in automatically
+    // Check if the job is active
     if (this.job.restrict_by_time) {
       const now = (new Date()).getTime()
       const window = this.job.restrict_by_time_window
       const start = (new Date(this.shift.time_begin)).getTime() - (window * 60 * 1000)
-      if (now >= start) {
-        this.clockIn()
-        return
-      }
-      else {
-        if (!this.job.restrict_by_location && !this.job.restrict_by_code) {
-          showToast(this.$store, {
-            text: 'You can only clock in when this shift is active',
-          })
-        }
+      if (now < start) {
+        return exit(`You will be able to clock in at ${dayjs(start).format('h:mm A')}`)
       }
     }
     
-    // If user is at job site, clock in automatically
+    // Check that user is at the job site
     if (this.job.restrict_by_location) {
-      this.getDeviceLocation()
+      const location = await this.getDeviceLocation()
+      // TODO: Check that location is within job site
+
+      if (!this.withinJobBounds) {
+        return exit('You must be at the job site to clock in.')
+      }
+    }
+
+    // Code is required, Wait for user to submit.
+    if (this.job.restrict_by_code) {
+      this.initQr()
+    }
+    else {
+      // Code is not requried, clock in in automatically.
+      this.clockIn()
     }
   }
 
@@ -222,24 +237,22 @@ export default class ClockInDialog extends Vue {
 
   async getDeviceLocation() {
     this.loadingLocation = true
-
-    const location = await geolocation.get(this.$store)
-
+    await geolocation.get(this.$store)
     this.loadingLocation = false
     
     // If location permission was not granted, do not allow
     const permissionGranted = await geolocation.permissionGranted()
 
+    console.log(permissionGranted)
+
     if (!permissionGranted || !this.deviceLocation) {
       showToast(this.$store, {
-        text: `Unable to get location. Check your location permissions.`,
+        text: 'Unable to get location. Check your location permissions.',
       })
-      this.loading = false
       return
     }
-
-    this.closeDialog()
-    this.clockIn()
+    this.gotNewLocation = true
+    return this.deviceLocation
   }
 
   submitCode(code: string) {

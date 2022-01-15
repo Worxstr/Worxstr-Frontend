@@ -68,7 +68,60 @@ export async function stop() {
 export async function get(store: any) {
   init(store)
   const position = await Geo.Geolocation.getCurrentPosition({
-    enableHighAccuracy: true
+    enableHighAccuracy: false
   })
   return setDeviceLocation(store, position)
+}
+/* 
+
+def haversine(lat1, lng1, lat2, lng2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lng1, lat1, lng2, lat2 = map(radians, [lng1, lat1, lng2, lat2])
+
+    # haversine formula
+    dlng = lng2 - lng1
+    dlat = lat2 - lat1
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlng / 2) ** 2
+    c = 2 * asin(sqrt(a))
+    r = 6371000  # Radius of earth in meters.
+    return c * r
+    
+*/
+
+// Convert degress to radians
+function radians(degress: number) {
+  return degress * Math.PI / 180
+}
+
+/* 
+  Calculate the great circle distance between two points
+  on the earth (specified in decimal degrees)
+*/
+export function haversine(lat1: number, lng1: number, lat2: number, lng2: number) {
+  // convert decimal degrees to radians
+  lng1 = radians(lng1)
+  lat1 = radians(lat1)
+  lng2 = radians(lng2)
+  lat2 = radians(lat2)
+
+  // haversine formula
+  const dlng = lng2 - lng1
+  const dlat = lat2 - lat1
+
+  const a = Math.sin(dlat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlng / 2) ** 2
+  const c = 2 * Math.asin(Math.sqrt(a))
+  const r = 6371000  // Radius of earth in meters.
+
+  return c * r
+}
+
+type Location = [number, number]
+
+export function withinBounds(location1: Location, r1: number, location2: Location, r2: number) {
+  const distance = haversine(location1[0], location1[1], location2[0], location2[1])
+  return r1 + r2 >= distance
 }
