@@ -217,8 +217,15 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
         @contextmenu:event='contextMenu'
       )
         template(v-slot:event='{ event, timed, eventSummary }')
+          v-fade-transition
+            v-overlay(v-if='savingEvent === event.id' absolute opacity='.2')
+              v-progress-circular(indeterminate size='25')
+
           .v-event-draggable
-            div(v-html='eventSummary()' :class='`${textColor(event.color)}--text`')
+            div(:class='`${textColor(event.color)}--text`')
+              div(v-html='eventSummary()')
+              //- p Contractor name 
+              //- p Job name
 
           .v-event-drag-bottom(v-if='timed' @mousedown='extendBottom(event)')
         
@@ -313,6 +320,7 @@ import { loadWorkforce } from '@/services/users'
 export default class Schedule extends Vue {
 
   virtualEvent: any = null // The event that is shown when creating a new event by dragging
+  savingEvent: number | null = null // The id of the event that is being saved
   newEventTime: any = null // The start and end time used to pass to shift create dialog
   creatingEventDrag = false // User is creating an event by drag
   movingEventDrag = false // User is moving an event by drag
@@ -391,6 +399,12 @@ export default class Schedule extends Vue {
     const endTime = this.roundDate(this.toDate(timeData))
     this.dragEndTime = endTime
     
+    // Don't allow negative duration if extending
+    if (this.extendingEventDrag && endTime < this.virtualEvent.start) {
+      console.log('not allowed')
+      return
+    }
+
     if (this.creatingEventDrag) {
       this.virtualEvent.end = endTime
       return
@@ -408,6 +422,7 @@ export default class Schedule extends Vue {
       if (!this.extendingEventDrag) {
         this.virtualEvent.start = new Date(this.virtualEvent.originalStart.getTime() + delta)
       }
+      
       this.virtualEvent.end = new Date(this.virtualEvent.originalEnd.getTime() + delta)
     }
   }
@@ -445,8 +460,11 @@ export default class Schedule extends Vue {
             time_end: this.virtualEvent.end,
           }
           this.cancelDrag()
-          if (this.userIsManager)
+          if (this.userIsManager) {
+            this.savingEvent = newShift.id
             await updateShift(this.$store, newShift)
+            this.savingEvent = null
+          }
         }
         catch {
           // If update fails, revert the event
