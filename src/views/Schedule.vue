@@ -397,16 +397,22 @@ export default class Schedule extends Vue {
     if (this.isRightClick) return
 
     const endTime = this.roundDate(this.toDate(timeData))
-    this.dragEndTime = endTime
-    
+
     // Don't allow negative duration if extending
     if (this.extendingEventDrag && endTime < this.virtualEvent.start) {
-      console.log('not allowed')
       return
     }
 
+    this.dragEndTime = endTime
+
     if (this.creatingEventDrag) {
-      this.virtualEvent.end = endTime
+      // Ensure end time is at least 15 minutes after start
+      if (endTime.getTime() - this.virtualEvent.start.getTime() < 15 * 60 * 1000) {
+        this.virtualEvent.end = new Date(this.virtualEvent.start.getTime() + 15 * 60 * 1000)
+      }
+      else {
+        this.virtualEvent.end = endTime
+      }
       return
     }
 
