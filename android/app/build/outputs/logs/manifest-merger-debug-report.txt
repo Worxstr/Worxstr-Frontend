@@ -11,10 +11,10 @@ INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\ma
 	android:name
 		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:29:13-62
 manifest
-ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-46:12
-INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-46:12
-INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-46:12
-INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-46:12
+ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-53:12
+INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-53:12
+INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-53:12
+INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-53:12
 MERGED from [:capacitor-community-barcode-scanner] C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor-community\barcode-scanner\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-13:12
 MERGED from [:capacitor-community-fcm] C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor-community\fcm\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:capacitor-app] C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\app\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
@@ -90,25 +90,25 @@ MERGED from [org.apache.cordova:framework:7.0.0] C:\Users\owner\.gradle\caches\t
 MERGED from [com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\owner\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:17:1-56:12
 MERGED from [androidx.constraintlayout:constraintlayout:1.1.3] C:\Users\owner\.gradle\caches\transforms-3\100680bc97939093aaf9039d412b3883\transformed\constraintlayout-1.1.3\AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.annotation:annotation-experimental:1.0.0] C:\Users\owner\.gradle\caches\transforms-3\83a29c899503a7aacb5140bd577234ac\transformed\jetified-annotation-experimental-1.0.0\AndroidManifest.xml:17:1-24:12
-INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-46:12
-INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-46:12
-INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-46:12
+INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-53:12
+INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-53:12
+INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-53:12
 	package
 		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:3:5-34
 		INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-46:12
+		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-53:12
 		INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml
 	android:versionCode
 		INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-46:12
+		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:1-53:12
 		INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:2:11-69
 application
-ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:5:5-37:19
+ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:5:5-44:19
 MERGED from [:capacitor-push-notifications] C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\push-notifications\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-17:19
 MERGED from [:capacitor-push-notifications] C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\node_modules\@capacitor\push-notifications\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-17:19
 MERGED from [:capacitor-native-biometric] C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\node_modules\capacitor-native-biometric\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:9:5-14:19
@@ -171,8 +171,6 @@ MERGED from [androidx.constraintlayout:constraintlayout:1.1.3] C:\Users\owner\.g
 		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:6:9-35
 	android:theme
 		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:11:9-40
-	android:usesCleartextTraffic
-		ADDED from [:capacitor-cordova-android-plugins] C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\capacitor-cordova-android-plugins\build\intermediates\merged_manifest\debug\AndroidManifest.xml:10:18-53
 activity#com.worxstr.worxstr.MainActivity
 ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:13:9-26:20
 	android:screenOrientation
@@ -197,8 +195,20 @@ category#android.intent.category.LAUNCHER
 ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:23:17-77
 	android:name
 		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:23:27-74
+meta-data#com.google.firebase.messaging.default_notification_icon
+ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:38:9-40:70
+	android:resource
+		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:40:13-67
+	android:name
+		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:39:13-83
+meta-data#com.google.firebase.messaging.default_notification_color
+ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:41:9-43:68
+	android:resource
+		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:43:13-65
+	android:name
+		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:42:13-84
 uses-permission#android.permission.INTERNET
-ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:41:5-67
+ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:48:5-67
 MERGED from [com.google.firebase:firebase-iid:21.0.1] C:\Users\owner\.gradle\caches\transforms-3\ea3e003f9c5dd28d8d3ae7c52d3cdc1e\transformed\jetified-firebase-iid-21.0.1\AndroidManifest.xml:23:5-67
 MERGED from [com.google.firebase:firebase-iid:21.0.1] C:\Users\owner\.gradle\caches\transforms-3\ea3e003f9c5dd28d8d3ae7c52d3cdc1e\transformed\jetified-firebase-iid-21.0.1\AndroidManifest.xml:23:5-67
 MERGED from [com.google.android.gms:play-services-cloud-messaging:16.0.0] C:\Users\owner\.gradle\caches\transforms-3\2c3379bd9abb651b502eb35f7fb2f136\transformed\jetified-play-services-cloud-messaging-16.0.0\AndroidManifest.xml:8:5-67
@@ -208,15 +218,15 @@ MERGED from [com.google.firebase:firebase-installations:16.3.5] C:\Users\owner\.
 MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\owner\.gradle\caches\transforms-3\68b073b82eb2806fe71ac8c1649ee32d\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:26:5-67
 MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\owner\.gradle\caches\transforms-3\68b073b82eb2806fe71ac8c1649ee32d\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:26:5-67
 	android:name
-		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:41:22-64
+		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:48:22-64
 uses-permission#android.permission.ACCESS_COARSE_LOCATION
-ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:42:5-81
+ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:49:5-81
 	android:name
-		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:42:22-78
+		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:49:22-78
 uses-permission#android.permission.ACCESS_FINE_LOCATION
-ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:43:5-79
+ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:50:5-79
 	android:name
-		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:43:22-76
+		ADDED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:50:22-76
 uses-sdk
 INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml
