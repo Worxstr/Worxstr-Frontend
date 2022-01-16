@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { Capacitor } from '@capacitor/core'
-import { PushNotifications, Token } from '@capacitor/push-notifications'
+import { PushNotificationSchema, ActionPerformed, PushNotifications, Token } from '@capacitor/push-notifications'
 import { FCM } from '@capacitor-community/fcm'
 import { api } from '@/util/axios'
+import router from '@/router'
 
 let isRegistering = false // Keep track of whether the user is trying to register or unregister from push
 const pushAvailable = Capacitor.isPluginAvailable('PushNotifications')
@@ -41,5 +42,20 @@ if (pushAvailable) {
         registration_id: fcmToken
       },
     })
+  })
+
+  PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
+    // TODO: Show some kind of popup for notifications in-app
+    console.log(JSON.stringify(notification))
+  })
+
+  PushNotifications.addListener('pushNotificationActionPerformed', ({ actionId, inputValue, notification }: ActionPerformed) => {
+  
+    if (notification?.data?.route) {
+      // Take a vue route and push it
+      const route = JSON.parse(notification.data.route)
+      router.push(route)
+    }
+
   })
 }
