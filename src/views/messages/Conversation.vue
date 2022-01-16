@@ -119,7 +119,7 @@ export default class Conversation extends Vue {
   }
 
   async sendMessage() {
-    this.$socket.client.emit('test', { test: 1 })
+    if (!this.message) return
     await messages.sendMessage(this.$store, { body: this.message }, parseInt(this.$route.params.conversationId))
     this.message = ''
   }
