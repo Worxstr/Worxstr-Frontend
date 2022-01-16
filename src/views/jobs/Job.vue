@@ -127,7 +127,7 @@ div(v-else)
               div(v-html='job.notes')
 
         v-card-text(v-if='job.restrict_by_code || job.restrict_by_time || job.restrict_by_location')
-          p.text-subtitle-2.mb-2 Presence verification options
+          p.text-subtitle-2.mb-2 Presence verification restrictions
           .d-flex.gap-xs
             v-chip(small label v-if='job.restrict_by_code') Clock-in code
             v-chip(small label v-if='job.restrict_by_location') Location
