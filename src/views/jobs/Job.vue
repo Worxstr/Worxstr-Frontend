@@ -12,8 +12,8 @@ v-container(v-if="loading && !job")
 div(v-else)
 
   v-container.approvals.mb-16(v-if="job")
-    edit-job-dialog(:opened.sync="editJobDialog", :job.sync="job")
-    close-job-dialog(:opened.sync="closeJobDialog", :job.sync="job")
+    edit-job-dialog(:opened.sync="editJobDialog" :job.sync="job")
+    close-job-dialog(:opened.sync="closeJobDialog" :job.sync="job")
     edit-shift-dialog(
       :opened.sync='createShiftDialog',
       :contractors='job.contractors'
@@ -31,6 +31,7 @@ div(v-else)
         :icon='$vuetify.breakpoint.xs'
         color='primary'
         @click="editJobDialog = true"
+        :disabled='!job.id'
         data-cy='edit-job-button'
       )
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
@@ -42,8 +43,9 @@ div(v-else)
         :icon='$vuetify.breakpoint.xs'
         color="error"
         @click="closeJobDialog = true"
+        :disabled='!job.id'
         data-cy='close-job-button'
-      ) 
+      )
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
         span(v-if='!$vuetify.breakpoint.xs') Close
 
@@ -52,14 +54,15 @@ div(v-else)
       :style='`border-top: 3px solid ${job.color}`'
     )
       
-      jobs-map(
+      g-map(
         :jobs='[job]'
-        :show-user-location='true'
+        :users='job.contractors'
+        :show-device-location='true'
         :style='$vuetify.breakpoint.lgAndUp && `width: 50%`'
       )
 
       .flex-grow-1
-        v-card-text.d-flex.pb-0.flex-column.flex-sm-row
+        v-card-text.d-flex.pb-0.flex-column.flex-sm-row.gap-small
           //- Address
           .d-flex
             .mt-1.mr-1
@@ -82,7 +85,7 @@ div(v-else)
           v-spacer
 
           //- Clock-in code
-          .d-flex.flex-row.align-center(v-if='userIsManager')
+          .d-flex.flex-row.align-center(v-if='userIsManager && job.restrict_by_code')
               
             .d-flex.flex-column
               p.text-sm-right.text-subtitle-2.mb-1 Clock-in code
@@ -103,6 +106,19 @@ div(v-else)
 
               clipboard-copy(:text='job.consultant_code')
 
+              v-progress-circular.mx-2(indeterminate size='21' color='primary' v-if='refreshingClockInCode')
+              v-tooltip(v-else-if='userIsManager' bottom)
+                span Refresh code
+                template(v-slot:activator='{ on, attrs }')
+                  v-btn(
+                    icon
+                    color='primary'
+                    v-bind='attrs'
+                    v-on='on'
+                    @click='refreshClockInCode'
+                  )
+                    v-icon mdi-refresh
+
         //- Job notes
         v-card-text(v-if='job.notes')
           p.text-subtitle-2.mb-2 Notes
@@ -110,12 +126,18 @@ div(v-else)
             v-card-text
               div(v-html='job.notes')
 
+        v-card-text(v-if='job.restrict_by_code || job.restrict_by_time || job.restrict_by_location')
+          p.text-subtitle-2.mb-2 Presence verification restrictions
+          .d-flex.gap-xs
+            v-chip(small label v-if='job.restrict_by_code') Clock-in code
+            v-chip(small label v-if='job.restrict_by_location') Location
+            v-chip(small label v-if='job.restrict_by_time') Time
+              .text-xs.font-weight-bold.ml-1 ({{ job.restrict_by_time_window }} min window)
+
         //- Job info fields
-        v-card-text.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between(
-          v-if='job.organization_manager && job.contractor_manager && job.consultant_name && job.consultant_code'
-        )
+        v-card-text.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between
         
-          .flex-grow-1
+          .flex-grow-1(v-if='job.organization_manager')
             p.text-subtitle-2.mb-1 Organization manager
             p
               router-link.alt-style(
@@ -123,7 +145,7 @@ div(v-else)
               )
                 | {{ job.organization_manager | fullName }}
 
-          .flex-grow-1
+          .flex-grow-1(v-if='job.contractor_manager')
             p.text-subtitle-2.mb-1 Contractor manager
             p
               router-link.alt-style(
@@ -131,14 +153,13 @@ div(v-else)
               )
                 | {{ job.contractor_manager | fullName }}
 
-          .flex-grow-1
+          .flex-grow-1(v-if='job.consultant_name && job.consultant_email && job.consultant_phone')
             p.text-subtitle-2.mb-1 Consultant
             .d-flex.flex-column.gap
               span.mb-0 {{ job.consultant_name }}
               a.mb-0(target='_blank' :href='`mailto:${job.consultant_email}`') {{ job.consultant_email }}
               a(target='_blank' :href='`tel:${job.consultant_phone}`')    {{ job.consultant_phone | phone }}
 
-        v-skeleton-loader(type='list-item-two-line' v-else)
 
     v-toolbar(flat color="transparent")
       v-toolbar-title.text-h6 Upcoming shifts
@@ -148,6 +169,7 @@ div(v-else)
         text
         color='primary'
         @click='createShiftDialog = true'
+        :disabled='!job.id'
         data-cy='assign-shift-button'
       )
         v-icon(left) mdi-clipboard-plus-outline
@@ -169,7 +191,7 @@ import CloseJobDialog from './CloseJobDialog.vue'
 import EditShiftDialog from './EditShiftDialog.vue'
 import QrCodeDialog from './QrCodeDialog.vue'
 
-import JobsMap from '@/components/JobsMap.vue'
+import GMap from '@/components/GMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
 import ClipboardCopy from '@/components/ClipboardCopy.vue'
 import TaskList from '@/components/TaskList.vue'
@@ -177,8 +199,7 @@ import ShiftList from '@/components/ShiftList.vue'
 
 import { currentUserIs, UserRole, Managers } from '@/types/Users'
 import { Job } from '@/types/Jobs'
-import { loadJob } from '@/services/jobs'
-import * as geolocation from '@/services/geolocation'
+import { loadJob, refreshClockInCode } from '@/services/jobs'
 
 @Component({
   components: {
@@ -186,7 +207,7 @@ import * as geolocation from '@/services/geolocation'
     CloseJobDialog,
     EditShiftDialog,
     QrCodeDialog,
-    JobsMap,
+    GMap,
     ClockEvents,
     ClipboardCopy,
     TaskList,
@@ -199,6 +220,7 @@ export default class JobView extends Vue {
   closeJobDialog = false
   createShiftDialog = false
   qrCodeDialog = false
+  refreshingClockInCode = false
   shifts = []
 
   metaInfo() {
@@ -214,7 +236,6 @@ export default class JobView extends Vue {
     } finally {
       this.loading = false
     }
-    await geolocation.init(this.$store)
   }
 
   get job(): Job {
@@ -241,6 +262,16 @@ export default class JobView extends Vue {
     const position = this.userLocation && `${this.userLocation.lat},${this.userLocation.lng}`
     const address = `${this.job.address}, ${this.job.city}, ${this.job.state} ${this.job.zip_code}`
     return `https://www.google.com/maps/dir/?api=1${position ? `&origin=${position}` : ''}&destination=${address}`
+  }
+
+  async refreshClockInCode() {
+    this.refreshingClockInCode = true
+    try {
+      await refreshClockInCode(this.$store, this.job.id)
+    }
+    finally {
+      this.refreshingClockInCode = false
+    }
   }
 }
 </script>

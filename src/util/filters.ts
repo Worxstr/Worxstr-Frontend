@@ -7,6 +7,9 @@ import { Conversation } from '@/types/Messages'
 
 dayjs.extend(relativeTime)
 
+const standardDateFormat = 'MMM D, YYYY'
+const standardTimeFormat = 'h:mm a'
+
 Vue.filter('capitalize', (value: string) => {
 	if (!value) return ''
 	return value.charAt(0).toUpperCase() + value.slice(1);
@@ -21,12 +24,12 @@ Vue.filter('numberFormat', (num: number, precision: number) => {
 })
 
 export const date = (value: (string|number|Date), format?: string) => {
-	return dayjs(value).format(format || 'YYYY-MM-DD')
+	return dayjs(value).format(format || standardDateFormat)
 }
 Vue.filter('date', date)
 
 export const time = (value: (string|number|Date), format?: string) => {
-	return dayjs(value).format(format || 'h:mm a')
+	return dayjs(value).format(format || standardTimeFormat)
 }
 Vue.filter('time', time)
 
@@ -35,9 +38,9 @@ export const timeAgo = (value: (string|number|Date)) => {
 }
 Vue.filter('timeAgo', timeAgo)
 
-Vue.filter('dateOrTime', (value: (string|number|Date)) => {
+Vue.filter('dateOrTime', (value: (string|number|Date), format?: string) => {
 	if (new Date(value).getTime() < Date.now() - (1000 * 60 * 60 * 24)) {
-		return date(value)
+		return dayjs(value).format(format || standardDateFormat)
 	}
 	return time(value)
 })

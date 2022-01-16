@@ -22,12 +22,12 @@
         v-overlay(v-if='togglingClock' absolute opacity='.2')
           v-progress-circular(indeterminate)
 
-  .d-flex.flex-row.justify-center.gap-small
+  .d-flex.flex-row.gap-small
 
     v-expand-x-transition
       div(v-if='!onBreak')
         v-btn(
-          @click='clocked ? clockOut() : openVerifyDialog()'
+          @click='clocked ? clockOut() : clockIn()'
           :loading='togglingClock'
           :disabled='!iAmVerified'
           width='130px'
@@ -80,14 +80,13 @@ export default class ClockButtons extends Vue {
   togglingClock = false
   togglingBreak = false
 
-  openVerifyDialog() {
+  clockIn() {
     this.clockInDialog = true
   }
 
   async clockOut(forceOut = false) {
     this.togglingClock = true
     
-    console.log(this.shift.tasks)
     const allTasksCompleted = this.shift.tasks.reduce((acc, task) => {
       return acc && task.complete
     }, true)
@@ -107,7 +106,6 @@ export default class ClockButtons extends Vue {
   }
 
   async toggleBreak() {
-    console.log(this.shift.id)
     this.togglingBreak = true
     await shifts.toggleBreak(this.$store, this.shift.id, !this.onBreak)
     this.togglingBreak = false

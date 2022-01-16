@@ -1,4 +1,5 @@
 import colors from 'vuetify/lib/util/colors'
+import Vuetify from 'vuetify'
 
 export function normalizeRelations(data: any, fields: any) {
   return {
@@ -55,4 +56,45 @@ export function hashColor(input: number | string) {
   const shade = shades[Math.floor(i / colorList.length)]
 
   return colorsToUse[color][shade]
+}
+
+export function darkenColor(color: string, amount: number) {
+  if (!color) return color
+  const c = /^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/.exec(color)!
+  return `#${c[1] +
+    (~~Math.min(Math.max(parseInt(c[2], 16) + amount, 0), 255)).toString(
+      16
+    )}${c[3]}`
+}
+
+// Determine light or dark text color based on background color
+export function textColor(color: string) {
+
+  if (!color) return 'white'
+  color = color.replace('#', '')
+
+  // If non-alphanumeric, return white
+  if (!/^[a-fA-F0-9]+$/.test(color)) return 'white'
+
+  const c = /^([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/.exec(color)!
+  const brightness =
+    (parseInt(c[1], 16) * 299 +
+      parseInt(c[2], 16) * 587 +
+      parseInt(c[3], 16) * 114) /
+    1000
+  return brightness > 126 ? 'black' : 'white'
+}
+
+
+// Find a nested object by dot-syntax string
+// ex. lookup(obj, 'a.b.c') => obj.a.b.c
+export function lookup(obj: any, path: string, defaultVal?: any): any {
+  return path.split('.').reduce((prev, curr) => {
+    return prev ? prev[curr] : (defaultVal ?? undefined)
+  }, obj)
+}
+
+// Map lookup on an array
+export function mapProps(object: any, path: string, defaultVal?: any) {
+  return object.map((o: any) => lookup(o, path, defaultVal))
 }

@@ -1,22 +1,23 @@
 import { DarkPreference } from "@/util/theme"
 import { miniNav } from '@/services/app'
 import * as theme from '@/util/theme'
+import * as notifications from '@/services/notifications'
 
 export interface AppState {
   snackbar: {
-    show: boolean;
-    text: string;
-    timeout: number;
+    show: boolean
+    text: string
+    timeout: number
     action?: {
-      text: string;
-      action: Function;
-      color?: string;
-    };
-  };
+      text: string
+      action: Function
+      color?: string
+    }
+  }
   preferences: {
-    darkMode: DarkPreference;
-    miniNav: boolean;
-  };
+    darkMode: DarkPreference
+    miniNav: boolean
+  }
 }
 
 export const initialState = (): AppState => ({
@@ -51,7 +52,7 @@ const mutations = {
 
   SET_MINI_NAV(state: AppState, mini: boolean) {
     state.preferences.miniNav = mini
-  }
+  },
 }
 
 export default {

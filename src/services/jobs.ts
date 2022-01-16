@@ -67,7 +67,7 @@ export async function loadJob({ commit }: any, jobId: number) {
   })
 
   normalizeJob(commit, data.job)
-  return data
+  return data.job
 }
 
 export async function createJob({ commit }: any, job: Job) {
@@ -96,4 +96,12 @@ export async function closeJob({ commit }: any, jobId: number) {
     url: `jobs/${jobId}/close`,
   })
   commit('REMOVE_JOB', jobId)
+}
+
+export async function refreshClockInCode({ commit }: any, jobId: number) {
+  const { data } = await api({
+    method: 'PUT',
+    url: `jobs/${jobId}/code`,
+  })
+  commit('ADD_JOB', data)
 }

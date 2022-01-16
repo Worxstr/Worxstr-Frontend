@@ -17,6 +17,10 @@ export type Job = {
 	consultant_code: string;
 	consultant_email: string;
 	consultant_phone: string;
+	restrict_by_code: boolean;
+	restrict_by_location: boolean;
+	restrict_by_time: boolean;
+	restrict_by_time_window: number;
 	latitude: number;
 	longitude: number;
 	organization_id: number;

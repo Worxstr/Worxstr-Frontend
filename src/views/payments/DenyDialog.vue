@@ -51,7 +51,7 @@ export default class DenyDialog extends Vue {
   loading = false
   
   closeDialog() {
-    this.$emit("update:opened", false);
+    this.$emit("update:opened", false)
   }
 
   async denyPayments() {

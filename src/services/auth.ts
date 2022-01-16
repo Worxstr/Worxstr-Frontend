@@ -8,7 +8,8 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 import { Capacitor } from '@capacitor/core'
 import usersStore from '@/store/users'
 import { socket } from '@/util/socket-io'
-import { hashColor } from '@/util/helpers'
+import * as geolocation from '@/services/geolocation'
+import { registerNotifications, unregisterNotifications } from '@/services/notifications'
 
 
 export function shouldUseSandbox(email: string) {
@@ -68,26 +69,14 @@ export async function signIn({ commit }: any, email: string, password: string, r
     if (authToken) {
       setAuthToken(authToken)
     }
-    // Use authentication token in subsequent requests
-    // Set token in secure storage on iOS/Android
-    // await SecureStoragePlugin.set({
-    //   key: 'authToken',
-    //   value: authToken
-    // })
 
     await getMe({ commit })
     router.push({ name: defaultRoute() })
+
+    // Show prompt for notification permission, if user hasn't already granted it
+    registerNotifications()
+
     return data
-  // } catch (err) {
-  //   if ((err as any).response.status === 400) {
-  //     // Already signed in
-  //     await getAuthenticatedUser({ commit })
-  //     router.push({ name: defaultRoute() })
-  //   } else {
-  //     commit('UNSET_AUTHENTICATED_USER')
-  //     return err
-  //   }
-  // }
 }
 
 /*
@@ -129,7 +118,9 @@ export async function signOut({ state, commit }: any) {
     { commit },
     shouldUseSandbox(usersStore.getters.me(usersStore.state)?.email as string)
   )
-
+  
+  unregisterNotifications()
+  geolocation.stop()
   await api({
     method: 'POST',
     url: `/auth/logout`,
@@ -171,8 +162,6 @@ export async function resetPassword(
     router.push({
       name: defaultRoute(),
     })
-  } else {
-    console.log(response)
   }
 }
 
@@ -205,12 +194,12 @@ export async function resendEmailConfirmation({ commit }: any, email: string) {
 }
 
 export async function updatePassword(
-  { commit, state }: any,
+  { commit, getters }: any,
   newPassword: string
 ) {
   sandboxMode.toggle(
     { commit },
-    shouldUseSandbox(state.getters.me(usersStore.state).email)
+    shouldUseSandbox(getters.me.email)
   )
 
   const { data } = await api({

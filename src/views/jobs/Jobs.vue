@@ -26,15 +26,15 @@ div
 
   v-container.approvals(v-else)
         
-    v-card.mb-3.d-flex.flex-column.soft-shadow
-      jobs-map(:jobs='allJobs')
+    v-card.mb-3.d-flex.flex-column.soft-shadow(outlined)
+      g-map(:jobs='allJobs')
       jobs-list(:jobs='directJobs')
 
     .mb-5(v-if="indirectJobs.length")
       v-toolbar(flat, color="transparent")
         v-toolbar-title.text-h6 Other jobs
 
-      v-card.soft-shadow
+      v-card.soft-shadow(outlined)
         jobs-list(:jobs='indirectJobs')
 </template>
 
@@ -46,11 +46,11 @@ import { Job } from '@/types/Jobs'
 import { loadJobs } from '@/services/jobs'
 
 import EditJobDialog from './EditJobDialog.vue'
-import JobsMap from '@/components/JobsMap.vue'
+import GMap from '@/components/GMap.vue'
 import JobsList from '@/components/JobsList.vue'
 
 @Component({
-  components: { EditJobDialog, JobsList, JobsMap },
+  components: { EditJobDialog, JobsList, GMap },
 })
 export default class JobsView extends Vue {
 

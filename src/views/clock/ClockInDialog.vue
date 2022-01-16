@@ -17,31 +17,41 @@ v-dialog(
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
       span(v-if='!$vuetify.breakpoint.xs') Cancel
 
-  v-card.sign-in.fill-height
-    v-form.d-flex.flex-column.fill-height(
+  v-card.d-flex.flex-column
+
+    .flex-grow-1.d-flex.align-center.justify-center(v-if='!job || !job.id || loadingJob')
+      v-progress-circular(indeterminate)
+
+    v-form.d-flex.flex-column.fill-height.flex-grow-1(
+      v-else
       ref='form'
       v-model="isValid"
-      @submit.prevent='submitCode(code)'
+      @submit.prevent='clockIn'
     )
-      v-card-title.text-h6 Verify your presence
+      v-card-title.d-flex.flex-column.align-start
+        .text-h6 Verify your presence
+        .text-caption Clocking in to {{ job.name }}
 
       v-spacer
 
       v-card-text
 
         .d-flex.flex-column
-          //- v-btn.mb-2(
-          //-   @click='getUserLocation'
-          //-   text
-          //-   color='primary'
-          //-   outlined
-          //-   x-large
-          //- )
-          //-   v-icon(left) mdi-map-marker-radius
-          //-   span Use my location
+          v-btn.mb-2(
+            v-if='job.restrict_by_location'
+            @click='getDeviceLocation'
+            text
+            color='primary'
+            outlined
+            x-large
+            :loading='loadingLocation'
+            :disabled='gotNewLocation'
+          )
+            v-icon(left) mdi-map-marker-radius
+            span {{ gotNewLocation ? (withinJobBounds ? 'At job site' : 'Not at job site') : 'Use my location' }}
 
           v-btn(
-            v-if='!allowedLocation && !webQrEnabled && !cameraFailed'
+            v-if='job.restrict_by_code && !webQrEnabled && !cameraFailed'
             @click='startScan'
             text
             color='primary'
@@ -51,7 +61,7 @@ v-dialog(
             v-icon(left) mdi-qrcode
             span Scan clock-in code
 
-      div(v-if='opened && !allowedLocation && webQrEnabled && !cameraFailed')
+      div(v-if='opened && job.restrict_by_code && webQrEnabled && !cameraFailed')
 
         qrcode-stream(@init='webQrInit' @decode='submitCode')
           v-fade-transition
@@ -65,6 +75,7 @@ v-dialog(
 
       v-card-text
         v-text-field(
+          v-if='job.restrict_by_code'
           label='Or enter your clock-in code'
           v-model='code'
           dense
@@ -95,9 +106,12 @@ import { QrcodeStream } from 'vue-qrcode-reader'
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner'
 import * as geolocation from '@/services/geolocation'
 
+import { withinBounds } from '@/services/geolocation'
 import * as clock from '@/services/shifts'
+import * as job from '@/services/jobs'
 import { showToast } from '@/services/app'
-import { Shift } from '@/types/Jobs'
+import { Job, Shift } from '@/types/Jobs'
+import dayjs from 'dayjs'
 
 /*
   We are using two difference QR code scanner libraries here.
@@ -114,6 +128,9 @@ import { Shift } from '@/types/Jobs'
 export default class ClockInDialog extends Vue {
   code = ''
   loading = false
+  loadingJob = false
+  loadingLocation = false
+  gotNewLocation = false // Used to ensure we have a fresh location update
   isValid = false
   webQrEnabled = false
   cameraFailed = false
@@ -130,6 +147,25 @@ export default class ClockInDialog extends Vue {
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ type: Object }) readonly shift!: Shift
 
+  // Some hacky stuff to make the native camera view show in the app
+
+  @Watch('opened')
+  async onOpened(opened: boolean) {
+    if (opened) {
+      (this.$refs.form as HTMLFormElement)?.reset()
+
+      this.loadingJob = true
+      try {
+        await job.loadJob(this.$store, this.shift.job_id)
+        this.autoClockIn()
+      }
+      finally {
+        this.loadingJob = false
+      }
+
+    }
+  }
+
   get dialogOpened() {
     return this.opened && !this.hideDialogForQr
   }
@@ -138,11 +174,100 @@ export default class ClockInDialog extends Vue {
     this.$emit('update:opened', false)
   }
 
-  async submitCode(code: string) {
+  // Logic for form submission
+
+  get job() {
+    return this.$store.getters.job(this.shift.job_id)
+  }
+
+  get withinJobBounds() {
+    if (!this.deviceLocation || !this.job) return false
+
+    return withinBounds(
+      [this.deviceLocation.latitude, this.deviceLocation.longitude],
+      this.deviceLocation.accuracy,
+      [this.job.latitude, this.job.longitude],
+      this.job.radius,
+    )
+  }
+
+  async autoClockIn() {
+
+    const exit = (message: string) => {
+      showToast(this.$store, {
+        text: message,
+      })
+      this.closeDialog()
+      return
+    }
+
+    // Check if the job is active
+    if (this.job.restrict_by_time) {
+      const now = (new Date()).getTime()
+      const window = this.job.restrict_by_time_window
+      const start = (new Date(this.shift.time_begin)).getTime() - (window * 60 * 1000)
+      if (now < start) {
+        return exit(`You will be able to clock in at ${dayjs(start).format('h:mm A')}`)
+      }
+    }
+    
+    // Check that user is at the job site
+    if (this.job.restrict_by_location) {
+      const location = await this.getDeviceLocation()
+      // TODO: Check that location is within job site
+
+      if (!this.withinJobBounds) {
+        return exit('You must be at the job site to clock in.')
+      }
+    }
+
+    // Code is required, Wait for user to submit.
+    if (this.job.restrict_by_code) {
+      this.initQr()
+    }
+    else {
+      // Code is not requried, clock in in automatically.
+      this.clockIn()
+    }
+  }
+
+  get deviceLocation() {
+    return this.$store.state.users.deviceLocation
+  }
+
+  async getDeviceLocation() {
+    this.loadingLocation = true
+    await geolocation.get(this.$store)
+    this.loadingLocation = false
+    
+    // If location permission was not granted, do not allow
+    const permissionGranted = await geolocation.permissionGranted()
+
+    console.log(permissionGranted)
+
+    if (!permissionGranted || !this.deviceLocation) {
+      showToast(this.$store, {
+        text: 'Unable to get location. Check your location permissions.',
+      })
+      return
+    }
+    this.gotNewLocation = true
+    return this.deviceLocation
+  }
+
+  submitCode(code: string) {
+    this.code = code
+    this.clockIn()
+  }
+
+  async clockIn() {
     // TODO: Handle incorrect code
     try {
       this.loading = true
-      await clock.clockIn(this.$store, code, this.shift.id)
+      await clock.clockIn(this.$store, this.shift.id, {
+        code: this.code,
+        location: this.deviceLocation,
+      })
       this.closeDialog()
     }
     finally {
@@ -150,13 +275,7 @@ export default class ClockInDialog extends Vue {
     }
   }
 
-  @Watch('opened')
-  async onOpened(opened: boolean) {
-    if (opened) {
-      (this.$refs.form as HTMLFormElement)?.reset()
-      this.initQr()
-    }
-  }
+  // QR code scanner related methods
 
   async initQr() {
     if (!Capacitor.isNativePlatform()) {
@@ -199,19 +318,6 @@ export default class ClockInDialog extends Vue {
     } finally {
       this.cameraLoading = false
     }
-  }
-
-  async getUserLocation() {
-    const location = await geolocation.get(this.$store)
-    showToast(this.$store, {
-      text: `${location.lat} ${location.lng}`,
-    })
-    this.closeDialog()
-    // TODO: Clock in with location
-    // Dialog.alert({
-    //   title: 'Got location',
-    //   message: `Lat: ${coords.latitude}, Long: ${coords.longitude}`,
-    // })
   }
 
   async webCameraPermissionGranted() {

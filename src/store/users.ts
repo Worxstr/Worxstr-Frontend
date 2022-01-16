@@ -3,25 +3,25 @@ import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
 import { Position } from '@/services/geolocation'
 
 export interface UsersState {
-  all: number[];
+  all: number[]
   byId: {
-    [key: number]: User;
-  };
+    [key: number]: User
+  }
   
-  me: number | null;
-  userLocation: Position | null;
+  me: number | null
+  deviceLocation: Position | null
 
-  workforce: number[];
+  workforce: number[]
   managers: {
-    [key: string]: User[];
-  };
+    [key: string]: User[]
+  }
 }
 
 export const initialState = (): UsersState => ({
   all: [],
   byId: {},
   me: null,
-  userLocation: null,
+  deviceLocation: null,
   workforce: [],
   managers: {
     contractor: [],
@@ -59,8 +59,8 @@ const mutations = {
     Vue.delete(state.workforce, state.workforce.indexOf(userId))
   },
 
-  SET_USER_LOCATION(state: UsersState, location: Position) {
-    state.userLocation = location
+  SET_DEVICE_LOCATION(state: UsersState, location: Position) {
+    state.deviceLocation = location
   },
 
   ADD_WORKFORCE_MEMBER(state: UsersState, userId: number) {

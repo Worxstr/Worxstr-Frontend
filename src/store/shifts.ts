@@ -9,17 +9,17 @@ import jobsStore from '@/store/jobs'
 // TODO ---------------------
 
 export interface ShiftsState {
-  upcoming: number[];
-  all: number[];
+  upcoming: number[]
+  all: number[]
   byId: {
-    [key: number]: Shift;
-  };
+    [key: number]: Shift
+  }
   tasks: {
-    all: number[];
+    all: number[]
     byId: {
-      [key: number]: Task;
-    };
-  };
+      [key: number]: Task
+    }
+  }
 }
 
 export const initialState = (): ShiftsState => ({
@@ -70,8 +70,9 @@ const mutations = {
   REMOVE_SHIFT(state: ShiftsState, {jobId, shiftId}: {jobId: number; shiftId: number}) {
 
     // Remove shift id from the job
-    // TODO:                                                                         // number
-    jobsStore.state.byId[jobId].shifts = jobsStore.state.byId[jobId].shifts?.filter((id: any) => id !== shiftId)
+    if (jobsStore.state.byId[jobId])
+      // TODO: change type                                                                     // number
+      jobsStore.state.byId[jobId].shifts = jobsStore.state.byId[jobId].shifts?.filter((id: any) => id !== shiftId)
 
     Vue.delete(state.byId, shiftId)
     Vue.delete(

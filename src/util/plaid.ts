@@ -6,7 +6,7 @@ import { addPlaidFundingSource, getPlaidLinkToken } from '@/services/payments'
 import store from '@/store'
 declare global {
   interface Window {
-    Plaid: any;
+    Plaid: any
   }
 }
 

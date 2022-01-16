@@ -22,9 +22,24 @@ v-dialog(
 
       v-card-text
 
+        div(v-if='!jobId')
+          v-subheader Job selection
+
+          v-select(
+            v-model='selectedJob'
+            :items='jobs'
+            item-text='name'
+            item-value='id'
+            outlined
+            dense
+            required
+            label='Job'
+            @change='onSelectedJob'
+          )
+
         v-subheader Date and time
 
-        recurring-date-input.my-4(v-model='recurData' :recurrable='!editing')
+        recurring-date-input.my-4(v-model='recurData' :recurrable='!editing' :time='startEndTimes')
 
         v-divider.mb-4
 
@@ -48,7 +63,6 @@ v-dialog(
         //- Multi selection for creating
         v-select(
           v-else
-          autofocus
           v-model='editedShift.contractor_ids'
           :items='contractors'
           :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)"
@@ -59,6 +73,7 @@ v-dialog(
           multiple
           label='Contractors'
           data-cy='shift-contractors'
+          :loading='loadingJob'
         )
           template(v-slot:item='{ active, item, attrs, on }')
             v-list-item(v-on='on' v-bind='attrs' #default='{ active }')
@@ -143,10 +158,12 @@ v-dialog(
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
 import dayjs from 'dayjs'
+import { Capacitor } from '@capacitor/core'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { User } from '@/types/Users'
 import { Shift } from '@/types/Jobs'
 import { createShift, updateShift } from '@/services/shifts'
+import { loadJob } from '@/services/jobs'
 import { exists } from '@/util/inputValidation'
 
 import RichtextField from '@/components/inputs/RichtextField.vue'
@@ -158,27 +175,7 @@ const timeValidate = (errorMessage: string) => (value: any) =>
   /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(value)
 
 interface UnassignedContractor {
-  id: number;
-}
-
-const now = new Date()
-if (now.getMinutes() != 0) now.setHours(now.getHours() + 1)
-now.setSeconds(0, 0)
-now.setMinutes(0)
-const hourFromNow = new Date(now.getTime() + 60 * 60 * 1000)
-const nowFormatted = dayjs(now).utc().format('YYYY-MM-DDTHH:mm:ssZ')
-const hourFromNowFormatted = dayjs(hourFromNow).utc().format('YYYY-MM-DDTHH:mm:ssZ')
-
-function initialState() {
-  return {
-    contractor_ids: [],
-    site_locations: [],
-    site_location: '',
-    time_begin: nowFormatted,
-    time_end: hourFromNowFormatted,
-    notes: '',
-    tasks: [],
-  }
+  id: number
 }
 
 @Component({
@@ -190,12 +187,53 @@ function initialState() {
   },
 })
 export default class EditShiftDialog extends Vue {
-  ends = 'on'
 
-  editedShift: any = initialState()
+  @Prop({ type: Object   }) readonly shift?: Shift
+  @Prop({ default: false }) readonly opened!: boolean
+  @Prop({ default: false }) readonly editing!: boolean
+  // @Prop({ default: []    }) readonly contractors!: (User | UnassignedContractor)[]
+  // If no jobId specified, then we add a job selector to the dialog
+  @Prop({ type: Number    }) readonly jobId!: number
+  @Prop({ type: Object }) readonly time?: {
+    start: Date
+    end: Date
+  }
+
+  @Watch('time')
+  onTimeChange(time: any) {
+    console.log('time changed', time)
+  }
+
+  get startEndTimes() {
+    if (this.time) {
+      return this.time
+    }
+    else if (this.shift) return {
+      start: this.shift.time_begin,
+      end: this.shift.time_end,
+    }
+    return undefined
+  }
+
+  initialState() {
+    return {
+      contractor_ids: [],
+      site_locations: [],
+      site_location: '',
+      time_begin: '',
+      time_end: '',
+      notes: '',
+      tasks: [],
+    }
+  }
+
+  ends = 'on'
+  editedShift: any = this.initialState()
+  selectedJob: number | null = null
   recurData: any = {}
   isValid = false
   loading = false
+  loadingJob = false
   rules = {
     location: [exists('Location required')],
     date: [exists('Date required')],
@@ -203,35 +241,61 @@ export default class EditShiftDialog extends Vue {
     timeEnd: [exists('End time required'), timeValidate('Time invalid')],
   }
 
-  @Prop({ type: Object   }) readonly shift?: Shift
-  @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ default: false }) readonly editing!: boolean
-  // @Prop({ default: []    }) readonly contractors!: (User | UnassignedContractor)[]
-  @Prop({ type: Number    }) readonly jobId!: number
-
   @Watch('opened')
-  onOpened() {
+  onOpened(opened: boolean) {
+    if (!opened) return
+
+    this.editedShift = this.initialState()
+
+    // Editing existing shift, fill data
     if (this.editing && this.shift) {
       this.editedShift = {
         ...this.shift,
       }
     }
+    // Creating new shift, prefill fields
     else {
       if (this.contractors.length) this.editedShift.contractor_ids = [this.contractors[0]?.id]
-      this.editedShift.time_begin = this.editedShift?.time_begin
-      this.editedShift.time_end = this.editedShift?.time_end
+    }
+
+    if (!this.jobId) {
+      // Pick first job for selector
+      this.selectedJob = this.jobs[0].id ?? null
+      this.onSelectedJob(this.selectedJob)
+    }
+  }
+
+  async onSelectedJob(jobId: number | null) {
+    if (!jobId) return
+
+    this.loadingJob = true
+    // Query job to get the contractors data
+    // TODO: Make route for only the contractors of a job
+    try {
+      await loadJob(this.$store, jobId)
+      // When the job loads, for some reason the selected job gets cleared.
+      // For now, just set it again. This method gets called again on change but there are no params passed, so no infinite loop.
+      this.selectedJob = jobId
+    }
+    finally {
+      this.loadingJob = false
     }
   }
 
   closeDialog() {
-    this.editedShift = initialState()
+    this.editedShift = this.initialState()
     this.$emit('update:opened', false)
   }
 
-  get contractors() {
-    // TODO: Sort
-    return this.$store.getters.job(this.jobId)?.contractors ?? []
+  get jobs() {
+    return this.$store.getters.jobs
+  }
 
+  get contractors() {
+    const jobId = this.jobId ?? this.selectedJob
+    return this.$store.getters.job(jobId)?.contractors ?? []
+
+    // TODO: Sort
     // return this.contractors.sort((a: any, b: any) => {
     //   return (a.direct === b.direct) ? 0 : (a.direct ? -1 : 1)
     // })
@@ -279,7 +343,7 @@ export default class EditShiftDialog extends Vue {
         await createShift(
           this.$store,
           editedShift,
-          parseInt(this.$route.params.jobId),
+          this.jobId ?? this.selectedJob,
         )
       }
 

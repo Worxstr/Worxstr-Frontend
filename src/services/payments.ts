@@ -93,10 +93,10 @@ export async function loadFundingSources({ commit }: any) {
 }
 
 export async function addFundingSource({ commit }: any, { accountName, routingNumber, accountNumber, accountType }: {
-  accountName: string;
-  routingNumber: string;
-  accountNumber: string;
-  accountType: 'checking' | 'savings';
+  accountName: string
+  routingNumber: string
+  accountNumber: string
+  accountType: 'checking' | 'savings'
 }) {
   const { data } = await api({
     method: 'POST',
@@ -116,9 +116,9 @@ export async function addFundingSource({ commit }: any, { accountName, routingNu
 }
 
 export async function addPlaidFundingSource({ commit }: any, { accountName, publicToken, accountId }: {
-  accountName: string;
-  publicToken: string;
-  accountId: string;
+  accountName: string
+  publicToken: string
+  accountId: string
 }) {
   const { data } = await api({
     method: 'POST',
@@ -134,9 +134,9 @@ export async function addPlaidFundingSource({ commit }: any, { accountName, publ
 }
 
 export async function verifyFundingSource({ commit }: any, { fundingSourceUrl, amount1, amount2 }: {
-  fundingSourceUrl: string;
-  amount1: number;
-  amount2: number;
+  fundingSourceUrl: string
+  amount1: number
+  amount2: number
 }) {
   const { data } = await api({
     method: 'PUT',

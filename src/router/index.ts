@@ -15,6 +15,8 @@ import NativeHome from '@/views/landing/NativeHome.vue'
 import About from '@/views/landing/About.vue'
 import Pricing from '@/views/landing/Pricing.vue'
 import Contact from '@/views/landing/Contact.vue'
+import Blog from '@/views/landing/Blog.vue'
+import BlogPost from '@/views/landing/BlogPost.vue'
 import Support from '@/views/support/Support.vue'
 import SupportArticle from '@/views/support/SupportArticle.vue'
 import Privacy from '@/views/landing/Privacy.vue'
@@ -35,11 +37,12 @@ import Schedule from '@/views/Schedule.vue'
 import Messages from '@/views/messages/Messages.vue'
 import Conversation from '@/views/messages/Conversation.vue'
 import Settings from '@/views/settings/Settings.vue'
-import SettingsMe from "@/views/settings/pages/me/Me.vue"
-import SettingsOrganization from "@/views/settings/pages/organization/Organization.vue"
-import SettingsPayments from "@/views/settings/pages/payments/Payments.vue"
-import SettingsSecurity from "@/views/settings/pages/security/Security.vue"
-import SettingsPreferences from "@/views/settings/pages/preferences/Preferences.vue"
+import SettingsMe from '@/views/settings/pages/me/Me.vue'
+import SettingsOrganization from '@/views/settings/pages/organization/Organization.vue'
+import SettingsNotifications from '@/views/settings/pages/notifications/Notifications.vue'
+import SettingsPayments from '@/views/settings/pages/payments/Payments.vue'
+import SettingsSecurity from '@/views/settings/pages/security/Security.vue'
+import SettingsPreferences from '@/views/settings/pages/preferences/Preferences.vue'
 import NotFound from '@/views/errors/NotFound.vue'
 
 Vue.use(VueRouter)
@@ -73,7 +76,7 @@ const routes = [
       noSkeleton: true,
       fullHeight: true,
       bleedSafeAreaBottom: true,
-    }
+    },
   },
   {
     path: '/about',
@@ -81,7 +84,7 @@ const routes = [
     component: About,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/pricing',
@@ -89,7 +92,7 @@ const routes = [
     component: Pricing,
     meta: {
       landing: true
-    }
+    },
   },
   {
     path: '/contact',
@@ -97,7 +100,23 @@ const routes = [
     component: Contact,
     meta: {
       landing: true,
-    }
+    },
+  },
+  {
+    path: '/blog',
+    name: 'blog',
+    component: Blog,
+    meta: {
+      landing: true,
+    },
+  },
+  {
+    path: '/blog/:blogPostId',
+    name: 'blogPost',
+    component: BlogPost,
+    meta: {
+      landing: true,
+    },
   },
   {
     path: '/support',
@@ -105,7 +124,7 @@ const routes = [
     component: Support,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/support/:articleId',
@@ -113,7 +132,7 @@ const routes = [
     component: SupportArticle,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/privacy',
@@ -121,7 +140,7 @@ const routes = [
     component: Privacy,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/terms',
@@ -129,7 +148,7 @@ const routes = [
     component: Terms,
     meta: {
       landing: true,
-    }
+    },
   },
   {
     path: '/sign-in',
@@ -138,7 +157,7 @@ const routes = [
     meta: {
       landing: true,
       fullHeight: true,
-    }
+    },
   },
   {
     path: '/sign-up',
@@ -148,7 +167,7 @@ const routes = [
     meta: {
       landing: true,
       fullHeight: true,
-    }
+    },
   },
   {
     path: '/reset-password',
@@ -158,7 +177,7 @@ const routes = [
     meta: {
       landing: true,
       fullHeight: true,
-    }
+    },
   },
   {
     path: '/confirm-email',
@@ -167,7 +186,7 @@ const routes = [
     meta: {
       landing: true,
       fullHeight: true,
-    }
+    },
   },
   {
     path: '/dashboard',
@@ -239,6 +258,7 @@ const routes = [
     meta: {
       icon: 'mdi-calendar-multiselect',
       hideNav: true,
+      fullHeight: true,
     }
   },
   {
@@ -292,6 +312,9 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: Settings,
+    meta: {
+      disableBreadcrumbs: ['settings']
+    },
     beforeEnter: (_to: any, _from: any, next: any) => {
       // Default to /me if no sub-route is specified
       if (_to.matched.length === 1) next({name: 'settings/me'})
@@ -336,7 +359,7 @@ const routes = [
         path: 'preferences',
         component: SettingsPreferences,
         meta: {
-          icon: 'mdi-palette',
+          icon: 'mdi-tune-variant',
         }
       },
     ]

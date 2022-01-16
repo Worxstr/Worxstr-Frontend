@@ -11,13 +11,16 @@ const config: CapacitorConfig = {
       androidScaleType: 'CENTER_INSIDE',
       // showSpinner: true,
       backgroundColor: '#e7edf7'
-    }
+    },
+    PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert'],
+    },
   },
   cordova: {},
   server: {
     hostname: "worxstr.com",
-    // "url": "http://192.168.86.25:8080",
-    // "cleartext": true
+    // url: "http://192.168.86.27:8080",
+    // cleartext: true
   }
 };
 

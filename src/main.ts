@@ -14,11 +14,12 @@ import 'tiptap-vuetify/dist/main.css'
 import VueMask from 'v-mask'
 import PortalVue from 'portal-vue'
 import VueChatScroll from 'vue-chat-scroll'
-import * as VueGoogleMaps from 'vue2-google-maps'
+import GmapVue from 'gmap-vue'
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import { TiptapVuetifyPlugin } from 'tiptap-vuetify'
 import VueSanitize from 'vue-sanitize'
 import VueGtag from 'vue-gtag'
+import VueMasonry from 'vue-masonry-css'
 
 import { configureDwolla } from './util/dwolla'
 import { configureAxios } from './util/axios'
@@ -35,16 +36,18 @@ function configurePlugins() {
   Vue.use(PortalVue)
   Vue.use(VueChatScroll)
   Vue.use(VueSanitize)
+  Vue.use(VueMasonry)
 
   Vue.use(VueGtag, {
     config: { id: process.env.VUE_APP_GTAG_API },
   })
 
-  Vue.use(VueGoogleMaps, {
+  Vue.use(GmapVue, {
     load: {
       key: GOOGLE_MAPS_API_KEY,
       libraries: 'places',
     },
+    installComponents: true,
   })
   Vue.use(VuetifyGoogleAutocomplete, {
     apiKey: GOOGLE_MAPS_API_KEY,
