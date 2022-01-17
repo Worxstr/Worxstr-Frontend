@@ -5,6 +5,7 @@ export type ClockEvent = {
 	timecard_id: number
 	contractor_id: number
 	job_id: number
+	shift_id: number
 }
 
 export enum ClockAction {

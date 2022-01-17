@@ -41,13 +41,13 @@ export type Shift = {
 	active: boolean;
 	job_id: number;
 	clock_state: ClockAction;
+	clock_history: ClockEvent[];
 	contractor: User;
 	contractor_id: number;
 	site_location: string;
 	time_begin: string;
 	time_end: string;
 	timecard_id: number;
-	timeclock_actions: ClockEvent[];
 	tasks: Task[];
 }
 
