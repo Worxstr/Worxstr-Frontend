@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
 import { Shift, Task } from '@/types/Jobs'
-import { ClockAction } from '@/types/Clock'
+import { ClockAction, ClockEvent } from '@/types/Clock'
 import jobsStore from '@/store/jobs'
 
 // TODO ---------------------
@@ -58,8 +58,8 @@ const mutations = {
 
     
     // TODO: Normalize clock events
-    // if (shift.timeclock_actions) {
-    //   shift.timeclock_actions.forEach((event: ClockEvent) => {
+    // if (shift.clock_history) {
+    //   shift.clock_history.forEach((event: ClockEvent) => {
     //     Vue.set(clockStore.state.events.byId, event.id, event)
     //     if (!shiftsStore.state.events.all.includes(event.id))
     //     shiftsStore.state.events.all.push(event.id)
@@ -102,6 +102,10 @@ const mutations = {
   END_BREAK(state: ShiftsState, shiftId: number) {
     state.byId[shiftId].clock_state = ClockAction.EndBreak
   },
+
+  ADD_CLOCK_EVENT(state: ShiftsState, event: ClockEvent) {
+    state.byId[event.shift_id].clock_history.push(event)
+  }
 }
 
 const getters = {
