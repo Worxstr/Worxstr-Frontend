@@ -118,7 +118,7 @@ export default {
         name: "James Wheeler",
         title: "Co-Founder / Head of Sales and Marketing",
         photo: "james.jpg",
-        description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently completing his second undergraduate degree from Appalachian State University in Computer Information Systems Management with a prior degree in Advertising and General Business.",
+        description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He also has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently working on an MBA from Appalachian State University with two prior undergraduate degrees in Advertising and Computer Information Systems. ",
         socials: [
           {
             link: 'mailto:james@worxstr.com',
@@ -188,22 +188,38 @@ export default {
       //     },
       //   ]
       // },
-      // {
-      //   name: 'Coley Lippard',
-      //   title: "Creative Marketing Director",
-      //   photo: 'coley.jpg',
-      //   description: "Coley Lippard has grown from a unique history of forward-thinking individuals that push the envelope of normalcy. As the son of a variety entertainer, his creativity has lead to a career in design and marketing with a fresh perspective and an eye on sustainable results. He is a recent Digital Marketing and Computer Information Service graduate at Appalachian State University and is currently guiding the creative direction of several businesses.",
-      //   socials: [
-      //     {
-      //       link: 'mailto:coleylipp237@gmail.com',
-            // icon: 'mdi-email-outline',
-      //     },
-      //     {
-      //       link: 'https://www.linkedin.com/in/coleylipp',
-      //       icon: 'mdi-linkedin'
-      //     },
-      //   ]
-      // },
+      {
+        name: 'Sam Cheatham',
+        title: "Sales representative",
+        photo: 'sam.jpg',
+        description: 'Sam Cheatham is a senior at Appalachian State University majoring in Marketing and Professional Selling. He has worked in sales for a variety of organizations and is passionate about customer success. In his free time, Sam likes to play chess and manages the university\'s solar vehicle team.',
+        socials: [
+          {
+            link: 'mailto:sam@worxstr.com',
+            icon: 'mdi-email-outline',
+          },
+          {
+            link: 'https://www.linkedin.com/in/samcheatham',
+            icon: 'mdi-linkedin'
+          },
+        ]
+      },
+      {
+        name: 'Kale McIntosh',
+        title: "Sales representative",
+        photo: 'kale.jpg',
+        description: 'Kale is a Business Management major at Appalachian State University, and the President of Alpha Sigma Phi, Epsilon Rho Chapter.',
+        socials: [
+          {
+            link: 'mailto:kale@worxstr.com',
+            icon: 'mdi-email-outline',
+          },
+          {
+            link: 'https://www.linkedin.com/in/kalemcintosh',
+            icon: 'mdi-linkedin'
+          },
+        ]
+      },
       {
         name: 'Victoria DiMarco',
         title: "Marketing Designer",
