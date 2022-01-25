@@ -188,26 +188,22 @@ export default {
       //     },
       //   ]
       // },
-      // {
-      // {
-      //   name: '',
-      //   title: "Marketing Designer",
-      //   photo: 'victoria.jpg',
-      //   socials: [
-      //     {
-      //       link: 'mailto:victoriadimarco99@gmail.com',
-      //       icon: 'mdi-email-outline',
-      //     },
-      //     {
-      //       link: 'https://www.linkedin.com/in/victoriadimarco',
-      //       icon: 'mdi-linkedin'
-      //     },
-      //     {
-      //       link: 'https://www.instagram.com/designdimarco',
-      //       icon: 'mdi-instagram'
-      //     },
-      //   ]
-      // },
+      {
+        name: 'Kale McIntosh',
+        // title: "Marketing Designer",
+        photo: 'kale.jpg',
+        description: 'I am a Business Management major at Appalachian State University. I am a sales associate at Worxstr as well as the President of Alpha Sigma Phi, Epsilon Rho Chapter.',
+        socials: [
+          {
+            link: 'mailto:kale@worxstr.com',
+            icon: 'mdi-email-outline',
+          },
+          {
+            link: 'https://www.linkedin.com/in/kalemcintosh',
+            icon: 'mdi-linkedin'
+          },
+        ]
+      },
       {
         name: 'Victoria DiMarco',
         title: "Marketing Designer",
