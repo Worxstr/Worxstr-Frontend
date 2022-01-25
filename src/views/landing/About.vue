@@ -118,7 +118,7 @@ export default {
         name: "James Wheeler",
         title: "Co-Founder / Head of Sales and Marketing",
         photo: "james.jpg",
-        description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He also has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently working on an MBA from Appalachian State University with two prior undergraduate degrees in Advertising and  Computer Information Systems. ",
+        description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He also has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently working on an MBA from Appalachian State University with two prior undergraduate degrees in Advertising and Computer Information Systems. ",
         socials: [
           {
             link: 'mailto:james@worxstr.com',
@@ -189,10 +189,26 @@ export default {
       //   ]
       // },
       {
+        name: 'Sam Cheatham',
+        title: "Sales representative",
+        photo: 'sam.jpg',
+        description: 'Sam Cheatham is a senior at Appalachian State University majoring in Marketing and Professional Selling. He has worked in sales for a variety of organizations and is passionate about customer success. In his free time, Sam likes to play chess and manages the university\'s solar vehicle team.',
+        socials: [
+          {
+            link: 'mailto:sam@worxstr.com',
+            icon: 'mdi-email-outline',
+          },
+          {
+            link: 'https://www.linkedin.com/in/samcheatham',
+            icon: 'mdi-linkedin'
+          },
+        ]
+      },
+      {
         name: 'Kale McIntosh',
-        // title: "Marketing Designer",
+        title: "Sales representative",
         photo: 'kale.jpg',
-        description: 'I am a Business Management major at Appalachian State University. I am a sales associate at Worxstr as well as the President of Alpha Sigma Phi, Epsilon Rho Chapter.',
+        description: 'Kale is a Business Management major at Appalachian State University, and the President of Alpha Sigma Phi, Epsilon Rho Chapter.',
         socials: [
           {
             link: 'mailto:kale@worxstr.com',
