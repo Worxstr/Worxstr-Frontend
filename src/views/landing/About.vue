@@ -118,7 +118,7 @@ export default {
         name: "James Wheeler",
         title: "Co-Founder / Head of Sales and Marketing",
         photo: "james.jpg",
-        description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently completing his second undergraduate degree from Appalachian State University in Computer Information Systems Management with a prior degree in Advertising and General Business.",
+        description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He also has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently working on an MBA from Appalachian State University with two prior undergraduate degrees in Advertising and  Computer Information Systems. ",
         socials: [
           {
             link: 'mailto:james@worxstr.com',
@@ -189,18 +189,22 @@ export default {
       //   ]
       // },
       // {
-      //   name: 'Coley Lippard',
-      //   title: "Creative Marketing Director",
-      //   photo: 'coley.jpg',
-      //   description: "Coley Lippard has grown from a unique history of forward-thinking individuals that push the envelope of normalcy. As the son of a variety entertainer, his creativity has lead to a career in design and marketing with a fresh perspective and an eye on sustainable results. He is a recent Digital Marketing and Computer Information Service graduate at Appalachian State University and is currently guiding the creative direction of several businesses.",
+      // {
+      //   name: '',
+      //   title: "Marketing Designer",
+      //   photo: 'victoria.jpg',
       //   socials: [
       //     {
-      //       link: 'mailto:coleylipp237@gmail.com',
-            // icon: 'mdi-email-outline',
+      //       link: 'mailto:victoriadimarco99@gmail.com',
+      //       icon: 'mdi-email-outline',
       //     },
       //     {
-      //       link: 'https://www.linkedin.com/in/coleylipp',
+      //       link: 'https://www.linkedin.com/in/victoriadimarco',
       //       icon: 'mdi-linkedin'
+      //     },
+      //     {
+      //       link: 'https://www.instagram.com/designdimarco',
+      //       icon: 'mdi-instagram'
       //     },
       //   ]
       // },
