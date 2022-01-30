@@ -10,7 +10,7 @@
       p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33% increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
 
 
-      .demo-video(:class='{small: $vuetify.breakpoint.sm}')
+      .demo-video(:class='{small: $vuetify.breakpoint.smAndDown}')
         iframe.mt-5(
           width='100%'
           height='100%'
