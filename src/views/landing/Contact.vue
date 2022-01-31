@@ -107,7 +107,7 @@ export default class Contact extends Vue {
         text: 'Find a time',
         color: 'primary',
         action: () => {
-          calendly.showPopupWidget('https://calendly.com/d/cps-z6n-m4m/worxstr-consultation?hide_event_type_details=1&hide_gdpr_banner=1&primary_color=2e6aef')
+          calendly.showPopupWidget('https://calendly.com/d/cps-z6n-m4m/worxstr-consultation?hide_event_type_details=0&hide_gdpr_banner=1&primary_color=2e6aef')
           return false
         }
       },
