@@ -9,6 +9,15 @@
       p The Worxstr management platform was built to address the specific challenges of the temporary labor management industry by people who have operated within it. The platform provides structure and consistency to traditionally disparate and inefficient systems. Every step and process laid out in the platform has been designed with efficiency in mind. The goal of the platform is to make managers more productive and boost labor retention.
       p Time is money. Using the Worxstr platform, the average manager will be able to cut down the time consumed by each task by at least one third, based on conservative time calculations. The increase in manager productivity will enable greater accuracy and increased bandwidth. A 33% increase in productivity will reduce expenses, increase efficiency, speed up processes, boost retention, and streamline reporting.
 
+      v-btn(
+        v-if='!me'
+        :to="{ name: 'contact', params: {option: 'demo'}}"
+        class="mr-3"
+        outlined
+        color='primary'
+        large
+      )
+        span Schedule in-person demo
 
       .demo-video(:class='{small: $vuetify.breakpoint.smAndDown}')
         iframe.mt-5(
