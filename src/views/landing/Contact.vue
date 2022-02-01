@@ -65,6 +65,10 @@ type Option = {
   dialog: boolean
 }
 
+function openCalendly() {
+  calendly.showPopupWidget('https://calendly.com/d/cps-z6n-m4m/worxstr-consultation?hide_event_type_details=0&hide_gdpr_banner=1&primary_color=2e6aef')
+}
+
 @Component({
   metaInfo: {
     title: 'Contact us'
@@ -78,7 +82,7 @@ export default class Contact extends Vue {
 
   mounted() {
     if (this.$route.params.option) {
-      this.chosenOption = this.$route.params.option
+      this.selectOption(this.helpOptions.find(option => option.name == this.$route.params.option))
     }
   }
 
@@ -99,17 +103,14 @@ export default class Contact extends Vue {
 
   helpOptions: Option[] = [
     {
-      name: 'Demo',
+      name: 'demo',
       title: 'Schedule a demo',
       text: 'Want to learn more about our platform? Schedule a demo with one of our managers to learn more about Worxstr and how it can help you manage your team.',
       hideIfSignedIn: true,
       button: {
         text: 'Find a time',
         color: 'primary',
-        action: () => {
-          calendly.showPopupWidget('https://calendly.com/d/cps-z6n-m4m/worxstr-consultation?hide_event_type_details=0&hide_gdpr_banner=1&primary_color=2e6aef')
-          return false
-        }
+        action: openCalendly
       },
       dialog: false,
     },
