@@ -13,7 +13,21 @@ div
     :contractorName="contractorName(selectedShift.contractor_id)"
   )
 
+  v-toolbar(flat)
+    v-checkbox.mr-2(hide-details)
+
+    v-toolbar-title.text-subtitle-1 2 shifts selected
+
+    v-spacer
+
+    v-btn(icon color='primary')
+      v-icon mdi-pencil
+
+    v-btn(icon color='error')
+      v-icon mdi-delete
+
   v-card.soft-shadow(outlined rounded)
+
     v-list
       v-skeleton-loader(
         v-if='loading && (!shifts.length)'
@@ -26,7 +40,11 @@ div
         v-for='(shift, i) in sortedShifts'
         :key='shift.id'
       )
+        v-list-item-icon.my-0.mr-2
+          v-checkbox
+
         v-list-item-content
+
           v-list-item-title
             router-link.alt-style.my-1.font-weight-medium(
               :to="{name: 'shift', params: {jobId: shift.job_id, shiftId: shift.id}}"
