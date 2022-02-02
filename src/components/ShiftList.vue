@@ -14,9 +14,11 @@ div
   )
 
   v-toolbar(flat)
-    v-checkbox.mr-2(hide-details)
+    v-checkbox.mr-2(hide-details :value.sync="selectedShifts.length" @change='selectAll' :indeterminate='partiallySelected')
 
-    v-toolbar-title.text-subtitle-1 2 shifts selected
+    v-toolbar-title.text-subtitle-1
+      span(v-if='selectedShifts.length') {{selectedShifts.length}} {{selectedShifts.length == 1 ? 'shift' : 'shifts'}} selected
+      span(v-else) Upcoming shifts
 
     v-spacer
 
@@ -25,7 +27,7 @@ div
 
     v-btn(icon color='error')
       v-icon mdi-delete
-
+  
   v-card.soft-shadow(outlined rounded)
 
     v-list
@@ -41,7 +43,10 @@ div
         :key='shift.id'
       )
         v-list-item-icon.my-0.mr-2
-          v-checkbox
+          v-checkbox(
+            v-model='selectedShifts'
+            :value='shift.id'
+          )
 
         v-list-item-content
 
@@ -116,6 +121,7 @@ export default class ShiftList extends Vue {
   @Prop({ default: false }) loading!: boolean
 
   selectedShift: Shift | {} = {}
+  selectedShifts: number[] = []
   editShiftDialog = false
   deleteShiftDialog = false
 
@@ -145,6 +151,14 @@ export default class ShiftList extends Vue {
     }
 
     return clockedIn || active // TODO: || isOnSite || jobHasNoRestrictions
+  }
+
+  selectAll() {
+    this.selectedShifts = (this.selectedShifts.length === this.shifts.length) ? [] : this.shifts.map(shift => shift.id)
+  }
+
+  get partiallySelected() {
+    return this.selectedShifts.length != this.shifts.length && this.selectedShifts.length > 0
   }
 
   getContractor(contractorId: number) {
