@@ -22,10 +22,10 @@ div
 
     v-spacer
 
-    v-btn(icon color='primary')
+    v-btn(icon color='primary' v-if='oneSelected')
       v-icon mdi-pencil
 
-    v-btn(icon color='error')
+    v-btn(icon color='error' v-if='anySelected')
       v-icon mdi-delete
   
   v-card.soft-shadow(outlined rounded)
@@ -153,12 +153,25 @@ export default class ShiftList extends Vue {
     return clockedIn || active // TODO: || isOnSite || jobHasNoRestrictions
   }
 
-  selectAll() {
-    this.selectedShifts = (this.selectedShifts.length === this.shifts.length) ? [] : this.shifts.map(shift => shift.id)
+
+  get oneSelected() {
+    return this.selectedShifts.length === 1
+  }
+
+  get anySelected() {
+    return this.selectedShifts.length > 0
+  }
+
+  get allSelected() {
+    return this.selectedShifts.length === this.shifts.length
   }
 
   get partiallySelected() {
-    return this.selectedShifts.length != this.shifts.length && this.selectedShifts.length > 0
+    return this.anySelected && !this.allSelected
+  }
+  
+  selectAll() {
+    this.selectedShifts = this.allSelected ? [] : this.shifts.map(shift => shift.id)
   }
 
   getContractor(contractorId: number) {
