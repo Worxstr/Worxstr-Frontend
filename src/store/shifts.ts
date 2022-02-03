@@ -128,6 +128,12 @@ const getters = {
     return shift
   },
 
+  shifts: (_state: ShiftsState, getters: any) => (ids: number[]) => {
+    return ids.map((id: number) => {
+      return getters.shift(id)
+    })
+  },
+
   upcomingShifts: (state: ShiftsState) => {
     if (!state.upcoming) return []
     return state.upcoming.map(id => state.byId[id])

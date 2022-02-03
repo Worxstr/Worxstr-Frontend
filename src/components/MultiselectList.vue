@@ -62,6 +62,11 @@ export default class MultiselectList extends Vue {
 
   selectedItems: number[] = []
 
+  @Watch('value')
+  onValueChange(val: number[]) {
+    this.selectedItems = val
+  }
+
   @Watch('selectedItems')
   onselectedItemsChange(val: number[]) {
     this.$emit('input', val)

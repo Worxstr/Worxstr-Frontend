@@ -9,8 +9,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
   )
   delete-shift-dialog(
     :opened.sync='deleteShiftDialog'
-    :shift.sync='shift'
-    :contractorName="contractor ? contractor.first_name : 'This contractor'"
+    :shiftIds='[shift.id]'
   )
   
   portal(to='toolbarActions')

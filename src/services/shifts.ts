@@ -99,14 +99,19 @@ export async function updateShift({ commit }: any, shift: any) {
   return data
 }
 
-export async function deleteShift({ commit }: any, shiftId: number, jobId: number) {
+export async function deleteShifts({ state, commit }: any, shiftIds: number[]) {
   await api({
     method: 'DELETE',
-    url: `shifts/${shiftId}`,
+    url: 'shifts',
+    data: {
+      shift_ids: shiftIds
+    }
   })
-  commit('REMOVE_SHIFT', {
-    shiftId,
-    jobId,
+  shiftIds.map((shiftId: number) => {
+    commit('REMOVE_SHIFT', {
+      shiftId,
+      jobId: state.shifts.byId[shiftId].job_id,
+    }) 
   })
 }
 

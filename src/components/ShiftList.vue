@@ -13,6 +13,7 @@ div
     v-if='selectedShift'
     :opened.sync='deleteShiftDialog'
     :shiftIds.sync='selectedShiftIds'
+    @deleted='clearSelection'
   )
 
   multiselect-list(
@@ -156,6 +157,10 @@ export default class ShiftList extends Vue {
     }
 
     return clockedIn || active // TODO: || isOnSite || jobHasNoRestrictions
+  }
+
+  clearSelection() {
+    this.selectedShiftIds = []
   }
 
   // If any selected shifts have a clock history, disable delete button
