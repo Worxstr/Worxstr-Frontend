@@ -39,7 +39,7 @@ export default class DeleteShiftDialog extends Vue {
   @Prop({ default: false }) readonly opened!: boolean
   @Prop(Array) readonly shiftIds!: number[]
 
-  get shifts(): Shift[] | [] {
+  get shifts(): Shift[] {
     return this.$store.getters.shifts(this.shiftIds)
   }
 
@@ -56,7 +56,7 @@ export default class DeleteShiftDialog extends Vue {
   }
 
   get uniquePeople(): number {
-    return this.shifts.reduce((acc, shift) => {
+    return this.shifts.reduce((acc: any[], shift: Shift) => {
       if (acc.indexOf(shift.contractor_id) === -1) {
         acc.push(shift.contractor_id)
       }

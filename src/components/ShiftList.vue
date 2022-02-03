@@ -8,6 +8,7 @@ div
     :editing='true'
     :shiftId.sync='selectedShiftIds[0]'
     :opened.sync='editShiftDialog'
+    @saved='clearSelection'
   )
   delete-shift-dialog(
     v-if='selectedShift'

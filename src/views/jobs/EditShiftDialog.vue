@@ -22,7 +22,7 @@ v-dialog(
 
       v-card-text
 
-        div(v-if='!jobId')
+        div(v-if='!jobId && !editing')
           v-subheader Job selection
 
           v-select(
@@ -186,7 +186,7 @@ interface UnassignedContractor {
 })
 export default class EditShiftDialog extends Vue {
 
-  @Prop({ type: Object   }) readonly shift?: Shift
+  @Prop({ type: Number   }) readonly shiftId?: number
   @Prop({ default: false }) readonly opened!: boolean
   @Prop({ default: false }) readonly editing!: boolean
   // @Prop({ default: []    }) readonly contractors!: (User | UnassignedContractor)[]
@@ -206,9 +206,12 @@ export default class EditShiftDialog extends Vue {
     if (this.time) {
       return this.time
     }
-    else if (this.shift) return {
-      start: this.shift.time_begin,
-      end: this.shift.time_end,
+    else if (this.editing) {
+      const shift = this.$store.getters.shift(this.shiftId)
+      return {
+        start: shift.time_begin,
+        end: shift.time_end,
+      }
     }
     return undefined
   }
@@ -246,9 +249,9 @@ export default class EditShiftDialog extends Vue {
     this.editedShift = this.initialState()
 
     // Editing existing shift, fill data
-    if (this.editing && this.shift) {
+    if (this.editing && this.shiftId) {
       this.editedShift = {
-        ...this.shift,
+        ...this.$store.getters.shift(this.shiftId),
       }
     }
     // Creating new shift, prefill fields
@@ -336,6 +339,7 @@ export default class EditShiftDialog extends Vue {
 
       if (this.editing) {
         await updateShift(this.$store, editedShift)
+        this.$emit('saved')
       }
       else {
         await createShift(

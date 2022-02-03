@@ -6,7 +6,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
   )
   edit-shift-dialog(
     :opened.sync='editShiftDialog'
-    :shift.sync='selectedShift'
+    :shiftId='selectedShift ? selectedShift.id : null'
     :editing='true'
   )
 
