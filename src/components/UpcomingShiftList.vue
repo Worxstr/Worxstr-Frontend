@@ -1,15 +1,12 @@
 <template lang="pug">
 .upcoming-shift-list
-  v-toolbar.pa-0.flex-grow-0(flat color='transparent')
-    v-toolbar-title
-      h6.text-h6 Upcoming shifts
-
   div(v-if='!loading && !upcomingShifts.length')
     p.text-center
       | You have no shifts assigned. Go have fun! 🥂🎉
 
   div(v-else)
     shift-list(:shifts='upcomingShifts' :loading='loading')
+      template(v-slot:title) Upcoming shifts 
 
     .my-4.d-flex.justify-center
       v-btn(
