@@ -5,6 +5,7 @@
       v-text-field.mr-sm-4(
         autofocus
         label='First name'
+        hint='Enter your full legal first name'
         placeholder='Bobby'
         v-model='form.firstName'
         :rules='rules.firstName'
@@ -14,6 +15,7 @@
       )
       v-text-field(
         label='Last name'
+        hint='Enter your full legal last name'
         placeholder='Tables'
         v-model='form.lastName'
         :rules='rules.lastName'
@@ -69,6 +71,7 @@
     .d-flex.flex-column.flex-sm-row
       v-text-field.mr-sm-4(
         label='Legal business name'
+        hint='As filed with your Secretary of State'
         placeholder='Worxstr'
         v-model='form.businessName'
         :rules='rules.businessName'
@@ -101,7 +104,8 @@
 
       .d-flex.flex-column.flex-sm-row
         v-text-field.mr-sm-4(
-          label='Address 1'
+          label='Business address 1'
+          hint='As filed with your Secretary of State. P.O. Boxes are not allowed'
           placeholder='1234 Main St.'
           v-model='form.address1'
           :rules='rules.address1'
@@ -110,7 +114,7 @@
           dense
         )
         v-text-field(
-          label='Address 2'
+          label='Business address 2'
           placeholder='Apt. 123'
           v-model='form.address2'
           required
@@ -218,6 +222,7 @@
         .d-flex.flex-column.flex-sm-row(v-if='!isCompanyController')
           v-text-field.mr-sm-4(
             label='First name'
+            hint='Enter the controller\'s full legal first name'
             placeholder='Bobby'
             v-model='form.controller.firstName'
             :rules='rules.firstName'
@@ -227,6 +232,7 @@
           )
           v-text-field(
             label='Last name'
+            hint='Enter the controller\'s full legal last name'
             placeholder='Tables'
             v-model='form.controller.lastName'
             :rules='rules.lastName'

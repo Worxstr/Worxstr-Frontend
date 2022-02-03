@@ -1,9 +1,12 @@
 <template lang="pug">
 .contractor-form
+  v-subheader Full legal name
+
   .d-flex.flex-column.flex-sm-row
     v-text-field.mr-sm-4(
       autofocus
       label='First name'
+      hint='Enter your full legal first name'
       placeholder='Bobby'
       v-model='form.firstName'
       :rules='rules.firstName'
@@ -13,6 +16,7 @@
     )
     v-text-field(
       label='Last name'
+      hint='Enter your full legal last name'
       placeholder='Tables'
       v-model='form.lastName'
       :rules='rules.lastName'
@@ -20,6 +24,8 @@
       outlined
       dense
     )
+
+  v-subheader Your info
 
   v-text-field(
     v-if='!retry'
@@ -36,6 +42,7 @@
   .d-flex.flex-column.flex-sm-row(v-if='!retry')
     v-text-field.mr-sm-4(
       label='Manager reference number'
+      hint='Given to you by your manager'
       placeholder='123456789'
       v-model='form.manager_reference'
       :rules='rules.managerReference'
@@ -51,7 +58,8 @@
 
   .d-flex.flex-column.flex-sm-row
     v-text-field.mr-sm-4(
-      label='Address 1'
+      label='Mailing address 1'
+      hint='Typically the address that you used to file your last tax return'
       placeholder='1234 Main St.'
       v-model='form.address1'
       :rules='rules.address1'
@@ -60,7 +68,7 @@
       dense
     )
     v-text-field(
-      label='Address 2'
+      label='Mailing address 2'
       placeholder='Apt. 123'
       v-model='form.address2'
       required
