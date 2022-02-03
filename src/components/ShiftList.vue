@@ -21,21 +21,21 @@ div
   multiselect-list(
     :items='sortedShifts'
     :loading='loading'
+    :show-checkboxes='userIsManager'
   )
     template(#title) Upcoming shifts
 
     template(#actions)
-      p test
-      //- v-btn(
-      //-   v-if='userIsManager'
-      //-   text
-      //-   color='primary'
-      //-   @click='createShiftDialog = true'
-      //-   :icon='$vuetify.breakpoint.xs'
-      //-   data-cy='assign-shift-button'
-      //- )
-      //-   v-icon(:left='!$vuetify.breakpoint.xs') mdi-clipboard-plus-outline
-      //-   span(v-if='!$vuetify.breakpoint.xs') Assign shift
+      v-btn(
+        v-if='userIsManager'
+        text
+        color='primary'
+        @click='createShiftDialog = true'
+        :icon='$vuetify.breakpoint.xs'
+        data-cy='assign-shift-button'
+      )
+        v-icon(:left='!$vuetify.breakpoint.xs') mdi-clipboard-plus-outline
+        span(v-if='!$vuetify.breakpoint.xs') Assign shift
     
     template(#content='{ item }')
 
@@ -54,125 +54,25 @@ div
         span(v-if='item.clock_history.length')
           | &nbsp;- {{ item.clock_history.length }} {{ item.clock_history.length == 1 ? 'event' : 'events'}}
       
-        //- span(v-if='!userIsManager') {Job name} &bull; {n} tasks
+    template(#item-actions='{ item }')
+      .d-flex(v-if='item')
 
-    template(#actions='{ item }')
-      div(v-if='item')
+        v-list-item-action.mr-2(v-if='userIsContractor ? !shiftIsActive(item) : !$vuetify.breakpoint.xs')
 
-        v-list-item-action(v-if='userIsContractor ? !shiftIsActive(item) : !$vuetify.breakpoint.xs')
+          .d-flex.flex-column.align-end
+            .text-body-2.font-weight-medium {{ item.time_begin | date('MMM D, YYYY') }}
+            .text-body-2 {{ item.time_begin | time }} - {{ item.time_end | time }}
 
-        //-   .d-flex.flex-column.align-end
-        //-     .text-body-2.font-weight-medium {{ item.time_begin | date('MMM D, YYYY') }}
-        //-     .text-body-2 {{ item.time_begin | time }} - {{ item.time_end | time }}
+        v-list-item-action.mr-2(v-if='userIsContractor && shiftIsActive(item)')
+          clock-buttons(:shift='item')
 
-
-        //- v-list-item-action.ml-4(v-if='userIsContractor && shiftIsActive(item)')
-        //-   clock-buttons(:shift='item')
-
-        v-list-item-action(:class="{'ml-0': !userIsContractor}")
+        v-list-item-action.mx-0
           v-btn(
             icon
             :to="{name: 'shift', params: {jobId: item.job_id, shiftId: item.id}}"
           )
             v-icon mdi-chevron-right
 
-  //- v-toolbar(flat color='transparent')
-  //-   v-checkbox.mr-2(
-  //-     v-if='userIsManager'
-  //-     hide-details
-  //-     :value.sync="selectedShifts.length"
-  //-     @change='selectAll'
-  //-     :indeterminate='partiallySelected'
-  //-   )
-
-  //-   v-toolbar-title.text-h6
-  //-     span(v-if='selectedShifts.length')
-  //-       | {{selectedShifts.length}} {{selectedShifts.length == 1 ? 'shift' : 'shifts'}} selected
-
-  //-     span(v-else)
-  //-       slot(name='title')
-
-  //-   v-spacer
-
-  //-   v-btn(
-  //-     v-if='oneSelected'
-  //-     icon
-  //-     text
-  //-     color='primary'
-  //-     :icon='$vuetify.breakpoint.xs'
-  //-   )
-  //-     v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
-  //-     span(v-if='!$vuetify.breakpoint.xs') Edit
-
-  //-   v-btn(
-  //-     v-if='anySelected'
-  //-     icon
-  //-     text
-  //-     color='error'
-  //-     :disabled='!canDeleteSelected'
-  //-     :icon='$vuetify.breakpoint.xs'
-  //-   )
-  //-     v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
-  //-     span(v-if='!$vuetify.breakpoint.xs') Delete
-
-  //-   span(v-show='!anySelected')
-  //-     slot(name='actions')
-      
-  //- v-card.soft-shadow(outlined rounded)
-
-  //-   v-list
-  //-     v-skeleton-loader(
-  //-       v-if='loading && (!shifts.length)'
-  //-       v-for='(v, i) in [1,2,3,4,5,6]'
-  //-       :key='i'
-  //-       type="list-item-two-line"
-  //-     )
-
-  //-     v-list-item(
-  //-       v-for='(shift, i) in sortedShifts'
-  //-       :key='shift.id'
-  //-     )
-  //-       v-list-item-icon.my-0.mr-2(v-if='userIsManager')
-  //-         v-checkbox(
-  //-           v-model='selectedShifts'
-  //-           :value='shift.id'
-  //-         )
-
-  //-       v-list-item-content
-
-  //-         v-list-item-title
-  //-           router-link.alt-style.my-1.font-weight-medium(
-  //-             :to="{name: 'shift', params: {jobId: shift.job_id, shiftId: shift.id}}"
-  //-           ) {{ shift.site_location }}
-
-  //-         v-list-item-subtitle
-  //-           router-link.alt-style.my-1.font-weight-medium(
-  //-             v-if='shift.contractor_id && userIsManager'
-  //-             :to="{name: 'user', params: {userId: shift.contractor_id}}"
-  //-           )
-  //-             | {{ getContractor(shift.contractor_id) | fullName }}
-
-  //-           span(v-if='shift.clock_history.length')
-  //-             | &nbsp;- {{ shift.clock_history.length }} {{ shift.clock_history.length == 1 ? 'event' : 'events'}}
-          
-  //-           //- span(v-if='!userIsManager') {Job name} &bull; {n} tasks
-
-  //-       v-list-item-action(v-if='userIsContractor ? !shiftIsActive(shift) : !$vuetify.breakpoint.xs')
-
-  //-         .d-flex.flex-column.align-end
-  //-           .text-body-2.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
-  //-           .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
-
-
-  //-       v-list-item-action.ml-4(v-if='userIsContractor && shiftIsActive(shift)')
-  //-         clock-buttons(:shift='shift')
-
-  //-       v-list-item-action(:class="{'ml-0': !userIsContractor}")
-  //-         v-btn(
-  //-           icon
-  //-           :to="{name: 'shift', params: {jobId: shift.job_id, shiftId: shift.id}}"
-  //-         )
-  //-           v-icon mdi-chevron-right
 </template>
 
 <script lang="ts">

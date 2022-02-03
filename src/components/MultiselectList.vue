@@ -40,7 +40,6 @@ div
       span(v-if='!$vuetify.breakpoint.xs') Delete
 
     span(v-show='!anySelected')
-      pre test
       slot(name='actions')
       
   v-card.soft-shadow(outlined rounded)
@@ -66,7 +65,7 @@ div
         v-list-item-content
           slot(name='content' :item='item')
 
-        slot(name='actions' :item='item')
+        slot(name='item-actions' :item='item')
 </template>
 
 <script lang="ts">
