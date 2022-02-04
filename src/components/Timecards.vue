@@ -64,6 +64,7 @@
             text
             @click="openEditTimecardDialog(selectedTimecardIds[0])"
             data-cy='edit-timecard-button'
+            color='primary'
           ) 
             v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
             span(v-if='!$vuetify.breakpoint.xs') Edit
