@@ -193,7 +193,6 @@ export default class Timecards extends Vue {
     timeDiff(timeIn: string, timeOut: string) {
       const _in = dayjs(timeIn)
       const _out = dayjs(timeOut)
-
       return _out.from(_in, true)
     }
 

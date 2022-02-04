@@ -25,7 +25,9 @@ div
     item-name='shift'
     :two-line='true'
   )
-    template(#title) Upcoming shifts
+    template(#title)
+      span Upcoming shifts
+      v-chip.mx-3.pa-2.font-weight-bold(small) {{ shifts.length }}
 
     template(#actions)
       v-btn(
@@ -61,7 +63,7 @@ div
         :disabled='!canDeleteSelected'
       )
         v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
-        span(v-if='!$vuetify.breakpoint.xs') Delete
+        span(v-if='!$vuetify.breakpoint.xs') Delete {{ selectedShiftIds.length == 1 ? '' : (selectedShiftIds.length == shifts.length ? 'all' : selectedShiftIds.length) }}
     
     template(#content='{ item }')
       v-list-item-content
