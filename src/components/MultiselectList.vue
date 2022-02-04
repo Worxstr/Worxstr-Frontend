@@ -11,7 +11,9 @@ div
 
     v-toolbar-title.text-h6
       span(v-if='selectedItems.length')
-        | {{selectedItems.length}} {{selectedItems.length == 1 ? itemName : `${itemName}s`}} selected
+        | {{selectedItems.length}} &nbsp;
+        span(v-if='!$vuetify.breakpoint.xs') {{selectedItems.length == 1 ? itemName : `${itemName}s`}}
+        | &nbsp; selected
 
       span(v-else)
         slot(name='title')
@@ -26,7 +28,7 @@ div
       
   v-card.soft-shadow(outlined rounded)
 
-    v-list.py-1
+    v-list.py-0
       v-skeleton-loader(
         v-if='loading && (!items.length)'
         v-for='(v, i) in [1,2,3,4,5,6]'
@@ -39,9 +41,8 @@ div
         :key='item.id || i'
       )
         v-list-item(:two-line='twoLine')
-          v-list-item-icon.my-0.mr-2(v-if='showCheckboxes')
-            v-checkbox(
-              :class="twoLine ? '' : 'mt-2'"
+          v-list-item-icon.my-0.mr-2.align-self-center(v-if='showCheckboxes')
+            v-checkbox.mt-0.mb-1(
               v-model='selectedItems'
               :value='item.id'
               hide-details

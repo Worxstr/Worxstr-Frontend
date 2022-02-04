@@ -180,6 +180,7 @@ export default class EditTimecardDialog extends Vue {
         newTimeclockEvents,
       )
       this.closeDialog()
+      this.$emit('saved')
     } finally {
       this.loading = false
     }

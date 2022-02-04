@@ -11,14 +11,17 @@
       edit-timecard-dialog(
         :opened.sync="editTimecardDialog",
         :timecardId="selectedTimecardIds[0]"
+        @saved='clearSelection'
       )
       deny-dialog(
         :opened.sync="denyDialog"
         :timecardIds="selectedTimecardIds"
+        @denied='clearSelection'
       )
       payment-dialog(
         :opened.sync="paymentDialog",
         :timecardIds="selectedTimecardIds"
+        @completed='clearSelection'
       )
 
       multiselect-list(
@@ -28,32 +31,65 @@
         :show-checkboxes='userIsManager'
         item-name='timecard'
       )
-        template(#title) Pending payments
+        template(#title)
+          span(v-if='$vuetify.breakpoint.smAndUp') Pending payments
+          span(v-else) Pending
+          v-chip.mx-3.pa-2.font-weight-bold(small) {{ timecards.length }}
         
         template(#actions)
           v-btn(
-            text,
-            color="success",
-            @click="openPaymentDialog()"
+            text
+            color='success'
+            @click='openPaymentDialog()'
             :disabled='!hasSufficientBalance()'
             :icon='$vuetify.breakpoint.xs'
             data-cy='complete-all-timecards-button'
           )
             v-icon(:left='!$vuetify.breakpoint.xs') mdi-check-all
-            span(v-if='!$vuetify.breakpoint.xs') Complete&nbsp;
-              | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
+            span(v-if='!$vuetify.breakpoint.xs') Complete all
 
           v-btn(
-            text,
-            color="error",
-            @click="openDenyDialog()"
+            text
+            color='error'
+            @click='openDenyDialog()'
             :icon='$vuetify.breakpoint.xs'
             data-cy='deny-all-timecards-button'
           )
             v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
-            span(v-if='!$vuetify.breakpoint.xs') Deny&nbsp;
-              | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
+            span(v-if='!$vuetify.breakpoint.xs') Deny all
         
+        template(#item-actions)
+          v-btn(
+            v-if='selectedTimecardIds.length == 1'
+            text
+            @click="openEditTimecardDialog(selectedTimecardIds[0])"
+            data-cy='edit-timecard-button'
+          ) 
+            v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
+            span(v-if='!$vuetify.breakpoint.xs') Edit
+
+
+          v-btn(
+            text
+            color='success'
+            @click='openPaymentDialog()'
+            :disabled='!hasSufficientBalance()'
+            :icon='$vuetify.breakpoint.xs'
+            data-cy='complete-all-timecards-button'
+          )
+            v-icon(:left='!$vuetify.breakpoint.xs') {{ selectedTimecardIds.length == 1 ? 'mdi-check' : 'mdi-check-all' }}
+            span(v-if='!$vuetify.breakpoint.xs') Complete {{ selectedTimecardIds.length == 1 ? '' : (selectedTimecardIds.length == timecards.length) ? 'all' : selectedTimecardIds.length }}
+
+          v-btn(
+            text
+            color='error'
+            @click='openDenyDialog()'
+            :icon='$vuetify.breakpoint.xs'
+            data-cy='deny-all-timecards-button'
+          )
+            v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
+            span(v-if='!$vuetify.breakpoint.xs') Deny {{ selectedTimecardIds.length == 1 ? '' : (selectedTimecardIds.length == timecards.length) ? 'all' : selectedTimecardIds.length }}
+
         template(#content='{ item }')
           v-list-item-content
             v-list-item-title
@@ -61,7 +97,7 @@
                 :to="{name: 'user', params: {userId: item.contractor_id}}"
               ) {{ item | fullName }}
           
-          v-list-item-action.flex-row
+          v-list-item-action.align-self-center.flex-row
             span.flex-grow-0.px-2(
               v-if="item.time_clocks && item.time_clocks.length"
             )
@@ -73,124 +109,10 @@
               | }}
             span.flex-grow-0.px-2.font-weight-bold {{ item.total_payment | currency }}
         
-        template(#item-actions)
+          v-list-item-action.mx-0
+            v-btn(icon)
+              v-icon mdi-chevron-right
 
-
-      v-toolbar.no-padding(flat, color="transparent")
-      
-        v-checkbox.ml-6(
-          hide-details
-          @change='toggleAll'
-          :indeterminate='partiallySelected'
-          :value='selectedTimecardIds.length == timecards.length'
-        )
-
-        v-toolbar-title.px-4.text-h6
-          span(v-if='$vuetify.breakpoint.smAndUp') Pending payments
-          span(v-else) Pending
-          v-chip.mx-3.pa-2.font-weight-bold(small) {{ timecards.length }}
-
-        v-spacer
-
-        v-btn(
-          text,
-          color="success",
-          @click="openPaymentDialog()"
-          :disabled='!hasSufficientBalance()'
-          :icon='$vuetify.breakpoint.xs'
-          data-cy='complete-all-timecards-button'
-        )
-          v-icon(:left='!$vuetify.breakpoint.xs') mdi-check-all
-          span(v-if='!$vuetify.breakpoint.xs') Complete&nbsp;
-            | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
-
-        v-btn(
-          text,
-          color="error",
-          @click="openDenyDialog()"
-          :icon='$vuetify.breakpoint.xs'
-          data-cy='deny-all-timecards-button'
-        )
-          v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
-          span(v-if='!$vuetify.breakpoint.xs') Deny&nbsp;
-            | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
-
-      v-card.soft-shadow(outlined)
-        v-expansion-panels(accordion flat)
-          v-expansion-panel(
-            v-for="(timecard, i) in timecards",
-            :key="timecard.id"
-            data-cy='timecard'
-          )
-            v-expansion-panel-header.py-3
-              v-checkbox.mt-0.mb-1.mr-3(
-                v-model='selectedTimecardIds'
-                :value="timecard.id"
-                hide-details
-                style='flex: none'
-              )
-              
-              span.py-1.font-weight-medium.flex-grow-0 {{ timecard | fullName }}
-              
-              v-spacer
-
-              span.flex-grow-0.px-2(
-                v-if="timecard.time_clocks && timecard.time_clocks.length"
-              )
-                | {{
-                |   timeDiff(
-                |     timecard.time_clocks[0].time,
-                |     timecard.time_clocks[timecard.time_clocks.length - 1].time
-                |   )
-                | }}
-              span.flex-grow-0.px-2.font-weight-bold {{ timecard.total_payment | currency }}
-
-            v-expansion-panel-content
-              //- .text-body-1
-              v-card-text.d-flex(v-if="timecard.time_clocks && timecard.time_clocks.length")
-                .flex-grow-1
-                  p {{ timecard.time_clocks[0].time | date }}
-                  p
-                    | {{ timecard.time_clocks[0].time | time }}
-                    | -
-                    | {{
-                    | timecard.time_clocks[timecard.time_clocks.length - 1].time
-                    | | time
-                    | }}
-                .flex-grow-1
-                  p {{ parseFloat(timecard.time_break) }} minute break
-
-                .flex-grow-1
-                  p {{ timecard.wage_payment | currency }} earned
-                  p {{ timecard.fees_payment | currency }} fee
-
-
-              v-card-actions
-                v-spacer
-                v-btn(
-                  text
-                  @click="openEditTimecardDialog(timecard.id)"
-                  data-cy='edit-timecard-button'
-                ) Edit
-                v-btn(
-                  text,
-                  color="green",
-                  @click="openPaymentDialog(timecard.id)"
-                  :disabled='!hasSufficientBalance(timecard.id)'
-                  data-cy='complete-timecard-button'
-                )
-                  v-icon(left) mdi-check
-                  span Complete
-                v-btn(
-                  text
-                  color="red"
-                  @click="openDenyDialog(timecard.id)"
-                  data-cy='deny-timecard-button'
-                )
-                  v-icon(left) mdi-close
-                  span Deny
-
-            v-divider(v-if='i != timecards.length - 1')
 </template>
 
 <script lang="ts">
@@ -235,11 +157,8 @@ export default class Timecards extends Vue {
       }
     }
 
-    @Watch('paymentDialog')
-    @Watch('approveDialog')
-    @Watch('denyDialog')
-    dialogClosed(_oldVal: boolean, newVal: boolean) {
-      if (newVal) this.selectedTimecardIds = []
+    clearSelection() {
+      this.selectedTimecardIds = []
     }
 
     get payments() {
@@ -252,13 +171,6 @@ export default class Timecards extends Vue {
     
     get userIsManager() {
       return currentUserIs(...Managers)
-    }
-
-    get partiallySelected() {
-      return (
-        this.selectedTimecardIds.length != 0 &&
-        this.selectedTimecardIds.length != this.timecards.length
-      )
     }
 
     hasSufficientBalance(timecardId: number) {
@@ -285,13 +197,6 @@ export default class Timecards extends Vue {
       return _out.from(_in, true)
     }
 
-    toggleAll() {
-      if (this.selectedTimecardIds.length != this.timecards.length) {
-        this.selectAll()
-      } else {
-        this.deselectAll()
-      }
-    }
 
     selectAll() {
       this.selectedTimecardIds = this.timecards.map((t: Timecard) => t.id)

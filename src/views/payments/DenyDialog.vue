@@ -59,6 +59,7 @@ export default class DenyDialog extends Vue {
     await denyPayments(this.$store, this.timecardIds)
     this.loading = false
     this.closeDialog()
+    this.$emit('denied')
   }
 }
 </script>
