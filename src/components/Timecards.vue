@@ -21,6 +21,61 @@
         :timecardIds="selectedTimecardIds"
       )
 
+      multiselect-list(
+        v-model='selectedTimecardIds'
+        :items='timecards'
+        :loading='loadingTimecards'
+        :show-checkboxes='userIsManager'
+        item-name='timecard'
+      )
+        template(#title) Pending payments
+        
+        template(#actions)
+          v-btn(
+            text,
+            color="success",
+            @click="openPaymentDialog()"
+            :disabled='!hasSufficientBalance()'
+            :icon='$vuetify.breakpoint.xs'
+            data-cy='complete-all-timecards-button'
+          )
+            v-icon(:left='!$vuetify.breakpoint.xs') mdi-check-all
+            span(v-if='!$vuetify.breakpoint.xs') Complete&nbsp;
+              | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
+
+          v-btn(
+            text,
+            color="error",
+            @click="openDenyDialog()"
+            :icon='$vuetify.breakpoint.xs'
+            data-cy='deny-all-timecards-button'
+          )
+            v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
+            span(v-if='!$vuetify.breakpoint.xs') Deny&nbsp;
+              | {{ selectedTimecardIds.length != 0 && selectedTimecardIds.length != timecards.length ? selectedTimecardIds.length : 'all'}}
+        
+        template(#content='{ item }')
+          v-list-item-content
+            v-list-item-title
+              router-link.alt-style.font-weight-medium(
+                :to="{name: 'user', params: {userId: item.contractor_id}}"
+              ) {{ item | fullName }}
+          
+          v-list-item-action.flex-row
+            span.flex-grow-0.px-2(
+              v-if="item.time_clocks && item.time_clocks.length"
+            )
+              | {{
+              |   timeDiff(
+              |     item.time_clocks[0].time,
+              |     item.time_clocks[item.time_clocks.length - 1].time
+              |   )
+              | }}
+            span.flex-grow-0.px-2.font-weight-bold {{ item.total_payment | currency }}
+        
+        template(#item-actions)
+
+
       v-toolbar.no-padding(flat, color="transparent")
       
         v-checkbox.ml-6(
@@ -143,17 +198,20 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
+import MultiselectList from '@/components/MultiselectList.vue'
 import EditTimecardDialog from '@/views/payments/EditTimecardDialog.vue'
 import DenyDialog from '@/views/payments/DenyDialog.vue'
 import PaymentDialog from '@/views/payments/PaymentDialog.vue'
 
 import { Timecard } from '@/types/Payments'
 import { loadTimecards } from '@/services/payments'
+import { currentUserIs, Managers } from '@/types/Users'
 
 dayjs.extend(relativeTime)
 
 @Component({
   components: {
+    MultiselectList,
     EditTimecardDialog,
     PaymentDialog,
     DenyDialog,
@@ -190,6 +248,10 @@ export default class Timecards extends Vue {
 
     get timecards() {
       return this.$store.getters.timecards
+    }
+    
+    get userIsManager() {
+      return currentUserIs(...Managers)
     }
 
     get partiallySelected() {

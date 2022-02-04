@@ -23,6 +23,7 @@ div
     :loading='loading'
     :show-checkboxes='userIsManager'
     item-name='shift'
+    :two-line='true'
   )
     template(#title) Upcoming shifts
 
