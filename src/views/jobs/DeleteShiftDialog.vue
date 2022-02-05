@@ -75,7 +75,6 @@ export default class DeleteShiftDialog extends Vue {
         this.$store,
         this.shiftIds,
       )
-      console.log('close')
       this.closeDialog()
       this.$emit('deleted')
       // TODO:
