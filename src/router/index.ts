@@ -27,6 +27,7 @@ import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import Payments from '@/views/payments/Payments.vue'
+import Payment from '@/views/payments/Payment.vue'
 // import Availability from '@/views/Availability.vue'
 import Jobs from '@/views/jobs/Jobs.vue'
 import Job from '@/views/jobs/Job.vue'
@@ -249,6 +250,18 @@ const routes = [
     component: Payments,
     meta: {
       icon: 'mdi-cash-multiple',
+    }
+  },
+  {
+    path: '/payments/:paymentId',
+    name: 'payment',
+    component: Payment,
+    meta: {
+      paramMap: [{
+        param: 'paymentId',
+        store: 'payments',
+        prop: 'name'
+      }]
     }
   },
   {

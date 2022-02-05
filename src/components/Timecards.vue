@@ -111,7 +111,10 @@
             span.flex-grow-0.px-2.font-weight-bold {{ item.total_payment | currency }}
         
           v-list-item-action.mx-0
-            v-btn(icon)
+            v-btn(
+              icon
+              :to="{name: 'payment', params: {paymentId: item.id}}"
+            )
               v-icon mdi-chevron-right
 
 </template>
