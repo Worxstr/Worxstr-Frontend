@@ -79,7 +79,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
         clock-events(:events='history')
           
     .mb-4.d-flex.flex-column.gap-small
-      h5.text-h5 Transaction
+      h5.text-h5 ACH transfer
       v-sheet(outlined rounded)
         v-card-text
           v-chip.mr-3(

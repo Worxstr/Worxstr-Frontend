@@ -107,10 +107,10 @@ export async function deleteShifts({ state, commit }: any, shiftIds: number[]) {
       shift_ids: shiftIds
     }
   })
-  shiftIds.map((shiftId: number) => {
+  shiftIds.forEach((shiftId: number) => {
     commit('REMOVE_SHIFT', {
       shiftId,
-      jobId: state.shifts.byId[shiftId].job_id,
+      jobId: state.shifts.byId[shiftId]?.job_id,
     }) 
   })
 }
