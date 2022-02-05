@@ -1,5 +1,33 @@
 <template lang="pug">
 v-container.d-flex.flex-column.pt-6.gap-small
+
+  portal(to='toolbarActions')
+    v-btn(
+      text
+      :icon='$vuetify.breakpoint.xs'
+      color='primary'
+      data-cy='edit-shift-button'
+    )
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
+      span(v-if='!$vuetify.breakpoint.xs') Edit
+
+    v-btn(
+      text
+      :icon='$vuetify.breakpoint.xs'
+      color='success'
+      data-cy='edit-shift-button'
+    )
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-check
+      span(v-if='!$vuetify.breakpoint.xs') Complete
+
+    v-btn(
+      text
+      :icon='$vuetify.breakpoint.xs'
+      color='error'
+      data-cy='delete-shift-button'
+    )
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
+      span(v-if='!$vuetify.breakpoint.xs') Deny
   
   div
     h3.text-h3.green--text +{{ 123.45 | currency }}
