@@ -124,8 +124,6 @@ v-container.d-flex.flex-column.pt-6.gap-small
             v-list-item-action
               .text-subtitle-1.font-weight-black.green--text {{ invoiceTotal | currency }}
 
-        
-
 </template>
 
 <script lang="ts">

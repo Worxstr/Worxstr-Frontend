@@ -2,9 +2,22 @@
 div
 
   transfer-funds-dialog(:opened.sync='transferFundsDialog' :action='transferFundsDialog')
+  create-invoice-dialog(:opened.sync='createInvoiceDialog')
 
   //- Toolbar buttons
   portal(to="toolbarActions")
+
+    v-btn(
+      v-if='userIsContractor'
+      color="primary",
+      text
+      :icon='$vuetify.breakpoint.xs'
+      @click='openInvoiceDialog'
+      :disabled='!iAmVerified'
+    )
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-receipt
+      span(v-if='!$vuetify.breakpoint.xs') Create invoice
+
     v-btn(
       v-if='userIsManager'
       color="primary",
@@ -50,7 +63,8 @@ import { Component, Vue } from 'vue-property-decorator'
 import Timecards from '@/components/Timecards.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
-import { currentUserIs, Managers } from '@/types/Users'
+import CreateInvoiceDialog from './CreateInvoiceDialog.vue'
+import { currentUserIs, Managers, UserRole } from '@/types/Users'
 import { loadBalance } from '@/services/payments'
 import { showToast } from '@/services/app'
 
@@ -62,12 +76,14 @@ import { showToast } from '@/services/app'
     Timecards,
     TransferHistory,
     TransferFundsDialog,
+    CreateInvoiceDialog,
   }
 })
 export default class Payments extends Vue {
   loadingBalance = false
   breaks = [{}]
   transferFundsDialog: string | null = null
+  createInvoiceDialog = false
 
   async mounted() {
     this.loadingBalance = true
@@ -84,6 +100,10 @@ export default class Payments extends Vue {
 
   get payments() {
     return this.$store.state.payments
+  }
+
+  get userIsContractor() {
+    return currentUserIs(UserRole.Contractor)
   }
 
   get userIsManager() {
@@ -111,6 +131,10 @@ export default class Payments extends Vue {
       return false
     }
     return true
+  }
+
+  openInvoiceDialog() {
+    this.createInvoiceDialog = true
   }
   
   openAddFundsDialog() {
