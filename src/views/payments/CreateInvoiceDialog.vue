@@ -9,39 +9,24 @@ v-dialog(
     v-form.flex-grow-1.d-flex.flex-column(
       @submit.prevent='createInvoice'
       ref='form'
-      v-model='isValid'
+      v-model='allValid'
     )
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title.text-h6 Creating new invoice
 
       v-divider
 
-      v-card-text.transfer-amount.pb-0
+      v-card-text.transfer-amount.d-flex.flex-column.gap-small
+        
         richtext-field(
-          placeholder='Description'
+          placeholder='Description of invoice'
           v-model='invoice.description'
         )
 
-        v-subheader Items
-
-        invoice-input(v-model='invoice.items')
-
-        //- v-list(outlined rounded)
-        //-   v-list-item(v-for='item in invoice.items')
-        //-     v-list-item-content
-        //-       v-list-item-title {{ item.description }}
-            
-        //-     v-list-item-action
-        //-       .text-subtitle-1 {{ item.amount | currency }}
-
-        //-   v-divider
-
-        //-   v-list-item
-        //-     v-list-item-content
-        //-       v-list-item-title.font-weight-bold Total
-            
-        //-     v-list-item-action
-        //-       .text-subtitle-1.font-weight-black.green--text {{ invoiceTotal | currency }}
+        div
+          v-subheader Line items
+          //- // TODO: Create generic component for draggable list creation
+          invoice-input(v-model='invoice.items' :orderable='true')
 
       v-spacer
 
@@ -51,10 +36,10 @@ v-dialog(
         v-btn(
           text
           color='primary'
-          :disabled='!isValid'
+          :disabled='!allValid'
           type='submit'
           data-cy='transfer-submit-button'
-        ) Transfer
+        ) Create
 </template>
 
 <script lang="ts">
@@ -76,6 +61,11 @@ export default class CreateInvoiceDialog extends Vue {
   invoice = {
     description: '',
     items: []
+  }
+
+  // TODO: Figure out how to add rules prop to InvoiceInput
+  get allValid() {
+    return this.isValid && this.invoice.items.length > 0
   }
   
   closeDialog() {

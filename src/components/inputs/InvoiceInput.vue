@@ -1,5 +1,5 @@
 <template lang="pug">
-.lineitem-list-input.d-flex.flex-column.gap-small
+.lineitem-list-input.d-flex.flex-column
 
   draggable.d-flex.flex-column.gap-small(
     v-model='localLineitems'
@@ -89,15 +89,22 @@
           )
             v-icon mdi-drag-horizontal
 
-  .d-flex
-    v-btn(
-      text
-      color='primary'
-      @click='addLineitem'
-      v-show='editingLineitem === null'
-    )
-      v-icon(left) mdi-plus
-      | Add item
+  v-list-item
+    v-list-item-content
+      v-list-item-title.font-weight-bold(v-if='localLineitems.length') Total amount
+    
+    v-list-item-action(v-if='localLineitems.length')
+      .text-subtitle-1.font-weight-black.green--text {{ total | currency }}
+
+    v-list-item-action
+      v-btn(
+        text
+        color='primary'
+        @click='addLineitem'
+        v-show='editingLineitem === null'
+      )
+        v-icon(left) mdi-plus
+        | Add item
 
 </template>
 
@@ -144,7 +151,7 @@ export default class InvoiceInput extends Vue {
     this.localLineitems = this.localLineitems.filter((lineitem: Lineitem) => !!lineitem.title)
     this.localLineitems.push({
       title: '',
-      description: ''
+      amount: 0,
     })
     this.editingLineitem = this.localLineitems.length - 1
     this.update()
@@ -179,6 +186,10 @@ export default class InvoiceInput extends Vue {
 
   update() {
     this.$emit('input', this.localLineitems.filter((lineitem: Lineitem) => !!lineitem.title));
+  }
+
+  get total() {
+    return this.localLineitems.reduce((total: number, lineitem: Lineitem) => total + lineitem.amount, 0)
   }
   
 }
