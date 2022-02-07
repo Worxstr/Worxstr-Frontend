@@ -1,6 +1,22 @@
 <template lang="pug">
 v-container.d-flex.flex-column.pt-6.gap-small
 
+  //- edit-timecard-dialog(
+  //-   :opened.sync="editTimecardDialog",
+  //-   :timecardId="selectedTimecardIds[0]"
+  //-   @saved='clearSelection'
+  //- )
+  //- deny-dialog(
+  //-   :opened.sync="denyDialog"
+  //-   :timecardIds="selectedTimecardIds"
+  //-   @denied='clearSelection'
+  //- )
+  //- payment-dialog(
+  //-   :opened.sync="paymentDialog",
+  //-   :timecardIds="selectedTimecardIds"
+  //-   @completed='clearSelection'
+  //- )
+
   portal(to='toolbarActions')
     v-btn(
       text

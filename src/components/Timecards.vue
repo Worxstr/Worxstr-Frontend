@@ -29,7 +29,7 @@
         :items='timecards'
         :loading='loadingTimecards'
         :show-checkboxes='userIsManager'
-        item-name='timecard'
+        item-name='payment'
       )
         template(#title)
           span(v-if='$vuetify.breakpoint.smAndUp') Pending payments
