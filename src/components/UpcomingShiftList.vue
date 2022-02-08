@@ -23,7 +23,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component } from 'vue-property-decorator'
 import ShiftList from '@/components/ShiftList.vue'
-import { getUpcomingShifts } from '@/services/shifts'
+import { loadUpcomingShifts } from '@/services/shifts'
 import { Shift } from '@/types/Jobs'
 
 @Component({
@@ -51,7 +51,7 @@ export default class UpcomingShiftList extends Vue {
   async loadUpcomingShifts() {
     this.loading = true
     try {
-      await getUpcomingShifts(this.$store, this.offset)
+      await loadUpcomingShifts(this.$store, this.offset)
       this.offset++
     }
     finally {

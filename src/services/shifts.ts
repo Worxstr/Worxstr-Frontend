@@ -48,7 +48,7 @@ export async function toggleBreak({ commit }: any, shiftId: number, breakState: 
   return data
 }
 
-export async function getShift({ commit }: any, shiftId: number) {
+export async function loadShift({ commit }: any, shiftId: number) {
   const { data } = await api({
     method: 'GET',
     url: `shifts/${shiftId}`,
@@ -57,7 +57,7 @@ export async function getShift({ commit }: any, shiftId: number) {
   return data
 }
 
-export async function getUpcomingShifts({ commit }: any, offset = 0, limit = 10) {
+export async function loadUpcomingShifts({ commit }: any, offset = 0, limit = 10) {
   const { data } = await api({
     method: 'GET',
     url: 'shifts',

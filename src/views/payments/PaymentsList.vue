@@ -1,40 +1,40 @@
 <template lang="pug">
-  div(v-if="loadingTimecards && !(timecards.length)")
+  div(v-if="loadingPayments && !(payments.length)")
     v-skeleton-loader.my-4(type="heading")
     v-skeleton-loader(
       type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
     )
 
   .d-flex.flex-column.justify-center(v-else)
-    .payments.pt-0(v-if='timecards && timecards.length')
+    .payments.pt-0(v-if='payments && payments.length')
 
-      edit-timecard-dialog(
-        :opened.sync="editTimecardDialog",
-        :timecardId="selectedTimecardIds[0]"
+      edit-payment-dialog(
+        :opened.sync="editPaymentDialog",
+        :paymentId="selectedPaymentIds[0]"
         @saved='clearSelection'
       )
       deny-dialog(
         :opened.sync="denyDialog"
-        :timecardIds="selectedTimecardIds"
+        :paymentIds="selectedPaymentIds"
         @denied='clearSelection'
       )
-      payment-dialog(
-        :opened.sync="paymentDialog",
-        :timecardIds="selectedTimecardIds"
+      complete-payment-dialog(
+        :opened.sync="paymentDialog"
+        :paymentIds="selectedPaymentIds"
         @completed='clearSelection'
       )
 
       multiselect-list(
-        v-model='selectedTimecardIds'
-        :items='timecards'
-        :loading='loadingTimecards'
+        v-model='selectedPaymentIds'
+        :items='payments'
+        :loading='loadingPayments'
         :show-checkboxes='userIsManager'
         item-name='payment'
       )
         template(#title)
           span(v-if='$vuetify.breakpoint.smAndUp') Pending payments
           span(v-else) Pending
-          v-chip.mx-3.pa-2.font-weight-bold(small) {{ timecards.length }}
+          v-chip.mx-3.pa-2.font-weight-bold(small) {{ payments.length }}
         
         template(#actions)
           v-btn(
@@ -43,7 +43,7 @@
             @click='openPaymentDialog()'
             :disabled='!hasSufficientBalance()'
             :icon='$vuetify.breakpoint.xs'
-            data-cy='complete-all-timecards-button'
+            data-cy='complete-all-payments-button'
           )
             v-icon(:left='!$vuetify.breakpoint.xs') mdi-check-all
             span(v-if='!$vuetify.breakpoint.xs') Complete all
@@ -53,17 +53,17 @@
             color='error'
             @click='openDenyDialog()'
             :icon='$vuetify.breakpoint.xs'
-            data-cy='deny-all-timecards-button'
+            data-cy='deny-all-payments-button'
           )
             v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
             span(v-if='!$vuetify.breakpoint.xs') Deny all
         
         template(#item-actions)
           v-btn(
-            v-if='selectedTimecardIds.length == 1'
+            v-if='selectedPaymentIds.length == 1'
             text
-            @click="openEditTimecardDialog(selectedTimecardIds[0])"
-            data-cy='edit-timecard-button'
+            @click="openEditPaymentDialog(selectedPaymentIds[0])"
+            data-cy='edit-payment-button'
             color='primary'
           ) 
             v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
@@ -76,20 +76,20 @@
             @click='openPaymentDialog()'
             :disabled='!hasSufficientBalance()'
             :icon='$vuetify.breakpoint.xs'
-            data-cy='complete-all-timecards-button'
+            data-cy='complete-all-payments-button'
           )
-            v-icon(:left='!$vuetify.breakpoint.xs') {{ selectedTimecardIds.length == 1 ? 'mdi-check' : 'mdi-check-all' }}
-            span(v-if='!$vuetify.breakpoint.xs') Complete {{ selectedTimecardIds.length == 1 ? '' : (selectedTimecardIds.length == timecards.length) ? 'all' : selectedTimecardIds.length }}
+            v-icon(:left='!$vuetify.breakpoint.xs') {{ selectedPaymentIds.length == 1 ? 'mdi-check' : 'mdi-check-all' }}
+            span(v-if='!$vuetify.breakpoint.xs') Complete {{ selectedPaymentIds.length == 1 ? '' : (selectedPaymentIds.length == payments.length) ? 'all' : selectedPaymentIds.length }}
 
           v-btn(
             text
             color='error'
             @click='openDenyDialog()'
             :icon='$vuetify.breakpoint.xs'
-            data-cy='deny-all-timecards-button'
+            data-cy='deny-all-payments-button'
           )
             v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
-            span(v-if='!$vuetify.breakpoint.xs') Deny {{ selectedTimecardIds.length == 1 ? '' : (selectedTimecardIds.length == timecards.length) ? 'all' : selectedTimecardIds.length }}
+            span(v-if='!$vuetify.breakpoint.xs') Deny {{ selectedPaymentIds.length == 1 ? '' : (selectedPaymentIds.length == payments.length) ? 'all' : selectedPaymentIds.length }}
 
         template(#content='{ item }')
           v-list-item-content
@@ -108,7 +108,7 @@
               |     item.time_clocks[item.time_clocks.length - 1].time
               |   )
               | }}
-            span.flex-grow-0.px-2.font-weight-bold {{ item.total_payment | currency }}
+            span.flex-grow-0.px-2.font-weight-bold {{ item.total | currency }}
         
           v-list-item-action.mx-0
             v-btn(
@@ -125,12 +125,12 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
 import MultiselectList from '@/components/MultiselectList.vue'
-import EditTimecardDialog from '@/views/payments/EditTimecardDialog.vue'
+import EditPaymentDialog from '@/views/payments/EditPaymentDialog.vue'
 import DenyDialog from '@/views/payments/DenyDialog.vue'
-import PaymentDialog from '@/views/payments/PaymentDialog.vue'
+import CompletePaymentDialog from '@/views/payments/CompletePaymentDialog.vue'
 
-import { Timecard } from '@/types/Payments'
-import { loadTimecards } from '@/services/payments'
+import { Payment } from '@/types/Payments'
+import { loadPayments } from '@/services/payments'
 import { currentUserIs, Managers } from '@/types/Users'
 
 dayjs.extend(relativeTime)
@@ -138,60 +138,64 @@ dayjs.extend(relativeTime)
 @Component({
   components: {
     MultiselectList,
-    EditTimecardDialog,
-    PaymentDialog,
+    EditPaymentDialog,
+    CompletePaymentDialog,
     DenyDialog,
   },
 })
-export default class Timecards extends Vue {
+export default class PaymentsList extends Vue {
   
-    loadingTimecards = false
-    selectedTimecardIds: number[] = []
-    editTimecardDialog = false
+    loadingPayments = false
+    selectedPaymentIds: number[] = []
+    editPaymentDialog = false
     approveDialog = false
     denyDialog = false
     paymentDialog = false
     
     async mounted() {
-      this.loadingTimecards = true
+      this.loadingPayments = true
       try {
-        await loadTimecards(this.$store)
+        await loadPayments(this.$store)
       } finally {
-        this.loadingTimecards = false
+        this.loadingPayments = false
       }
     }
 
     clearSelection() {
-      this.selectedTimecardIds = []
+      this.selectedPaymentIds = []
+    }
+
+    get balance() {
+      return this.$store.state.payments.balance
     }
 
     get payments() {
-      return this.$store.state.payments
+      return this.$store.getters.payments
     }
 
-    get timecards() {
-      return this.$store.getters.timecards
-    }
+    // get timecards() {
+    //   return this.$store.getters.timecards
+    // }
     
     get userIsManager() {
       return currentUserIs(...Managers)
     }
 
-    hasSufficientBalance(timecardId: number) {
+    hasSufficientBalance(paymentId: number) {
 
-      let timecardIds = []
+      let paymentIds = []
 
-      if (timecardId) timecardIds = [timecardId]   
-      else if (!this.selectedTimecardIds.length) timecardIds = this.timecards.map((t: Timecard) => t.id)
-      else timecardIds = this.selectedTimecardIds
+      if (paymentId) paymentIds = [paymentId]   
+      else if (!this.selectedPaymentIds.length) paymentIds = this.payments.map((p: Payment) => p.id)
+      else paymentIds = this.selectedPaymentIds
 
-      const timecards = this.$store.getters.timecardsByIds(timecardIds)
+      const payments = this.$store.getters.paymentsByIds(paymentIds)
 
-      const totalPayment = timecards.reduce((total: number, timecard: Timecard) => {
-        return total + (timecard ? parseFloat(timecard.total_payment) : 0)
+      const totalPayment = payments.reduce((total: number, payment: Payment) => {
+        return total + (payment ? parseFloat(payment.total) : 0)
       }, 0)
 
-      return Math.round(totalPayment * 100) / 100 <= parseFloat(this.payments.balance.value)
+      return Math.round(totalPayment * 100) / 100 <= parseFloat(this.balance.value)
     }
 
     timeDiff(timeIn: string, timeOut: string) {
@@ -202,28 +206,28 @@ export default class Timecards extends Vue {
 
 
     selectAll() {
-      this.selectedTimecardIds = this.timecards.map((t: Timecard) => t.id)
+      this.selectedPaymentIds = this.payments.map((t: Payment) => t.id)
     }
 
     deselectAll() {
-      this.selectedTimecardIds = []
+      this.selectedPaymentIds = []
     }
 
-    openEditTimecardDialog(timecardId: number) {
-      this.selectedTimecardIds = [timecardId]
-      this.editTimecardDialog = true
+    openEditPaymentDialog(paymentId: number) {
+      this.selectedPaymentIds = [paymentId]
+      this.editPaymentDialog = true
     }
 
-    openDenyDialog(timecardId: number) {
-      if (timecardId) this.selectedTimecardIds = [timecardId]
-      else if (!this.selectedTimecardIds.length) this.selectAll()
+    openDenyDialog(paymentId: number) {
+      if (paymentId) this.selectedPaymentIds = [paymentId]
+      else if (!this.selectedPaymentIds.length) this.selectAll()
       this.denyDialog = true
     }
 
-    openPaymentDialog(timecardId: number) {
+    openPaymentDialog(paymentId: number) {
       // this.selectTimecards()
-      if (timecardId) this.selectedTimecardIds = [timecardId]
-      else if (!this.selectedTimecardIds.length) this.selectAll()
+      if (paymentId) this.selectedPaymentIds = [paymentId]
+      else if (!this.selectedPaymentIds.length) this.selectAll()
       this.paymentDialog = true
     }
 }

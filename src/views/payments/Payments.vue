@@ -51,16 +51,16 @@ div
       .text-h6 Available balance
       .text-h2 {{ payments.balance.value | currency }}
 
-    timecards.mb-5(v-if='userIsManager')
+    payments-list.mb-5(v-if='userIsManager')
 
-    transfer-history
+    //- transfer-history
 
 </template>
 
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import Timecards from '@/components/Timecards.vue'
+import PaymentsList from '@/views/payments/PaymentsList.vue'
 import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import CreateInvoiceDialog from './CreateInvoiceDialog.vue'
@@ -73,7 +73,7 @@ import { showToast } from '@/services/app'
     title: 'Payments',
   },
   components: {
-    Timecards,
+    PaymentsList,
     TransferHistory,
     TransferFundsDialog,
     CreateInvoiceDialog,

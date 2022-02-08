@@ -1,6 +1,6 @@
 <template lang="pug">
 v-dialog(
-  v-if='timecards && timecards.length'
+  v-if='payments && payments.length'
   id="payment-dialog"
   v-model="opened",
   :fullscreen="$vuetify.breakpoint.smAndDown",
@@ -12,13 +12,13 @@ v-dialog(
     v-card-title.headline
       span
         | Deny
-        | {{timecards.length}}
-        | payment{{timecards.length == 1 ? '' : 's'}}?
+        | {{payments.length}}
+        | payment{{payments.length == 1 ? '' : 's'}}?
 
-    v-card-text(v-if="timecards && timecards[0]")
-      | {{timecards.length == 1 ? `${timecards[0].first_name} ${timecards[0].last_name}` : 'These contractors' }}
+    v-card-text(v-if="payments && payments[0]")
+      | {{payments.length == 1 ? `${payments[0].first_name} ${payments[0].last_name}` : 'These contractors' }}
       | will not be paid for
-      | {{timecards.length == 1 ? 'this shift' : 'these shifts'}}.
+      | {{payments.length == 1 ? 'this shift' : 'these shifts'}}.
 
     v-spacer
     
@@ -42,10 +42,10 @@ import { denyPayments } from '@/services/payments'
 export default class DenyDialog extends Vue {
 
   @Prop({ default: false }) opened!: boolean
-  @Prop({ default: [] }) timecardIds!: Array<number>
+  @Prop({ default: [] }) paymentIds!: Array<number>
   
-  get timecards() {
-    return this.$store.getters.timecardsByIds(this.timecardIds)
+  get payments() {
+    return this.$store.getters.paymentsByIds(this.paymentIds)
   }
 
   loading = false
@@ -56,7 +56,7 @@ export default class DenyDialog extends Vue {
 
   async denyPayments() {
     this.loading = true
-    await denyPayments(this.$store, this.timecardIds)
+    await denyPayments(this.$store, this.paymentIds)
     this.loading = false
     this.closeDialog()
     this.$emit('denied')

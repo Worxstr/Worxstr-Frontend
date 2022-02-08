@@ -6,9 +6,9 @@ v-dialog(
   persistent
 )
   v-card.d-flex.flex-column
-    v-form.flex-grow-1.d-flex.flex-column(@submit.prevent="updateTimecard" v-model="form.isValid" v-if="timecard")
+    v-form.flex-grow-1.d-flex.flex-column(@submit.prevent="updatePayment" v-model="form.isValid" v-if="payment")
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ timecard | fullName }}'s timecard
+        v-toolbar-title.text-h6 {{ payment | fullName }}'s payment
 
       v-divider
           
@@ -17,7 +17,7 @@ v-dialog(
           outlined
           v-model="form.data.timeIn.time"
           label="Time in"
-          data-cy='timecard-time-in'
+          data-cy='payment-time-in'
         )
 
         .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
@@ -29,7 +29,7 @@ v-dialog(
                 hide-details
                 v-model="breakItem.start.time"
                 :label="`Break ${index + 1} start`"
-                :data-cy="`timecard-break-${index + 1}-start`"
+                :data-cy="`payment-break-${index + 1}-start`"
               )
             v-col
               datetime-input(
@@ -38,7 +38,7 @@ v-dialog(
                 hide-details
                 v-model="breakItem.end.time"
                 :label="`Break ${index + 1} end`"
-                :data-cy="`timecard-break-${index + 1}-end`"
+                :data-cy="`payment-break-${index + 1}-end`"
               )
 
         datetime-input(
@@ -46,7 +46,7 @@ v-dialog(
           required
           v-model="form.data.timeOut.time"
           label="Time out"
-          data-cy='timecard-time-out'
+          data-cy='payment-time-out'
         )
 
       v-spacer
@@ -57,8 +57,8 @@ v-dialog(
         v-btn(
           text
           color="primary"
-          @click="updateTimecard"
-          data-cy='save-timecard-button'
+          @click="updatePayment"
+          data-cy='save-payment-button'
         ) Save
 
     v-fade-transition
@@ -82,7 +82,7 @@ dayjs.extend(duration)
 @Component({
   components: { DatetimeInput },
 })
-export default class EditTimecardDialog extends Vue {
+export default class EditPaymentDialog extends Vue {
   
   loading = false
   form = {
@@ -95,14 +95,14 @@ export default class EditTimecardDialog extends Vue {
   }
 
   @Prop({ default: false }) opened
-  @Prop({ type: Number }) timecardId
+  @Prop({ type: Number }) paymentId
 
-  get timecard() {
-    return this.$store.getters.timecard(this.timecardId)
+  get payment() {
+    return this.$store.getters.payment(this.paymentId)
   }
 
-  @Watch('timecardId')
-  onTimecardIdChanged() {
+  @Watch('paymentId')
+  onPaymentIdChanged() {
     this.calculateFormValues()
   }
 
@@ -116,7 +116,7 @@ export default class EditTimecardDialog extends Vue {
   }
 
   calculateFormValues() {
-    const events = this.timecard.time_clocks
+    const events = this.payment.time_clocks
       .sort((a, b) => {
         return new Date(b.time).getTime() - new Date(a.time).getTime()
       })
@@ -161,7 +161,7 @@ export default class EditTimecardDialog extends Vue {
     }`
   }
 
-  async updateTimecard() {
+  async updatePayment() {
     const newTimeclockEvents = []
 
     newTimeclockEvents.push(this.form.data.timeIn)
@@ -174,9 +174,9 @@ export default class EditTimecardDialog extends Vue {
     this.loading = true
 
     try {
-      await payments.updateTimecard(
+      await payments.updatePayment(
         this.$store,
-        this.timecard.id,
+        this.payment.id,
         newTimeclockEvents,
       )
       this.closeDialog()

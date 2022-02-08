@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { FundingSource, Timecard, Transfer } from '@/types/Payments'
+import { FundingSource, Payment } from '@/types/Payments'
 
 export interface PaymentsState {
   beneficialOwnersCertified: boolean
@@ -14,16 +14,10 @@ export interface PaymentsState {
       [key: string]: FundingSource[]
     }
   }
-  timecards: {
+  payments: {
     all: number[]
     byId: {
-      [key: number]: Timecard
-    }
-  }
-  transfers: {
-    all: string[]
-    byId: {
-      [key: string]: Transfer
+      [key: number]: Payment
     }
   }
 }
@@ -39,11 +33,7 @@ export const initialState = (): PaymentsState => ({
     all: [],
     byLocation: {},
   },
-  timecards: {
-    all: [],
-    byId: {},
-  },
-  transfers: {
+  payments: {
     all: [],
     byId: {},
   },
@@ -67,18 +57,17 @@ const mutations = {
     state.balance.value += amount
   },
 
-  ADD_TIMECARD(state: PaymentsState, timecard: Timecard) {
-    // TODO: Normalize contractor data
-    Vue.set(state.timecards.byId, timecard.id, timecard)
-    if (!state.timecards.all.includes(timecard.id))
-      state.timecards.all.push(timecard.id)
+  ADD_PAYMENT(state: PaymentsState, payment: Payment) {
+    Vue.set(state.payments.byId, payment.id, payment)
+    if (!state.payments.all.includes(payment.id))
+      state.payments.all.push(payment.id)
   },
 
-  REMOVE_TIMECARD(state: PaymentsState, timecardId: number) {
-    Vue.delete(state.timecards.byId, timecardId)
+  REMOVE_PAYMENT(state: PaymentsState, paymentId: number) {
+    Vue.delete(state.payments.byId, paymentId)
     Vue.delete(
-      state.timecards.all,
-      state.timecards.all.indexOf(timecardId)
+      state.payments.all,
+      state.payments.all.indexOf(paymentId)
     )
   },
 
@@ -111,28 +100,20 @@ const mutations = {
       )
     )
   },
-
-  ADD_TRANSFER(state: PaymentsState, transfer: Transfer) {
-    Vue.set(state.transfers.byId, transfer.id, {
-      ...state.transfers.byId[transfer.id],
-      ...transfer
-    })
-    if (!state.transfers.all.includes(transfer.id))
-      state.transfers.all.push(transfer.id)
-  },
 }
 
 const getters = {
-  timecard: (state: PaymentsState) => (id: number) => {
-    return state.timecards.byId[id]
+
+  payment: (state: PaymentsState) => (id: number) => {
+    return state.payments.byId[id]
   },
 
-  timecards: (state: PaymentsState, getters: any) => {
-    return state.timecards.all.map((id) => getters.timecard(id))
+  payments: (state: PaymentsState, getters: any) => {
+    return state.payments.all.map((id) => getters.payment(id))
   },
 
-  timecardsByIds: (_state: PaymentsState, getters: any) => (timecardIds: number[]) => {
-    return timecardIds.map((id) => getters.timecard(id))
+  paymentsByIds: (_state: PaymentsState, getters: any) => (paymentIds: number[]) => {
+    return paymentIds.map((id) => getters.payment(id))
   },
 
   fundingSource: (state: PaymentsState) => (location: string) => {
@@ -141,18 +122,6 @@ const getters = {
 
   fundingSources: (state: PaymentsState, getters: any) => {
     return state.fundingSources.all.map((location) => getters.fundingSource(location))
-  },
-
-  transfer: (state: PaymentsState) => (transferId: string) => {
-    return state.transfers.byId[transferId]
-  },
-
-  transfers: (state: PaymentsState, getters: any) => {
-    return state.transfers.all
-      .map((transferId) => getters.transfer(transferId))
-      .sort((a: Transfer, b: Transfer) => 
-        ((new Date(b.created)).valueOf()) - ((new Date(a.created)).valueOf())
-      )
   },
 }
 

@@ -313,7 +313,7 @@ export default class Shift extends Vue {
   async loadShift() {
     this.loadingShift = true
     try {
-      return shifts.getShift(this.$store, parseInt(this.$route.params.shiftId))
+      return shifts.loadShift(this.$store, parseInt(this.$route.params.shiftId))
     }
     finally {
       this.loadingShift = false

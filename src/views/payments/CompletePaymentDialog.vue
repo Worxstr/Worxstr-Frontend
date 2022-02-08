@@ -17,9 +17,9 @@ v-dialog(
 
     v-card-text.mt-5
       p
-        | {{ timecards.length }}
-        | contractor{{ timecards.length == 1 ? '' : 's' }}
-        | will be paid {{ wagePayment  | currency }}{{ timecards.length > 1 ? ' in total' : ''}}.
+        | {{ payments.length }}
+        | contractor{{ payments.length == 1 ? '' : 's' }}
+        | will be paid {{ wagePayment  | currency }}{{ payments.length > 1 ? ' in total' : ''}}.
         br
         | A {{ feesPayment | currency }} fee will be applied.
         br
@@ -41,19 +41,19 @@ v-dialog(
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Timecard } from '@/types/Payments'
+import { Payment } from '@/types/Payments'
 import { completePayments } from '@/services/payments'
 
 @Component
-export default class PaymentDialog extends Vue {
+export default class CompletePaymentDialog extends Vue {
 
   @Prop({ default: false }) opened!: boolean
-  @Prop({ type: Array }) timecardIds!: number[]
+  @Prop({ type: Array }) paymentIds!: number[]
 
   loading = false
 
-  get timecards() {
-    return this.$store.getters.timecardsByIds(this.timecardIds)
+  get payments() {
+    return this.$store.getters.paymentsByIds(this.paymentIds)
   }
 
   get totalPayment() {
@@ -61,16 +61,16 @@ export default class PaymentDialog extends Vue {
   }
 
   get wagePayment() {
-    const total = this.timecards.reduce((total: number, current: Timecard) => {
-      return total + parseFloat(current.wage_payment)
+    const total = this.payments.reduce((total: number, current: Payment) => {
+      return total + parseFloat(current.amount)
     }, 0)
 
     return Math.round(total * 100) / 100
   }
 
   get feesPayment() {
-    const total = this.timecards.reduce((total: number, current: Timecard) => {
-      return total + parseFloat(current.fees_payment)
+    const total = this.payments.reduce((total: number, current: Payment) => {
+      return total + parseFloat(current.fee)
     }, 0)
 
     return Math.round(total * 100) / 100
@@ -82,7 +82,7 @@ export default class PaymentDialog extends Vue {
   
   async completePayments() {
     this.loading = true
-    await completePayments(this.$store, this.timecards.map((t: Timecard) => t.id))
+    await completePayments(this.$store, this.payments.map((t: Payment) => t.id))
     this.loading = false
     this.closeDialog()
     this.$emit('completed')

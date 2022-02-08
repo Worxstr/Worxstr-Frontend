@@ -1,7 +1,7 @@
 <template lang="pug">
 v-container.d-flex.flex-column.pt-6.gap-small
 
-  //- edit-timecard-dialog(
+  //- edit-payment-dialog(
   //-   :opened.sync="editTimecardDialog",
   //-   :timecardId="selectedTimecardIds[0]"
   //-   @saved='clearSelection'
@@ -11,7 +11,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
   //-   :timecardIds="selectedTimecardIds"
   //-   @denied='clearSelection'
   //- )
-  //- payment-dialog(
+  //- complete-payment-dialog(
   //-   :opened.sync="paymentDialog",
   //-   :timecardIds="selectedTimecardIds"
   //-   @completed='clearSelection'
@@ -45,22 +45,25 @@ v-container.d-flex.flex-column.pt-6.gap-small
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
       span(v-if='!$vuetify.breakpoint.xs') Deny
   
-  div
-    h3.text-h3.green--text +{{ subtotal | currency }}
-    h6.text-h6 To Alex Wohlbruck
+  div(v-if='payment')
+    h3.text-h3.green--text +{{ payment.amount | currency }}
+    h6.text-h6 To {{ payment.receiver | fullName }}
     
     .my-2
       v-chip.mr-3(
+        v-if='payment.bank_transfer'
         small
         :color='`${statusColor("processed")} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`'
       )
         | {{ 'processed' | capitalize }}
-      span.text-body-2 {{ 'Sat, 05 Feb 2022 03:54:46 GMT' | date('MMM D, YYYY') }}, {{ 'Sat, 05 Feb 2022 03:54:46 GMT' | time }}
+
+      span.text-body-2(v-if='payment.date_completed')
+        | {{ payment.date_completed | date('MMM D, YYYY') }}, {{ payment.date_completed | time }}
 
 
   masonry(:cols='{default: 2, 959: 1}' :gutter='30')
 
-    .mb-4.d-flex.flex-column.gap-small
+    .mb-4.d-flex.flex-column.gap-small(v-if='payment && payment.invoice && payment.invoice.shift')
       h5.text-h5 Shift details
       v-sheet(outlined rounded)
         v-card-text.pb-1
@@ -106,11 +109,11 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
         clock-events(:events='history')
 
-    .mb-4.d-flex.flex-column.gap-small
+    .mb-4.d-flex.flex-column.gap-small(v-if='payment && payment.invoice')
       h5.text-h5 Invoice
       v-sheet(outlined rounded)
         v-list
-          v-list-item(v-for='item in invoiceItems')
+          v-list-item(v-for='item in payment.invoice.items')
             v-list-item-content
               v-list-item-title(:class="{'primary--text': item.bold, 'font-weight-medium': item.bold}") {{ item.description }}
             
@@ -124,27 +127,30 @@ v-container.d-flex.flex-column.pt-6.gap-small
               v-list-item-title Subtotal
             
             v-list-item-action
-              .text-subtitle-1 {{ subtotal | currency }}
+              .text-subtitle-1 {{ payment.amount | currency }}
 
           v-list-item
             v-list-item-content
               v-list-item-title Fee payment
             
             v-list-item-action
-              .text-subtitle-1 {{ fee | currency }}
+              .text-subtitle-1 {{ payment.fee | currency }}
 
           v-list-item
             v-list-item-content
               v-list-item-title.font-weight-bold Total
             
             v-list-item-action
-              .text-subtitle-1.font-weight-black.green--text {{ invoiceTotal | currency }}
+              .text-subtitle-1.font-weight-black.green--text {{ payment.total | currency }}
 
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import ClockEvents from '@/components/ClockEvents.vue'
+import { loadPayment } from '@/services/payments'
+import { loadShift } from '@/services/shifts'
+import { loadJob } from '@/services/jobs'
 
 @Component({
   metaInfo: {
@@ -155,6 +161,31 @@ import ClockEvents from '@/components/ClockEvents.vue'
   }
 })
 export default class Payment extends Vue {
+
+  loading = false
+
+  async mounted() {
+    this.loading = true
+    const payment = await loadPayment(this.$store, this.$route.params.paymentId)
+    this.loading = false
+    
+    if (payment.invoice) {
+      const shift = await loadShift(this.$store, payment.invoice.shift_id)
+      const job = await loadJob(this.$store, shift.job_id)
+    }
+  }
+
+  get payment() {
+    return this.$store.getters.payment(this.$route.params.paymentId)
+  }
+
+  get shift() {
+    return this.$store.getters.shift(this.payment.invoice.shift_id)
+  }
+
+
+
+
   
   history = [{"action":1,"contractor_id":162,"id":1184,"job_id":114,"shift_id":748,"time":"2022-02-05T03:30:01Z","timecard_id":457},{"action":2,"contractor_id":162,"id":1185,"job_id":114,"shift_id":748,"time":"2022-02-05T03:30:07Z","timecard_id":457}]
 
@@ -162,32 +193,6 @@ export default class Payment extends Vue {
     amount: 102,
     description: 'Front of store',
     bold: true
-  }
-
-  invoiceItems = [
-    this.shiftPayment,
-    {
-      amount: 12,
-      description: 'Item 1',
-    },
-    {
-      amount: 23,
-      description: 'Item 2',
-    },
-    {
-      amount: 34,
-      description: 'Item 3',
-    }
-  ]
-
-  get subtotal() {
-    return this.invoiceItems.reduce((acc, item) => acc + item.amount, 0)
-  }
-
-  fee = 102 * .05
-
-  get invoiceTotal() {
-    return this.subtotal + this.fee
   }
 
   // TODO: Duplicated in TransferHistory.vue
