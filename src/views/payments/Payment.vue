@@ -46,8 +46,10 @@ v-container.d-flex.flex-column.pt-6.gap-small
       span(v-if='!$vuetify.breakpoint.xs') Deny
   
   div(v-if='payment')
-    h3.text-h3.green--text +{{ payment.amount | currency }}
-    h6.text-h6 To {{ payment.receiver | fullName }}
+    h3.text-h3(:class="isDebit ? 'green--text' : 'red--text'")
+      | {{ isDebit ? '+' : '-' }}{{ payment.amount | currency }}
+      
+    h6.text-h6 {{ isDebit ? 'From' : 'To' }} {{ payment.receiver | fullName }}
     
     .my-2
       v-chip.mr-3(
@@ -151,6 +153,7 @@ import ClockEvents from '@/components/ClockEvents.vue'
 import { loadPayment } from '@/services/payments'
 import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
+import { isDebit } from '@/types/Payments'
 
 @Component({
   metaInfo: {
@@ -183,10 +186,10 @@ export default class Payment extends Vue {
     return this.$store.getters.shift(this.payment.invoice.shift_id)
   }
 
+  get isDebit() {
+    return isDebit(this.payment)
+  }
 
-
-
-  
   history = [{"action":1,"contractor_id":162,"id":1184,"job_id":114,"shift_id":748,"time":"2022-02-05T03:30:01Z","timecard_id":457},{"action":2,"contractor_id":162,"id":1185,"job_id":114,"shift_id":748,"time":"2022-02-05T03:30:07Z","timecard_id":457}]
 
   shiftPayment = {

@@ -95,8 +95,10 @@
           v-list-item-content
             v-list-item-title
               router-link.alt-style.font-weight-medium(
-                :to="{name: 'user', params: {userId: item.contractor_id}}"
-              ) {{ item | fullName }}
+                :to="{name: 'payment', params: {paymentId: item.id}}"
+              )
+                | {{ isDebit(item) ? 'From' : 'To' }}
+                | {{ (isDebit(item) ? item.sender : item.receiver) | name }}
           
           v-list-item-action.align-self-center.flex-row
             span.flex-grow-0.px-2(
@@ -108,7 +110,8 @@
               |     item.time_clocks[item.time_clocks.length - 1].time
               |   )
               | }}
-            span.flex-grow-0.px-2.font-weight-bold {{ item.total | currency }}
+            span.flex-grow-0.px-2.font-weight-bold(:class="isDebit(item) ? 'green--text' : 'red--text'")
+              | {{ isDebit(item) ? '+' : '-' }}{{ item.total | currency }}
         
           v-list-item-action.mx-0
             v-btn(
@@ -129,9 +132,10 @@ import EditPaymentDialog from '@/views/payments/EditPaymentDialog.vue'
 import DenyDialog from '@/views/payments/DenyDialog.vue'
 import CompletePaymentDialog from '@/views/payments/CompletePaymentDialog.vue'
 
-import { Payment } from '@/types/Payments'
+import { Payment, isDebit, isUser } from '@/types/Payments'
 import { loadPayments } from '@/services/payments'
-import { currentUserIs, Managers } from '@/types/Users'
+import { currentUserIs, Managers, User } from '@/types/Users'
+import { Organization } from '@/types/Organizations'
 
 dayjs.extend(relativeTime)
 
@@ -142,6 +146,15 @@ dayjs.extend(relativeTime)
     CompletePaymentDialog,
     DenyDialog,
   },
+  filters: {
+    name(account: any) {
+      if (isUser(account)) {
+        return `${account.first_name} ${account.last_name}`
+      } else {
+        return account.name
+      }
+    }
+  }
 })
 export default class PaymentsList extends Vue {
   
@@ -165,6 +178,10 @@ export default class PaymentsList extends Vue {
       this.selectedPaymentIds = []
     }
 
+    get me() {
+      return this.$store.getters.me
+    }
+
     get balance() {
       return this.$store.state.payments.balance
     }
@@ -172,20 +189,20 @@ export default class PaymentsList extends Vue {
     get payments() {
       return this.$store.getters.payments
     }
-
-    // get timecards() {
-    //   return this.$store.getters.timecards
-    // }
     
     get userIsManager() {
       return currentUserIs(...Managers)
+    }
+
+    isDebit(payment: Payment) {
+      return isDebit(payment)
     }
 
     hasSufficientBalance(paymentId: number) {
 
       let paymentIds = []
 
-      if (paymentId) paymentIds = [paymentId]   
+      if (paymentId) paymentIds = [paymentId]
       else if (!this.selectedPaymentIds.length) paymentIds = this.payments.map((p: Payment) => p.id)
       else paymentIds = this.selectedPaymentIds
 
