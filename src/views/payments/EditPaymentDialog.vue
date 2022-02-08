@@ -13,41 +13,42 @@ v-dialog(
       v-divider
           
       v-card-text
-        datetime-input(
-          outlined
-          v-model="form.data.timeIn.time"
-          label="Time in"
-          data-cy='payment-time-in'
-        )
+        //- datetime-input(
+        //-   outlined
+        //-   v-model="form.data.timeIn.time"
+        //-   label="Time in"
+        //-   data-cy='payment-time-in'
+        //- )
 
         .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
           v-row
             v-col
-              datetime-input(
-                outlined
-                required
-                hide-details
-                v-model="breakItem.start.time"
-                :label="`Break ${index + 1} start`"
-                :data-cy="`payment-break-${index + 1}-start`"
-              )
-            v-col
-              datetime-input(
-                outlined
-                required
-                hide-details
-                v-model="breakItem.end.time"
-                :label="`Break ${index + 1} end`"
-                :data-cy="`payment-break-${index + 1}-end`"
-              )
+            //-   datetime-input(
+            //-     outlined
+            //-     required
+            //-     hide-details
+            //-     v-model="breakItem.start.time"
+            //-     :label="`Break ${index + 1} start`"
+            //-     :data-cy="`payment-break-${index + 1}-start`"
+            //-   )
+            //- v-col
+            //-   datetime-input(
+            //-     outlined
+            //-     required
+            //-     hide-details
+            //-     v-model="breakItem.end.time"
+            //-     :label="`Break ${index + 1} end`"
+            //-     :data-cy="`payment-break-${index + 1}-end`"
+            //-   )
 
-        datetime-input(
-          outlined
-          required
-          v-model="form.data.timeOut.time"
-          label="Time out"
-          data-cy='payment-time-out'
-        )
+        //- datetime-input(
+        //-   v-if='form.data.timeOut'
+        //-   outlined
+        //-   required
+        //-   v-model="form.data.timeOut.time"
+        //-   label="Time out"
+        //-   data-cy='payment-time-out'
+        //- )
 
       v-spacer
       
@@ -116,36 +117,38 @@ export default class EditPaymentDialog extends Vue {
   }
 
   calculateFormValues() {
-    const events = this.payment.time_clocks
-      .sort((a, b) => {
-        return new Date(b.time).getTime() - new Date(a.time).getTime()
-      })
+    return
+    // TODO
+  //   const events = this.payment.time_clocks
+  //     .sort((a, b) => {
+  //       return new Date(b.time).getTime() - new Date(a.time).getTime()
+  //     })
 
-    this.form.data.timeIn = events.find(event => event.action === ClockAction.ClockIn)
-    this.form.data.timeOut = events.find(event => event.action === ClockAction.ClockOut)
+  //   this.form.data.timeIn = events.find(event => event.action === ClockAction.ClockIn)
+  //   this.form.data.timeOut = events.find(event => event.action === ClockAction.ClockOut)
 
-    const breakStarts = events.filter(event => event.action === ClockAction.StartBreak)
-    const breakEnds = events.filter(event => event.action === ClockAction.EndBreak)
-    /*
-      We will group the start and end breaks into pairs, eg:
-      breaks = [{
-        start: ClockEvent,
-        end: ClockEvent,
-      },
-      ...
-      ]
-    */
-   const breaks = []
+  //   const breakStarts = events.filter(event => event.action === ClockAction.StartBreak)
+  //   const breakEnds = events.filter(event => event.action === ClockAction.EndBreak)
+  //   /*
+  //     We will group the start and end breaks into pairs, eg:
+  //     breaks = [{
+  //       start: ClockEvent,
+  //       end: ClockEvent,
+  //     },
+  //     ...
+  //     ]
+  //   */
+  //  const breaks = []
 
-    if (breakStarts.length != breakEnds.length) return console.error('Malformed data.')
+  //   if (breakStarts.length != breakEnds.length) return console.error('Malformed data.')
 
-    breakStarts.forEach((start, index) => {
-      breaks.push({
-        start,
-        end: breakEnds[index]
-      })
-    })
-    this.form.data.breaks = breaks
+  //   breakStarts.forEach((start, index) => {
+  //     breaks.push({
+  //       start,
+  //       end: breakEnds[index]
+  //     })
+  //   })
+  //   this.form.data.breaks = breaks
   }
 
   timeDiff(timeIn, timeOut) {

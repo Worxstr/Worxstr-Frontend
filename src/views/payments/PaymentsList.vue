@@ -79,7 +79,9 @@
             data-cy='complete-all-payments-button'
           )
             v-icon(:left='!$vuetify.breakpoint.xs') {{ selectedPaymentIds.length == 1 ? 'mdi-check' : 'mdi-check-all' }}
-            span(v-if='!$vuetify.breakpoint.xs') Complete {{ selectedPaymentIds.length == 1 ? '' : (selectedPaymentIds.length == payments.length) ? 'all' : selectedPaymentIds.length }}
+            span(v-if='!$vuetify.breakpoint.xs')
+              | Complete {{ selectedPaymentIds.length == 1 ? '' : (selectedPaymentIds.length == payments.length) ? 'all' : selectedPaymentIds.length }}
+              | ({{ selectedTotal | currency }})
 
           v-btn(
             text
@@ -194,6 +196,14 @@ export default class PaymentsList extends Vue {
       return currentUserIs(...Managers)
     }
 
+    // Sum the amount of all selected payments
+    get selectedTotal() {
+      return this.selectedPaymentIds.reduce((total, id) => {
+        const payment = this.payments.find((p: Payment) => p.id === id)
+        return total + (payment ? parseFloat(payment.total) : 0)
+      }, 0)
+    }
+
     isDebit(payment: Payment) {
       return isDebit(payment)
     }
@@ -206,7 +216,7 @@ export default class PaymentsList extends Vue {
       else if (!this.selectedPaymentIds.length) paymentIds = this.payments.map((p: Payment) => p.id)
       else paymentIds = this.selectedPaymentIds
 
-      const payments = this.$store.getters.paymentsByIds(paymentIds)
+      const payments: Payment[] = this.$store.getters.paymentsByIds(paymentIds)
 
       const totalPayment = payments.reduce((total: number, payment: Payment) => {
         return total + (payment ? parseFloat(payment.total) : 0)
