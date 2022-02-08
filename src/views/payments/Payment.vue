@@ -49,7 +49,13 @@ v-container.d-flex.flex-column.pt-6.gap-small
     h3.text-h3(:class="isDebit ? 'green--text' : 'red--text'")
       | {{ isDebit ? '+' : '-' }}{{ payment.amount | currency }}
       
-    h6.text-h6 {{ isDebit ? 'From' : 'To' }} {{ payment.receiver | fullName }}
+    h6.text-h6
+      | {{ isDebit ? 'From' : 'To' }} &nbsp;
+
+      router-link.alt-style(v-if='receiverIsUser' :to="{name: 'user', params: {userId: payment.receiver.id}}")
+        | {{ payment.receiver | fullName }}
+
+      span(v-else) payment.receiver.name
     
     .my-2
       v-chip.mr-3(
@@ -153,7 +159,7 @@ import ClockEvents from '@/components/ClockEvents.vue'
 import { loadPayment } from '@/services/payments'
 import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
-import { isDebit } from '@/types/Payments'
+import { isDebit, isUser } from '@/types/Payments'
 
 @Component({
   metaInfo: {
@@ -172,7 +178,7 @@ export default class Payment extends Vue {
     const payment = await loadPayment(this.$store, this.$route.params.paymentId)
     this.loading = false
     
-    if (payment.invoice) {
+    if (payment?.invoice) {
       const shift = await loadShift(this.$store, payment.invoice.shift_id)
       const job = await loadJob(this.$store, shift.job_id)
     }
@@ -188,6 +194,10 @@ export default class Payment extends Vue {
 
   get isDebit() {
     return isDebit(this.payment)
+  }
+
+  get receiverIsUser() {
+    return isUser(this.payment.receiver)
   }
 
   history = [{"action":1,"contractor_id":162,"id":1184,"job_id":114,"shift_id":748,"time":"2022-02-05T03:30:01Z","timecard_id":457},{"action":2,"contractor_id":162,"id":1185,"job_id":114,"shift_id":748,"time":"2022-02-05T03:30:07Z","timecard_id":457}]

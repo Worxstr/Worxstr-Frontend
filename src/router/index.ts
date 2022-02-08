@@ -50,6 +50,8 @@ Vue.use(VueRouter)
 Vue.use(Meta)
 
 import { UserRole, Managers, defaultRoute, currentUserIs, isAuthenticated } from '@/types/Users'
+import * as PaymentTypes from '@/types/Payments'
+import { currency } from '@/util/filters'
 
 const routes = [
   {
@@ -260,7 +262,12 @@ const routes = [
       paramMap: [{
         param: 'paymentId',
         store: 'payments',
-        prop: 'name'
+        propBuilder(payment: PaymentTypes.Payment) {
+          console.log(payment)
+          const account = payment.receiver
+          const name = (PaymentTypes.isUser(account)) ? account.first_name : account.name
+          return `${currency(payment.amount)} to ${name}`
+        },
       }]
     }
   },

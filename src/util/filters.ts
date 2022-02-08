@@ -45,10 +45,11 @@ Vue.filter('dateOrTime', (value: (string|number|Date), format?: string) => {
 	return time(value)
 })
 
-Vue.filter('currency', (value: string) => {
-	const parsed = parseFloat(value)
+export const currency = (value: string | number) => {
+	const parsed = typeof value === 'string' ? parseFloat(value) : value
 	return '$' + (isNaN(parsed) ? '0.00' : parsed.toFixed(2))
-})
+}
+Vue.filter('currency', currency)
 
 // 1234567890 -> (123) 456-7890
 Vue.filter('phone', (value: string) => {

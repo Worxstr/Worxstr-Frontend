@@ -2,6 +2,10 @@ import Vue from 'vue'
 import { FundingSource, Payment } from '@/types/Payments'
 
 export interface PaymentsState {
+  all: number[]
+  byId: {
+    [key: number]: Payment
+  }
   beneficialOwnersCertified: boolean
   balance: {
     value: number
@@ -14,15 +18,11 @@ export interface PaymentsState {
       [key: string]: FundingSource[]
     }
   }
-  payments: {
-    all: number[]
-    byId: {
-      [key: number]: Payment
-    }
-  }
 }
 
 export const initialState = (): PaymentsState => ({
+  all: [],
+  byId: {},
   beneficialOwnersCertified: false,
   balance: {
     value: 0,
@@ -32,10 +32,6 @@ export const initialState = (): PaymentsState => ({
   fundingSources: {
     all: [],
     byLocation: {},
-  },
-  payments: {
-    all: [],
-    byId: {},
   },
 })
 
@@ -58,16 +54,16 @@ const mutations = {
   },
 
   ADD_PAYMENT(state: PaymentsState, payment: Payment) {
-    Vue.set(state.payments.byId, payment.id, payment)
-    if (!state.payments.all.includes(payment.id))
-      state.payments.all.push(payment.id)
+    Vue.set(state.byId, payment.id, payment)
+    if (!state.all.includes(payment.id))
+      state.all.push(payment.id)
   },
 
   REMOVE_PAYMENT(state: PaymentsState, paymentId: number) {
-    Vue.delete(state.payments.byId, paymentId)
+    Vue.delete(state.byId, paymentId)
     Vue.delete(
-      state.payments.all,
-      state.payments.all.indexOf(paymentId)
+      state.all,
+      state.all.indexOf(paymentId)
     )
   },
 
@@ -105,11 +101,11 @@ const mutations = {
 const getters = {
 
   payment: (state: PaymentsState) => (id: number) => {
-    return state.payments.byId[id]
+    return state.byId[id]
   },
 
   payments: (state: PaymentsState, getters: any) => {
-    return state.payments.all.map((id) => getters.payment(id))
+    return state.all.map((id) => getters.payment(id))
   },
 
   paymentsByIds: (_state: PaymentsState, getters: any) => (paymentIds: number[]) => {
