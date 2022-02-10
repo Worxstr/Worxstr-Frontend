@@ -105,7 +105,7 @@ div
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Shift } from '@/types/Jobs'
 import { Managers, currentUserIs, UserRole } from '@/types/Users'
-import { ClockAction } from '@/types/Clock'
+import { ClockAction } from '@/types/Jobs'
 
 import MultiselectList from '@/components/MultiselectList.vue'
 import ClockButtons from '@/components/ClockButtons.vue'

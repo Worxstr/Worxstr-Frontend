@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
 import { FundingSource, Payment } from '@/types/Payments'
-import { ClockEvent } from '@/types/Clock'
+import { ClockEvent } from '@/types/Jobs'
 import { showToast } from '@/services/app'
 
 export async function loadPayments({ commit }: any) {

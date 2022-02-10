@@ -38,6 +38,27 @@ export const timeAgo = (value: (string|number|Date)) => {
 }
 Vue.filter('timeAgo', timeAgo)
 
+// Duration in human readable format, eg. 1 day, 2 hours, 3 minutes
+export const duration = (valueMs: number, short = true) => {
+	const msPerMinute = 60 * 1000
+	const msPerHour = msPerMinute * 60
+	const msPerDay = msPerHour * 24
+	const msPerWeek = msPerDay * 7
+
+	if (valueMs < msPerMinute) {
+		return Math.round(valueMs / 1000) + (short ? 's' : ' seconds')
+	} else if (valueMs < msPerHour) {
+		return Math.round(valueMs / msPerMinute) + (short ? 'm' : ' minutes')
+	} else if (valueMs < msPerDay) {
+		return Math.round(valueMs / msPerHour) + (short ? 'h' : ' hours')
+	} else if (valueMs < msPerWeek) {
+		return Math.round(valueMs / msPerDay) + (short ? 'd' : ' days')
+	} else {
+		return Math.round(valueMs / msPerWeek) + (short ? 'w' : ' weeks')
+	}
+}
+Vue.filter('duration', duration)
+
 Vue.filter('dateOrTime', (value: (string|number|Date), format?: string) => {
 	if (new Date(value).getTime() < Date.now() - (1000 * 60 * 60 * 24)) {
 		return dayjs(value).format(format || standardDateFormat)

@@ -71,7 +71,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
   masonry(:cols='{default: 2, 959: 1}' :gutter='30')
 
-    .mb-4.d-flex.flex-column.gap-small(v-if='payment && payment.invoice && payment.invoice.shift')
+    .mb-4.d-flex.flex-column.gap-small(v-if='shift')
       h5.text-h5 Shift details
       v-sheet(outlined rounded)
         v-card-text.pb-1
@@ -79,26 +79,29 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
 
             h6.text-body-1
-              | Front of store - &nbsp;
               router-link.alt-style(
-                :to="{name: 'job', params: { jobId: 1 }}"
-              ) Alex's Test Job
+                :to="{name: 'shift', params: { shiftId: shift.id }}"
+              ) {{ shift.site_location }}
+              | &nbsp; - &nbsp;
+              router-link.alt-style(
+                :to="{name: 'job', params: { jobId: shift.job_id }}"
+              ) {{ shift.job_id }}
 
-            .text-body-2 {{ 'Sat, 05 Feb 2022 03:54:46 GMT' | time }} - {{ 'Sat, 05 Feb 2022 03:54:46 GMT' | time }}
-            .text-body-2 {{ 'Sat, 05 Feb 2022 03:54:46 GMT' | date('MMM D, YYYY') }} - {{ 'Sat, 05 Feb 2022 03:54:46 GMT' | date('MMM D, YYYY') }}
+            .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
+            .text-body-2 {{ shift.time_begin | date('MMM D, YYYY') }} - {{ shift.time_end | date('MMM D, YYYY') }}
 
         v-card-actions
           v-spacer
           v-btn(
             text
             color='primary'
-            :to="{name: 'shift', params: {shiftId: 1}}"
+            :to="{name: 'shift', params: {shiftId: shift.id}}"
             exact
           ) View shift
           v-btn(
             text
             color='primary'
-            :to="{name: 'job', params: {jobId: 1}}"
+            :to="{name: 'job', params: {jobId: shift.job_id}}"
             exact
           ) View job
 
@@ -106,12 +109,13 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
         v-card-text.d-flex
           .d-flex.flex-column
-            h6.text-body-1 Worked for 4 hours
-            span 1 hour break
+            h6.text-body-1 Worked for {{ clockedTime | duration }}
+            span {{ breakTime | duration }} break
 
           v-spacer
 
-          .text-subtitle-1.mt-2.green--text {{ shiftPayment.amount | currency }}          
+          .text-subtitle-1.mt-2.green--text(v-if='payment && payment.invoice && payment.invoice.timecard')
+            | {{ payment.invoice.timecard.total_payment | currency }}          
         
         v-divider
 
@@ -121,6 +125,12 @@ v-container.d-flex.flex-column.pt-6.gap-small
       h5.text-h5 Invoice
       v-sheet(outlined rounded)
         v-list
+          v-list-item(v-if='shift && payment && payment.invoice && payment.invoice.timecard')
+            v-list-item-content.primary--text.font-weight-bold.d-flex
+              router-link.alt-style(:to="{name: 'shift', params: {shiftId: shift.id}}")
+                | Payment for {{ shift.site_location }}
+            v-list-item-action.text-subtitle-1 {{ payment.invoice.timecard.total_payment | currency }}
+
           v-list-item(v-for='item in payment.invoice.items')
             v-list-item-content
               v-list-item-title(:class="{'primary--text': item.bold, 'font-weight-medium': item.bold}") {{ item.description }}
@@ -160,6 +170,7 @@ import { loadPayment } from '@/services/payments'
 import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
 import { isDebit, isUser } from '@/types/Payments'
+import { clockedTime, breakTime, ClockEvent } from '@/types/Jobs'
 
 @Component({
   metaInfo: {
@@ -189,7 +200,18 @@ export default class Payment extends Vue {
   }
 
   get shift() {
-    return this.$store.getters.shift(this.payment.invoice.shift_id)
+    if (!this.payment?.invoice?.timecard) return null
+    return this.$store.getters.shift(this.payment.invoice.timecard.shift_id)
+  }
+
+  get clockedTime() {
+    if (!this.shift) return null
+    return clockedTime(this.shift)
+  }
+  
+  get breakTime() {
+    if (!this.shift) return null
+    return breakTime(this.shift)
   }
 
   get isDebit() {
@@ -200,7 +222,12 @@ export default class Payment extends Vue {
     return isUser(this.payment.receiver)
   }
 
-  history = [{"action":1,"contractor_id":162,"id":1184,"job_id":114,"shift_id":748,"time":"2022-02-05T03:30:01Z","timecard_id":457},{"action":2,"contractor_id":162,"id":1185,"job_id":114,"shift_id":748,"time":"2022-02-05T03:30:07Z","timecard_id":457}]
+  get history() {
+    if (!this.shift || !this.shift.clock_history) return []
+    return this.shift.clock_history.sort((a: ClockEvent, b: ClockEvent) => {
+      return (new Date(b.time)).getTime() - (new Date(a.time)).getTime()
+    })
+  }
 
   shiftPayment = {
     amount: 102,

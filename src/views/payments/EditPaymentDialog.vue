@@ -73,7 +73,7 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import * as payments from '@/services/payments'
-import { ClockAction } from '@/types/Clock'
+import { ClockAction } from '@/types/Jobs'
 
 // TODO: Convert this file to typescript
 // TODO: Add chronology validation

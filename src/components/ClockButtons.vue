@@ -61,7 +61,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import * as shifts from '@/services/shifts'
 import { Shift } from '@/types/Jobs'
-import { ClockAction } from '@/types/Clock'
+import { ClockAction } from '@/types/Jobs'
 
 import ClockInDialog from '@/views/clock/ClockInDialog.vue'
 

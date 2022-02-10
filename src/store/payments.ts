@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
 import { FundingSource, Payment } from '@/types/Payments'
+import shiftsStore from './shifts'
 
 export interface PaymentsState {
   all: number[]
@@ -54,7 +56,15 @@ const mutations = {
   },
 
   ADD_PAYMENT(state: PaymentsState, payment: Payment) {
+    
+    if (payment?.invoice?.timecard?.shift) {
+      shiftsStore.mutations.ADD_SHIFT(shiftsStore.state, payment.invoice.timecard.shift)
+      payment.invoice.timecard.shift_id = payment.invoice.timecard.shift.id
+      delete payment.invoice.timecard.shift
+    }
+    
     Vue.set(state.byId, payment.id, payment)
+    
     if (!state.all.includes(payment.id))
       state.all.push(payment.id)
   },

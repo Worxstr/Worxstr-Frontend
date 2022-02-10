@@ -1,7 +1,24 @@
-import { ClockEvent } from './Clock'
+import { ClockEvent } from './Jobs'
 import { Organization } from './Organizations'
+import { Shift } from './Jobs'
 import { User } from './Users'
 import usersStore from '@/store/users'
+
+type Timecard = {
+  id: number
+  contractor_id: number
+  first_name: string
+  last_name: string
+  time_break: string
+  total_time: string
+  wage_payment: string
+  fees_payment: string
+  total_payment: string
+  denied: boolean
+  paid: boolean
+  shift_id?: number
+  shift?: Shift
+}
 
 type InvoiceItem = {
   id: number
@@ -17,6 +34,8 @@ type Invoice = {
   approved: boolean
   date_created: string
   items: InvoiceItem[]
+  timecard_id?: number
+  timecard?: Timecard
 }
 
 type BankTransfer = {

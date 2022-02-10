@@ -134,7 +134,7 @@ import * as jobs from '@/services/jobs'
 import * as shifts from '@/services/shifts'
 import { Managers, currentUserIs } from '@/types/Users'
 import { Task } from '@/types/Jobs'
-import { ClockEvent, ClockAction } from '@/types/Clock'
+import { ClockEvent, ClockAction } from '@/types/Jobs'
 
 import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
