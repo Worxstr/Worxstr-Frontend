@@ -44,18 +44,33 @@ export const duration = (valueMs: number, short = true) => {
 	const msPerHour = msPerMinute * 60
 	const msPerDay = msPerHour * 24
 	const msPerWeek = msPerDay * 7
+	const string = []
 
-	if (valueMs < msPerMinute) {
-		return Math.round(valueMs / 1000) + (short ? 's' : ' seconds')
-	} else if (valueMs < msPerHour) {
-		return Math.round(valueMs / msPerMinute) + (short ? 'm' : ' minutes')
-	} else if (valueMs < msPerDay) {
-		return Math.round(valueMs / msPerHour) + (short ? 'h' : ' hours')
-	} else if (valueMs < msPerWeek) {
-		return Math.round(valueMs / msPerDay) + (short ? 'd' : ' days')
-	} else {
-		return Math.round(valueMs / msPerWeek) + (short ? 'w' : ' weeks')
+	if (valueMs >= msPerWeek) {
+		string.push(Math.round(valueMs / msPerWeek) + (short ? 'w' : ' week'))
+		valueMs %= msPerWeek
 	}
+
+	if (valueMs >= msPerDay) {
+		string.push(Math.round(valueMs / msPerDay) + (short ? 'd' : ' day'))
+		valueMs %= msPerDay
+	}
+
+	if (valueMs >= msPerHour) {
+		string.push(Math.round(valueMs / msPerHour) + (short ? 'h' : ' hour'))
+		valueMs %= msPerHour
+	}
+
+	if (valueMs >= msPerMinute) {
+		string.push(Math.round(valueMs / msPerMinute) + (short ? 'm' : ' minute'))
+		valueMs %= msPerMinute
+	}
+
+	if (valueMs > 0) {
+		string.push(Math.round(valueMs / 1000) + (short ? 's' : ' second'))
+	}
+
+	return string.join(', ')
 }
 Vue.filter('duration', duration)
 

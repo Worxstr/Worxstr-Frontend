@@ -78,9 +78,11 @@ export type Task = {
 }
 
 // Compute the duration of a timecard in ms
-export function clockedTime(shift: Shift) {
-	const clockIn = shift.clock_history.find((clock: ClockEvent) => clock.action === ClockAction.ClockIn)
-	const clockOut = shift.clock_history.find((clock: ClockEvent) => clock.action === ClockAction.ClockOut)
+export function clockedTime(clockEvents: ClockEvent[]): number {
+
+	const clockIn = clockEvents.find((clock: ClockEvent) => clock.action === ClockAction.ClockIn)
+	const clockOut = clockEvents.find((clock: ClockEvent) => clock.action === ClockAction.ClockOut)
+
 	if (clockIn && clockOut) {
 		// Print in format 1h 30m
 		return dayjs(clockOut.time).diff(dayjs(clockIn.time))
@@ -89,9 +91,10 @@ export function clockedTime(shift: Shift) {
 }
 
 // Compute the break time on a shift in ms
-export function breakTime(shift: Shift) {
-	const breakStarts = shift.clock_history.filter((clock: ClockEvent) => clock.action === ClockAction.StartBreak)
-	const breakEnds = shift.clock_history.filter((clock: ClockEvent) => clock.action === ClockAction.EndBreak)
+export function breakTime(clockEvents: ClockEvent[]): number {
+
+	const breakStarts = clockEvents.filter((clock: ClockEvent) => clock.action === ClockAction.StartBreak)
+	const breakEnds = clockEvents.filter((clock: ClockEvent) => clock.action === ClockAction.EndBreak)
 
 	if (breakStarts && breakEnds) {
 		let total = 0
@@ -104,6 +107,6 @@ export function breakTime(shift: Shift) {
 }
 
 // Compute the time worked on a shift in ms
-export function workTime(shift: Shift) {
-	return clockedTime(shift) - breakTime(shift)	
+export function workTime(clockEvents: ClockEvent[]): number {
+	return clockedTime(clockEvents) - breakTime(clockEvents)	
 }

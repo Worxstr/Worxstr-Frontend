@@ -71,7 +71,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
   masonry(:cols='{default: 2, 959: 1}' :gutter='30')
 
-    .mb-4.d-flex.flex-column.gap-small(v-if='shift')
+    .mb-4.d-flex.flex-column.gap-small(v-if='shift && shift.id')
       h5.text-h5 Shift details
       v-sheet(outlined rounded)
         v-card-text.pb-1
@@ -107,15 +107,17 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
         v-divider
 
-        v-card-text.d-flex
+        v-card-text.d-flex.align-center
           .d-flex.flex-column
-            h6.text-body-1 Worked for {{ clockedTime | duration }}
-            span {{ breakTime | duration }} break
+            h6.text-body-1 Billed for {{ clockedTime | duration }} at {{ payment.receiver.additional_info.hourly_rate | currency }}/hour
+            .d-flex.flex-column(v-if='breakTime')
+              span Worked {{ workTime | duration }}
+              span {{ breakTime | duration }} break
 
           v-spacer
 
-          .text-subtitle-1.mt-2.green--text(v-if='payment && payment.invoice && payment.invoice.timecard')
-            | {{ payment.invoice.timecard.total_payment | currency }}          
+          .text-h6.green--text(v-if='payment && payment.invoice && payment.invoice.timecard')
+            | {{ payment.invoice.timecard.wage_payment | currency }}          
         
         v-divider
 
@@ -170,7 +172,7 @@ import { loadPayment } from '@/services/payments'
 import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
 import { isDebit, isUser } from '@/types/Payments'
-import { clockedTime, breakTime, ClockEvent } from '@/types/Jobs'
+import { clockedTime, breakTime, workTime, ClockEvent } from '@/types/Jobs'
 
 @Component({
   metaInfo: {
@@ -204,14 +206,30 @@ export default class Payment extends Vue {
     return this.$store.getters.shift(this.payment.invoice.timecard.shift_id)
   }
 
+  get history() {
+    if (!this.shift || !this.shift.clock_history) return []
+    return this.shift.clock_history
+      .sort((a: ClockEvent, b: ClockEvent) => {
+        return (new Date(b.time)).getTime() - (new Date(a.time)).getTime()
+      })
+      .filter((event: ClockEvent) => {
+        return event.timecard_id === this.payment?.invoice?.timecard.id
+      })
+  }
+
+  get workTime() {
+    if (!this.shift) return null
+    return workTime(this.history)
+  }
+
   get clockedTime() {
     if (!this.shift) return null
-    return clockedTime(this.shift)
+    return clockedTime(this.history)
   }
   
   get breakTime() {
     if (!this.shift) return null
-    return breakTime(this.shift)
+    return breakTime(this.history)
   }
 
   get isDebit() {
@@ -220,13 +238,6 @@ export default class Payment extends Vue {
 
   get receiverIsUser() {
     return isUser(this.payment.receiver)
-  }
-
-  get history() {
-    if (!this.shift || !this.shift.clock_history) return []
-    return this.shift.clock_history.sort((a: ClockEvent, b: ClockEvent) => {
-      return (new Date(b.time)).getTime() - (new Date(a.time)).getTime()
-    })
   }
 
   shiftPayment = {

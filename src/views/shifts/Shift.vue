@@ -165,9 +165,6 @@ function timeBetween(time: Date) {
 }
 
 @Component({
-  metaInfo: {
-    title: 'Clock'
-  },
   components: {
     EditShiftDialog,
     DeleteShiftDialog,
@@ -208,6 +205,12 @@ export default class Shift extends Vue {
   @Watch('clockInTime')
   onClockInTimeChange() {
     this.computeTimeSinceClockIn()
+  }
+
+  metaInfo(): any {
+    return {
+      title: this.shift ? this.shift.site_location : 'Shift'
+    }
   }
 
   // User info
