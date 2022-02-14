@@ -18,7 +18,7 @@
         :paymentIds="selectedPaymentIds"
         @denied='clearSelection'
       )
-      complete-payment-dialog(
+      complete-payments-dialog(
         :opened.sync="paymentDialog"
         :paymentIds="selectedPaymentIds"
         @completed='clearSelection'
@@ -131,8 +131,8 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 import MultiselectList from '@/components/MultiselectList.vue'
 import EditPaymentDialog from '@/views/payments/EditPaymentDialog.vue'
-import DenyDialog from '@/views/payments/DenyDialog.vue'
-import CompletePaymentDialog from '@/views/payments/CompletePaymentDialog.vue'
+import DenyDialog from '@/views/payments/DenyPaymentsDialog.vue'
+import CompletePaymentsDialog from '@/views/payments/CompletePaymentsDialog.vue'
 
 import { Payment, isDebit, isUser } from '@/types/Payments'
 import { loadPayments } from '@/services/payments'
@@ -145,7 +145,7 @@ dayjs.extend(relativeTime)
   components: {
     MultiselectList,
     EditPaymentDialog,
-    CompletePaymentDialog,
+    CompletePaymentsDialog,
     DenyDialog,
   },
   filters: {

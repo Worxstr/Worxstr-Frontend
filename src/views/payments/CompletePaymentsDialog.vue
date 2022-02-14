@@ -17,8 +17,7 @@ v-dialog(
 
     v-card-text.mt-5
       p
-        | {{ countUniquePeople }}
-        | {{ countUniquePeople == 1 ? 'person' : 'people' }}
+        | {{ countUniquePeople == 1 ? (`${payments[0].receiver.first_name} ${payments[0].receiver.last_name}`) : `${countUniquePeople} people` }}
         | will be paid {{ subtotal | currency }}{{ payments.length > 1 ? ' in total' : ''}}.
         br
         | A {{ fees | currency }} fee will be applied.
@@ -45,7 +44,7 @@ import { Payment } from '@/types/Payments'
 import { completePayments } from '@/services/payments'
 
 @Component
-export default class CompletePaymentDialog extends Vue {
+export default class CompletePaymentsDialog extends Vue {
 
   @Prop({ default: false }) opened!: boolean
   @Prop({ type: Array }) paymentIds!: number[]
@@ -92,13 +91,13 @@ export default class CompletePaymentDialog extends Vue {
   async completePayments() {
     this.loading = true
     try {
-      await completePayments(this.$store, this.payments.map((t: Payment) => t.id))
-    }
-    finally {
+      await completePayments(this.$store, this.paymentIds)
       this.closeDialog()
       this.$emit('completed')
     }
-    this.loading = false
+    finally {
+      this.loading = false
+    }
   }
 }
 </script>

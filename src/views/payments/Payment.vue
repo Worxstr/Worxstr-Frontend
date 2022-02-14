@@ -6,13 +6,13 @@ v-container.d-flex.flex-column.pt-6.gap-small
   //-   :timecardId="selectedTimecardIds[0]"
   //-   @saved='clearSelection'
   //- )
-  //- deny-dialog(
-  //-   :opened.sync="denyDialog"
-  //-   :timecardIds="selectedTimecardIds"
-  //-   @denied='clearSelection'
-  //- )
-  complete-payment-dialog(
-    :opened.sync='completePaymentDialog'
+  deny-payments-dialog(
+    :opened.sync="denyPaymentsDialog"
+    :paymentIds="[$route.params.paymentId]"
+    @denied='goBack'
+  )
+  complete-payments-dialog(
+    :opened.sync='completePaymentsDialog'
     :paymentIds='[$route.params.paymentId]'
     @completed='goBack'
   )
@@ -30,7 +30,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
       text
       :icon='$vuetify.breakpoint.xs'
       color='success'
-      @click='completePaymentDialog = true'
+      @click='completePaymentsDialog = true'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-check
       span(v-if='!$vuetify.breakpoint.xs') Complete
@@ -39,6 +39,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
       text
       :icon='$vuetify.breakpoint.xs'
       color='error'
+      @click='denyPaymentsDialog = true'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
       span(v-if='!$vuetify.breakpoint.xs') Deny
@@ -171,7 +172,8 @@ import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
 import { isDebit, isUser } from '@/types/Payments'
 import { clockedTime, breakTime, workTime, ClockEvent } from '@/types/Jobs'
-import CompletePaymentDialog from './CompletePaymentDialog.vue'
+import CompletePaymentsDialog from './CompletePaymentsDialog.vue'
+import DenyPaymentsDialog from './DenyPaymentsDialog.vue'
 
 @Component({
   metaInfo: {
@@ -179,13 +181,15 @@ import CompletePaymentDialog from './CompletePaymentDialog.vue'
   },
   components: {
     ClockEvents,
-    CompletePaymentDialog,
+    CompletePaymentsDialog,
+    DenyPaymentsDialog,
   }
 })
 export default class Payment extends Vue {
 
   loading = false
-  completePaymentDialog = false
+  completePaymentsDialog = false
+  denyPaymentsDialog = false
 
   async mounted() {
     this.loading = true

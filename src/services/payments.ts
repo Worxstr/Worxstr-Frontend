@@ -38,17 +38,17 @@ export async function updateTimecard({ commit }: any, timecardId: number, events
 }
 
 // TODO: Transition to payments
-export async function denyPayments({ commit }: any, timecardIds: number[]) {
+export async function denyPayments({ commit }: any, paymentIds: number[]) {
   const { data } = await api({
     method: 'PUT',
     url: 'payments/deny',
     data: {
-      timecard_ids: timecardIds,
+      payment_ids: paymentIds,
     },
   })
-  timecardIds.forEach((timecardId: number) => {
+  paymentIds.forEach((paymentId: number) => {
     // TODO: Normalize nested data
-    commit('REMOVE_TIMECARD', timecardId)
+    commit('REMOVE_PAYMENT', paymentId)
   })
   return data
 }

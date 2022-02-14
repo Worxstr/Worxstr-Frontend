@@ -16,9 +16,9 @@ v-dialog(
         | payment{{payments.length == 1 ? '' : 's'}}?
 
     v-card-text(v-if="payments && payments[0]")
-      | {{payments.length == 1 ? `${payments[0].first_name} ${payments[0].last_name}` : 'These contractors' }}
-      | will not be paid for
-      | {{payments.length == 1 ? 'this shift' : 'these shifts'}}.
+      | {{countUniquePeople == 1 ? `${payments[0].receiver.first_name} ${payments[0].receiver.last_name}` : 'These contractors' }}
+      | will not receive
+      | {{payments.length == 1 ? 'this payment' : 'these payments'}}.
 
     v-spacer
     
@@ -39,13 +39,22 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { denyPayments } from '@/services/payments'
 
 @Component
-export default class DenyDialog extends Vue {
+export default class DenyPaymentsDialog extends Vue {
 
   @Prop({ default: false }) opened!: boolean
   @Prop({ default: [] }) paymentIds!: Array<number>
   
   get payments() {
     return this.$store.getters.paymentsByIds(this.paymentIds)
+  }
+
+  get countUniquePeople() {
+    return this.payments.reduce((acc: any[], payment: Payment) => {
+      if (acc.indexOf(payment.receiver.id) === -1) {
+        acc.push(payment.receiver.id)
+      }
+      return acc
+    }, []).length
   }
 
   loading = false
@@ -56,10 +65,14 @@ export default class DenyDialog extends Vue {
 
   async denyPayments() {
     this.loading = true
-    await denyPayments(this.$store, this.paymentIds)
-    this.loading = false
-    this.closeDialog()
-    this.$emit('denied')
+    try {
+      await denyPayments(this.$store, this.paymentIds)
+      this.closeDialog()
+      this.$emit('denied')
+    }
+    finally {
+      this.loading = false
+    }
   }
 }
 </script>
