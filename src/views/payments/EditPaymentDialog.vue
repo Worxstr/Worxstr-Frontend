@@ -181,6 +181,7 @@ export default class EditPaymentDialog extends Vue {
         this.$store,
         this.payment.id,
         newTimeclockEvents,
+        // invoice
       )
       this.closeDialog()
       this.$emit('saved')

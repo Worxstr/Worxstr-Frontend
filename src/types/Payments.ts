@@ -4,7 +4,7 @@ import { Shift } from './Jobs'
 import { User } from './Users'
 import usersStore from '@/store/users'
 
-type Timecard = {
+export type Timecard = {
   id: number
   contractor_id: number
   first_name: string
@@ -20,14 +20,14 @@ type Timecard = {
   shift?: Shift
 }
 
-type InvoiceItem = {
+export type InvoiceItem = {
   id: number
   invoice_id: number
   amount: string
   description: string
 }
 
-type Invoice = {
+export type Invoice = {
   id: number
   amount: string
   description: string
@@ -38,7 +38,7 @@ type Invoice = {
   timecard?: Timecard
 }
 
-type BankTransfer = {
+export type BankTransfer = {
   id: number
   amount: number
   transaction_type: string

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
-import { FundingSource, Payment } from '@/types/Payments'
+import { FundingSource, Payment, Invoice } from '@/types/Payments'
 import { ClockEvent } from '@/types/Jobs'
 import { showToast } from '@/services/app'
 
@@ -24,20 +24,21 @@ export async function loadPayment({ commit }: any, paymentId: string) {
   return data.payment
 }
 
-// TODO: Transition to payments
-export async function updateTimecard({ commit }: any, timecardId: number, events: ClockEvent[]) {
+export async function updatePayment({ commit }: any, paymentId: number, events: ClockEvent[], invoice: Invoice) {
   const { data } = await api({
     method: 'PUT',
-    url: `payments/timecards/${timecardId}`,
+    url: `payments/${paymentId}`,
     data: {
-      changes: events,
+      timecard: {
+        clock_events: events,
+      },
+      invoice: invoice,
     },
   })
-  commit('ADD_TIMECARD', data)
+  commit('ADD_PAYMENT', data)
   return data
 }
 
-// TODO: Transition to payments
 export async function denyPayments({ commit }: any, paymentIds: number[]) {
   const { data } = await api({
     method: 'PUT',

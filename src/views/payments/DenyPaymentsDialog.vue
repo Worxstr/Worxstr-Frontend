@@ -37,6 +37,7 @@ v-dialog(
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { denyPayments } from '@/services/payments'
+import { Payment } from '@/types/Payments'
 
 @Component
 export default class DenyPaymentsDialog extends Vue {

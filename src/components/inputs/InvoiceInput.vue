@@ -1,32 +1,25 @@
 <template lang="pug">
 .lineitem-list-input.d-flex.flex-column
 
-  draggable.d-flex.flex-column.gap-small(
-    v-model='localLineitems'
-    @change='update'
-    v-bind='{animation: 200}'
-    @start='dragStart'
-    @end='dragEnd'
-    :disabled='!orderable'
-    handle='.handle'
+  v-form.d-flex.flex-column(
+    v-model='lineitemValid'
+    ref='form'
+    :class="{'mt-4': localLineitems.length}"
   )
-    div(
-      v-for='(lineitem, i) in localLineitems'
-      :key='i'
-      style='width: 100%;'
+    draggable.d-flex.flex-column.gap-small(
+      v-model='localLineitems'
+      @change='update'
+      v-bind='{animation: 200}'
+      @start='dragStart'
+      @end='dragEnd'
+      :disabled='!orderable'
+      handle='.handle'
     )
-      v-form.d-flex.flex-column(
-        v-if='editingLineitem === i'
-        @submit.prevent='addLineitem'
-        v-model='lineitemValid'
-        ref='form'
-        :class="{'mt-4': localLineitems.length}"
-      )
-          
-        .d-flex.flex-column.flex-sm-row.gap-small
+      .d-flex(v-for='(lineitem, i) in localLineitems' :key='i')
+        .d-flex.gap-small.flex-grow-1
           v-text-field(
-            v-model='localLineitems[editingLineitem].title'
-            label='Item name'
+            v-model='lineitem.title'
+            :label='`Item ${i + 1} name`'
             placeholder='Item title'
             autofocus
             outlined
@@ -35,56 +28,25 @@
             :rules='lineitemRules.title'
           )
           currency-input(
-            v-model='localLineitems[editingLineitem].amount'
+            v-model='lineitem.amount'
             label='Amount'
             outlined
             dense
             hide-details
           )
-
-        .d-flex
+        
+        .d-flex.ml-2
           v-btn(
-            v-if='editingLineitem !== null'
-            text
-            color='success'
-            @click='exitEditMode'
-            :disabled='!lineitemValid'
+            icon
+            color='error'
+            @click='removeLineitem(i)'
+            :disabled='localLineitems.length === 1'
           )
-            v-icon(left) mdi-check
-            | Save item
-
-          v-btn(
-            text
-            color='primary'
-            @click='addLineitem'
-            :disabled='!lineitemValid'
-          )
-            v-icon(left) mdi-plus
-            | Add another item
-
-      v-sheet.d-flex(
-        v-else
-        outlined
-        rounded
-      )
-        v-card-text.px-4.py-2
-          h5.text-subtitle-1 {{ lineitem.title }}
-          div(v-html='lineitem.description')
-
-        .d-flex.mt-1.mr-1
-
-          h5.text-subtitle-1.mt-1.mr-2 {{ lineitem.amount | currency }}
-
-          v-btn(icon color='primary' @click='editLineitem(i)')
-            v-icon mdi-pencil
-
-          v-btn(icon color='error' @click='removeLineitem(i)')
             v-icon mdi-delete
 
           v-btn.handle(
-            v-if='orderable'
+            v-if='orderable && localLineitems.length !== 1'
             icon
-            @click='removeLineitem(i)'
             style='cursor: move'
           )
             v-icon mdi-drag-horizontal
@@ -101,7 +63,6 @@
         text
         color='primary'
         @click='addLineitem'
-        v-show='editingLineitem === null'
       )
         v-icon(left) mdi-plus
         | Add item
@@ -130,14 +91,13 @@ type Lineitem = {
 })
 export default class InvoiceInput extends Vue {
 
-  @Prop({ default: [] }) value!: Lineitem[]
+  @Prop({ type: Array }) value!: Lineitem[]
   @Prop({ default: false }) editable!: boolean
   @Prop({ default: false }) orderable!: boolean
 
   localLineitems: Lineitem[] = []
   drag = false
-  editingLineitem: null | number = null
-  lineitemValid = false
+
   lineitemRules = {
     title: [exists('Lineitem title required')],
     amount: [exists('Lineitem amount required'), (v: number) => v > 0 || 'Invalid amount'],
@@ -148,44 +108,30 @@ export default class InvoiceInput extends Vue {
   }
 
   addLineitem() {
-    this.localLineitems = this.localLineitems.filter((lineitem: Lineitem) => !!lineitem.title)
     this.localLineitems.push({
       title: '',
       amount: 0,
     })
-    this.editingLineitem = this.localLineitems.length - 1
     this.update()
   }
 
-  editLineitem(i: number) {
-    this.exitEditMode()
-    this.editingLineitem = i
-  }
-
   removeLineitem(i: number) {
-    this.exitEditMode()
     this.localLineitems.splice(i, 1)
     this.update()
   }
 
-  exitEditMode() {
-    this.localLineitems = this.localLineitems.filter((lineitem: Lineitem) => !!lineitem.title)
-    this.editingLineitem = null
-    this.update()
-  }
+  lineitemValid = true
 
   dragStart() {
-    this.exitEditMode()
     this.drag = true
   }
 
   dragEnd(event: any) {
     this.drag = false
-    if (this.editingLineitem) this.editingLineitem = event.newIndex
   }
 
   update() {
-    this.$emit('input', this.localLineitems.filter((lineitem: Lineitem) => !!lineitem.title));
+    this.$emit('input', this.localLineitems)
   }
 
   get total() {

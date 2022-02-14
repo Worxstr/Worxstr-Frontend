@@ -8,16 +8,8 @@
     :rules='allRules'
     ref='input'
     prefix='$'
+    v-bind='$attrs'
 
-    :required='required'
-    :color='color'
-    :suffix='suffix'
-    :filled="filled"
-    :dense='dense'
-    :label='label'
-    :autofocus='autofocus'
-    :outlined='outlined'
-    :disabled='disabled'
   )
 </template>
 
@@ -28,17 +20,7 @@ import { currency } from '@/util/inputValidation'
 @Component
 export default class CurrencyInput extends Vue {
   @Prop({ type: [Number, String], required: true, default: 0 }) value!: number | string
-  @Prop(String) readonly color: string | undefined
-  @Prop(String) readonly suffix: string | undefined
-
   @Prop({ default: false }) readonly headerFont!: boolean
-  @Prop({ default: false }) readonly required!: boolean
-  @Prop({ default: false }) readonly filled!: boolean
-  @Prop({ default: false }) readonly dense!: boolean
-  @Prop({ default: false }) readonly label!: boolean
-  @Prop({ default: false }) readonly autofocus!: boolean
-  @Prop({ default: false }) readonly outlined!: boolean
-  @Prop({ default: false }) readonly disabled!: boolean
   @Prop({ type: Array }) readonly rules?: any[]
 
   get allRules() {

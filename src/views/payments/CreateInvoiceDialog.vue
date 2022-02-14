@@ -19,7 +19,7 @@ v-dialog(
       v-card-text.transfer-amount.d-flex.flex-column.gap-small
         
         richtext-field(
-          placeholder='Description of invoice'
+          placeholder='What\'s this for?'
           v-model='invoice.description'
         )
 
@@ -60,7 +60,10 @@ export default class CreateInvoiceDialog extends Vue {
   isValid = false
   invoice = {
     description: '',
-    items: []
+    items: [{
+      title: '',
+      amount: 0,
+    }]
   }
 
   // TODO: Figure out how to add rules prop to InvoiceInput
