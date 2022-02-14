@@ -21,7 +21,7 @@ export async function loadPayment({ commit }: any, paymentId: string) {
     url: `/payments/${paymentId}`,
   })
   commit('ADD_PAYMENT', data)
-  return data.payment
+  return data
 }
 
 export async function createInvoice({ commit }: any, invoice: Invoice) {

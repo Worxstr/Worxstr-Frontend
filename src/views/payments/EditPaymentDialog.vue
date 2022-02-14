@@ -1,26 +1,33 @@
 <template lang="pug">
 v-dialog(
-  v-model="opened",
-  :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="600",
+  v-model='opened'
+  :fullscreen='$vuetify.breakpoint.smAndDown'
+  max-width='700'
   persistent
 )
   v-card.d-flex.flex-column
-    v-form.flex-grow-1.d-flex.flex-column(@submit.prevent="updatePayment" v-model="form.isValid" v-if="payment")
+    v-form.flex-grow-1.d-flex.flex-column(
+      v-if='payment'
+      @submit.prevent='updatePayment'
+      v-model='isValid'
+    )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ payment | fullName }}'s payment
+        v-toolbar-title.text-h6 {{ payment.receiver | fullName }}'s payment
+        v-spacer
+        .text-h6.font-weight-black.green--text(v-if='invoice.items.length')
+          | {{ total | currency }}
 
       v-divider
+      v-subheader Time sheet
           
       v-card-text
-        //- datetime-input(
-        //-   outlined
-        //-   v-model="form.data.timeIn.time"
-        //-   label="Time in"
-        //-   data-cy='payment-time-in'
-        //- )
+        datetime-input(
+          outlined
+          label='Time in'
+          data-cy='payment-time-in'
+        )
 
-        .mb-5(v-for="(breakItem, index) in form.data.breaks", :key="index")
+        .mb-5(v-for='(breakItem, i) in []' :key='i')
           v-row
             v-col
             //-   datetime-input(
@@ -41,14 +48,20 @@ v-dialog(
             //-     :data-cy="`payment-break-${index + 1}-end`"
             //-   )
 
-        //- datetime-input(
-        //-   v-if='form.data.timeOut'
-        //-   outlined
-        //-   required
-        //-   v-model="form.data.timeOut.time"
-        //-   label="Time out"
-        //-   data-cy='payment-time-out'
-        //- )
+        datetime-input(
+          outlined
+          required
+          label='Time out'
+          data-cy='payment-time-out'
+        )
+
+      v-divider
+      v-subheader Invoice details
+
+      v-card-text
+        invoice-input(
+          v-model='invoice.items'
+        )
 
       v-spacer
       
@@ -67,11 +80,12 @@ v-dialog(
         v-progress-circular(indeterminate)
 </template>
 
-<script>
+<script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
+import InvoiceInput from '@/components/inputs/InvoiceInput.vue'
 import * as payments from '@/services/payments'
 import { ClockAction } from '@/types/Jobs'
 
@@ -81,25 +95,34 @@ import { ClockAction } from '@/types/Jobs'
 dayjs.extend(duration)
 
 @Component({
-  components: { DatetimeInput },
+  components: { DatetimeInput, InvoiceInput },
 })
 export default class EditPaymentDialog extends Vue {
   
   loading = false
-  form = {
-    isValid: false,
-    data: {
-      timeIn: null,
-      timeOut: null,
-      breaks: [],
-    },
+  isValid = false
+  invoice = {
+    items: [
+      {
+        description: '',
+        amount: 0,
+      },
+    ],
+    description: ''
   }
+  timeIn = null
+  timeOut = null
+  breaks = []
 
-  @Prop({ default: false }) opened
-  @Prop({ type: Number }) paymentId
+  @Prop({ default: false }) opened!: boolean
+  @Prop({ type: Number }) paymentId!: number
 
   get payment() {
     return this.$store.getters.payment(this.paymentId)
+  }
+
+  get total() {
+    return this.invoice.items.reduce((total: number, lineitem: any) => total + lineitem.amount, 0)
   }
 
   @Watch('paymentId')
@@ -108,7 +131,7 @@ export default class EditPaymentDialog extends Vue {
   }
 
   @Watch('opened')
-  onOpened(opened) {
+  onOpened(opened: boolean) {
     if (opened) this.calculateFormValues()
   }
 
@@ -151,7 +174,7 @@ export default class EditPaymentDialog extends Vue {
   //   this.form.data.breaks = breaks
   }
 
-  timeDiff(timeIn, timeOut) {
+  timeDiff(timeIn: any, timeOut: any) {
     timeIn = dayjs(timeIn)
     timeOut = dayjs(timeOut)
 
@@ -159,35 +182,35 @@ export default class EditPaymentDialog extends Vue {
       hours = duration.format('H'),
       minutes = duration.format('m')
 
-    return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${
-      minutes == 1 ? '' : 's'
+    return `${hours} hour${hours == '1' ? '' : 's'}, ${minutes} minute${
+      minutes == '1' ? '' : 's'
     }`
   }
 
   async updatePayment() {
-    const newTimeclockEvents = []
+    // const newTimeclockEvents = []
 
-    newTimeclockEvents.push(this.form.data.timeIn)
-    this.form.data.breaks.forEach((breakItem) => {
-      newTimeclockEvents.push(breakItem.start)
-      newTimeclockEvents.push(breakItem.end)
-    })
-    newTimeclockEvents.push(this.form.data.timeOut)
+    // newTimeclockEvents.push(this.form.data.timeIn)
+    // this.form.data.breaks.forEach((breakItem) => {
+    //   newTimeclockEvents.push(breakItem.start)
+    //   newTimeclockEvents.push(breakItem.end)
+    // })
+    // newTimeclockEvents.push(this.form.data.timeOut)
 
-    this.loading = true
+    // this.loading = true
 
-    try {
-      await payments.updatePayment(
-        this.$store,
-        this.payment.id,
-        newTimeclockEvents,
-        // invoice
-      )
-      this.closeDialog()
-      this.$emit('saved')
-    } finally {
-      this.loading = false
-    }
+    // try {
+    //   await payments.updatePayment(
+    //     this.$store,
+    //     this.payment.id,
+    //     newTimeclockEvents,
+    //     // invoice
+    //   )
+    //   this.closeDialog()
+    //   this.$emit('saved')
+    // } finally {
+    //   this.loading = false
+    // }
   }
 }
 </script>

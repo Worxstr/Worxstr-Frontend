@@ -13,7 +13,7 @@
     )
       .d-flex(v-for='(lineitem, i) in localLineitems' :key='i')
         .d-flex.flex-column.flex-sm-row.gap-small.flex-grow-1
-          v-text-field(
+          v-text-field.flex-2(
             v-model='lineitem.description'
             :label='`Item ${i + 1}`'
             placeholder='Item description'
@@ -23,7 +23,7 @@
             hide-details
             :rules='lineitemRules.description'
           )
-          currency-input(
+          currency-input.flex-1(
             v-model='lineitem.amount'
             :label='`Item ${i + 1} amount`'
             outlined

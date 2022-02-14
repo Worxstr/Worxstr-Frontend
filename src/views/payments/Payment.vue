@@ -1,19 +1,19 @@
 <template lang="pug">
 v-container.d-flex.flex-column.pt-6.gap-small
 
-  //- edit-payment-dialog(
-  //-   :opened.sync="editTimecardDialog",
-  //-   :timecardId="selectedTimecardIds[0]"
-  //-   @saved='clearSelection'
-  //- )
+  edit-payment-dialog(
+    :opened.sync='editPaymentDialog'
+    :paymentId='parseInt($route.params.paymentId)'
+    @saved='goBack'
+  )
   deny-payments-dialog(
-    :opened.sync="denyPaymentsDialog"
-    :paymentIds="[$route.params.paymentId]"
+    :opened.sync='denyPaymentsDialog'
+    :paymentIds="[parseInt($route.params.paymentId)]"
     @denied='goBack'
   )
   complete-payments-dialog(
     :opened.sync='completePaymentsDialog'
-    :paymentIds='[$route.params.paymentId]'
+    :paymentIds='[parseInt($route.params.paymentId)]'
     @completed='goBack'
   )
 
@@ -22,6 +22,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
       text
       :icon='$vuetify.breakpoint.xs'
       color='primary'
+      @click='editPaymentDialog = true'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
       span(v-if='!$vuetify.breakpoint.xs') Edit
@@ -84,7 +85,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
               | &nbsp; - &nbsp;
               router-link.alt-style(
                 :to="{name: 'job', params: { jobId: shift.job_id }}"
-              ) {{ shift.job_id }}
+              ) {{ (job && job.name) ? job.name : shift.job_id }}
 
             .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
             .text-body-2 {{ shift.time_begin | date('MMM D, YYYY') }} - {{ shift.time_end | date('MMM D, YYYY') }}
@@ -94,7 +95,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
           v-btn(
             text
             color='primary'
-            :to="{name: 'shift', params: {shiftId: shift.id}}"
+            :to="{name: 'shift', params: {shiftId: shift.id, jobId: shift.job_id}}"
             exact
           ) View shift
           v-btn(
@@ -130,13 +131,13 @@ v-container.d-flex.flex-column.pt-6.gap-small
           v-card-text
             h6.text-h6.mb-3 Description
             div(v-html='payment.invoice.description')
-            
+
           v-divider
 
         v-list
           v-list-item(v-if='shift && payment && payment.invoice && payment.invoice.timecard')
             v-list-item-content.primary--text.font-weight-bold.d-flex
-              router-link.alt-style(:to="{name: 'shift', params: {shiftId: shift.id}}")
+              router-link.alt-style(:to="{name: 'shift', params: {shiftId: shift.id, jobId: shift.job_id}}")
                 | Payment for {{ shift.site_location }}
             v-list-item-action.text-subtitle-1 {{ payment.invoice.timecard.total_payment | currency }}
 
@@ -180,6 +181,7 @@ import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
 import { isDebit, isUser } from '@/types/Payments'
 import { clockedTime, breakTime, workTime, ClockEvent } from '@/types/Jobs'
+import EditPaymentDialog from './EditPaymentDialog.vue'
 import CompletePaymentsDialog from './CompletePaymentsDialog.vue'
 import DenyPaymentsDialog from './DenyPaymentsDialog.vue'
 
@@ -189,6 +191,7 @@ import DenyPaymentsDialog from './DenyPaymentsDialog.vue'
   },
   components: {
     ClockEvents,
+    EditPaymentDialog,
     CompletePaymentsDialog,
     DenyPaymentsDialog,
   }
@@ -196,6 +199,7 @@ import DenyPaymentsDialog from './DenyPaymentsDialog.vue'
 export default class Payment extends Vue {
 
   loading = false
+  editPaymentDialog = false
   completePaymentsDialog = false
   denyPaymentsDialog = false
 
@@ -205,7 +209,7 @@ export default class Payment extends Vue {
     this.loading = false
     
     if (payment?.invoice) {
-      const shift = await loadShift(this.$store, payment.invoice.shift_id)
+      const shift = await loadShift(this.$store, payment.invoice.timecard.shift_id)
       const job = await loadJob(this.$store, shift.job_id)
     }
   }
@@ -217,6 +221,11 @@ export default class Payment extends Vue {
   get shift() {
     if (!this.payment?.invoice?.timecard) return null
     return this.$store.getters.shift(this.payment.invoice.timecard.shift_id)
+  }
+
+  get job() {
+    if (!this.shift) return null
+    return this.$store.getters.job(this.shift.job_id)
   }
 
   get history() {

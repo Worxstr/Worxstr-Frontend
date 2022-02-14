@@ -61,7 +61,7 @@ export default class CreateInvoiceDialog extends Vue {
 
   loading = false
   isValid = false
-  invoice: Invoice = {
+  invoice: any = {
     description: '',
     items: [{
       description: '',
