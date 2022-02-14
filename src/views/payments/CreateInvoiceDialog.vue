@@ -27,7 +27,6 @@ v-dialog(
           v-model='invoice.description'
         )
 
-
       v-spacer
 
       v-card-actions
@@ -39,6 +38,7 @@ v-dialog(
           :disabled='!allValid'
           type='submit'
           data-cy='transfer-submit-button'
+          :loading='loading'
         ) Create
 </template>
 
@@ -46,6 +46,8 @@ v-dialog(
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import InvoiceInput from '@/components/inputs/InvoiceInput.vue'
+import { createInvoice } from '@/services/payments'
+import { Invoice } from '@/types/Payments'
 
 @Component({
   components: {
@@ -57,11 +59,12 @@ export default class CreateInvoiceDialog extends Vue {
   
   @Prop({ default: false }) readonly opened!: boolean
 
+  loading = false
   isValid = false
-  invoice = {
+  invoice: Invoice = {
     description: '',
     items: [{
-      title: '',
+      description: '',
       amount: 0,
     }]
   }
@@ -79,9 +82,17 @@ export default class CreateInvoiceDialog extends Vue {
     this.$emit('update:opened', false)
   }
 
-  createInvoice() {
+  async createInvoice() {
     // TODO
-    this.closeDialog()
+    this.loading = true
+    try {
+      await createInvoice(this.$store, this.invoice);
+      (this.$refs.form as HTMLFormElement)?.reset()
+      this.closeDialog()
+    }
+    finally {
+      this.loading = false
+    }
   }
 }
 

@@ -125,6 +125,14 @@ v-container.d-flex.flex-column.pt-6.gap-small
     .mb-4.d-flex.flex-column.gap-small(v-if='payment && payment.invoice')
       h5.text-h5 Invoice
       v-sheet(outlined rounded)
+
+        div(v-if='payment.invoice && payment.invoice.description')
+          v-card-text
+            h6.text-h6.mb-3 Description
+            div(v-html='payment.invoice.description')
+            
+          v-divider
+
         v-list
           v-list-item(v-if='shift && payment && payment.invoice && payment.invoice.timecard')
             v-list-item-content.primary--text.font-weight-bold.d-flex

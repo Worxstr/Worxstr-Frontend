@@ -14,14 +14,14 @@
       .d-flex(v-for='(lineitem, i) in localLineitems' :key='i')
         .d-flex.flex-column.flex-sm-row.gap-small.flex-grow-1
           v-text-field(
-            v-model='lineitem.title'
-            :label='`Item ${i + 1} name`'
-            placeholder='Item title'
+            v-model='lineitem.description'
+            :label='`Item ${i + 1}`'
+            placeholder='Item description'
             autofocus
             outlined
             dense
             hide-details
-            :rules='lineitemRules.title'
+            :rules='lineitemRules.description'
           )
           currency-input(
             v-model='lineitem.amount'
@@ -34,10 +34,10 @@
         
         .d-flex.ml-2.align-center
           v-btn(
+            v-if='localLineitems.length !== 1'
             icon
             color='error'
             @click='removeLineitem(i)'
-            :disabled='localLineitems.length === 1'
           )
             v-icon mdi-delete
 
@@ -70,7 +70,7 @@ import draggable from 'vuedraggable'
 
 type Lineitem = {
   id?: number
-  title: string
+  description: string
   amount: number
 }
 
@@ -91,7 +91,7 @@ export default class InvoiceInput extends Vue {
   drag = false
 
   lineitemRules = {
-    title: [exists('Lineitem title required')],
+    description: [exists('Lineitem description required')],
     amount: [exists('Lineitem amount required'), (v: number) => v > 0 || 'Invalid amount'],
   }
 
@@ -101,7 +101,7 @@ export default class InvoiceInput extends Vue {
 
   addLineitem() {
     this.localLineitems.push({
-      title: '',
+      description: '',
       amount: 0,
     })
     this.update()

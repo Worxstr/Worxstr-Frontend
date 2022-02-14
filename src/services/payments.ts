@@ -24,6 +24,16 @@ export async function loadPayment({ commit }: any, paymentId: string) {
   return data.payment
 }
 
+export async function createInvoice({ commit }: any, invoice: Invoice) {
+  const { data } = await api({
+    method: 'POST',
+    url: 'payments/invoices',
+    data: invoice,
+  })
+  commit('ADD_PAYMENT', data)
+  return data
+}
+
 export async function updatePayment({ commit }: any, paymentId: number, events: ClockEvent[], invoice: Invoice) {
   const { data } = await api({
     method: 'PUT',

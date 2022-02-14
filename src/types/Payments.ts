@@ -23,7 +23,7 @@ export type Timecard = {
 export type InvoiceItem = {
   id: number
   invoice_id: number
-  amount: string
+  amount: string | number
   description: string
 }
 
