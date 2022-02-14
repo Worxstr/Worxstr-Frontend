@@ -1,15 +1,15 @@
 <template lang="pug">
 v-dialog(
-  id="payment-dialog"
-  v-model="opened",
-  :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  id='payment-dialog'
+  v-model='opened'
+  :fullscreen='$vuetify.breakpoint.smAndDown'
+  max-width='500'
   persistent
   eager
 )
   v-card.d-flex.flex-column
     v-toolbar.flex-grow-0(flat)
-      v-btn(icon, @click="closeDialog")
+      v-btn(icon @click='closeDialog')
         v-icon mdi-close
       v-toolbar-title.text-h6.pl-0 Complete payment
   
@@ -17,13 +17,13 @@ v-dialog(
 
     v-card-text.mt-5
       p
-        | {{ payments.length }}
-        | contractor{{ payments.length == 1 ? '' : 's' }}
-        | will be paid {{ wagePayment  | currency }}{{ payments.length > 1 ? ' in total' : ''}}.
+        | {{ countUniquePeople }}
+        | {{ countUniquePeople == 1 ? 'person' : 'people' }}
+        | will be paid {{ subtotal | currency }}{{ payments.length > 1 ? ' in total' : ''}}.
         br
-        | A {{ feesPayment | currency }} fee will be applied.
+        | A {{ fees | currency }} fee will be applied.
         br
-        | The total cost for this transaction is {{ totalPayment | currency }}.
+        | The total cost for this transaction is {{ total | currency }}.
 
     v-spacer
 
@@ -56,11 +56,7 @@ export default class CompletePaymentDialog extends Vue {
     return this.$store.getters.paymentsByIds(this.paymentIds)
   }
 
-  get totalPayment() {
-    return this.wagePayment + this.feesPayment;
-  }
-
-  get wagePayment() {
+  get subtotal() {
     const total = this.payments.reduce((total: number, current: Payment) => {
       return total + parseFloat(current.amount)
     }, 0)
@@ -68,12 +64,25 @@ export default class CompletePaymentDialog extends Vue {
     return Math.round(total * 100) / 100
   }
 
-  get feesPayment() {
+  get fees() {
     const total = this.payments.reduce((total: number, current: Payment) => {
       return total + parseFloat(current.fee)
     }, 0)
 
     return Math.round(total * 100) / 100
+  }
+
+  get total() {
+    return this.subtotal + this.fees
+  }
+
+  get countUniquePeople() {
+    return this.payments.reduce((acc: any[], payment: Payment) => {
+      if (acc.indexOf(payment.receiver.id) === -1) {
+        acc.push(payment.receiver.id)
+      }
+      return acc
+    }, []).length
   }
 
   closeDialog() {
@@ -82,10 +91,14 @@ export default class CompletePaymentDialog extends Vue {
   
   async completePayments() {
     this.loading = true
-    await completePayments(this.$store, this.payments.map((t: Payment) => t.id))
+    try {
+      await completePayments(this.$store, this.payments.map((t: Payment) => t.id))
+    }
+    finally {
+      this.closeDialog()
+      this.$emit('completed')
+    }
     this.loading = false
-    this.closeDialog()
-    this.$emit('completed')
   }
 }
 </script>

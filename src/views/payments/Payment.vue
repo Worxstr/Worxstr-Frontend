@@ -11,18 +11,17 @@ v-container.d-flex.flex-column.pt-6.gap-small
   //-   :timecardIds="selectedTimecardIds"
   //-   @denied='clearSelection'
   //- )
-  //- complete-payment-dialog(
-  //-   :opened.sync="paymentDialog",
-  //-   :timecardIds="selectedTimecardIds"
-  //-   @completed='clearSelection'
-  //- )
+  complete-payment-dialog(
+    :opened.sync='completePaymentDialog'
+    :paymentIds='[$route.params.paymentId]'
+    @completed='goBack'
+  )
 
   portal(to='toolbarActions')
     v-btn(
       text
       :icon='$vuetify.breakpoint.xs'
       color='primary'
-      data-cy='edit-shift-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
       span(v-if='!$vuetify.breakpoint.xs') Edit
@@ -31,7 +30,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
       text
       :icon='$vuetify.breakpoint.xs'
       color='success'
-      data-cy='edit-shift-button'
+      @click='completePaymentDialog = true'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-check
       span(v-if='!$vuetify.breakpoint.xs') Complete
@@ -40,7 +39,6 @@ v-container.d-flex.flex-column.pt-6.gap-small
       text
       :icon='$vuetify.breakpoint.xs'
       color='error'
-      data-cy='delete-shift-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-close
       span(v-if='!$vuetify.breakpoint.xs') Deny
@@ -173,18 +171,21 @@ import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
 import { isDebit, isUser } from '@/types/Payments'
 import { clockedTime, breakTime, workTime, ClockEvent } from '@/types/Jobs'
+import CompletePaymentDialog from './CompletePaymentDialog.vue'
 
 @Component({
   metaInfo: {
     title: 'Payment',
   },
   components: {
-    ClockEvents
+    ClockEvents,
+    CompletePaymentDialog,
   }
 })
 export default class Payment extends Vue {
 
   loading = false
+  completePaymentDialog = false
 
   async mounted() {
     this.loading = true
@@ -240,10 +241,8 @@ export default class Payment extends Vue {
     return isUser(this.payment.receiver)
   }
 
-  shiftPayment = {
-    amount: 102,
-    description: 'Front of store',
-    bold: true
+  goBack() {
+    this.$router.push({ name: 'payments' })
   }
 
   // TODO: Duplicated in TransferHistory.vue

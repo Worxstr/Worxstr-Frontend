@@ -53,17 +53,17 @@ export async function denyPayments({ commit }: any, timecardIds: number[]) {
   return data
 }
 
-// TODO: Transition to payments
-export async function completePayments({ commit }: any, timecardIds: number[]) {
+export async function completePayments({ commit }: any, paymentIds: number[]) {
   const { data } = await api({
     method: 'PUT',
     url: 'payments/complete',
     data: {
-      timecard_ids: timecardIds
+      payment_ids: paymentIds
     },
   })
-  timecardIds.forEach((timecardId: number) => {
-    commit('REMOVE_TIMECARD', timecardId)
+  // TODO: Probably don't need to do this
+  paymentIds.forEach((paymentId: number) => {
+    commit('REMOVE_PAYMENT', paymentId)
   })
   data.payments.forEach((payment: Payment) => {
     commit('ADD_PAYMENT', payment)
