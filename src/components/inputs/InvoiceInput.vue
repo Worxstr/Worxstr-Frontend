@@ -1,11 +1,7 @@
 <template lang="pug">
 .lineitem-list-input.d-flex.flex-column
 
-  v-form.d-flex.flex-column(
-    v-model='lineitemValid'
-    ref='form'
-    :class="{'mt-4': localLineitems.length}"
-  )
+  .d-flex.flex-column
     draggable.d-flex.flex-column.gap-small(
       v-model='localLineitems'
       @change='update'
@@ -16,7 +12,7 @@
       handle='.handle'
     )
       .d-flex(v-for='(lineitem, i) in localLineitems' :key='i')
-        .d-flex.gap-small.flex-grow-1
+        .d-flex.flex-column.flex-sm-row.gap-small.flex-grow-1
           v-text-field(
             v-model='lineitem.title'
             :label='`Item ${i + 1} name`'
@@ -29,13 +25,14 @@
           )
           currency-input(
             v-model='lineitem.amount'
-            label='Amount'
+            :label='`Item ${i + 1} amount`'
             outlined
             dense
             hide-details
+            :rules='lineitemRules.amount'
           )
         
-        .d-flex.ml-2
+        .d-flex.ml-2.align-center
           v-btn(
             icon
             color='error'
@@ -114,8 +111,6 @@ export default class InvoiceInput extends Vue {
     this.localLineitems.splice(i, 1)
     this.update()
   }
-
-  lineitemValid = true
 
   dragStart() {
     this.drag = true

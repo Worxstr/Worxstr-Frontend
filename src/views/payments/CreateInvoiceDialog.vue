@@ -9,7 +9,7 @@ v-dialog(
     v-form.flex-grow-1.d-flex.flex-column(
       @submit.prevent='createInvoice'
       ref='form'
-      v-model='allValid'
+      v-model='isValid'
     )
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title.text-h6 Creating new invoice
@@ -21,14 +21,12 @@ v-dialog(
 
       v-card-text.transfer-amount.d-flex.flex-column.gap-small
         
+        invoice-input(v-model='invoice.items' :orderable='true')
         richtext-field(
           placeholder='What\'s this for?'
           v-model='invoice.description'
         )
 
-        div
-          //- // TODO: Create generic component for draggable list creation
-          invoice-input(v-model='invoice.items' :orderable='true')
 
       v-spacer
 
