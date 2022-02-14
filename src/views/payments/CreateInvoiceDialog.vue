@@ -13,6 +13,9 @@ v-dialog(
     )
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title.text-h6 Creating new invoice
+        v-spacer
+        .text-h6.font-weight-black.green--text(v-if='invoice.items.length')
+          | {{ total | currency }}
 
       v-divider
 
@@ -24,7 +27,6 @@ v-dialog(
         )
 
         div
-          v-subheader Line items
           //- // TODO: Create generic component for draggable list creation
           invoice-input(v-model='invoice.items' :orderable='true')
 
@@ -69,6 +71,10 @@ export default class CreateInvoiceDialog extends Vue {
   // TODO: Figure out how to add rules prop to InvoiceInput
   get allValid() {
     return this.isValid && this.invoice.items.length > 0
+  }
+
+  get total() {
+    return this.invoice.items.reduce((total: number, lineitem: any) => total + lineitem.amount, 0)
   }
   
   closeDialog() {

@@ -51,12 +51,7 @@
           )
             v-icon mdi-drag-horizontal
 
-  v-list-item
-    v-list-item-content
-      v-list-item-title.font-weight-bold(v-if='localLineitems.length') Total amount
-    
-    v-list-item-action(v-if='localLineitems.length')
-      .text-subtitle-1.font-weight-black.green--text {{ total | currency }}
+  v-list-item.pl-0
 
     v-list-item-action
       v-btn(
@@ -132,10 +127,6 @@ export default class InvoiceInput extends Vue {
 
   update() {
     this.$emit('input', this.localLineitems)
-  }
-
-  get total() {
-    return this.localLineitems.reduce((total: number, lineitem: Lineitem) => total + lineitem.amount, 0)
   }
   
 }
