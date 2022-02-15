@@ -162,32 +162,13 @@ v-container.d-flex.flex-column.pt-6.gap-small
     .mb-4.d-flex.flex-column.gap-small(v-if='job && job.id')
       h5.text-h5 Job details
       v-sheet(outlined rounded)
-      
-        g-map(
-          :jobs='[job]'
-          :users='job.contractors'
-          :show-device-location='true'
-          :height="$vuetify.breakpoint.mdAndUp ? '25vh' : '35vh'"
-        )
+        job-preview(:job='job')
+
         
-        v-card-text.pb-1
-          .d-flex.flex-column
-            h6.text-body-1
-              router-link.alt-style(
-                :to="{name: 'job', params: { jobId: shift.job_id }}"
-              ) {{ (job && job.name) ? job.name : shift.job_id }}
-
-            .text-body-2 {{ job.address }}
-            .text-body-2 {{ job.shifts.length }} {{ job.shifts.length > 1 ? 'shifts' : 'shift' }}
-
-        v-card-actions
-          v-spacer
-          v-btn(
-            text
-            color='primary'
-            :to="{name: 'job', params: {jobId: shift.job_id}}"
-            exact
-          ) View job
+    .mb-4.d-flex.flex-column.gap-small(v-if='payment && payment.receiver')
+      h5.text-h5 Recipient
+      v-sheet(outlined rounded)
+        user-preview(:user='payment.receiver')
 
 </template>
 
@@ -195,6 +176,8 @@ v-container.d-flex.flex-column.pt-6.gap-small
 import { Vue, Component } from 'vue-property-decorator'
 import ClockEvents from '@/components/ClockEvents.vue'
 import GMap from '@/components/GMap.vue'
+import JobPreview from '@/components/JobPreview.vue'
+import UserPreview from '@/components/UserPreview.vue'
 import { loadPayment } from '@/services/payments'
 import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
@@ -211,6 +194,8 @@ import DenyPaymentsDialog from './DenyPaymentsDialog.vue'
   components: {
     ClockEvents,
     GMap,
+    JobPreview,
+    UserPreview,
     EditPaymentDialog,
     CompletePaymentsDialog,
     DenyPaymentsDialog,
