@@ -196,7 +196,7 @@ const routes = [
     name: 'dashboard',
     component: Dashboard,
     meta: {
-      icon: 'mdi-view-dashboard',
+      icon: 'mdi-home',
       restrict: [UserRole.Contractor],
     },
   },

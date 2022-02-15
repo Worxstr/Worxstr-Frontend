@@ -68,7 +68,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
         | {{ payment.date_completed | date('MMM D, YYYY') }}, {{ payment.date_completed | time }}
 
 
-  masonry(:cols='{default: 2, 959: 1}' :gutter='30')
+  masonry(:cols='{default: 2, 959: 1}' :gutter='20')
 
     .mb-4.d-flex.flex-column.gap-small(v-if='payment && payment.invoice')
       h5.text-h5 Invoice
