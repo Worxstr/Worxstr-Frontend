@@ -19,36 +19,38 @@ v-dialog(
 
       v-divider
       v-subheader Time sheet
-          
-      v-card-text
+
+      v-card-text(v-if='timeSheet')
         datetime-input(
+          v-model='timeSheet.timeIn.time'
           outlined
           label='Time in'
           data-cy='payment-time-in'
         )
 
-        .mb-5(v-for='(breakItem, i) in []' :key='i')
+        .mb-5(v-for='(breakItem, i) in timeSheet.breaks' :key='i')
           v-row
             v-col
-            //-   datetime-input(
-            //-     outlined
-            //-     required
-            //-     hide-details
-            //-     v-model="breakItem.start.time"
-            //-     :label="`Break ${index + 1} start`"
-            //-     :data-cy="`payment-break-${index + 1}-start`"
-            //-   )
-            //- v-col
-            //-   datetime-input(
-            //-     outlined
-            //-     required
-            //-     hide-details
-            //-     v-model="breakItem.end.time"
-            //-     :label="`Break ${index + 1} end`"
-            //-     :data-cy="`payment-break-${index + 1}-end`"
-            //-   )
+              datetime-input(
+                outlined
+                required
+                hide-details
+                v-model="breakItem.start.time"
+                :label="`Break ${i + 1} start`"
+                :data-cy="`payment-break-${i + 1}-start`"
+              )
+            v-col
+              datetime-input(
+                outlined
+                required
+                hide-details
+                v-model="breakItem.end.time"
+                :label="`Break ${i + 1} end`"
+                :data-cy="`payment-break-${i + 1}-end`"
+              )
 
         datetime-input(
+          v-model='timeSheet.timeOut.time'
           outlined
           required
           label='Time out'
@@ -61,6 +63,10 @@ v-dialog(
       v-card-text
         invoice-input(
           v-model='invoice.items'
+        )
+        richtext-field(
+          placeholder='Invoice description'
+          v-model='invoice.description'
         )
 
       v-spacer
@@ -86,8 +92,9 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import InvoiceInput from '@/components/inputs/InvoiceInput.vue'
+import RichtextField from '@/components/inputs/RichtextField.vue'
 import * as payments from '@/services/payments'
-import { ClockAction } from '@/types/Jobs'
+import { ClockAction, ClockEvent } from '@/types/Jobs'
 
 // TODO: Convert this file to typescript
 // TODO: Add chronology validation
@@ -95,7 +102,11 @@ import { ClockAction } from '@/types/Jobs'
 dayjs.extend(duration)
 
 @Component({
-  components: { DatetimeInput, InvoiceInput },
+  components: {
+    DatetimeInput,
+    InvoiceInput,
+    RichtextField,
+  },
 })
 export default class EditPaymentDialog extends Vue {
   
@@ -110,9 +121,11 @@ export default class EditPaymentDialog extends Vue {
     ],
     description: ''
   }
-  timeIn = null
-  timeOut = null
-  breaks = []
+  timeSheet: any = {
+    timeIn: null,
+    timeOut: null,
+    breaks: [],
+  }
 
   @Prop({ default: false }) opened!: boolean
   @Prop({ type: Number }) paymentId!: number
@@ -121,12 +134,26 @@ export default class EditPaymentDialog extends Vue {
     return this.$store.getters.payment(this.paymentId)
   }
 
+  get shift() {
+    return this.$store.getters.shift(this.payment.invoice?.timecard?.shift_id)
+  }
+
+  get clockEvents() {
+    return this.shift.clock_history
+      .filter(
+        (event: ClockEvent) => event.timecard_id === this.payment.invoice?.timecard?.id
+      )
+      .sort(
+        (a: ClockEvent, b: ClockEvent) => dayjs(a.time).diff(dayjs(b.time))
+      )
+  }
+
   get total() {
     return this.invoice.items.reduce((total: number, lineitem: any) => total + lineitem.amount, 0)
   }
 
-  @Watch('paymentId')
-  onPaymentIdChanged() {
+  @Watch('clockEvents')
+  onClockEventsChanged() {
     this.calculateFormValues()
   }
 
@@ -140,38 +167,31 @@ export default class EditPaymentDialog extends Vue {
   }
 
   calculateFormValues() {
-    return
-    // TODO
-  //   const events = this.payment.time_clocks
-  //     .sort((a, b) => {
-  //       return new Date(b.time).getTime() - new Date(a.time).getTime()
-  //     })
+    this.timeSheet.timeIn = this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockIn)
+    this.timeSheet.timeOut = this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockOut)
 
-  //   this.form.data.timeIn = events.find(event => event.action === ClockAction.ClockIn)
-  //   this.form.data.timeOut = events.find(event => event.action === ClockAction.ClockOut)
+    const breakStarts = this.clockEvents.filter((event: ClockEvent) => event.action === ClockAction.StartBreak)
+    const breakEnds = this.clockEvents.filter((event: ClockEvent) => event.action === ClockAction.EndBreak)
+    /*
+      We will group the start and end breaks into pairs, eg:
+      breaks = [{
+        start: ClockEvent,
+        end: ClockEvent,
+      },
+      ...
+      ]
+    */
+    const breaks: any = []
 
-  //   const breakStarts = events.filter(event => event.action === ClockAction.StartBreak)
-  //   const breakEnds = events.filter(event => event.action === ClockAction.EndBreak)
-  //   /*
-  //     We will group the start and end breaks into pairs, eg:
-  //     breaks = [{
-  //       start: ClockEvent,
-  //       end: ClockEvent,
-  //     },
-  //     ...
-  //     ]
-  //   */
-  //  const breaks = []
+    if (breakStarts.length != breakEnds.length) return console.error('Malformed data.')
 
-  //   if (breakStarts.length != breakEnds.length) return console.error('Malformed data.')
-
-  //   breakStarts.forEach((start, index) => {
-  //     breaks.push({
-  //       start,
-  //       end: breakEnds[index]
-  //     })
-  //   })
-  //   this.form.data.breaks = breaks
+    breakStarts.forEach((start: any, i: number) => {
+      breaks.push({
+        start,
+        end: breakEnds[i]
+      })
+    })
+    this.timeSheet.breaks = breaks
   }
 
   timeDiff(timeIn: any, timeOut: any) {

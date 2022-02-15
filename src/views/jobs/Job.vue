@@ -154,12 +154,8 @@ div(v-else)
               span.mb-0 {{ job.consultant_name }}
               a.mb-0(target='_blank' :href='`mailto:${job.consultant_email}`') {{ job.consultant_email }}
               a(target='_blank' :href='`tel:${job.consultant_phone}`')    {{ job.consultant_phone | phone }}
-
-
-    p.text-body-2.text-center.mt-3(v-if="(!job.shifts || !job.shifts.length) && !loading")
-      | There aren't any shifts for this job.
     
-    shift-list(v-else :shifts='job.shifts' :loading='loading')
+    shift-list(:shifts='job.shifts' :loading='loading')
 
 </template>
 
