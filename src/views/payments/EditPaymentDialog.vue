@@ -27,7 +27,6 @@ v-dialog(
           label='Time in'
           data-cy='payment-time-in'
         )
-
         .mb-5(v-for='(breakItem, i) in timeSheet.breaks' :key='i')
           v-row
             v-col
@@ -64,7 +63,7 @@ v-dialog(
         //- // TODO: Make reorderable work
         invoice-input(
           v-model='invoice.items'
-          :lineitems='[{description: `Payment for ${shift.site_location}`, amount: payment.amount,}]'
+          :lineitems='[timeSheetPayment]'
           :orderable='false'
         )
         richtext-field(
@@ -97,7 +96,7 @@ import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import InvoiceInput from '@/components/inputs/InvoiceInput.vue'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import * as payments from '@/services/payments'
-import { ClockAction, ClockEvent } from '@/types/Jobs'
+import { ClockAction, ClockEvent, clockedTime } from '@/types/Jobs'
 
 // TODO: Convert this file to typescript
 // TODO: Add chronology validation
@@ -130,6 +129,21 @@ export default class EditPaymentDialog extends Vue {
 
   get payment() {
     return this.$store.getters.payment(this.paymentId)
+  }
+
+  get calculatedPay() {
+    const rate = parseFloat(this.payment.receiver.additional_info.hourly_rate)
+    const time = clockedTime([this.timeSheet.timeIn, this.timeSheet.timeOut]) / (60 * 60 * 1000) 
+    console.log({ rate, time })
+    return rate * time
+      
+  }
+
+  get timeSheetPayment() {
+    return {
+      description: `Payment for ${this.shift.site_location}`,
+      amount: this.calculatedPay || this.payment.amount
+    }
   }
 
   get shift() {

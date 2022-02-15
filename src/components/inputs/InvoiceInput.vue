@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { exists } from '@/util/inputValidation'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import CurrencyInput from './CurrencyInput.vue'
@@ -109,7 +109,15 @@ export default class InvoiceInput extends Vue {
 
   mounted() {
     this.localLineitems = this.value
-    this.update()
+  }
+
+  lastVal: any = null
+  @Watch('lineitems')
+  onLineitemsChanged(val: Lineitem[]) {
+    if (JSON.stringify(val) !== JSON.stringify(this.lastVal)) {
+      this.update()
+    }
+    this.lastVal = val
   }
 
   addLineitem() {
@@ -136,6 +144,5 @@ export default class InvoiceInput extends Vue {
   update() {
     this.$emit('input', this.allLineitems)
   }
-  
 }
 </script>
