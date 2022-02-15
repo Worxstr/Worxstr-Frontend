@@ -62,13 +62,13 @@ v-dialog(
       v-card-text
         //- // TODO: Make reorderable work
         invoice-input(
-          v-model='invoice.items'
-          :lineitems='[timeSheetPayment]'
+          v-model='editedInvoice.items'
+          :fixedLineitems='[timeSheetPayment]'
           :orderable='false'
         )
         richtext-field(
           placeholder='Invoice description'
-          v-model='invoice.description'
+          v-model='editedInvoice.description'
         )
 
       v-spacer
@@ -97,6 +97,7 @@ import InvoiceInput from '@/components/inputs/InvoiceInput.vue'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import * as payments from '@/services/payments'
 import { ClockAction, ClockEvent, clockedTime } from '@/types/Jobs'
+import { Invoice } from '@/types/Payments'
 
 // TODO: Convert this file to typescript
 // TODO: Add chronology validation
@@ -114,29 +115,30 @@ export default class EditPaymentDialog extends Vue {
   
   loading = false
   isValid = false
-  invoice = {
-    items: [],
-    description: ''
-  }
   timeSheet: any = {
     timeIn: null,
     timeOut: null,
     breaks: [],
+  }
+  editedInvoice: any = {
+    items: [],
+    description: ''
   }
 
   @Prop({ default: false }) opened!: boolean
   @Prop({ type: Number }) paymentId!: number
 
   get payment() {
-    return this.$store.getters.payment(this.paymentId)
+    const payment = this.$store.getters.payment(this.paymentId)
+    this.editedInvoice = payment.invoice
+    console.log(this.editedInvoice)
+    return payment
   }
 
   get calculatedPay() {
     const rate = parseFloat(this.payment.receiver.additional_info.hourly_rate)
     const time = clockedTime([this.timeSheet.timeIn, this.timeSheet.timeOut]) / (60 * 60 * 1000) 
-    console.log({ rate, time })
     return rate * time
-      
   }
 
   get timeSheetPayment() {
@@ -161,7 +163,9 @@ export default class EditPaymentDialog extends Vue {
   }
 
   get total() {
-    return this.invoice.items.reduce((total: number, lineitem: any) => total + parseFloat(lineitem.amount), 0)
+    return this.calculatedPay + this.editedInvoice.items.reduce(
+      (total: number, lineitem: any) => total + parseFloat(lineitem.amount), 0
+    )
   }
 
   @Watch('clockEvents')
@@ -178,6 +182,7 @@ export default class EditPaymentDialog extends Vue {
     this.$emit('update:opened', false)
   }
 
+  // Format clock events list into a "time sheet" object, so we can iterate on it in the template
   calculateFormValues() {
     this.timeSheet.timeIn = {
       ...this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockIn)
@@ -207,7 +212,7 @@ export default class EditPaymentDialog extends Vue {
         end: breakEnds[i]
       })
     })
-    this.timeSheet.breaks = {...breaks}
+    this.timeSheet.breaks = [...breaks]
   }
 
   timeDiff(timeIn: any, timeOut: any) {
@@ -224,29 +229,30 @@ export default class EditPaymentDialog extends Vue {
   }
 
   async updatePayment() {
-    // const newTimeclockEvents = []
 
-    // newTimeclockEvents.push(this.form.data.timeIn)
-    // this.form.data.breaks.forEach((breakItem) => {
-    //   newTimeclockEvents.push(breakItem.start)
-    //   newTimeclockEvents.push(breakItem.end)
-    // })
-    // newTimeclockEvents.push(this.form.data.timeOut)
+    // Reconstruct the original clock events array format
+    const newTimeclockEvents: ClockEvent[] = []
+    newTimeclockEvents.push(this.timeSheet.timeIn)
+    this.timeSheet.breaks.forEach((breakItem: { start: ClockEvent; end: ClockEvent }) => {
+      newTimeclockEvents.push(breakItem.start)
+      newTimeclockEvents.push(breakItem.end)
+    })
+    newTimeclockEvents.push(this.timeSheet.timeOut)
 
-    // this.loading = true
+    this.loading = true
 
-    // try {
-    //   await payments.updatePayment(
-    //     this.$store,
-    //     this.payment.id,
-    //     newTimeclockEvents,
-    //     // invoice
-    //   )
-    //   this.closeDialog()
-    //   this.$emit('saved')
-    // } finally {
-    //   this.loading = false
-    // }
+    try {
+      await payments.updatePayment(
+        this.$store,
+        this.payment.id,
+        newTimeclockEvents,
+        this.editedInvoice,
+      )
+      this.closeDialog()
+      this.$emit('saved')
+    } finally {
+      this.loading = false
+    }
   }
 }
 </script>

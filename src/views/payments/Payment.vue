@@ -4,7 +4,6 @@ v-container.d-flex.flex-column.pt-6.gap-small
   edit-payment-dialog(
     :opened.sync='editPaymentDialog'
     :paymentId='parseInt($route.params.paymentId)'
-    @saved='goBack'
   )
   deny-payments-dialog(
     :opened.sync='denyPaymentsDialog'
