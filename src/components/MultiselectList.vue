@@ -28,7 +28,7 @@ div
       
   v-card.soft-shadow(outlined rounded)
 
-    v-card-text.text-center(v-if='!items.length') No {{itemName}}s yet
+    v-card-text.text-center(v-if='!items.length && !loading') No {{itemName}}s yet
 
     v-list.py-0
       v-skeleton-loader(

@@ -11,7 +11,7 @@
       :disabled='!orderable'
       handle='.handle'
     )
-      .d-flex(v-for='(lineitem, i) in localLineitems' :key='i')
+      .d-flex(v-for='(lineitem, i) in allLineitems' :key='i')
         .d-flex.flex-column.flex-sm-row.gap-small.flex-grow-1
           v-text-field.flex-2(
             v-model='lineitem.description'
@@ -22,6 +22,7 @@
             dense
             hide-details
             :rules='lineitemRules.description'
+            :readonly='i === lineitems.length - 1'
           )
           currency-input.flex-1(
             v-model='lineitem.amount'
@@ -34,17 +35,19 @@
         
         .d-flex.ml-2.align-center
           v-btn(
-            v-if='localLineitems.length !== 1'
+            v-if='allLineitems.length !== 1'
             icon
             color='error'
             @click='removeLineitem(i)'
+            :disabled='i === lineitems.length - 1'
           )
             v-icon mdi-delete
 
           v-btn.handle(
-            v-if='orderable && localLineitems.length !== 1'
-            icon
+            v-if='orderable && allLineitems.length !== 1'
+            :disabled='i <= lineitems.length - 1'
             style='cursor: move'
+            icon
           )
             v-icon mdi-drag-horizontal
 
@@ -83,12 +86,20 @@ type Lineitem = {
 })
 export default class InvoiceInput extends Vue {
 
+  @Prop({ default: [] }) lineitems!: Lineitem[] // Pass in optional fixed lineitems
   @Prop({ type: Array }) value!: Lineitem[]
   @Prop({ default: false }) editable!: boolean
   @Prop({ default: false }) orderable!: boolean
 
   localLineitems: Lineitem[] = []
   drag = false
+
+  get allLineitems() {
+    return [
+      ...this.lineitems,
+      ...this.localLineitems,
+    ]
+  }
 
   lineitemRules = {
     description: [exists('Lineitem description required')],
@@ -121,7 +132,7 @@ export default class InvoiceInput extends Vue {
   }
 
   update() {
-    this.$emit('input', this.localLineitems)
+    this.$emit('input', this.allLineitems)
   }
   
 }

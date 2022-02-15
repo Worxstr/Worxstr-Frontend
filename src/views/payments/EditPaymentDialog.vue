@@ -63,6 +63,8 @@ v-dialog(
       v-card-text
         invoice-input(
           v-model='invoice.items'
+          :lineitems='[{description: `Payment for ${shift.site_location}`, amount: payment.amount,}]'
+          :orderable='true'
         )
         richtext-field(
           placeholder='Invoice description'
@@ -113,12 +115,7 @@ export default class EditPaymentDialog extends Vue {
   loading = false
   isValid = false
   invoice = {
-    items: [
-      {
-        description: '',
-        amount: 0,
-      },
-    ],
+    items: [],
     description: ''
   }
   timeSheet: any = {
@@ -167,8 +164,12 @@ export default class EditPaymentDialog extends Vue {
   }
 
   calculateFormValues() {
-    this.timeSheet.timeIn = this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockIn)
-    this.timeSheet.timeOut = this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockOut)
+    this.timeSheet.timeIn = {
+      ...this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockIn)
+    }
+    this.timeSheet.timeOut = {
+      ...this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockOut)
+    }
 
     const breakStarts = this.clockEvents.filter((event: ClockEvent) => event.action === ClockAction.StartBreak)
     const breakEnds = this.clockEvents.filter((event: ClockEvent) => event.action === ClockAction.EndBreak)
@@ -191,7 +192,7 @@ export default class EditPaymentDialog extends Vue {
         end: breakEnds[i]
       })
     })
-    this.timeSheet.breaks = breaks
+    this.timeSheet.breaks = {...breaks}
   }
 
   timeDiff(timeIn: any, timeOut: any) {
