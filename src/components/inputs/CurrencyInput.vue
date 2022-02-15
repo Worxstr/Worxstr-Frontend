@@ -9,7 +9,6 @@
     ref='input'
     prefix='$'
     v-bind='$attrs'
-
   )
 </template>
 
@@ -31,8 +30,9 @@ export default class CurrencyInput extends Vue {
   }
 
   mounted() {
-    if (typeof(this.value) === 'string')
-      this.value = parseFloat(this.value)
+    if (typeof this.value === 'string') {
+      this.updateValue(this.value)
+    }
   }
 
   getInput() {
@@ -46,6 +46,7 @@ export default class CurrencyInput extends Vue {
     // If input is set to 0.00, ignore it and set the new value to the character typed
     if (oldValue == 0 && input.selectionStart == 1) {
       this.$emit('input', parseInt(input.value.charAt(0)))
+      console.log("emitted", parseInt(input.value.charAt(0)))
       return
     }
 

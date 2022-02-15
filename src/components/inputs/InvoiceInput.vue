@@ -31,6 +31,7 @@
             dense
             hide-details
             :rules='lineitemRules.amount'
+            :readonly='i === lineitems.length - 1'
           )
         
         .d-flex.ml-2.align-center
@@ -108,6 +109,7 @@ export default class InvoiceInput extends Vue {
 
   mounted() {
     this.localLineitems = this.value
+    this.update()
   }
 
   addLineitem() {

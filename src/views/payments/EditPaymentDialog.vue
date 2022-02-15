@@ -14,13 +14,13 @@ v-dialog(
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title.text-h6 {{ payment.receiver | fullName }}'s payment
         v-spacer
-        .text-h6.font-weight-black.green--text(v-if='invoice.items.length')
+        .text-h6.font-weight-black.green--text
           | {{ total | currency }}
 
       v-divider
       v-subheader Time sheet
 
-      v-card-text(v-if='timeSheet')
+      v-card-text(v-if='timeSheet && timeSheet.timeIn && timeSheet.timeOut')
         datetime-input(
           v-model='timeSheet.timeIn.time'
           outlined
@@ -61,10 +61,11 @@ v-dialog(
       v-subheader Invoice details
 
       v-card-text
+        //- // TODO: Make reorderable work
         invoice-input(
           v-model='invoice.items'
           :lineitems='[{description: `Payment for ${shift.site_location}`, amount: payment.amount,}]'
-          :orderable='true'
+          :orderable='false'
         )
         richtext-field(
           placeholder='Invoice description'
@@ -146,7 +147,7 @@ export default class EditPaymentDialog extends Vue {
   }
 
   get total() {
-    return this.invoice.items.reduce((total: number, lineitem: any) => total + lineitem.amount, 0)
+    return this.invoice.items.reduce((total: number, lineitem: any) => total + parseFloat(lineitem.amount), 0)
   }
 
   @Watch('clockEvents')
