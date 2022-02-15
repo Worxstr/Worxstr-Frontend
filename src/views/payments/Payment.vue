@@ -139,12 +139,6 @@ v-container.d-flex.flex-column.pt-6.gap-small
             :to="{name: 'shift', params: {shiftId: shift.id, jobId: shift.job_id}}"
             exact
           ) View shift
-          v-btn(
-            text
-            color='primary'
-            :to="{name: 'job', params: {jobId: shift.job_id}}"
-            exact
-          ) View job
 
         v-divider
 
@@ -173,7 +167,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
           :jobs='[job]'
           :users='job.contractors'
           :show-device-location='true'
-          height='25vh'
+          :height="$vuetify.breakpoint.mdAndUp ? '25vh' : '35vh'"
         )
         
         v-card-text.pb-1
