@@ -38,6 +38,42 @@ export const timeAgo = (value: (string|number|Date)) => {
 }
 Vue.filter('timeAgo', timeAgo)
 
+// Duration in human readable format, eg. 1 day, 2 hours, 3 minutes
+export const duration = (valueMs: number, short = true) => {
+	const msPerMinute = 60 * 1000
+	const msPerHour = msPerMinute * 60
+	const msPerDay = msPerHour * 24
+	const msPerWeek = msPerDay * 7
+	const string = []
+
+	if (valueMs >= msPerWeek) {
+		string.push(Math.round(valueMs / msPerWeek) + (short ? 'w' : ' week'))
+		valueMs %= msPerWeek
+	}
+
+	if (valueMs >= msPerDay) {
+		string.push(Math.round(valueMs / msPerDay) + (short ? 'd' : ' day'))
+		valueMs %= msPerDay
+	}
+
+	if (valueMs >= msPerHour) {
+		string.push(Math.round(valueMs / msPerHour) + (short ? 'h' : ' hour'))
+		valueMs %= msPerHour
+	}
+
+	if (valueMs >= msPerMinute) {
+		string.push(Math.round(valueMs / msPerMinute) + (short ? 'm' : ' minute'))
+		valueMs %= msPerMinute
+	}
+
+	if (valueMs > 0) {
+		string.push(Math.round(valueMs / 1000) + (short ? 's' : ' second'))
+	}
+
+	return string.join(', ')
+}
+Vue.filter('duration', duration)
+
 Vue.filter('dateOrTime', (value: (string|number|Date), format?: string) => {
 	if (new Date(value).getTime() < Date.now() - (1000 * 60 * 60 * 24)) {
 		return dayjs(value).format(format || standardDateFormat)
@@ -45,10 +81,11 @@ Vue.filter('dateOrTime', (value: (string|number|Date), format?: string) => {
 	return time(value)
 })
 
-Vue.filter('currency', (value: string) => {
-	const parsed = parseFloat(value)
+export const currency = (value: string | number) => {
+	const parsed = typeof value === 'string' ? parseFloat(value) : value
 	return '$' + (isNaN(parsed) ? '0.00' : parsed.toFixed(2))
-})
+}
+Vue.filter('currency', currency)
 
 // 1234567890 -> (123) 456-7890
 Vue.filter('phone', (value: string) => {

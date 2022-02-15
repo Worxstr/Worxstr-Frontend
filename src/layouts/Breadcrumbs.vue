@@ -59,6 +59,7 @@ export default class Breadcrumbs extends Vue {
       .split('/')
 
     return segments.map((pathSegment, i) => {
+
       let dynamicName
       try {
         // Extract the param name
@@ -68,6 +69,7 @@ export default class Breadcrumbs extends Vue {
         // Get param mapping from route metadata
         // ex. { param: 'jobId', store: 'jobs', prop: 'name' }
         const paramMap = this.$route.meta?.paramMap.find((m: any) => m.param === param)
+        console.log(this.$store.state, paramMap, param, this.$route.params[param])
 
         // Find the item in the store state
         const item = lookup(this.$store.state, paramMap.store)
@@ -81,6 +83,7 @@ export default class Breadcrumbs extends Vue {
       catch (e) {
         dynamicName = pathSegment
       }
+
 
       // Build link text and path
       const text = matched[i]?.includes(':') ? dynamicName : pathSegment

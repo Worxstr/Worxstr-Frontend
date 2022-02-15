@@ -14,11 +14,6 @@ div(v-else)
   v-container.approvals.mb-16(v-if="job")
     edit-job-dialog(:opened.sync="editJobDialog" :job.sync="job")
     close-job-dialog(:opened.sync="closeJobDialog" :job.sync="job")
-    edit-shift-dialog(
-      :opened.sync='createShiftDialog',
-      :contractors='job.contractors'
-      :job-id='job.id'
-    )
     qr-code-dialog(
       :opened.sync='qrCodeDialog'
       :code='job.consultant_code'
@@ -159,26 +154,8 @@ div(v-else)
               span.mb-0 {{ job.consultant_name }}
               a.mb-0(target='_blank' :href='`mailto:${job.consultant_email}`') {{ job.consultant_email }}
               a(target='_blank' :href='`tel:${job.consultant_phone}`')    {{ job.consultant_phone | phone }}
-
-
-    v-toolbar(flat color="transparent")
-      v-toolbar-title.text-h6 Upcoming shifts
-      v-spacer
-      v-btn(
-        v-if='userIsManager'
-        text
-        color='primary'
-        @click='createShiftDialog = true'
-        :disabled='!job.id'
-        data-cy='assign-shift-button'
-      )
-        v-icon(left) mdi-clipboard-plus-outline
-        span Assign shift
-
-    p.text-body-2.text-center.mt-3(v-if="(!job.shifts || !job.shifts.length) && !loading")
-      | There aren't any shifts for this job.
     
-    shift-list(v-else :shifts='job.shifts' :loading='loading')
+    shift-list(:shifts='job.shifts' :loading='loading')
 
 </template>
 

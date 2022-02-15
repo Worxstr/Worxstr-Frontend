@@ -48,7 +48,7 @@ export async function toggleBreak({ commit }: any, shiftId: number, breakState: 
   return data
 }
 
-export async function getShift({ commit }: any, shiftId: number) {
+export async function loadShift({ commit }: any, shiftId: number) {
   const { data } = await api({
     method: 'GET',
     url: `shifts/${shiftId}`,
@@ -57,7 +57,7 @@ export async function getShift({ commit }: any, shiftId: number) {
   return data
 }
 
-export async function getUpcomingShifts({ commit }: any, offset = 0, limit = 10) {
+export async function loadUpcomingShifts({ commit }: any, offset = 0, limit = 10) {
   const { data } = await api({
     method: 'GET',
     url: 'shifts',
@@ -99,14 +99,19 @@ export async function updateShift({ commit }: any, shift: any) {
   return data
 }
 
-export async function deleteShift({ commit }: any, shiftId: number, jobId: number) {
+export async function deleteShifts({ state, commit }: any, shiftIds: number[]) {
   await api({
     method: 'DELETE',
-    url: `shifts/${shiftId}`,
+    url: 'shifts',
+    data: {
+      shift_ids: shiftIds
+    }
   })
-  commit('REMOVE_SHIFT', {
-    shiftId,
-    jobId,
+  shiftIds.forEach((shiftId: number) => {
+    commit('REMOVE_SHIFT', {
+      shiftId,
+      jobId: state.shifts.byId[shiftId]?.job_id,
+    }) 
   })
 }
 

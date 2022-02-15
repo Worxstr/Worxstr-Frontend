@@ -1,92 +1,120 @@
 <template lang="pug">
 div
+  //- :contractors='job.contractors'
+  edit-shift-dialog(
+    :opened.sync='createShiftDialog'
+  )
   edit-shift-dialog(
     :editing='true'
-    :shift.sync='selectedShift'
+    :shiftId.sync='selectedShiftIds[0]'
     :opened.sync='editShiftDialog'
-    :job-id='selectedShift.job_id'
+    @saved='clearSelection'
   )
   delete-shift-dialog(
-    v-if="selectedShift",
-    :opened.sync="deleteShiftDialog",
-    :shift.sync="selectedShift",
-    :contractorName="contractorName(selectedShift.contractor_id)"
+    v-if='selectedShift'
+    :opened.sync='deleteShiftDialog'
+    :shiftIds.sync='selectedShiftIds'
+    @deleted='clearSelection'
   )
 
-  v-card.soft-shadow(outlined rounded)
-    v-list
-      v-skeleton-loader(
-        v-if='loading && (!shifts.length)'
-        v-for='(v, i) in [1,2,3,4,5,6]'
-        :key='i'
-        type="list-item-two-line"
+  multiselect-list(
+    v-model='selectedShiftIds'
+    :items='sortedShifts'
+    :loading='loading'
+    :show-checkboxes='userIsManager'
+    item-name='shift'
+    :two-line='true'
+  )
+    template(#title)
+      span Upcoming shifts
+      v-chip.mx-3.pa-2.font-weight-bold(small) {{ shifts.length }}
+
+    template(#actions)
+      v-btn(
+        v-if='userIsManager'
+        text
+        color='primary'
+        @click='createShiftDialog = true'
+        :icon='$vuetify.breakpoint.xs'
+        data-cy='assign-shift-button'
       )
+        v-icon(:left='!$vuetify.breakpoint.xs') mdi-clipboard-plus-outline
+        span(v-if='!$vuetify.breakpoint.xs') Assign shift
 
-      v-list-item(
-        v-for='(shift, i) in sortedShifts'
-        :key='shift.id'
+    template(#item-actions)
+      v-btn(
+        v-if='selectedShiftIds.length == 1'
+        icon
+        text
+        color='primary'
+        :icon='$vuetify.breakpoint.xs'
+        @click='editShiftDialog = true'
       )
-        v-list-item-content
-          v-list-item-title
-            router-link.alt-style.my-1.font-weight-medium(
-              :to="{name: 'shift', params: {jobId: shift.job_id, shiftId: shift.id}}"
-            ) {{ shift.site_location }}
+        v-icon(:left='!$vuetify.breakpoint.xs') mdi-pencil
+        span(v-if='!$vuetify.breakpoint.xs') Edit
 
-          v-list-item-subtitle
-            router-link.alt-style.my-1.font-weight-medium(
-              v-if='shift.contractor_id && userIsManager'
-              :to="{name: 'user', params: {userId: shift.contractor_id}}"
-            ) {{ getContractor(shift.contractor_id) | fullName }}
-          
-            //- span(v-if='!userIsManager') {Job name} &bull; {n} tasks
+      v-btn(
+        v-if='selectedShiftIds.length'
+        icon
+        text
+        color='error'
+        :icon='$vuetify.breakpoint.xs'
+        @click='deleteShiftDialog = true'
+        :disabled='!canDeleteSelected'
+      )
+        v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
+        span(v-if='!$vuetify.breakpoint.xs') Delete {{ selectedShiftIds.length == 1 ? '' : (selectedShiftIds.length == shifts.length ? 'all' : selectedShiftIds.length) }}
+    
+    template(#content='{ item }')
+      v-list-item-content
+        v-list-item-title
+          router-link.alt-style.my-1.font-weight-medium(
+            :to="{name: 'shift', params: {jobId: item.job_id, shiftId: item.id}}"
+          ) {{ item.site_location }}
 
-        v-list-item-action(v-if='$vuetify.breakpoint.mdAndUp || userIsManager || !shiftIsActive(shift)')
-          .d-flex.flex-column.align-end
-            .text-body-2.font-weight-medium {{ shift.time_begin | date('MMM D, YYYY') }}
-            .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
-
-        v-list-item-action.ml-4(v-if='!userIsManager && shiftIsActive(shift)')
-          clock-buttons(:shift='shift')
-
-        v-list-item-action.ml-3(v-if='userIsManager')
-          v-btn(
-            @click.stop='openEditShiftDialog(shift)'
-            icon
-            color='primary'
-            data-cy='edit-shift-button'
+        v-list-item-subtitle
+          router-link.alt-style.my-1.font-weight-medium(
+            v-if='item.contractor_id && userIsManager'
+            :to="{name: 'user', params: {userId: item.contractor_id}}"
           )
-            v-icon mdi-pencil
-            
-        v-list-item-action(v-if='userIsManager')
-          v-btn(
-            @click.stop='openDeleteShiftDialog(shift)'
-            :disabled='!!shift.clock_history.length'
-            icon
-            color='error'
-            data-cy='delete-shift-button'
-          )
-            v-icon mdi-delete
+            | {{ getContractor(item.contractor_id) | fullName }}
 
-        v-list-item-action(:class="{'ml-0': userIsManager}")
-          v-btn(
-            icon
-            :to="{name: 'shift', params: {jobId: shift.job_id, shiftId: shift.id}}"
-          )
-            v-icon mdi-chevron-right
+          span(v-if='item.clock_history.length')
+            | &nbsp;- {{ item.clock_history.length }} {{ item.clock_history.length == 1 ? 'event' : 'events'}}
+        
+
+      v-list-item-action.mr-2(v-if='userIsContractor ? !shiftIsActive(item) : !$vuetify.breakpoint.xs')
+
+        .d-flex.flex-column.align-end
+          .text-body-2.font-weight-medium {{ item.time_begin | date('MMM D, YYYY') }}
+          .text-body-2 {{ item.time_begin | time }} - {{ item.time_end | time }}
+
+      v-list-item-action.mr-2(v-if='userIsContractor && shiftIsActive(item)')
+        clock-buttons(:shift='item')
+
+      v-list-item-action.mx-0
+        v-btn(
+          icon
+          :to="{name: 'shift', params: {jobId: item.job_id, shiftId: item.id}}"
+        )
+          v-icon mdi-chevron-right
+
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Shift } from '@/types/Jobs'
-import { Managers, currentUserIs } from '@/types/Users'
-import { ClockAction } from '@/types/Clock'
+import { Managers, currentUserIs, UserRole } from '@/types/Users'
+import { ClockAction } from '@/types/Jobs'
 
+import MultiselectList from '@/components/MultiselectList.vue'
 import ClockButtons from '@/components/ClockButtons.vue'
 import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
 
 @Component({
   components: {
+    MultiselectList,
     ClockButtons,
     EditShiftDialog,
     DeleteShiftDialog,
@@ -97,12 +125,18 @@ export default class ShiftList extends Vue {
   @Prop({ default: () => [] }) shifts!: Shift[]
   @Prop({ default: false }) loading!: boolean
 
-  selectedShift: Shift | {} = {}
+  selectedShift: Shift | {} = {} // TODO: Remove this
+  selectedShiftIds: number[] = []
+  createShiftDialog = false
   editShiftDialog = false
   deleteShiftDialog = false
 
   get userIsManager() {
     return currentUserIs(...Managers)
+  }
+
+  get userIsContractor() {
+    return currentUserIs(UserRole.Contractor)
   }
 
   get sortedShifts() {
@@ -127,6 +161,17 @@ export default class ShiftList extends Vue {
     }
 
     return clockedIn || active // TODO: || isOnSite || jobHasNoRestrictions
+  }
+
+  clearSelection() {
+    this.selectedShiftIds = []
+  }
+
+  // If any selected shifts have a clock history, disable delete button
+  get canDeleteSelected() {
+    return this.selectedShiftIds
+      .map(shiftId => this.shifts.find(shift => shift.id === shiftId))
+      .every(shift => !shift?.clock_history.length)
   }
 
   getContractor(contractorId: number) {

@@ -9,8 +9,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
   )
   delete-shift-dialog(
     :opened.sync='deleteShiftDialog'
-    :shift.sync='shift'
-    :contractorName="contractor ? contractor.first_name : 'This contractor'"
+    :shiftIds='[shift.id]'
   )
   
   portal(to='toolbarActions')
@@ -135,7 +134,7 @@ import * as jobs from '@/services/jobs'
 import * as shifts from '@/services/shifts'
 import { Managers, currentUserIs } from '@/types/Users'
 import { Task } from '@/types/Jobs'
-import { ClockEvent, ClockAction } from '@/types/Clock'
+import { ClockEvent, ClockAction } from '@/types/Jobs'
 
 import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
@@ -166,9 +165,6 @@ function timeBetween(time: Date) {
 }
 
 @Component({
-  metaInfo: {
-    title: 'Clock'
-  },
   components: {
     EditShiftDialog,
     DeleteShiftDialog,
@@ -209,6 +205,12 @@ export default class Shift extends Vue {
   @Watch('clockInTime')
   onClockInTimeChange() {
     this.computeTimeSinceClockIn()
+  }
+
+  metaInfo(): any {
+    return {
+      title: this.shift ? this.shift.site_location : 'Shift'
+    }
   }
 
   // User info
@@ -314,7 +316,7 @@ export default class Shift extends Vue {
   async loadShift() {
     this.loadingShift = true
     try {
-      return shifts.getShift(this.$store, parseInt(this.$route.params.shiftId))
+      return shifts.loadShift(this.$store, parseInt(this.$route.params.shiftId))
     }
     finally {
       this.loadingShift = false

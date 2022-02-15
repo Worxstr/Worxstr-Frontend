@@ -27,6 +27,7 @@ import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import Payments from '@/views/payments/Payments.vue'
+import Payment from '@/views/payments/Payment.vue'
 // import Availability from '@/views/Availability.vue'
 import Jobs from '@/views/jobs/Jobs.vue'
 import Job from '@/views/jobs/Job.vue'
@@ -49,6 +50,8 @@ Vue.use(VueRouter)
 Vue.use(Meta)
 
 import { UserRole, Managers, defaultRoute, currentUserIs, isAuthenticated } from '@/types/Users'
+import * as PaymentTypes from '@/types/Payments'
+import { currency } from '@/util/filters'
 
 const routes = [
   {
@@ -249,6 +252,23 @@ const routes = [
     component: Payments,
     meta: {
       icon: 'mdi-cash-multiple',
+    }
+  },
+  {
+    path: '/payments/:paymentId',
+    name: 'payment',
+    component: Payment,
+    meta: {
+      paramMap: [{
+        param: 'paymentId',
+        store: 'payments',
+        propBuilder(payment: PaymentTypes.Payment) {
+          console.log(payment)
+          const account = payment.receiver
+          const name = (PaymentTypes.isUser(account)) ? account.first_name : account.name
+          return `${currency(payment.amount)} to ${name}`
+        },
+      }]
     }
   },
   {

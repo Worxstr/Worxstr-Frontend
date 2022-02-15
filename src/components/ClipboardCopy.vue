@@ -5,7 +5,7 @@ v-tooltip(bottom)
     v-btn(
       icon
       color='primary'
-      v-bind='attrs'
+      v-bind='$attrs'
       v-on='on'
       @click='copyText(text)'
     )

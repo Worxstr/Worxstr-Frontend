@@ -1,62 +1,83 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
-import * as Plaid from '@/util/plaid'
-import { FundingSource, Timecard, Transfer } from '@/types/Payments'
-import { ClockEvent } from '@/types/Clock'
+import { FundingSource, Payment, Invoice } from '@/types/Payments'
+import { ClockEvent } from '@/types/Jobs'
 import { showToast } from '@/services/app'
 
-export async function loadTimecards({ commit }: any) {
+export async function loadPayments({ commit }: any) {
   const { data } = await api({
     method: 'GET',
-    url: 'payments/timecards',
+    url: '/payments',
   })
-  data.timecards.forEach((timecard: Timecard) => {
-    // TODO: Normalize nested data
-    commit('ADD_TIMECARD', timecard)
+  data.payments.forEach((payment: Payment) => {
+    commit('ADD_PAYMENT', payment)
   })
+  return data.payments
+}
+
+export async function loadPayment({ commit }: any, paymentId: string) {
+  const { data } = await api({
+    method: 'GET',
+    url: `/payments/${paymentId}`,
+  })
+  commit('ADD_PAYMENT', data)
   return data
 }
 
-export async function updateTimecard({ commit }: any, timecardId: number, events: ClockEvent[]) {
+export async function createInvoice({ commit }: any, invoice: Invoice) {
+  const { data } = await api({
+    method: 'POST',
+    url: 'payments/invoices',
+    data: invoice,
+  })
+  commit('ADD_PAYMENT', data)
+  return data
+}
+
+export async function updatePayment({ commit }: any, paymentId: number, events: ClockEvent[], invoice: Invoice) {
   const { data } = await api({
     method: 'PUT',
-    url: `payments/timecards/${timecardId}`,
+    url: `payments/${paymentId}`,
     data: {
-      changes: events,
+      timecard: {
+        clock_events: events,
+      },
+      invoice: invoice,
     },
   })
-  commit('ADD_TIMECARD', data)
+  commit('ADD_PAYMENT', data)
   return data
 }
 
-export async function denyPayments({ commit }: any, timecardIds: number[]) {
+export async function denyPayments({ commit }: any, paymentIds: number[]) {
   const { data } = await api({
     method: 'PUT',
     url: 'payments/deny',
     data: {
-      timecard_ids: timecardIds,
+      payment_ids: paymentIds,
     },
   })
-  timecardIds.forEach((timecardId: number) => {
+  paymentIds.forEach((paymentId: number) => {
     // TODO: Normalize nested data
-    commit('REMOVE_TIMECARD', timecardId)
+    commit('REMOVE_PAYMENT', paymentId)
   })
   return data
 }
 
-export async function completePayments({ commit }: any, timecardIds: number[]) {
+export async function completePayments({ commit }: any, paymentIds: number[]) {
   const { data } = await api({
     method: 'PUT',
     url: 'payments/complete',
     data: {
-      timecard_ids: timecardIds
+      payment_ids: paymentIds
     },
   })
-  timecardIds.forEach((timecardId: number) => {
-    commit('REMOVE_TIMECARD', timecardId)
+  // TODO: Probably don't need to do this
+  paymentIds.forEach((paymentId: number) => {
+    commit('REMOVE_PAYMENT', paymentId)
   })
-  data.transfers.forEach((transfer: Transfer) => {
-    commit('ADD_TRANSFER', transfer)
+  data.payments.forEach((payment: Payment) => {
+    commit('ADD_PAYMENT', payment)
   })
   commit('SET_BALANCE', data.balance)
 }
@@ -193,20 +214,5 @@ export async function removeFromBalance({ commit }: any, transfer: { amount: num
   commit('ADD_TRANSFER', data.transfer)
   commit('SET_BALANCE', data.transfer.new_balance)
   showToast({ commit }, { text: 'Hang tight, your transfer is being processed.' })
-  return data
-}
-
-export async function loadTransfers({ commit }: any, { limit=10, offset=0 } = {}) {
-  const { data } = await api({
-    method: 'GET',
-    url: 'payments/transfers',
-    params: {
-      limit,
-      offset,
-    }
-  })
-  data.transfers.forEach((transfer: Transfer) => {
-    commit('ADD_TRANSFER', transfer)
-  })
   return data
 }
