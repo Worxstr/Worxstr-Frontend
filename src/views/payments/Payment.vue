@@ -70,58 +70,6 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
   masonry(:cols='{default: 2, 959: 1}' :gutter='30')
 
-    .mb-4.d-flex.flex-column.gap-small(v-if='shift && shift.id')
-      h5.text-h5 Shift details
-      v-sheet(outlined rounded)
-        v-card-text.pb-1
-          .d-flex.flex-column
-
-
-            h6.text-body-1
-              router-link.alt-style(
-                :to="{name: 'shift', params: { shiftId: shift.id }}"
-              ) {{ shift.site_location }}
-              | &nbsp; - &nbsp;
-              router-link.alt-style(
-                :to="{name: 'job', params: { jobId: shift.job_id }}"
-              ) {{ (job && job.name) ? job.name : shift.job_id }}
-
-            .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
-            .text-body-2 {{ shift.time_begin | date('MMM D, YYYY') }} - {{ shift.time_end | date('MMM D, YYYY') }}
-
-        v-card-actions
-          v-spacer
-          v-btn(
-            text
-            color='primary'
-            :to="{name: 'shift', params: {shiftId: shift.id, jobId: shift.job_id}}"
-            exact
-          ) View shift
-          v-btn(
-            text
-            color='primary'
-            :to="{name: 'job', params: {jobId: shift.job_id}}"
-            exact
-          ) View job
-
-        v-divider
-
-        v-card-text.d-flex.align-center
-          .d-flex.flex-column
-            h6.text-body-1 Billed for {{ clockedTime | duration }} at {{ payment.receiver.additional_info.hourly_rate | currency }}/hour
-            .d-flex.flex-column(v-if='breakTime')
-              span Worked {{ workTime | duration }}
-              span {{ breakTime | duration }} break
-
-          v-spacer
-
-          .text-h6.green--text(v-if='payment && payment.invoice && payment.invoice.timecard')
-            | {{ payment.invoice.timecard.wage_payment | currency }}          
-        
-        v-divider
-
-        clock-events(:events='history')
-
     .mb-4.d-flex.flex-column.gap-small(v-if='payment && payment.invoice')
       h5.text-h5 Invoice
       v-sheet(outlined rounded)
@@ -170,11 +118,89 @@ v-container.d-flex.flex-column.pt-6.gap-small
             v-list-item-action
               .text-subtitle-1.font-weight-black.green--text {{ payment.total | currency }}
 
+    .mb-4.d-flex.flex-column.gap-small(v-if='shift && shift.id')
+      h5.text-h5 Shift details
+      v-sheet(outlined rounded)
+        v-card-text.pb-1
+          .d-flex.flex-column
+            h6.text-body-1
+              router-link.alt-style(
+                :to="{name: 'shift', params: { shiftId: shift.id }}"
+              ) {{ shift.site_location }}
+
+            .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
+            .text-body-2 {{ shift.time_begin | date('MMM D, YYYY') }} - {{ shift.time_end | date('MMM D, YYYY') }}
+
+        v-card-actions
+          v-spacer
+          v-btn(
+            text
+            color='primary'
+            :to="{name: 'shift', params: {shiftId: shift.id, jobId: shift.job_id}}"
+            exact
+          ) View shift
+          v-btn(
+            text
+            color='primary'
+            :to="{name: 'job', params: {jobId: shift.job_id}}"
+            exact
+          ) View job
+
+        v-divider
+
+        v-card-text.d-flex.align-center
+          .d-flex.flex-column
+            h6.text-body-1 Billed for {{ clockedTime | duration }} at {{ payment.receiver.additional_info.hourly_rate | currency }}/hour
+            .d-flex.flex-column(v-if='breakTime')
+              span Worked {{ workTime | duration }}
+              span {{ breakTime | duration }} break
+
+          v-spacer
+
+          .text-h6.green--text(v-if='payment && payment.invoice && payment.invoice.timecard')
+            | {{ payment.invoice.timecard.wage_payment | currency }}          
+        
+        v-divider
+
+        clock-events(:events='history')
+
+        
+    .mb-4.d-flex.flex-column.gap-small(v-if='job && job.id')
+      h5.text-h5 Job details
+      v-sheet(outlined rounded)
+      
+        g-map(
+          :jobs='[job]'
+          :users='job.contractors'
+          :show-device-location='true'
+          height='25vh'
+        )
+        
+        v-card-text.pb-1
+          .d-flex.flex-column
+            h6.text-body-1
+              router-link.alt-style(
+                :to="{name: 'job', params: { jobId: shift.job_id }}"
+              ) {{ (job && job.name) ? job.name : shift.job_id }}
+
+            .text-body-2 {{ job.address }}
+            .text-body-2 {{ job.shifts.length }} {{ job.shifts.length > 1 ? 'shifts' : 'shift' }}
+
+        v-card-actions
+          v-spacer
+          v-btn(
+            text
+            color='primary'
+            :to="{name: 'job', params: {jobId: shift.job_id}}"
+            exact
+          ) View job
+
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import ClockEvents from '@/components/ClockEvents.vue'
+import GMap from '@/components/GMap.vue'
 import { loadPayment } from '@/services/payments'
 import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
@@ -190,6 +216,7 @@ import DenyPaymentsDialog from './DenyPaymentsDialog.vue'
   },
   components: {
     ClockEvents,
+    GMap,
     EditPaymentDialog,
     CompletePaymentsDialog,
     DenyPaymentsDialog,
