@@ -4,6 +4,11 @@ div
     v-container.py-16
       h3.text-h3.font-weight-black Business pricing
 
+      .d-flex.align-center.mt-2
+        span.text-subtitle-1 Monthly
+        v-switch.mt-0.mx-2(v-model='annual' color='accent' hide-details)
+        span.text-subtitle-1 Annually
+
   v-container.shift-down.mb-3
     v-row
       v-col(cols="12", sm="4", v-for="(tier, i) in pricingTiers" :key='i')
@@ -16,15 +21,15 @@ div
               span.mr-1.text-h4.font-weight-black(
                 class='accent--text'
               ) ${{ tier.price }}
-              span / month
-
+              span / manager / month
+            
           div(:style="`background: rgba(255,255,255,${(highlight(tier) || $vuetify.theme.dark) ? '.1' : '.8'})`")
             v-card-text
+              v-subheader.text-subtitle-1(v-if='i != 0' :class="highlight(tier) ? 'accent--text' : 'primary--text'")
+                | Everything in {{ pricingTiers[i - 1].name | capitalize }}, and:
               ul
-                li.mb-3.text-subtitle-1.font-weight-medium {{ tier.support }}
-
-                li.mb-3.text-subtitle-1.font-weight-medium
-                  | {{ tier.contractors == Infinity ? 'Unlimited' : tier.contractors }} contractors
+                li.mb-3.text-subtitle-1.font-weight-medium(v-for='(feature, i) in tier.features' :key='i')
+                  | {{ feature }}
 
             v-card-actions.justify-center.pb-5
               v-btn(
@@ -56,8 +61,7 @@ type Tier = {
   name: string
   price: number | null
   description?: string
-  contractors: number
-  support: string
+  features: string[]
   buttonText: string
   to: {
     name: string
@@ -76,37 +80,48 @@ type Tier = {
   }
 })
 export default class Pricing extends Vue {
-  pricingTiers: Tier[] = [
-    {
-      price: 0,
-      name: 'free',
-      description: 'Free forever',
-      contractors: 10,
-      support: 'Free tier chat assistance',
-      buttonText: 'Get free',
-      to: {name: 'signUp', params: { subscriptionTier: 'free' }}
-    },
-    {
-      price: 100,
-      name: 'premium',
-      contractors: 100,
-      support: 'Standard support',
-      buttonText: 'Get premium',
-      to: {name: 'signUp', params: { subscriptionTier: 'premium' }}
-    },
-    {
-      price: null,
-      name: 'enterprise',
-      description: 'Speak with sales',
-      contractors: Infinity,
-      support: '24/7 support',
-      buttonText: 'Contact sales',
-      to: {name: 'contact', params: { option: 'sales' }}
-    }
-  ]
+  
+  annual = true
+  get pricingTiers(): Tier[] {
+    return [
+      {
+        price: 0,
+        name: 'free',
+        description: 'Free forever',
+        features: [
+          'Up to 5 contractors',
+          'Ticket-based support',
+        ],
+        buttonText: 'Get free',
+        to: {name: 'signUp', params: { subscriptionTier: 'free' }}
+      },
+      {
+        price: this.annual ? 16 : 20,
+        name: 'standard',
+        features: [
+          'Up to 10 contractors',
+          'Multiple managers per organization',
+          'Chat-based support representative',
+        ],
+        buttonText: 'Get standard',
+        to: {name: 'signUp', params: { subscriptionTier: 'standard' }}
+      },
+      {
+        price: null,
+        name: 'enterprise',
+        description: 'Speak with sales',
+        features: [
+          'Unlimited contractors',
+          'Dedicated account manager',
+        ],
+        buttonText: 'Contact sales',
+        to: {name: 'contact', params: { option: 'sales' }}
+      }
+    ]
+  }
 
   highlight(tier: Tier) {
-    return tier.name == "premium"
+    return tier.name == 'standard'
   }
 }
 </script>
