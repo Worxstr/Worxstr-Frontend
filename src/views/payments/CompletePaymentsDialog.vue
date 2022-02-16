@@ -57,7 +57,7 @@ export default class CompletePaymentsDialog extends Vue {
 
   get subtotal() {
     const total = this.payments.reduce((total: number, current: Payment) => {
-      return total + parseFloat(current.amount)
+      return total + (current ? parseFloat(current.amount) : 0)
     }, 0)
 
     return Math.round(total * 100) / 100
@@ -65,7 +65,7 @@ export default class CompletePaymentsDialog extends Vue {
 
   get fees() {
     const total = this.payments.reduce((total: number, current: Payment) => {
-      return total + parseFloat(current.fee)
+      return total + (current ? parseFloat(current.fee) : 0)
     }, 0)
 
     return Math.round(total * 100) / 100

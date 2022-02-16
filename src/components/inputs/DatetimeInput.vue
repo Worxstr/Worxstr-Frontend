@@ -5,6 +5,7 @@
     dense
     :value='raw'
     v-bind='attrsModified'
+    :rules='rules'
   )
 </template>
 
@@ -20,6 +21,7 @@ export default class DatetimeInput extends Vue {
 
   @Prop({ type: [String, Date], required: true }) readonly value?: string | Date
   @Prop({ default: false }) readonly localized!: boolean
+  @Prop({ type: Array }) readonly rules?: any[]
 
   get raw() {
     return dayjs(this.value).format('YYYY-MM-DDTHH:mm')
