@@ -28,15 +28,15 @@
         v-model='selectedPaymentIds'
         :items='payments'
         :loading='loadingPayments'
-        :show-checkboxes='userIsManager'
+        :show-checkboxes='userIsManager && editable'
         item-name='payment'
       )
         template(#title)
-          span(v-if='$vuetify.breakpoint.smAndUp') Pending payments
+          span(v-if='$vuetify.breakpoint.smAndUp') {{ title }}
           span(v-else) Pending
           v-chip.mx-3.pa-2.font-weight-bold(small) {{ payments.length }}
         
-        template(#actions)
+        template(#actions v-if='editable')
           v-btn(
             text
             color='success'
@@ -112,7 +112,7 @@
               |     item.time_clocks[item.time_clocks.length - 1].time
               |   )
               | }}
-            span.flex-grow-0.px-2.font-weight-bold(:class="isDebit(item) ? 'green--text' : 'red--text'")
+            span.flex-grow-0.px-2.font-weight-bold(:class="{'green--text': isDebit(item)}")
               | {{ isDebit(item) ? '+' : '-' }}{{ item.total | currency }}
         
           v-list-item-action.mx-0
@@ -125,7 +125,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
@@ -166,6 +166,10 @@ export default class PaymentsList extends Vue {
     approveDialog = false
     denyDialog = false
     paymentDialog = false
+
+    @Prop({ required: true }) payments!: Payment[]
+    @Prop({ default: false }) editable!: boolean
+    @Prop({ type: String, required: true }) title!: string
     
     async mounted() {
       this.loadingPayments = true
@@ -186,10 +190,6 @@ export default class PaymentsList extends Vue {
 
     get balance() {
       return this.$store.state.payments.balance
-    }
-
-    get payments() {
-      return this.$store.getters.payments
     }
     
     get userIsManager() {

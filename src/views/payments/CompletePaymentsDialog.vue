@@ -77,6 +77,8 @@ export default class CompletePaymentsDialog extends Vue {
 
   get countUniquePeople() {
     return this.payments.reduce((acc: any[], payment: Payment) => {
+      if (!payment?.receiver?.id) return acc
+      
       if (acc.indexOf(payment.receiver.id) === -1) {
         acc.push(payment.receiver.id)
       }

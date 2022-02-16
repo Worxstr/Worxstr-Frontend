@@ -16,7 +16,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
     @completed='goBack'
   )
 
-  portal(to='toolbarActions')
+  portal(to='toolbarActions' v-if='payment && payment.date_completed')
     v-btn(
       text
       :icon='$vuetify.breakpoint.xs'
@@ -45,7 +45,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
       span(v-if='!$vuetify.breakpoint.xs') Deny
   
   div(v-if='payment')
-    h3.text-h3(:class="isDebit ? 'green--text' : 'red--text'")
+    h3.text-h3(:class="{isDebit: 'green--text'}")
       | {{ isDebit ? '+' : '-' }}{{ payment.amount | currency }}
       
     h6.text-h6
@@ -54,7 +54,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
       router-link.alt-style(v-if='receiverIsUser' :to="{name: 'user', params: {userId: payment.receiver.id}}")
         | {{ payment.receiver | fullName }}
 
-      span(v-else) payment.receiver.name
+      span(v-else) {{ payment.receiver | fullName }}
     
     .my-2
       v-chip.mr-3(

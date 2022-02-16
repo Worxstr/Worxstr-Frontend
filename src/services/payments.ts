@@ -72,10 +72,6 @@ export async function completePayments({ commit }: any, paymentIds: number[]) {
       payment_ids: paymentIds
     },
   })
-  // TODO: Probably don't need to do this
-  paymentIds.forEach((paymentId: number) => {
-    commit('REMOVE_PAYMENT', paymentId)
-  })
   data.payments.forEach((payment: Payment) => {
     commit('ADD_PAYMENT', payment)
   })
