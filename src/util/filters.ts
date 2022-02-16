@@ -114,6 +114,7 @@ Vue.filter('fullName', fullName)
 
 
 export const userOrOrgName = (account: any) => {
+	if (!account) return 'Invalid account'
 	if (isUser(account)) {
 		return `${account.first_name} ${account.last_name}`
 	} else {

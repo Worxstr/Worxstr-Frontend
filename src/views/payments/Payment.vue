@@ -52,9 +52,9 @@ v-container.d-flex.flex-column.pt-6.gap-small
       | {{ isDebit ? 'From' : 'To' }} &nbsp;
 
       router-link.alt-style(v-if='receiverIsUser' :to="{name: 'user', params: {userId: payment.receiver.id}}")
-        | {{ payment.receiver | userOrOrgName }}
+        | {{ (isDebit ? payment.sender : payment.receiver) | userOrOrgName }}
 
-      span(v-else) {{ payment.receiver | userOrOrgName }}
+      span(v-else) {{ (isDebit ? payment.sender : payment.receiver) | userOrOrgName }}
     
     .my-2
       v-chip.mr-3(
@@ -266,6 +266,7 @@ export default class Payment extends Vue {
   get receiverIsUser() {
     return isUser(this.payment.receiver)
   }
+
 
   goBack() {
     this.$router.push({ name: 'payments' })
