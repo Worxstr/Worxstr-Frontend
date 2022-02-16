@@ -4,6 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { User } from '@/types/Users'
 import { Conversation } from '@/types/Messages'
+import { isUser } from '@/types/Payments'
 
 dayjs.extend(relativeTime)
 
@@ -82,6 +83,7 @@ Vue.filter('dateOrTime', (value: (string|number|Date), format?: string) => {
 })
 
 export const currency = (value: string | number) => {
+	if (!value) return 'Invalid value'
 	const parsed = typeof value === 'string' ? parseFloat(value) : value
 	return '$' + (isNaN(parsed) ? '0.00' : parsed.toFixed(2))
 }
@@ -109,6 +111,17 @@ export const fullName = (user: User) => {
 	return `${user.first_name} ${user.last_name}`
 }
 Vue.filter('fullName', fullName)
+
+
+export const userOrOrgName = (account: any) => {
+	if (!account) return 'Invalid account'
+	if (isUser(account)) {
+		return `${account.first_name} ${account.last_name}`
+	} else {
+		return account.name
+	}
+}
+Vue.filter('userOrOrgName', userOrOrgName)
 
 // Create a string that lists users names from an array of users, filtering the authenticated user
 // [{first: 'Bob', last: 'Vance'}, {first: 'Ada', last: 'Lovelace'}]								-> 'Ada Lovelace'

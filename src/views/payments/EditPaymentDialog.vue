@@ -130,7 +130,7 @@ export default class EditPaymentDialog extends Vue {
 
   get payment() {
     const payment = this.$store.getters.payment(this.paymentId)
-    this.editedInvoice = payment.invoice
+    this.editedInvoice = payment?.invoice
     console.log(this.editedInvoice)
     return payment
   }
@@ -149,13 +149,13 @@ export default class EditPaymentDialog extends Vue {
   }
 
   get shift() {
-    return this.$store.getters.shift(this.payment.invoice?.timecard?.shift_id)
+    return this.$store.getters.shift(this.payment?.invoice?.timecard?.shift_id)
   }
 
   get clockEvents() {
     return this.shift.clock_history
       .filter(
-        (event: ClockEvent) => event.timecard_id === this.payment.invoice?.timecard?.id
+        (event: ClockEvent) => event.timecard_id === this.payment?.invoice?.timecard?.id
       )
       .sort(
         (a: ClockEvent, b: ClockEvent) => dayjs(a.time).diff(dayjs(b.time))
