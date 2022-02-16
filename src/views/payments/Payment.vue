@@ -86,7 +86,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
             v-list-item-content.primary--text.font-weight-bold.d-flex
               router-link.alt-style(:to="{name: 'shift', params: {shiftId: shift.id, jobId: shift.job_id}}")
                 | Payment for {{ shift.site_location }}
-            v-list-item-action.text-subtitle-1 {{ payment.invoice.timecard.total_payment | currency }}
+            v-list-item-action.text-subtitle-1 {{ payment.invoice.timecard.wage_payment | currency }}
 
           v-list-item(v-for='item in payment.invoice.items')
             v-list-item-content
@@ -116,7 +116,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
               v-list-item-title.font-weight-bold Total
             
             v-list-item-action
-              .text-subtitle-1.font-weight-black.green--text {{ payment.total | currency }}
+              .text-h6.font-weight-black.green--text {{ payment.total | currency }}
 
     .mb-4.d-flex.flex-column.gap-small(v-if='shift && shift.id')
       h5.text-h5 Shift details
