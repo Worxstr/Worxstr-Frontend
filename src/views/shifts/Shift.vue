@@ -104,11 +104,10 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
     //- Shift history
     .mb-4.d-flex.flex-column.gap-small(v-if='history.length')
       h5.text-h5 History
-
-      v-card(outlined flat)
+      v-sheet(outlined rounded)
         clock-events(:events='history')
 
-    .mb-4.d-flex.flex-column.gap-small(v-if='contractor && contractor.id')
+    .mb-4.d-flex.flex-column.gap-small(v-if='contractor && contractor.id && !isMyShift')
       h5.text-h5 Assignee
       v-sheet(outlined rounded)
         user-preview(:user='contractor')

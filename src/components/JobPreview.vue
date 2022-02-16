@@ -1,5 +1,5 @@
 <template lang="pug">
-.job-preview
+.job-preview(:style='`border-top: 3px solid ${job.color}`')
   g-map(
     :jobs='[job]'
     :users='job.contractors'
@@ -45,3 +45,9 @@ export default class JobPreview extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.job-preview {
+  border-radius: 4px
+}
+</style>
