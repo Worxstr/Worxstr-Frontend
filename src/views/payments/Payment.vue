@@ -16,7 +16,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
     @completed='goBack'
   )
 
-  portal(to='toolbarActions' v-if='payment && payment.date_completed')
+  portal(to='toolbarActions' v-if='payment && !payment.date_completed')
     v-btn(
       text
       :icon='$vuetify.breakpoint.xs'
