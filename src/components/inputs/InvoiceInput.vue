@@ -22,7 +22,7 @@
             dense
             hide-details
             :rules='lineitemRules.description'
-            :readonly='i === lineitems.length - 1'
+            :readonly='i === fixedLineitems.length - 1'
           )
           currency-input.flex-1(
             v-model='lineitem.amount'
@@ -31,6 +31,7 @@
             dense
             hide-details
             :rules='lineitemRules.amount'
+            :readonly='i === fixedLineitems.length - 1'
           )
         
         .d-flex.ml-2.align-center
@@ -38,14 +39,14 @@
             v-if='allLineitems.length !== 1'
             icon
             color='error'
-            @click='removeLineitem(i)'
-            :disabled='i === lineitems.length - 1'
+            @click='removeLineitem(i - fixedLineitems.length)'
+            :disabled='i === fixedLineitems.length - 1'
           )
             v-icon mdi-delete
 
           v-btn.handle(
             v-if='orderable && allLineitems.length !== 1'
-            :disabled='i <= lineitems.length - 1'
+            :disabled='i <= fixedLineitems.length - 1'
             style='cursor: move'
             icon
           )
@@ -65,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { exists } from '@/util/inputValidation'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import CurrencyInput from './CurrencyInput.vue'
@@ -86,7 +87,7 @@ type Lineitem = {
 })
 export default class InvoiceInput extends Vue {
 
-  @Prop({ default: [] }) lineitems!: Lineitem[] // Pass in optional fixed lineitems
+  @Prop({ default: [] }) fixedLineitems!: Lineitem[] // Pass in optional fixed lineitems
   @Prop({ type: Array }) value!: Lineitem[]
   @Prop({ default: false }) editable!: boolean
   @Prop({ default: false }) orderable!: boolean
@@ -96,7 +97,7 @@ export default class InvoiceInput extends Vue {
 
   get allLineitems() {
     return [
-      ...this.lineitems,
+      ...this.fixedLineitems,
       ...this.localLineitems,
     ]
   }
@@ -108,6 +109,15 @@ export default class InvoiceInput extends Vue {
 
   mounted() {
     this.localLineitems = this.value
+  }
+
+  lastVal: any = null
+  @Watch('fixedLineitems')
+  onFixedLineitemsChanged(val: Lineitem[]) {
+    if (JSON.stringify(val) !== JSON.stringify(this.lastVal)) {
+      this.update()
+    }
+    this.lastVal = val
   }
 
   addLineitem() {
@@ -132,8 +142,7 @@ export default class InvoiceInput extends Vue {
   }
 
   update() {
-    this.$emit('input', this.allLineitems)
+    this.$emit('input', this.localLineitems)
   }
-  
 }
 </script>

@@ -11,7 +11,7 @@
 		
 		portal(to="toolbarActions")
 			v-btn(
-				:disabled='userIsManager'
+				:disabled='!userIsContractor'
 				text
 				color='primary'
 				@click='editUserDialog = true'
@@ -127,6 +127,10 @@ export default class User extends Vue {
 
 	get userIsOrgManager() {
 		return currentUserIs(UserRole.OrganizationManager)
+	}
+
+	get userIsContractor() {
+		return currentUserIs(UserRole.Contractor)
 	}
 }
 </script>

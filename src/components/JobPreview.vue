@@ -1,33 +1,53 @@
 <template lang="pug">
-.job-preview.pa-3.d-flex.flex-column
-  .d-flex
-    v-badge(:color='job.color' dot)
-    h4.text-h6 {{ job.name }}
+.job-preview(:style='`border-top: 3px solid ${job.color}`')
+  g-map(
+    :jobs='[job]'
+    :users='job.contractors'
+    :show-device-location='true'
+    :height="$vuetify.breakpoint.mdAndUp ? '25vh' : '35vh'"
+  )
 
-  p.text-caption {{ job.address }}
-    br
-    | {{ job.city }}, {{ job.state }} {{ job.zip_code }}, {{ job.country }}
+  v-card-text.pb-1
+    .d-flex.flex-column
+      h6.text-body-1
+        router-link.alt-style(
+          :to="{name: 'job', params: { jobId: job.id }}"
+        ) {{ (job && job.name) ? job.name : job.id }}
 
-  .d-flex
+      .text-body-2 {{ job.address }}
+      .text-body-2(v-if='countShifts') {{ countShifts }} {{ countShifts > 1 ? 'shifts' : 'shift' }}
+
+  v-card-actions
     v-spacer
-    v-btn(color='primary' text :to="{name: 'job', params: {jobId: job.id}}") View job
-
+    v-btn(
+      text
+      color='primary'
+      :to="{name: 'job', params: {jobId: job.id}}"
+      exact
+    ) View job
 </template>
 
 <script lang="ts">
+import { Job } from '@/types/Jobs'
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { loadJob } from '@/services/jobs'
+import GMap from '@/components/GMap.vue'
 
-@Component
+@Component({
+  components: {
+    GMap,
+  },
+})
 export default class JobPreview extends Vue {
-  @Prop({ type: Number }) jobId!: number
-  
-  async mounted() {
-    await loadJob(this.$store, this.jobId)
-  }
+  @Prop({ required: true }) job!: Job
 
-  get job() {
-    return this.$store.getters.job(this.jobId)
+  get countShifts() {
+    return this.job.shifts?.length || null
   }
 }
 </script>
+
+<style lang="scss">
+.job-preview {
+  border-radius: 4px
+}
+</style>
