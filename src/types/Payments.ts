@@ -105,9 +105,10 @@ export type FundingSource = {
 
 // Determine if a payment recipient is an organization or a user
 export function isUser(account: User | Organization): account is User {
+  if (!account) return false
   return (account as User).first_name !== undefined
 }
-  
+
 // Determine if payment is inbound (debit) or outbound (credit), e.g. "From" or "To"
 export function isDebit(payment: Payment) {
   if (isUser(payment.receiver)) {

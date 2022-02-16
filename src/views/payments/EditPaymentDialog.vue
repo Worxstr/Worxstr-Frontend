@@ -137,8 +137,8 @@ export default class EditPaymentDialog extends Vue {
 
   get calculatedPay() {
     const rate = parseFloat(this.payment.receiver.additional_info.hourly_rate)
-    const time = clockedTime([this.timeSheet.timeIn, this.timeSheet.timeOut]) / (60 * 60 * 1000) 
-    return rate * time
+    const time = clockedTime([this.timeSheet.timeIn, this.timeSheet.timeOut])
+    return rate * time / (60 * 60 * 1000) // Divide after multiplying to avoid rounding errors
   }
 
   get timeSheetPayment() {
