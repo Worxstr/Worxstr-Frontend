@@ -100,7 +100,7 @@
                 :to="{name: 'payment', params: {paymentId: item.id}}"
               )
                 | {{ isDebit(item) ? 'From' : 'To' }}
-                | {{ (isDebit(item) ? item.sender : item.receiver) | name }}
+                | {{ (isDebit(item) ? item.sender : item.receiver) | userOrOrgName }}
           
           v-list-item-action.align-self-center.flex-row
             span.flex-grow-0.px-2(
@@ -148,15 +148,6 @@ dayjs.extend(relativeTime)
     CompletePaymentsDialog,
     DenyDialog,
   },
-  filters: {
-    name(account: any) {
-      if (isUser(account)) {
-        return `${account.first_name} ${account.last_name}`
-      } else {
-        return account.name
-      }
-    }
-  }
 })
 export default class PaymentsList extends Vue {
   

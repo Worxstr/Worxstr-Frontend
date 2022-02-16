@@ -52,9 +52,9 @@ v-container.d-flex.flex-column.pt-6.gap-small
       | {{ isDebit ? 'From' : 'To' }} &nbsp;
 
       router-link.alt-style(v-if='receiverIsUser' :to="{name: 'user', params: {userId: payment.receiver.id}}")
-        | {{ payment.receiver | fullName }}
+        | {{ payment.receiver | userOrOrgName }}
 
-      span(v-else) {{ payment.receiver | fullName }}
+      span(v-else) {{ payment.receiver | userOrOrgName }}
     
     .my-2
       v-chip.mr-3(
