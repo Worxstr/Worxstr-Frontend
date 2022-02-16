@@ -113,11 +113,11 @@ export default class Payments extends Vue {
   }
 
   get pendingPayments() {
-    return this.$store.getters.payments.filter((p: Payment) => p.date_completed)
+    return this.$store.getters.payments.filter((p: Payment) => !p.date_completed)
   }
 
   get completedPayments() {
-    return this.$store.getters.payments.filter((p: Payment) => !p.date_completed)
+    return this.$store.getters.payments.filter((p: Payment) => !!p.date_completed)
   }
 
   get userIsContractor() {
