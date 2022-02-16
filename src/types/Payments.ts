@@ -120,3 +120,18 @@ export function isDebit(payment: Payment) {
     return true
   }
 }
+
+export function statusColor(status: string): string {
+  switch (status) {
+    case 'pending':
+      return 'amber'
+    case 'processed':
+      return 'green'
+    case 'cancelled':
+      return 'deep-orange'
+    case 'failed':
+      return 'red'
+    default:
+      return 'primary'
+  }
+}

@@ -94,13 +94,32 @@
             span(v-if='!$vuetify.breakpoint.xs') Deny {{ selectedPaymentIds.length == 1 ? '' : (selectedPaymentIds.length == payments.length) ? 'all' : selectedPaymentIds.length }}
 
         template(#content='{ item }')
+
+          .d-flex
+          
+            div(v-if='item.bank_transfer')
+              v-chip.mr-3(
+                v-if='$vuetify.breakpoint.smAndUp'
+                small
+                :color='`${statusColor(item.bank_transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`'
+              )
+                | {{ item.bank_transfer.status | capitalize }}
+              
+              v-badge.mr-5(
+                v-else
+                dot
+                style='margin-bottom: 3.5px'
+                :color='`${statusColor(item.bank_transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`'
+              )
+
           v-list-item-content
             v-list-item-title
-              router-link.alt-style.font-weight-medium(
-                :to="{name: 'payment', params: {paymentId: item.id}}"
-              )
-                | {{ isDebit(item) ? 'From' : 'To' }}
-                | {{ (isDebit(item) ? item.sender : item.receiver) | userOrOrgName }}
+
+                router-link.alt-style.font-weight-medium(
+                  :to="{name: 'payment', params: {paymentId: item.id}}"
+                )
+                  | {{ isDebit(item) ? 'From' : 'To' }}
+                  | {{ (isDebit(item) ? item.sender : item.receiver) | userOrOrgName }}
           
           v-list-item-action.align-self-center.flex-row
             span.flex-grow-0.px-2(
@@ -134,7 +153,7 @@ import EditPaymentDialog from '@/views/payments/EditPaymentDialog.vue'
 import DenyDialog from '@/views/payments/DenyPaymentsDialog.vue'
 import CompletePaymentsDialog from '@/views/payments/CompletePaymentsDialog.vue'
 
-import { Payment, isDebit, isUser } from '@/types/Payments'
+import { Payment, isDebit, isUser, statusColor } from '@/types/Payments'
 import { loadPayments } from '@/services/payments'
 import { currentUserIs, Managers, User } from '@/types/Users'
 import { Organization } from '@/types/Organizations'
@@ -151,102 +170,106 @@ dayjs.extend(relativeTime)
 })
 export default class PaymentsList extends Vue {
   
-    loadingPayments = false
-    selectedPaymentIds: number[] = []
-    editPaymentDialog = false
-    approveDialog = false
-    denyDialog = false
-    paymentDialog = false
+  loadingPayments = false
+  selectedPaymentIds: number[] = []
+  editPaymentDialog = false
+  approveDialog = false
+  denyDialog = false
+  paymentDialog = false
 
-    @Prop({ required: true }) payments!: Payment[]
-    @Prop({ default: false }) editable!: boolean
-    @Prop({ type: String, required: true }) title!: string
-    
-    async mounted() {
-      this.loadingPayments = true
-      try {
-        await loadPayments(this.$store)
-      } finally {
-        this.loadingPayments = false
-      }
+  @Prop({ required: true }) payments!: Payment[]
+  @Prop({ default: false }) editable!: boolean
+  @Prop({ type: String, required: true }) title!: string
+  
+  async mounted() {
+    this.loadingPayments = true
+    try {
+      await loadPayments(this.$store)
+    } finally {
+      this.loadingPayments = false
     }
+  }
 
-    clearSelection() {
-      this.selectedPaymentIds = []
-    }
+  clearSelection() {
+    this.selectedPaymentIds = []
+  }
 
-    get me() {
-      return this.$store.getters.me
-    }
+  get me() {
+    return this.$store.getters.me
+  }
 
-    get balance() {
-      return this.$store.state.payments.balance
-    }
-    
-    get userIsManager() {
-      return currentUserIs(...Managers)
-    }
+  get balance() {
+    return this.$store.state.payments.balance
+  }
+  
+  get userIsManager() {
+    return currentUserIs(...Managers)
+  }
 
-    // Sum the amount of all selected payments
-    get selectedTotal() {
-      return this.selectedPaymentIds.reduce((total, id) => {
-        const payment = this.payments.find((p: Payment) => p.id === id)
-        return total + (payment ? parseFloat(payment.total) : 0)
-      }, 0)
-    }
+  // Sum the amount of all selected payments
+  get selectedTotal() {
+    return this.selectedPaymentIds.reduce((total, id) => {
+      const payment = this.payments.find((p: Payment) => p.id === id)
+      return total + (payment ? parseFloat(payment.total) : 0)
+    }, 0)
+  }
 
-    isDebit(payment: Payment) {
-      return isDebit(payment)
-    }
+  isDebit(payment: Payment) {
+    return isDebit(payment)
+  }
 
-    hasSufficientBalance(paymentId: number) {
+  hasSufficientBalance(paymentId: number) {
 
-      let paymentIds = []
+    let paymentIds = []
 
-      if (paymentId) paymentIds = [paymentId]
-      else if (!this.selectedPaymentIds.length) paymentIds = this.payments.map((p: Payment) => p.id)
-      else paymentIds = this.selectedPaymentIds
+    if (paymentId) paymentIds = [paymentId]
+    else if (!this.selectedPaymentIds.length) paymentIds = this.payments.map((p: Payment) => p.id)
+    else paymentIds = this.selectedPaymentIds
 
-      const payments: Payment[] = this.$store.getters.paymentsByIds(paymentIds)
+    const payments: Payment[] = this.$store.getters.paymentsByIds(paymentIds)
 
-      const totalPayment = payments.reduce((total: number, payment: Payment) => {
-        return total + (payment ? parseFloat(payment.total) : 0)
-      }, 0)
+    const totalPayment = payments.reduce((total: number, payment: Payment) => {
+      return total + (payment ? parseFloat(payment.total) : 0)
+    }, 0)
 
-      return Math.round(totalPayment * 100) / 100 <= parseFloat(this.balance.value)
-    }
+    return Math.round(totalPayment * 100) / 100 <= parseFloat(this.balance.value)
+  }
 
-    timeDiff(timeIn: string, timeOut: string) {
-      const _in = dayjs(timeIn)
-      const _out = dayjs(timeOut)
-      return _out.from(_in, true)
-    }
+  timeDiff(timeIn: string, timeOut: string) {
+    const _in = dayjs(timeIn)
+    const _out = dayjs(timeOut)
+    return _out.from(_in, true)
+  }
 
 
-    selectAll() {
-      this.selectedPaymentIds = this.payments.map((t: Payment) => t.id)
-    }
+  selectAll() {
+    this.selectedPaymentIds = this.payments.map((t: Payment) => t.id)
+  }
 
-    deselectAll() {
-      this.selectedPaymentIds = []
-    }
+  deselectAll() {
+    this.selectedPaymentIds = []
+  }
 
-    openEditPaymentDialog(paymentId: number) {
-      this.selectedPaymentIds = [paymentId]
-      this.editPaymentDialog = true
-    }
+  openEditPaymentDialog(paymentId: number) {
+    this.selectedPaymentIds = [paymentId]
+    this.editPaymentDialog = true
+  }
 
-    openDenyDialog(paymentId: number) {
-      if (paymentId) this.selectedPaymentIds = [paymentId]
-      else if (!this.selectedPaymentIds.length) this.selectAll()
-      this.denyDialog = true
-    }
+  openDenyDialog(paymentId: number) {
+    if (paymentId) this.selectedPaymentIds = [paymentId]
+    else if (!this.selectedPaymentIds.length) this.selectAll()
+    this.denyDialog = true
+  }
 
-    openPaymentDialog(paymentId: number) {
-      // this.selectTimecards()
-      if (paymentId) this.selectedPaymentIds = [paymentId]
-      else if (!this.selectedPaymentIds.length) this.selectAll()
-      this.paymentDialog = true
-    }
+  openPaymentDialog(paymentId: number) {
+    // this.selectTimecards()
+    if (paymentId) this.selectedPaymentIds = [paymentId]
+    else if (!this.selectedPaymentIds.length) this.selectAll()
+    this.paymentDialog = true
+  }
+
+  statusColor(status: string) {
+    return statusColor(status)
+  }
 }
 </script>

@@ -60,9 +60,9 @@ v-container.d-flex.flex-column.pt-6.gap-small
       v-chip.mr-3(
         v-if='payment.bank_transfer'
         small
-        :color='`${statusColor("processed")} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`'
+        :color='`${statusColor(payment.bank_transfer.status)} ${$vuetify.theme.dark ? "darken" : "lighten"}-3`'
       )
-        | {{ 'processed' | capitalize }}
+        | {{ payment.bank_transfer.status | capitalize }}
 
       span.text-body-2(v-if='payment.date_completed')
         | {{ payment.date_completed | date('MMM D, YYYY') }}, {{ payment.date_completed | time }}
@@ -181,7 +181,7 @@ import UserPreview from '@/components/UserPreview.vue'
 import { loadPayment } from '@/services/payments'
 import { loadShift } from '@/services/shifts'
 import { loadJob } from '@/services/jobs'
-import { isDebit, isUser } from '@/types/Payments'
+import { isDebit, isUser, statusColor } from '@/types/Payments'
 import { clockedTime, breakTime, workTime, ClockEvent } from '@/types/Jobs'
 import EditPaymentDialog from './EditPaymentDialog.vue'
 import CompletePaymentsDialog from './CompletePaymentsDialog.vue'
@@ -272,21 +272,8 @@ export default class Payment extends Vue {
     this.$router.push({ name: 'payments' })
   }
 
-  // TODO: Duplicated in TransferHistory.vue
-  // TODO: DRY
-  statusColor(status: string): string {
-    switch (status) {
-      case 'pending':
-        return 'amber'
-      case 'processed':
-        return 'green'
-      case 'cancelled':
-        return 'deep-orange'
-      case 'failed':
-        return 'red'
-      default:
-        return 'primary'
-    }
+  statusColor(status: string) {
+    return statusColor(status)
   }
 }
 </script>
