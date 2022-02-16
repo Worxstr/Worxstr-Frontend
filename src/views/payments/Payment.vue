@@ -56,6 +56,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
       span(v-else) {{ (isDebit ? payment.sender : payment.receiver) | userOrOrgName }}
     
+    
     .my-2
       v-chip.mr-3(
         v-if='payment.bank_transfer'
