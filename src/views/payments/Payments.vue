@@ -35,7 +35,7 @@ div
       text
       :icon='$vuetify.breakpoint.xs'
       @click='openTransferToBankDialog'
-      :disabled='!iAmVerified || payments.balance.value == 0'
+      :disabled='!iAmVerified || balance.value == 0'
       data-cy='transfer-to-bank-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
@@ -44,16 +44,25 @@ div
 
   v-container.d-flex.flex-column.justify-center
     //- Balance display
-    div(v-if="loadingBalance && !payments.balance.value")
+    div(v-if="loadingBalance && !balance.value")
       v-skeleton-loader.my-4(type="heading")
 
     .text-center.my-5(v-else)
       .text-h6 Available balance
-      .text-h2 {{ payments.balance.value | currency }}
+      .text-h2 {{ balance.value | currency }}
 
-    payments-list.mb-5(v-if='userIsManager')
+    payments-list.mb-5(
+      v-if='userIsManager'
+      :payments='pendingPayments'
+      :editable='true'
+      title='Pending payments'
+    )
 
-    //- transfer-history
+    payments-list.mb-5(
+      v-if='userIsManager'
+      :payments='completedPayments'
+      title='Completed payments'
+    )
 
 </template>
 
@@ -67,6 +76,7 @@ import CreateInvoiceDialog from './CreateInvoiceDialog.vue'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
 import { loadBalance } from '@/services/payments'
 import { showToast } from '@/services/app'
+import { Payment } from '@/types/Payments'
 
 @Component({
   metaInfo: {
@@ -98,8 +108,16 @@ export default class Payments extends Vue {
     return this.$store.getters.me
   }
 
-  get payments() {
-    return this.$store.state.payments
+  get balance() {
+    return this.$store.state.payments.balance
+  }
+
+  get pendingPayments() {
+    return this.$store.getters.payments.filter((p: Payment) => p.date_completed)
+  }
+
+  get completedPayments() {
+    return this.$store.getters.payments.filter((p: Payment) => !p.date_completed)
   }
 
   get userIsContractor() {
