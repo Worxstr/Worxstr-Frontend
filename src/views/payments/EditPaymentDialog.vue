@@ -200,7 +200,7 @@ export default class EditPaymentDialog extends Vue {
   }
 
   get calculatedPay() {
-    const rate = parseFloat(this.payment.receiver.additional_info.hourly_rate)
+    const rate = parseFloat(this.payment.receiver?.additional_info?.hourly_rate || 0)
     const time = clockedTime([this.timeSheet.timeIn, this.timeSheet.timeOut])
     return rate * time / (60 * 60 * 1000) // Divide after multiplying to avoid rounding errors
   }
@@ -218,7 +218,7 @@ export default class EditPaymentDialog extends Vue {
 
   get clockEvents() {
     if (!this.shift?.clock_history) return null
-    
+
     return this.shift.clock_history
       .filter(
         (event: ClockEvent) => event.timecard_id === this.payment?.invoice?.timecard?.id

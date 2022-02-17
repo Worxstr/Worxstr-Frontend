@@ -52,16 +52,16 @@ div
       .text-h2 {{ balance.value | currency }}
 
     payments-list.mb-5(
-      v-if='userIsManager'
       :payments='pendingPayments'
       :editable='true'
       title='Pending payments'
+      :loading='loadingPayments'
     )
 
     payments-list.mb-5(
-      v-if='userIsManager'
       :payments='completedPayments'
       title='Completed payments'
+      :loading='loadingPayments'
     )
 
 </template>
@@ -74,7 +74,7 @@ import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import CreateInvoiceDialog from './CreateInvoiceDialog.vue'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
-import { loadBalance } from '@/services/payments'
+import { loadBalance, loadPayments } from '@/services/payments'
 import { showToast } from '@/services/app'
 import { Payment } from '@/types/Payments'
 
@@ -90,16 +90,22 @@ import { Payment } from '@/types/Payments'
   }
 })
 export default class Payments extends Vue {
+  loadingPayments = false
   loadingBalance = false
   breaks = [{}]
   transferFundsDialog: string | null = null
   createInvoiceDialog = false
 
   async mounted() {
+    this.loadingPayments = true
     this.loadingBalance = true
+
     try {
+      await loadPayments(this.$store)
       await loadBalance(this.$store)
-    } finally {
+    }
+    finally {
+      this.loadingPayments = false
       this.loadingBalance = false
     }
   }
