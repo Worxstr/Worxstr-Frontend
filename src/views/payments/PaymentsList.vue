@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(v-if="loadingPayments && !(payments.length)")
+  div(v-if="loading && !(payments.length)")
     v-skeleton-loader.my-4(type="heading")
     v-skeleton-loader(
       type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
@@ -27,7 +27,7 @@
       multiselect-list(
         v-model='selectedPaymentIds'
         :items='payments'
-        :loading='loadingPayments'
+        :loading='loading'
         :show-checkboxes='userIsManager && editable'
         item-name='payment'
       )
@@ -144,7 +144,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
@@ -153,10 +153,8 @@ import EditPaymentDialog from '@/views/payments/EditPaymentDialog.vue'
 import DenyDialog from '@/views/payments/DenyPaymentsDialog.vue'
 import CompletePaymentsDialog from '@/views/payments/CompletePaymentsDialog.vue'
 
-import { Payment, isDebit, isUser, statusColor } from '@/types/Payments'
-import { loadPayments } from '@/services/payments'
-import { currentUserIs, Managers, User } from '@/types/Users'
-import { Organization } from '@/types/Organizations'
+import { Payment, isDebit, statusColor } from '@/types/Payments'
+import { currentUserIs, Managers } from '@/types/Users'
 
 dayjs.extend(relativeTime)
 
@@ -170,7 +168,6 @@ dayjs.extend(relativeTime)
 })
 export default class PaymentsList extends Vue {
   
-  loadingPayments = false
   selectedPaymentIds: number[] = []
   editPaymentDialog = false
   approveDialog = false
@@ -180,16 +177,8 @@ export default class PaymentsList extends Vue {
   @Prop({ required: true }) payments!: Payment[]
   @Prop({ default: false }) editable!: boolean
   @Prop({ type: String, required: true }) title!: string
+  @Prop({ default: false }) loading!: boolean
   
-  async mounted() {
-    this.loadingPayments = true
-    try {
-      await loadPayments(this.$store)
-    } finally {
-      this.loadingPayments = false
-    }
-  }
-
   clearSelection() {
     this.selectedPaymentIds = []
   }

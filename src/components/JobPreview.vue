@@ -4,7 +4,7 @@
     :jobs='[job]'
     :users='job.contractors'
     :show-device-location='true'
-    :height="$vuetify.breakpoint.mdAndUp ? '25vh' : '35vh'"
+    :height="$vuetify.breakpoint.mdAndUp ? '30vh' : '35vh'"
   )
 
   v-card-text.pb-1
