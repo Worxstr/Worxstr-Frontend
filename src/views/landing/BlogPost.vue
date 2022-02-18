@@ -47,40 +47,48 @@ export default class BlogPost extends Vue {
       title: `${this.blogPost.title} | Blog`,
       meta: [
         {
-          name: 'description',
+          property: 'description',
           content: this.blogPost.description,
         },
         {
-          name: 'twitter:card',
+          property: 'twitter:card',
           content: 'summary',
         },
         {
-          name: 'twitter:title',
+          property: 'twitter:title',
           content: this.blogPost.title,
         },
         {
-          name: 'twitter:description',
+          property: 'twitter:description',
           content: this.blogPost.description,
         },
         {
-          name: 'twitter:image',
+          property: 'twitter:image',
           content: this.blogPost.image,
         },
         {
-          name: 'og:title',
-          content: this.blogPost.title,
-        },
-        {
-          name: 'og:description',
-          content: this.blogPost.description,
-        },
-        {
-          name: 'og:image',
-          content: this.blogPost.image,
-        },
-        {
-          name: 'org:url',
+          property: 'twitter:url',
           content: window.location.href,
+        },
+        {
+          property: 'og:title',
+          content: this.blogPost.title,
+        },
+        {
+          property: 'og:description',
+          content: this.blogPost.description,
+        },
+        {
+          property: 'og:image',
+          content: this.blogPost.image,
+        },
+        {
+          property: 'og:url',
+          content: window.location.href,
+        },
+        {
+          property: 'og:type',
+          content: 'article',
         }
       ],
     }
