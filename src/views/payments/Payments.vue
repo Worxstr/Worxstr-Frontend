@@ -53,7 +53,7 @@ div
 
     payments-list.mb-5(
       :payments='pendingPayments'
-      :editable='true'
+      :editable='userIsManager'
       title='Pending payments'
       :loading='loadingPayments'
     )

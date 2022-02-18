@@ -16,7 +16,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
     @completed='goBack'
   )
 
-  portal(to='toolbarActions' v-if='payment && !payment.date_completed')
+  portal(to='toolbarActions' v-if='payment && !payment.date_completed && userIsManager')
     v-btn(
       text
       :icon='$vuetify.breakpoint.xs'
@@ -186,6 +186,7 @@ import { clockedTime, breakTime, workTime, ClockEvent } from '@/types/Jobs'
 import EditPaymentDialog from './EditPaymentDialog.vue'
 import CompletePaymentsDialog from './CompletePaymentsDialog.vue'
 import DenyPaymentsDialog from './DenyPaymentsDialog.vue'
+import { currentUserIs, Managers } from '@/types/Users'
 
 @Component({
   metaInfo: {
@@ -261,6 +262,10 @@ export default class Payment extends Vue {
 
   get isDebit() {
     return isDebit(this.payment)
+  }
+
+  get userIsManager() {
+    return currentUserIs(...Managers)
   }
 
   get receiverIsUser() {
