@@ -19,52 +19,55 @@ v-dialog(
           | {{ total | currency }}
 
       v-divider
-      v-subheader Time sheet
 
-      v-card-text(v-if='timeSheet && timeSheet.timeIn && timeSheet.timeOut')
-        datetime-input(
-          v-model='timeSheet.timeIn.time'
-          outlined
-          label='Time in'
-          :rules='rules.timeIn'
-          data-cy='payment-time-in'
-        )
-        div(v-for='(breakItem, i) in timeSheet.breaks' :key='i')
-          .d-flex.gap-small
-            datetime-input(
-              outlined
-              required
-              v-model="breakItem.start.time"
-              :label="`Break ${i + 1} start`"
-              :rules='rules.breakStart(i)'
-              :data-cy="`payment-break-${i + 1}-start`"
-            )
-            datetime-input(
-              outlined
-              required
-              v-model="breakItem.end.time"
-              :label="`Break ${i + 1} end`"
-              :rules='rules.breakEnd(i)'
-              :data-cy="`payment-break-${i + 1}-end`"
-            )
+      div(v-if='hasAssociatedTimecard')
+        v-subheader Time sheet
 
-        datetime-input(
-          v-model='timeSheet.timeOut.time'
-          outlined
-          required
-          label='Time out'
-          :rules='rules.timeOut'
-          data-cy='payment-time-out'
-        )
+        v-card-text(v-if='timeSheet && timeSheet.timeIn && timeSheet.timeOut')
+          datetime-input(
+            v-model='timeSheet.timeIn.time'
+            outlined
+            label='Time in'
+            :rules='rules.timeIn'
+            data-cy='payment-time-in'
+          )
+          div(v-for='(breakItem, i) in timeSheet.breaks' :key='i')
+            .d-flex.gap-small
+              datetime-input(
+                outlined
+                required
+                v-model="breakItem.start.time"
+                :label="`Break ${i + 1} start`"
+                :rules='rules.breakStart(i)'
+                :data-cy="`payment-break-${i + 1}-start`"
+              )
+              datetime-input(
+                outlined
+                required
+                v-model="breakItem.end.time"
+                :label="`Break ${i + 1} end`"
+                :rules='rules.breakEnd(i)'
+                :data-cy="`payment-break-${i + 1}-end`"
+              )
 
-      v-divider
+          datetime-input(
+            v-model='timeSheet.timeOut.time'
+            outlined
+            required
+            label='Time out'
+            :rules='rules.timeOut'
+            data-cy='payment-time-out'
+          )
+
+        v-divider
+
       v-subheader Invoice details
 
       v-card-text
         //- // TODO: Make reorderable work
         invoice-input(
           v-model='editedInvoice.items'
-          :fixedLineitems='[timeSheetPayment]'
+          :fixedLineitems='hasAssociatedTimecard ? [timeSheetPayment] : []'
           :orderable='false'
         )
         richtext-field(
@@ -99,7 +102,7 @@ import InvoiceInput from '@/components/inputs/InvoiceInput.vue'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import * as payments from '@/services/payments'
 import { ClockAction, ClockEvent, clockedTime } from '@/types/Jobs'
-import { Invoice } from '@/types/Payments'
+import { Invoice, Payment } from '@/types/Payments'
 import { exists } from '@/util/inputValidation'
 
 dayjs.extend(isSameOrAfter)
@@ -195,11 +198,16 @@ export default class EditPaymentDialog extends Vue {
 
   get payment() {
     const payment = this.$store.getters.payment(this.paymentId)
-    this.editedInvoice = payment?.invoice
     return payment
   }
 
+  get hasAssociatedTimecard() {
+    return !!this.payment?.invoice?.timecard
+  }
+
   get calculatedPay() {
+    if (!this.hasAssociatedTimecard || !this.timeSheet.timeIn || !this.timeSheet.timeOut) return null
+
     const rate = parseFloat(this.payment.receiver?.additional_info?.hourly_rate || 0)
     const time = clockedTime([this.timeSheet.timeIn, this.timeSheet.timeOut])
     return rate * time / (60 * 60 * 1000) // Divide after multiplying to avoid rounding errors
@@ -217,7 +225,7 @@ export default class EditPaymentDialog extends Vue {
   }
 
   get clockEvents() {
-    if (!this.shift?.clock_history) return null
+    if (!this.hasAssociatedTimecard) return null
 
     return this.shift.clock_history
       .filter(
@@ -232,6 +240,12 @@ export default class EditPaymentDialog extends Vue {
     return this.calculatedPay + this.editedInvoice.items.reduce(
       (total: number, lineitem: any) => total + parseFloat(lineitem.amount), 0
     )
+  }
+
+  @Watch('payment')
+  onPaymentChange(payment: Payment) {
+    if (!payment.invoice) return
+    this.editedInvoice = JSON.parse(JSON.stringify(payment.invoice)) // Deep copy
   }
 
   @Watch('timeSheet', { deep: true })
@@ -256,6 +270,8 @@ export default class EditPaymentDialog extends Vue {
 
   // Format clock events list into a "time sheet" object, so we can iterate on it in the template
   calculateFormValues() {
+    if (!this.hasAssociatedTimecard || !this.clockEvents) return
+
     this.timeSheet.timeIn = {
       ...this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockIn)
     }
@@ -301,12 +317,11 @@ export default class EditPaymentDialog extends Vue {
     this.loading = true
 
     try {
-      await payments.updatePayment(
-        this.$store,
-        this.payment.id,
-        newTimeclockEvents,
-        this.editedInvoice,
-      )
+      const params: [any, number, any, ClockEvent[]?] = [this.$store, this.paymentId, this.editedInvoice]
+      if (this.hasAssociatedTimecard) params.push(newTimeclockEvents)
+
+      await payments.updatePayment(...params)
+      
       this.closeDialog()
       this.$emit('saved')
     } finally {

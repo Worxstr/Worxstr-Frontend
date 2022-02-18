@@ -34,14 +34,14 @@ export async function createInvoice({ commit }: any, invoice: Invoice) {
   return data
 }
 
-export async function updatePayment({ commit }: any, paymentId: number, events: ClockEvent[], invoice: Invoice) {
+export async function updatePayment({ commit }: any, paymentId: number, invoice: Invoice, events?: ClockEvent[]) {
   const { data } = await api({
     method: 'PUT',
     url: `payments/${paymentId}`,
     data: {
-      timecard: {
+      timecard: events ? {
         clock_events: events,
-      },
+      } : undefined,
       invoice: invoice,
     },
   })

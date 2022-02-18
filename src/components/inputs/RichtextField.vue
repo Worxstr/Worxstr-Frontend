@@ -20,7 +20,7 @@ import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragrap
 })
 export default class RichtextField extends Vue {
 
-  @Prop({ type: String, required: true }) readonly value?: string
+  @Prop({ type: String }) readonly value?: string
 
   input(value: string) {
     this.$emit('input', value)

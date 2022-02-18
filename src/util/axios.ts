@@ -63,7 +63,7 @@ function getAction(error: any) {
 
   // Handle error action types that are sent by the server.
   // These actions can redirect the user to an area of the app to resolve the error.
-  if (res.actions) {
+  if (res?.actions) {
     action = {
       text: res.actions[0].action_text,
       action: () => {

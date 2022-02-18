@@ -263,7 +263,6 @@ const routes = [
         param: 'paymentId',
         store: 'payments',
         propBuilder(payment: PaymentTypes.Payment) {
-          console.log(payment)
           const account = payment.receiver
           const name = (PaymentTypes.isUser(account)) ? account.first_name : account.name
           return `${currency(payment.amount)} to ${name}`

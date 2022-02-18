@@ -214,7 +214,7 @@ export default class Payment extends Vue {
     const payment = await loadPayment(this.$store, this.$route.params.paymentId)
     this.loading = false
     
-    if (payment?.invoice) {
+    if (payment?.invoice?.timecard?.shift_id) {
       const shift = await loadShift(this.$store, payment.invoice.timecard.shift_id)
       const job = await loadJob(this.$store, shift.job_id)
     }
