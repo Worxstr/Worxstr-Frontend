@@ -72,32 +72,28 @@ v-dialog(
             label="Contractor manager"
             data-cy='job-contractor-manager'
           )
-        v-subheader Consultant info
+        v-subheader Client info (optional)
         .d-flex.flex-column.flex-sm-row
           v-text-field.mr-sm-4(
             outlined
             dense
-            label="Name",
-            v-model="editedJob.consultant_name"
-            :rules="rules.consultantName"
+            label='Name'
+            v-model='editedJob.consultant_name'
             data-cy='job-consultant-name'
-            required
           )
           phone-input(
             v-model='editedJob.consultant_phone'
             data-cy='job-consultant-phone'
             outlined
-            :required='true'
           )
         v-text-field(
           outlined
           dense
-          label="Email"
-          type="email"
-          v-model="editedJob.consultant_email"
-          :rules="rules.consultantEmail"
+          label='Email'
+          type='email'
+          v-model='editedJob.consultant_email'
+          :rules='rules.consultantEmail'
           data-cy='job-consultant-email'
-          required
         )
 
         v-subheader Presence verification restrictions
@@ -200,7 +196,7 @@ v-dialog(
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import { User } from '@/types/Users'
 import { Job } from '@/types/Jobs';
-import { exists, phoneRules, emailRules } from '@/util/inputValidation'
+import { exists, phoneRules, emailRules, phoneRulesOptional, emailRulesOptional } from '@/util/inputValidation'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import GMap from '@/components/GMap.vue'
@@ -237,9 +233,8 @@ export default class EditJobDialog extends Vue {
   rules = {
     name: [exists("Job name required")],
     address: [exists("Address required")],
-    consultantName: [exists("Consultant name required")],
-    consultantPhone: phoneRules,
-    consultantEmail: emailRules,
+    consultantPhone: phoneRulesOptional,
+    consultantEmail: emailRulesOptional,
     restrictByTimeWindow: [
       exists("Time window required"),
       (value: string) => !isNaN(parseInt(value)) || 'Time window must be a number',
