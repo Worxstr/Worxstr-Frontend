@@ -28,7 +28,7 @@ div
       data-cy='add-funds-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-cash-plus
-      span(v-if='!$vuetify.breakpoint.xs') Add funds to wallet
+      span(v-if='!$vuetify.breakpoint.xs') Add funds
     
     v-btn(
       color="primary",
@@ -40,6 +40,34 @@ div
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
       span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
+  
+    v-menu(offset-y)
+      template(v-slot:activator='{ on, attrs }')
+        v-btn(
+          v-if='userIsManager'
+          color='primary'
+          text
+          :icon='$vuetify.breakpoint.xs'
+          data-cy='transfer-to-bank-button'
+          v-on='on'
+          v-bind='attrs'
+        )
+          v-icon(:left='!$vuetify.breakpoint.xs') mdi-database-export-outline
+          span(v-if='!$vuetify.breakpoint.xs') Export data
+      v-list
+        v-subheader Export data as:
+        v-list-item(two-line @click='')
+          v-list-item-content
+            v-list-item-title .csv
+            v-list-item-subtitle Comma-separated values
+        v-list-item(two-line @click='')
+          v-list-item-content
+            v-list-item-title .xlsx
+            v-list-item-subtitle Excel spreadsheet
+        v-list-item(two-line @click='')
+          v-list-item-content
+            v-list-item-title .pdf
+            v-list-item-subtitle Adobe PDF
 
 
   v-container.d-flex.flex-column.justify-center
