@@ -17,7 +17,7 @@ v-dialog(
       v-model='isValid'
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
+        v-toolbar-title.text-h6 {{ !jobId ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
       
       v-divider
 
@@ -192,7 +192,7 @@ v-dialog(
           type="submit"
           data-cy='save-job-button'
         )
-          | {{ create ? 'Create' : 'Save' }}
+          | {{ jobId ? 'Save' : 'Create' }}
 </template>
 
 <script lang="ts">
@@ -217,10 +217,8 @@ import { hashColor } from '@/util/helpers'
 })
 export default class EditJobDialog extends Vue {
 
+  @Prop({ type: Number }) readonly jobId?: number
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ default: false }) readonly create!: boolean
-  @Prop(Object) readonly job: Job | undefined
-
 
   editedJob: any = {
     color: hashColor(Date.now()),
@@ -256,11 +254,8 @@ export default class EditJobDialog extends Vue {
   @Watch('opened')
   onOpened(newVal: boolean) {
     if (newVal) {
-      if (this.create) (this.$refs.form as HTMLFormElement)?.reset()
+      if (this.jobId) this.editedJob = this.$store.getters.job(this.jobId)
     }
-
-    if (newVal && this.job)
-      this.editedJob = Object.assign({}, this.job);
   }
 
   get showMap() {
@@ -298,8 +293,11 @@ export default class EditJobDialog extends Vue {
   async updateJob() {
     this.loading = true
     try {
-      if (this.create) await createJob(this.$store, this.editedJob)
-      else await updateJob(this.$store, this.editedJob)
+      if (this.jobId)
+        await updateJob(this.$store, this.editedJob)
+      else
+        await createJob(this.$store, this.editedJob)
+
       this.closeDialog()
     }
     finally {

@@ -1,8 +1,9 @@
 <template lang="pug">
 .jobs-list
 
-  edit-job-dialog(:opened.sync="editJobDialog", :job.sync="selectedJob")
-  close-job-dialog(:opened.sync="closeJobDialog", :job.sync="selectedJob")
+  div(v-if='selectedJobId')
+    edit-job-dialog(:opened.sync="editJobDialog" :jobId="selectedJobId")
+    close-job-dialog(:opened.sync="closeJobDialog" :jobId="selectedJobId")
 
   v-list(v-if="jobs.length")
     div(
@@ -21,7 +22,7 @@
           v-btn(
             icon
             color='primary'
-            @click.stop='openEditJobDialog(job)'
+            @click.stop='openEditJobDialog(job.id)'
             data-cy='edit-job-button'
           )
             v-icon mdi-pencil
@@ -30,7 +31,7 @@
           v-btn(
             icon
             color='error'
-            @click.stop='openCloseJobDialog(job)'
+            @click.stop='openCloseJobDialog(job.id)'
             data-cy='close-job-button'
           )
             v-icon mdi-close
@@ -64,15 +65,15 @@ export default class JobsList extends Vue {
 
   editJobDialog = false
   closeJobDialog = false
-  selectedJob: Job | null = null
+  selectedJobId: number | null = null
 
-  openEditJobDialog(job: Job) {
-    this.selectedJob = job
+  openEditJobDialog(jobId: number) {
+    this.selectedJobId = jobId
     this.editJobDialog = true
   }
 
-  openCloseJobDialog(job: Job) {
-    this.selectedJob = job
+  openCloseJobDialog(jobId: number) {
+    this.selectedJobId = jobId
     this.closeJobDialog = true
   }
 }

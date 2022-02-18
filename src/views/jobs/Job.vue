@@ -12,8 +12,8 @@ v-container(v-if="loading && !job")
 div(v-else)
 
   v-container.approvals.mb-16(v-if="job")
-    edit-job-dialog(:opened.sync="editJobDialog" :job.sync="job")
-    close-job-dialog(:opened.sync="closeJobDialog" :job.sync="job")
+    edit-job-dialog(:opened.sync="editJobDialog" :job-id="job.id")
+    close-job-dialog(:opened.sync="closeJobDialog" :job-id="job.id")
     qr-code-dialog(
       :opened.sync='qrCodeDialog'
       :code='job.consultant_code'
@@ -155,7 +155,7 @@ div(v-else)
               a.mb-0(target='_blank' :href='`mailto:${job.consultant_email}`') {{ job.consultant_email }}
               a(target='_blank' :href='`tel:${job.consultant_phone}`')    {{ job.consultant_phone | phone }}
     
-    shift-list(:shifts='job.shifts' :loading='loading')
+    shift-list(:shifts='job.shifts' :loading='loading' :job-id='job.id')
 
 </template>
 

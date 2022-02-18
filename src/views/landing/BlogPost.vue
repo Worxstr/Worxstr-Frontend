@@ -19,7 +19,7 @@ v-container.pt-8
   v-row
     v-col(cols='12' md='9')
       v-card.soft-shadow
-        v-img(v-if='blogPost.image' :src='blogPost.image' max-height='200')
+        v-img(v-if='blogPost.image' :src='blogPost.image' max-height='400' position='start center')
         vue-markdown.pa-8.mb-10(:source='blogPost.content')
 
     v-col(cols='12' md='3')
@@ -50,10 +50,42 @@ export default class BlogPost extends Vue {
           name: 'description',
           content: this.blogPost.description,
         },
+        {
+          name: 'twitter:card',
+          content: 'summary',
+        },
+        {
+          name: 'twitter:title',
+          content: this.blogPost.title,
+        },
+        {
+          name: 'twitter:description',
+          content: this.blogPost.description,
+        },
+        {
+          name: 'twitter:image',
+          content: this.blogPost.image,
+        },
+        {
+          name: 'og:title',
+          content: this.blogPost.title,
+        },
+        {
+          name: 'og:description',
+          content: this.blogPost.description,
+        },
+        {
+          name: 'og:image',
+          content: this.blogPost.image,
+        },
+        {
+          name: 'org:url',
+          content: window.location.href,
+        }
       ],
     }
   }
-  
+
   get blogPost() {
     return this.$store.getters.blogPost(this.$route.params.blogPostId)
   }

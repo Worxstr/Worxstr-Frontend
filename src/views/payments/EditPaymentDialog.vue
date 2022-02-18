@@ -104,6 +104,7 @@ import * as payments from '@/services/payments'
 import { ClockAction, ClockEvent, clockedTime } from '@/types/Jobs'
 import { Invoice, Payment } from '@/types/Payments'
 import { exists } from '@/util/inputValidation'
+import { deepCopy } from '@/util/helpers'
 
 dayjs.extend(isSameOrAfter)
 
@@ -245,7 +246,7 @@ export default class EditPaymentDialog extends Vue {
   @Watch('payment')
   onPaymentChange(payment: Payment) {
     if (!payment.invoice) return
-    this.editedInvoice = JSON.parse(JSON.stringify(payment.invoice)) // Deep copy
+    this.editedInvoice = deepCopy(payment.invoice)
   }
 
   @Watch('timeSheet', { deep: true })
@@ -272,12 +273,14 @@ export default class EditPaymentDialog extends Vue {
   calculateFormValues() {
     if (!this.hasAssociatedTimecard || !this.clockEvents) return
 
-    this.timeSheet.timeIn = {
-      ...this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockIn)
-    }
-    this.timeSheet.timeOut = {
-      ...this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockOut)
-    }
+    // TODO: Make deep copies
+
+    this.timeSheet.timeIn = deepCopy(
+      this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockIn)
+    )
+    this.timeSheet.timeOut = deepCopy(
+      this.clockEvents.find((event: ClockEvent) => event.action === ClockAction.ClockOut)
+    )
 
     const breakStarts = this.clockEvents.filter((event: ClockEvent) => event.action === ClockAction.StartBreak)
     const breakEnds = this.clockEvents.filter((event: ClockEvent) => event.action === ClockAction.EndBreak)
@@ -300,7 +303,7 @@ export default class EditPaymentDialog extends Vue {
         end: breakEnds[i]
       })
     })
-    this.timeSheet.breaks = [...breaks]
+    this.timeSheet.breaks = deepCopy(breaks)
   }
 
   async updatePayment() {
