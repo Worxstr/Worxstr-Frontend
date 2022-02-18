@@ -21,13 +21,13 @@ export const initialState = (): BlogState => ({
       id: 'release-0.4',
       title: 'Payments release (0.4)',
       description: 'Payments are getting a big update! Invoicing, data exporting, 2FA, and more coming soon.',
-      // image: 'https://i.imgur.com/KSy5lel.png',
+      image: 'https://i.imgur.com/2ihwZDf.png',
       date: '2022-02-07',
       author: {
         name: 'Alex Wohlbruck',
         image: require('@/assets/images/team/alex.jpg'),
       },
-      content: '### 0.4.0\n- Shift lists now support multiselect for deleting batch shifts\n- We now have a detailed payment view where users can see the shift details related to a payment and its item list.\n- Contractors can now create invoice payments to be approved by their managers.\n<br>'
+      content: '### 0.4.0\n- Shift lists now support multiselect for deleting batch shifts\n- Contractors can now create invoice payments to be approved by their managers.\n- Payments now have detailed standalone page where users can see all information related to a payment and its invoice item list.\n- Payments view now loads much faster.\n<br>'
     },
     {
       id: 'release-0.3',

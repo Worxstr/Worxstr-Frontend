@@ -26,7 +26,7 @@
 
       multiselect-list(
         v-model='selectedPaymentIds'
-        :items='payments'
+        :items='paymentsSorted'
         :loading='loading'
         :show-checkboxes='userIsManager && editable'
         item-name='payment'
@@ -193,6 +193,15 @@ export default class PaymentsList extends Vue {
   
   get userIsManager() {
     return currentUserIs(...Managers)
+  }
+
+  get paymentsSorted() {
+    return this.payments.sort((a, b) => {
+      if (a.date_completed && b.date_completed) {
+        return dayjs(b.date_completed).diff(dayjs(a.date_completed))
+      }
+      return b.id - a.id
+    })
   }
 
   // Sum the amount of all selected payments
