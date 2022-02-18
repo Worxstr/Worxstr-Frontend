@@ -98,3 +98,8 @@ export function lookup(obj: any, path: string, defaultVal?: any): any {
 export function mapProps(object: any, path: string, defaultVal?: any) {
   return object.map((o: any) => lookup(o, path, defaultVal))
 }
+
+// Deep copy an object using JSON stringify/parse
+export function deepCopy(obj: any) {
+  return JSON.parse(JSON.stringify(obj))
+}

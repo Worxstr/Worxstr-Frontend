@@ -25,7 +25,6 @@ v-dialog(
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { Job } from '@/types/Jobs'
 import { closeJob } from '@/services/jobs'
 
 @Component
@@ -33,8 +32,11 @@ export default class CloseJobDialog extends Vue {
   loading = false
 
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop(Object) readonly job!: Job
-  @Prop(String) readonly contractorName: string | undefined
+  @Prop({ type: Number, required: true }) readonly jobId!: number
+
+  get job() {
+    return this.$store.getters.job(this.jobId)
+  }
 
   closeDialog() {
     this.$emit('update:opened', false)

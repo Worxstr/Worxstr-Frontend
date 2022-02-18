@@ -3,17 +3,18 @@ div
   //- :contractors='job.contractors'
   edit-shift-dialog(
     :opened.sync='createShiftDialog'
+    :job-id='jobId'
   )
   edit-shift-dialog(
     :editing='true'
-    :shiftId.sync='selectedShiftIds[0]'
+    :shift-id.sync='selectedShiftIds[0]'
     :opened.sync='editShiftDialog'
     @saved='clearSelection'
   )
   delete-shift-dialog(
     v-if='selectedShift'
     :opened.sync='deleteShiftDialog'
-    :shiftIds.sync='selectedShiftIds'
+    :shift-ids.sync='selectedShiftIds'
     @deleted='clearSelection'
   )
 
@@ -124,6 +125,7 @@ export default class ShiftList extends Vue {
   
   @Prop({ default: () => [] }) shifts!: Shift[]
   @Prop({ default: false }) loading!: boolean
+  @Prop({ type: Number }) jobId?: number
 
   selectedShift: Shift | {} = {} // TODO: Remove this
   selectedShiftIds: number[] = []

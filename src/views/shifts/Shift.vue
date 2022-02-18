@@ -5,7 +5,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
     :editing='true'
     :shift.sync='shift'
     :opened.sync='editShiftDialog'
-    :job-id='shift.job_id'
+    :shift-id='shift.id'
   )
   delete-shift-dialog(
     :opened.sync='deleteShiftDialog'
@@ -100,22 +100,22 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
           | {{tasksComplete}}/{{totalTasks}} completed
 
       task-list(:tasks='tasks')
+
+    .mb-4.d-flex.flex-column.gap-small(v-if='job && job.id')
+      h5.text-h5 Job details
+      v-sheet(outlined rounded)
+        job-preview(:job='job')
+
+    .mb-4.d-flex.flex-column.gap-small(v-if='contractor && contractor.id && !isMyShift')
+      h5.text-h5 Assignee
+      v-sheet(outlined rounded)
+        user-preview(:user='contractor')
     
     //- Shift history
     .mb-4.d-flex.flex-column.gap-small(v-if='history.length')
       h5.text-h5 History
       v-sheet(outlined rounded)
         clock-events(:events='history')
-
-    .mb-4.d-flex.flex-column.gap-small(v-if='contractor && contractor.id && !isMyShift')
-      h5.text-h5 Assignee
-      v-sheet(outlined rounded)
-        user-preview(:user='contractor')
-
-    .mb-4.d-flex.flex-column.gap-small(v-if='job && job.id')
-      h5.text-h5 Job details
-      v-sheet(outlined rounded)
-        job-preview(:job='job')
       
 </template>
 
