@@ -56,18 +56,19 @@ div
           span(v-if='!$vuetify.breakpoint.xs') Export data
       v-list
         v-subheader Export data as:
-        v-list-item(two-line @click='')
+        v-list-item(
+          two-line
+          v-for='(format, i) in exportFormats'
+          :key='i'
+          @click="exportPayments(format.name)"
+          :disabled='format.disabled'
+        )
+          v-list-item-icon.mr-3.mb-0.pt-1
+            v-icon {{ format.icon }}
+
           v-list-item-content
-            v-list-item-title .csv
-            v-list-item-subtitle Comma-separated values
-        v-list-item(two-line @click='')
-          v-list-item-content
-            v-list-item-title .xlsx
-            v-list-item-subtitle Excel spreadsheet
-        v-list-item(two-line @click='')
-          v-list-item-content
-            v-list-item-title .pdf
-            v-list-item-subtitle Adobe PDF
+            v-list-item-title .{{format.name}}
+            v-list-item-subtitle {{format.description}}
 
 
   v-container.d-flex.flex-column.justify-center
@@ -102,7 +103,7 @@ import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import CreateInvoiceDialog from './CreateInvoiceDialog.vue'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
-import { loadBalance, loadPayments } from '@/services/payments'
+import { loadBalance, loadPayments, exportPayments } from '@/services/payments'
 import { showToast } from '@/services/app'
 import { Payment } from '@/types/Payments'
 
@@ -123,6 +124,32 @@ export default class Payments extends Vue {
   breaks = [{}]
   transferFundsDialog: string | null = null
   createInvoiceDialog = false
+  exportFormats: any = [
+    {
+      name: 'csv',
+      icon: 'mdi-file-delimited-outline',
+      description: 'Comma-separated values',
+      disabled: false
+    },
+    {
+      name: 'json',
+      icon: 'mdi-code-json',
+      description: 'Javascript object notation',
+      disabled: false
+    },
+    {
+      name: 'xlsx',
+      icon: 'mdi-microsoft-office',
+      description: 'Excel spreadsheet',
+      disabled: true
+    },
+    {
+      name: 'pdf',
+      icon: 'mdi-file-pdf-box',
+      description: 'Adobe PDF',
+      disabled: true
+    },
+  ]
 
   async mounted() {
     this.loadingPayments = true
@@ -197,6 +224,10 @@ export default class Payments extends Vue {
   openTransferToBankDialog() {
     if (this.userHasFundingSource())
       this.transferFundsDialog = 'remove'
+  }
+
+  async exportPayments(format: 'csv' | 'json' | 'xlsx' | 'pdf') {
+    await exportPayments(format)
   }
 }
 </script>
