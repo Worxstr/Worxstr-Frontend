@@ -2,7 +2,8 @@
 import { api } from '@/util/axios'
 import { FundingSource, Payment, Invoice } from '@/types/Payments'
 import { ClockEvent } from '@/types/Jobs'
-import { showToast } from '@/services/app'
+import { baseUrl, showToast } from '@/services/app'
+import { download } from '@/util/helpers'
 
 export async function loadPayments({ commit }: any) {
   const { data } = await api({
@@ -13,6 +14,11 @@ export async function loadPayments({ commit }: any) {
     commit('ADD_PAYMENT', payment)
   })
   return data.payments
+}
+
+export async function exportPayments(format: 'csv' | 'json' | 'xlsx' | 'pdf') {
+  const url = `${baseUrl.get()}/payments/export?format=${format}`
+  download(url, `payments-export.${format}`)
 }
 
 export async function loadPayment({ commit }: any, paymentId: string) {

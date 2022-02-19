@@ -103,3 +103,13 @@ export function mapProps(object: any, path: string, defaultVal?: any) {
 export function deepCopy(obj: any) {
   return JSON.parse(JSON.stringify(obj))
 }
+
+export function download(url: string, name: string) {
+  // Download file at url
+  const link = document.createElement('a')
+  link.href = url
+  link.download = name
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
