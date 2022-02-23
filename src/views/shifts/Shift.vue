@@ -66,7 +66,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
           router-link.alt-style(
             v-if='!isMyShift && contractor'
             :to="{name: 'user', params: { userId: contractor.id }}"
-          ) {{ contractor | fullName }}
+          ) {{ contractor.name }}
 
         .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
         .text-body-2 {{ shift.time_begin | date('MMM D, YYYY') }} - {{ shift.time_end | date('MMM D, YYYY') }}

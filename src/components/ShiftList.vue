@@ -78,7 +78,7 @@ div
             v-if='item.contractor_id && userIsManager'
             :to="{name: 'user', params: {userId: item.contractor_id}}"
           )
-            | {{ getContractor(item.contractor_id) | fullName }}
+            | {{ getContractor(item.contractor_id).name }}
 
           span(v-if='item.clock_history.length')
             | &nbsp;- {{ item.clock_history.length }} {{ item.clock_history.length == 1 ? 'event' : 'events'}}

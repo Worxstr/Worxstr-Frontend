@@ -82,7 +82,7 @@ v-dialog(
               v-list-item-content
                 v-list-item-title
                   v-row(no-gutters align='center')
-                    span(v-if='item.id > 0') {{ item | fullName }}
+                    span(v-if='item.id > 0') {{ item.name }}
                     span(v-else) Unassigned {{ -item.id }}
                     v-spacer
                     v-chip(small v-if='!item.direct && item.id > 0') {{ !item.direct && 'Indirect' }}

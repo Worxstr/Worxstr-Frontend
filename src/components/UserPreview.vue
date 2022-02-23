@@ -11,7 +11,7 @@
       h6.text-body-1
         router-link.alt-style(
           :to="{name: 'user', params: { userId: user.id }}"
-        ) {{ user | fullName }}
+        ) {{ user.name }}
 
       .text-body-2 {{ user.email }}
       //- .text-body-2(v-if='countShifts') {{ countShifts }} {{ countShifts > 1 ? 'shifts' : 'shift' }}

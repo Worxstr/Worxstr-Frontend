@@ -33,7 +33,7 @@
 		v-container.d-flex.flex-column.justify-center
 			v-card.soft-shadow(outlined)
 				.py-5.px-4
-					h4.text-h4 {{ user | fullName }}
+					h4.text-h4 {{ user.name }}
 					h6.text-h6
 						a(:href='`mailto:${user.email}`' target="_blank") {{ user.email }}
 					h6.text-h6
