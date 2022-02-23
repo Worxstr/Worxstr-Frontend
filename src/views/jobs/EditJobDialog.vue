@@ -171,7 +171,17 @@ v-dialog(
                 min='20'
                 max='1000'
               )
-              p.mt-1 {{ editedJob.radius | distance }}
+              v-text-field.mb-2(
+                v-model.number="editedJob.radius"
+                outlined
+                dense
+                type='number'
+                min='20'
+                max='1000'
+                hide-details
+                suffix='meters'
+                style='max-width: 132px'
+              )
 
             v-card.soft-shadow
               g-map(:jobs='[editedJob]' jobsDraggable @jobMoved='updateJobLocation')
