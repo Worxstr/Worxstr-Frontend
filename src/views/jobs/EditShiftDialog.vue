@@ -48,7 +48,7 @@ v-dialog(
         //- Contractor selector
 
         //- Single selection for editing
-        v-select(
+        v-autocomplete(
           v-if='shiftId'
           v-model='editedShift.contractor_id'
           :items='contractors'
@@ -56,12 +56,11 @@ v-dialog(
           item-value='id'
           outlined
           dense
-          required
           label='Contractor'
           data-cy='shift-contractor'
         )
         //- Multi selection for creating
-        v-select(
+        v-autocomplete(
           v-else
           v-model='editedShift.contractor_ids'
           :items='contractors'
@@ -69,7 +68,6 @@ v-dialog(
           item-value='id'
           outlined
           dense
-          required
           multiple
           label='Contractors'
           data-cy='shift-contractors'
