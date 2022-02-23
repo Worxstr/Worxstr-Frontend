@@ -1,7 +1,5 @@
 <template lang="pug">
 div
-  edit-job-dialog(:opened.sync="createJobDialog", :create="true")
-
   portal(to="toolbarActions")
     v-btn(
       color="primary",
@@ -45,18 +43,16 @@ import { currentUserIs, UserRole } from '@/types/Users'
 import { Job } from '@/types/Jobs'
 import { loadJobs } from '@/services/jobs'
 
-import EditJobDialog from './EditJobDialog.vue'
 import GMap from '@/components/GMap.vue'
 import JobsList from '@/components/JobsList.vue'
 
 @Component({
-  components: { EditJobDialog, JobsList, GMap },
+  components: { JobsList, GMap },
 })
 export default class JobsView extends Vue {
 
   loading = false
   createJobDialog = false
-  editJobDialog = false
 
   metaInfo() {
     return { title: 'Jobs' }

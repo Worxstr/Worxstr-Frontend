@@ -1,7 +1,7 @@
 <template lang="pug">
 .jobs-list
 
-  div(v-if='selectedJobId')
+  div
     edit-job-dialog(:opened.sync="editJobDialog" :jobId="selectedJobId")
     close-job-dialog(:opened.sync="closeJobDialog" :jobId="selectedJobId")
 
