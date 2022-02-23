@@ -285,12 +285,13 @@ export default class EditShiftDialog extends Vue {
 
   get contractors() {
     const jobId = this.jobId ?? this.selectedJob
-    return this.$store.getters.job(jobId)?.contractors ?? []
 
-    // TODO: Sort
-    // return this.contractors.sort((a: any, b: any) => {
-    //   return (a.direct === b.direct) ? 0 : (a.direct ? -1 : 1)
-    // })
+    const contractors = this.$store.getters.job(jobId)?.contractors ?? []
+
+    return contractors.sort((a: User, b: User) => {
+      if (!a.name || !b.name) return 0
+      return a.name > b.name ? 1 : -1
+    })
   }
 
   contractorName(contractorId: number) {

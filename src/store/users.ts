@@ -50,7 +50,10 @@ const mutations = {
   },
 
   ADD_USER(state: UsersState, user: User) {
-    addUser(state, user)
+    addUser(state, {
+      ...user,
+      name: `${user?.first_name} ${user?.last_name}`,
+    })
   },
 
   REMOVE_USER(state: UsersState, userId: number) {
