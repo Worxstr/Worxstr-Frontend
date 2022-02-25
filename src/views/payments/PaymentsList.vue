@@ -143,7 +143,6 @@
               :to="{name: 'payment', params: {paymentId: item.id}}"
             )
               v-icon mdi-chevron-right
-
 </template>
 
 <script lang="ts">
@@ -176,6 +175,7 @@ export default class PaymentsList extends Vue {
   approveDialog = false
   denyDialog = false
   paymentDialog = false
+  loadingMore = false
 
   @Prop({ required: true }) payments!: Payment[]
   @Prop({ default: false }) editable!: boolean

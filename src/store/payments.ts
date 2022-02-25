@@ -8,6 +8,7 @@ export interface PaymentsState {
   byId: {
     [key: number]: Payment
   }
+  lastPageLoaded: number | null
   beneficialOwnersCertified: boolean
   balance: {
     value: number
@@ -25,6 +26,7 @@ export interface PaymentsState {
 export const initialState = (): PaymentsState => ({
   all: [],
   byId: {},
+  lastPageLoaded: null,
   beneficialOwnersCertified: false,
   balance: {
     value: 0,
@@ -38,6 +40,10 @@ export const initialState = (): PaymentsState => ({
 })
 
 const mutations = {
+
+  SET_LAST_PAGE_LOADED(state: PaymentsState, lastPageLoaded: number) {
+    state.lastPageLoaded = lastPageLoaded
+  },
 
   SET_BALANCE(state: PaymentsState, { value, currency, location }: {
     value: string | number

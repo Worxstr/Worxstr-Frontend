@@ -183,6 +183,8 @@ export default class Shift extends Vue {
   async mounted() {
     const shift = await this.loadShift()
 
+    console.log(shift)
+
     if (shift?.job_id) {
       this.loadJob(shift.job_id)
     }

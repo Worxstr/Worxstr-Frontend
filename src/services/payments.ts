@@ -5,10 +5,18 @@ import { ClockEvent } from '@/types/Jobs'
 import { baseUrl, showToast } from '@/services/app'
 import { download } from '@/util/helpers'
 
-export async function loadPayments({ commit }: any) {
+export async function loadPayments({ commit }: any, offset = 0, limit = 2) {
+
+  console.log(offset)
+  commit('SET_LAST_PAGE_LOADED', offset)
+
   const { data } = await api({
     method: 'GET',
     url: '/payments',
+    params: {
+      offset,
+      limit,
+    }
   })
   data.payments.forEach((payment: Payment) => {
     commit('ADD_PAYMENT', payment)
