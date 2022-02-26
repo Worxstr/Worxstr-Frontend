@@ -225,13 +225,13 @@ export default class Payments extends Vue {
   get pendingPayments() {
     return this.$store.getters.payments
       .filter((p: Payment) => !p.date_completed)
-      .sort((a: Payment, b: Payment) => dayjs(b.date_created).diff(dayjs(a.date_created)))
+      .sort((a: Payment, b: Payment) => dayjs(a.date_created).diff(dayjs(b.date_created)))
   }
 
   get completedPayments() {
     return this.$store.getters.payments
       .filter((p: Payment) => !!p.date_completed)
-      .sort((a: Payment, b: Payment) => dayjs(b.date_created).diff(dayjs(a.date_created)))
+      .sort((a: Payment, b: Payment) => dayjs(a.date_created).diff(dayjs(b.date_created)))
   }
 
   get userIsContractor() {
