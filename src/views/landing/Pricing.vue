@@ -93,7 +93,12 @@ export default class Pricing extends Vue {
           'Ticket-based support',
         ],
         buttonText: 'Get free',
-        to: {name: 'signUp', params: { subscriptionTier: 'free' }}
+        to: {
+          name: 'signUp',
+          params: {
+            subscriptionTier: `FREE`, 
+          }
+        }
       },
       {
         price: this.annual ? 16 : 20,
@@ -104,7 +109,12 @@ export default class Pricing extends Vue {
           'Chat-based support representative',
         ],
         buttonText: 'Get standard',
-        to: {name: 'signUp', params: { subscriptionTier: 'standard' }}
+        to: {
+          name: 'signUp',
+          params: {
+            subscriptionTier: `STANDARD_${this.annual ? 'ANNUALLY' : 'MONTHLY'}`
+          }
+        }
       },
       {
         price: null,
