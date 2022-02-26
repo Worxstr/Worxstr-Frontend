@@ -5,7 +5,7 @@ import { ClockEvent } from '@/types/Jobs'
 import { baseUrl, showToast } from '@/services/app'
 import { download } from '@/util/helpers'
 
-export async function loadPayments({ commit }: any, offset = 0, limit = 2) {
+export async function loadPayments({ commit }: any, offset = 0, limit = 10) {
 
   console.log(offset)
   commit('SET_LAST_PAGE_LOADED', offset)
