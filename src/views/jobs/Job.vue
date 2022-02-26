@@ -18,8 +18,19 @@ div(v-else)
       :opened.sync='qrCodeDialog'
       :code='job.consultant_code'
     )
+    create-invoice-dialog(:opened.sync='createInvoiceDialog' :job-id="job.id")
 
     portal(to="toolbarActions")
+      v-btn(
+        color="primary",
+        text
+        :icon='$vuetify.breakpoint.xs'
+        @click='createInvoiceDialog = true'
+        :disabled='!iAmVerified'
+      )
+        v-icon(:left='!$vuetify.breakpoint.xs') mdi-receipt
+        span(v-if='!$vuetify.breakpoint.xs') Create invoice
+
       v-btn(
         v-if="userIsOrgManager",
         text,
@@ -167,6 +178,7 @@ import EditJobDialog from './EditJobDialog.vue'
 import CloseJobDialog from './CloseJobDialog.vue'
 import EditShiftDialog from './EditShiftDialog.vue'
 import QrCodeDialog from './QrCodeDialog.vue'
+import CreateInvoiceDialog from '@/views/payments/CreateInvoiceDialog.vue'
 
 import GMap from '@/components/GMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
@@ -184,6 +196,7 @@ import { loadJob, refreshClockInCode } from '@/services/jobs'
     CloseJobDialog,
     EditShiftDialog,
     QrCodeDialog,
+    CreateInvoiceDialog,
     GMap,
     ClockEvents,
     ClipboardCopy,
@@ -197,6 +210,7 @@ export default class JobView extends Vue {
   closeJobDialog = false
   createShiftDialog = false
   qrCodeDialog = false
+  createInvoiceDialog = false
   refreshingClockInCode = false
   shifts = []
 
@@ -233,6 +247,10 @@ export default class JobView extends Vue {
 
   get userLocation() {
     return this.$store.state.users.userLocation
+  }
+
+  get iAmVerified() {
+    return this.$store.getters.iAmVerified
   }
 
   get navigationUrl() {

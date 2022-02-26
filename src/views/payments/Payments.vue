@@ -8,7 +8,6 @@ div
   portal(to="toolbarActions")
 
     v-btn(
-      v-if='userIsContractor'
       color="primary",
       text
       :icon='$vuetify.breakpoint.xs'

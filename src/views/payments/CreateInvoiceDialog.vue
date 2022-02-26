@@ -20,6 +20,31 @@ v-dialog(
       v-divider
 
       v-card-text.transfer-amount.d-flex.flex-column.gap-small
+
+        .d-flex.flex-column.flex-sm-row.gap-small(v-if='userIsManager')
+          v-select(
+            label='Attach to job'
+            outlined
+            dense
+            v-model='invoice.job_id'
+            :items='jobs'
+            item-text='name'
+            item-value='id'
+            hide-details
+            :loading='loadingJobs'
+          )
+
+          v-select(
+            label='Recipient'
+            outlined
+            dense
+            v-model='invoice.recipient_id'
+            :items='contractors'
+            item-text='name'
+            item-value='id'
+            hide-details
+            :loading='loadingContractors'
+          )
         
         invoice-input(v-model='invoice.items' :orderable='true')
         richtext-field(
@@ -43,11 +68,14 @@ v-dialog(
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+/* eslint-disable @typescript-eslint/camelcase */
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import InvoiceInput from '@/components/inputs/InvoiceInput.vue'
 import { createInvoice } from '@/services/payments'
-import { Invoice } from '@/types/Payments'
+import { loadJobs } from '@/services/jobs'
+import { currentUserIs, Managers, UserRole } from '@/types/Users'
+import { Job } from '@/types/Jobs'
 
 @Component({
   components: {
@@ -58,8 +86,11 @@ import { Invoice } from '@/types/Payments'
 export default class CreateInvoiceDialog extends Vue {
   
   @Prop({ default: false }) readonly opened!: boolean
+  @Prop({ type: Number }) readonly jobId?: number
 
   loading = false
+  loadingJobs = false
+  loadingContractors = false
   isValid = false
   invoice: any = {
     description: '',
@@ -67,6 +98,25 @@ export default class CreateInvoiceDialog extends Vue {
       description: '',
       amount: 0,
     }]
+  }
+
+  @Watch('opened')
+  async onOpenedChange(val: boolean) {
+    if (val) {
+      if (this.jobId) {
+        this.invoice.job_id = this.jobId
+      }
+
+      if (this.userIsContractor) {
+        this.invoice.recipient_id = this.$store.getters.me.id
+      }
+
+      if (this.userIsManager) {
+        this.loadingJobs = true
+        await loadJobs(this.$store)
+        this.loadingJobs = false
+      }
+    }
   }
 
   // TODO: Figure out how to add rules prop to InvoiceInput
@@ -77,18 +127,39 @@ export default class CreateInvoiceDialog extends Vue {
   get total() {
     return this.invoice.items.reduce((total: number, lineitem: any) => total + lineitem.amount, 0)
   }
+
+  get jobs() {
+    return this.$store.getters.jobs
+  }
+
+  get contractors() {
+    return this.jobs.flatMap((job: Job) => job.contractors)
+  }
+
+  get userIsManager() {
+    return currentUserIs(...Managers)
+  }
+
+  get userIsContractor() {
+    return currentUserIs(UserRole.Contractor)
+  }
   
   closeDialog() {
     this.$emit('update:opened', false)
   }
 
   async createInvoice() {
-    // TODO
     this.loading = true
     try {
-      await createInvoice(this.$store, this.invoice);
+      const payment = await createInvoice(this.$store, this.invoice);
       (this.$refs.form as HTMLFormElement)?.reset()
       this.closeDialog()
+      this.$router.push({
+        name: 'payment',
+        params: {
+          paymentId: payment.id,
+        }
+      })
     }
     finally {
       this.loading = false

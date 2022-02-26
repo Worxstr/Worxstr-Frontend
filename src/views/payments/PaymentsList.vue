@@ -122,7 +122,6 @@
                   | {{ (isDebit(item) ? item.sender : item.receiver) | userOrOrgName }}
           
           v-list-item-action.align-self-center.flex-row
-            span {{item.date_created}}
             span.flex-grow-0.px-2(
               v-if="item.time_clocks && item.time_clocks.length"
             )

@@ -1,21 +1,23 @@
 <template lang="pug">
 div
+  edit-job-dialog(:opened.sync='createJobDialog')
+
   portal(to="toolbarActions")
     v-btn(
-      color="primary",
-      text
+      v-if='userIsOrgManager'
+      @click='createJobDialog = true'
       :icon='$vuetify.breakpoint.xs'
-      @click="openCreateJobDialog",
-      v-if="userIsOrgManager"
+      color='primary'
+      text
       data-cy='add-job-button'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-plus
       span(v-if='!$vuetify.breakpoint.xs') Add job
 
   v-container(fluid v-if="loading && !(directJobs.length || indirectJobs.length)")
-    v-skeleton-loader.my-4(type="heading")
+    v-skeleton-loader.my-4(type='heading')
     v-skeleton-loader(
-      type="list-item, list-item, list-item, list-item, list-item, list-item, list-item"
+      type='list-item, list-item, list-item, list-item, list-item, list-item, list-item'
     )
 
   .d-flex.flex-column.justify-center(v-else-if='!allJobs.length')
@@ -28,8 +30,8 @@ div
       g-map(:jobs='allJobs')
       jobs-list(:jobs='directJobs')
 
-    .mb-5(v-if="indirectJobs.length")
-      v-toolbar(flat, color="transparent")
+    .mb-5(v-if='indirectJobs.length')
+      v-toolbar(flat color='transparent')
         v-toolbar-title.text-h6 Other jobs
 
       v-card.soft-shadow(outlined)
@@ -45,9 +47,10 @@ import { loadJobs } from '@/services/jobs'
 
 import GMap from '@/components/GMap.vue'
 import JobsList from '@/components/JobsList.vue'
+import EditJobDialog from './EditJobDialog.vue'
 
 @Component({
-  components: { JobsList, GMap },
+  components: { JobsList, GMap, EditJobDialog },
 })
 export default class JobsView extends Vue {
 
@@ -82,10 +85,6 @@ export default class JobsView extends Vue {
 
   get userIsOrgManager() {
     return currentUserIs(UserRole.OrganizationManager)
-  }
-
-  openCreateJobDialog() {
-    this.createJobDialog = true
   }
 }
 </script>
