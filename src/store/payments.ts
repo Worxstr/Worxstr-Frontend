@@ -8,7 +8,8 @@ export interface PaymentsState {
   byId: {
     [key: number]: Payment
   }
-  lastPageLoaded: number | null
+  lastPageLoadedPending: number | null
+  lastPageLoadedCompleted: number | null
   beneficialOwnersCertified: boolean
   balance: {
     value: number
@@ -26,7 +27,8 @@ export interface PaymentsState {
 export const initialState = (): PaymentsState => ({
   all: [],
   byId: {},
-  lastPageLoaded: null,
+  lastPageLoadedPending: null,
+  lastPageLoadedCompleted: null,
   beneficialOwnersCertified: false,
   balance: {
     value: 0,
@@ -41,8 +43,12 @@ export const initialState = (): PaymentsState => ({
 
 const mutations = {
 
-  SET_LAST_PAGE_LOADED(state: PaymentsState, lastPageLoaded: number) {
-    state.lastPageLoaded = lastPageLoaded
+  SET_LAST_PAGE_LOADED_PENDING(state: PaymentsState, lastPageLoaded: number) {
+    state.lastPageLoadedPending = lastPageLoaded
+  },
+
+  SET_LAST_PAGE_LOADED_COMPLETED(state: PaymentsState, lastPageLoaded: number) {
+    state.lastPageLoadedCompleted = lastPageLoaded
   },
 
   SET_BALANCE(state: PaymentsState, { value, currency, location }: {

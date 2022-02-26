@@ -88,6 +88,15 @@ div
       :loading='loadingPayments'
     )
 
+    .d-flex.justify-center
+      v-btn(
+        text
+        outlined
+        color='primary'
+        @click='loadMorePending'
+        :loading='loadingMorePending'
+      ) View more
+
     payments-list(
       v-if='completedPayments.length'
       :payments='completedPayments'
@@ -100,8 +109,8 @@ div
         text
         outlined
         color='primary'
-        @click='loadMore'
-        :loading='loadingMore'
+        @click='loadMoreCompleted'
+        :loading='loadingMoreCompleted'
       ) View more
 
 </template>
@@ -118,6 +127,8 @@ import { loadBalance, loadPayments, exportPayments } from '@/services/payments'
 import { showToast } from '@/services/app'
 import { Payment } from '@/types/Payments'
 
+const PAGE_SIZE = 2
+
 @Component({
   metaInfo: {
     title: 'Payments',
@@ -130,9 +141,10 @@ import { Payment } from '@/types/Payments'
   }
 })
 export default class Payments extends Vue {
-  loadingPayments = false
-  loadingMore = false
   loadingBalance = false
+  loadingPayments = false
+  loadingMorePending = false
+  loadingMoreCompleted = false
   breaks = [{}]
   transferFundsDialog: string | null = null
   createInvoiceDialog = false
@@ -179,14 +191,26 @@ export default class Payments extends Vue {
   }
 
   async loadPayments() {
-    await loadPayments(this.$store)
+    await loadPayments(this.$store, 0, PAGE_SIZE, { pending: true })
+    await loadPayments(this.$store, 0, PAGE_SIZE, { pending: false })
   }
 
-  async loadMore() {
-    this.loadingMore = true
-    const lastPageLoaded = this.$store.state.payments.lastPageLoaded
-    await loadPayments(this.$store, (lastPageLoaded + 1) ?? 0)
-    this.loadingMore = false
+  async loadMorePending() {
+    this.loadingMorePending = true
+    const lastPageLoaded = this.$store.state.payments.lastPageLoadedPending
+    await loadPayments(this.$store, (lastPageLoaded + 1) ?? 0, PAGE_SIZE, {
+      pending: true,
+    })
+    this.loadingMorePending = false
+  }
+
+  async loadMoreCompleted() {
+    this.loadingMoreCompleted = true
+    const lastPageLoaded = this.$store.state.payments.lastPageLoadedCompleted
+    await loadPayments(this.$store, (lastPageLoaded + 1) ?? 0, PAGE_SIZE, {
+      pending: false,
+    })
+    this.loadingMoreCompleted = false
   }
 
   get me() {

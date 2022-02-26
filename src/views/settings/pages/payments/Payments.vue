@@ -68,7 +68,7 @@ div
     )
       v-list-item-content
         v-list-item-title {{ fundingSource.name }}
-        v-list-item-subtitle {{ fundingSourceId(fundingSource._links.self.href) }}
+        v-list-item-subtitle {{ fundingSource.bankName }}
         v-list-item-subtitle
           v-chip(label :color='verificationStatuses[fundingSource.status].color' small) {{ verificationStatuses[fundingSource.status].text }}
 
