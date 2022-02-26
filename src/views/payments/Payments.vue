@@ -8,37 +8,37 @@ div
   portal(to="toolbarActions")
 
     v-btn(
-      color="primary",
-      text
-      :icon='$vuetify.breakpoint.xs'
-      @click='openInvoiceDialog'
-      :disabled='!iAmVerified'
-    )
-      v-icon(:left='!$vuetify.breakpoint.xs') mdi-receipt
-      span(v-if='!$vuetify.breakpoint.xs') Create invoice
-
-    v-btn(
       v-if='userIsManager'
       color="primary",
       text
-      :icon='$vuetify.breakpoint.xs'
+      :icon='$vuetify.breakpoint.smAndDown'
       @click='openAddFundsDialog'
       :disabled='!iAmVerified'
       data-cy='add-funds-button'
     )
-      v-icon(:left='!$vuetify.breakpoint.xs') mdi-cash-plus
-      span(v-if='!$vuetify.breakpoint.xs') Add funds
+      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-cash-plus
+      span(v-if='!$vuetify.breakpoint.smAndDown') Add funds
     
     v-btn(
       color="primary",
       text
-      :icon='$vuetify.breakpoint.xs'
+      :icon='$vuetify.breakpoint.smAndDown'
       @click='openTransferToBankDialog'
       :disabled='!iAmVerified || balance.value == 0'
       data-cy='transfer-to-bank-button'
     )
-      v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
-      span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
+      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-bank-transfer-in
+      span(v-if='!$vuetify.breakpoint.smAndDown') Transfer to bank
+
+    v-btn(
+      color="primary",
+      text
+      :icon='$vuetify.breakpoint.smAndDown'
+      @click='openInvoiceDialog'
+      :disabled='!iAmVerified'
+    )
+      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-receipt
+      span(v-if='!$vuetify.breakpoint.smAndDown') Create invoice
   
     v-menu(offset-y)
       template(v-slot:activator='{ on, attrs }')
@@ -46,13 +46,13 @@ div
           v-if='userIsManager'
           color='primary'
           text
-          :icon='$vuetify.breakpoint.xs'
+          :icon='$vuetify.breakpoint.smAndDown'
           data-cy='transfer-to-bank-button'
           v-on='on'
           v-bind='attrs'
         )
-          v-icon(:left='!$vuetify.breakpoint.xs') mdi-database-export-outline
-          span(v-if='!$vuetify.breakpoint.xs') Export data
+          v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-database-export-outline
+          span(v-if='!$vuetify.breakpoint.smAndDown') Export data
       v-list
         v-subheader Export data as:
         v-list-item(
@@ -118,7 +118,6 @@ div
 
 import { Component, Vue } from 'vue-property-decorator'
 import PaymentsList from '@/views/payments/PaymentsList.vue'
-import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import CreateInvoiceDialog from './CreateInvoiceDialog.vue'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
@@ -135,7 +134,6 @@ const PAGE_SIZE = 2
   },
   components: {
     PaymentsList,
-    TransferHistory,
     TransferFundsDialog,
     CreateInvoiceDialog,
   }

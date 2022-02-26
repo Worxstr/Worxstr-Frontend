@@ -23,6 +23,7 @@ v-dialog(
 
         .d-flex.flex-column.flex-sm-row.gap-small(v-if='userIsManager')
           v-select(
+            autofocus
             label='Attach to job'
             outlined
             dense
@@ -48,7 +49,8 @@ v-dialog(
             :rules='rules.recipient'
           )
         
-        invoice-input(v-model='invoice.items' :orderable='true')
+        invoice-input(v-model='invoice.items' :orderable='true' :autofocus='userIsContractor')
+        
         richtext-field(
           placeholder='What\'s this for?'
           v-model='invoice.description'

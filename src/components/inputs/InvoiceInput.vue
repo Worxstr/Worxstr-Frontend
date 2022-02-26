@@ -17,7 +17,7 @@
             v-model='lineitem.description'
             :label='`Item ${i + 1}`'
             placeholder='Item description'
-            autofocus
+            :autofocus='autofocus && i === 0'
             outlined
             dense
             hide-details
@@ -91,6 +91,7 @@ export default class InvoiceInput extends Vue {
   @Prop({ type: Array }) value!: Lineitem[]
   @Prop({ default: false }) editable!: boolean
   @Prop({ default: false }) orderable!: boolean
+  @Prop({ default: false }) autofocus!: boolean
 
   localLineitems: Lineitem[] = []
   drag = false
