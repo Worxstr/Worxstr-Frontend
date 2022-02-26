@@ -253,11 +253,11 @@ $halfnavwidth: $navwidth / 2;
   position: fixed;
   width: 100%;
   height: 100%;
-  background: rgba(255,0,0,.02);
+  background: rgba(255,0,0,.05);
   z-index: 9999;
   font-size: 3em;
   text-align: center;
-  color: rgba(128,128,128,.05);
+  color: rgba(128,128,128,.08);
   font-weight: 800;
   pointer-events: none;
 }
