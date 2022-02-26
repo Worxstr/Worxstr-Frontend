@@ -126,6 +126,7 @@ import { currentUserIs, Managers, UserRole } from '@/types/Users'
 import { loadBalance, loadPayments, exportPayments } from '@/services/payments'
 import { showToast } from '@/services/app'
 import { Payment } from '@/types/Payments'
+import dayjs from 'dayjs'
 
 const PAGE_SIZE = 2
 
@@ -222,11 +223,15 @@ export default class Payments extends Vue {
   }
 
   get pendingPayments() {
-    return this.$store.getters.payments.filter((p: Payment) => !p.date_completed)
+    return this.$store.getters.payments
+      .filter((p: Payment) => !p.date_completed)
+      .sort((a: Payment, b: Payment) => dayjs(b.date_created).diff(dayjs(a.date_created)))
   }
 
   get completedPayments() {
-    return this.$store.getters.payments.filter((p: Payment) => !!p.date_completed)
+    return this.$store.getters.payments
+      .filter((p: Payment) => !!p.date_completed)
+      .sort((a: Payment, b: Payment) => dayjs(b.date_created).diff(dayjs(a.date_created)))
   }
 
   get userIsContractor() {
