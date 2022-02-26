@@ -56,7 +56,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
       span(v-else) {{ (isDebit ? payment.sender : payment.receiver) | userOrOrgName }}
     
-    .my-2
+    .my-2.d-flex.align-center
       v-chip.mr-3(
         v-if='payment.bank_transfer'
         small
@@ -64,8 +64,12 @@ v-container.d-flex.flex-column.pt-6.gap-small
       )
         | {{ payment.bank_transfer.status | capitalize }}
 
-      span.text-body-2(v-if='payment.date_completed')
-        | {{ payment.date_completed | date('MMM D, YYYY') }}, {{ payment.date_completed | time }}
+      .d-flex.flex-column.text-caption
+        span
+          | Created {{ payment.date_created | date('MMM D, YYYY') }}, {{ payment.date_created | time }}
+
+        span(v-if='payment.date_completed')
+          | Completed {{ payment.date_completed | date('MMM D, YYYY') }}, {{ payment.date_completed | time }}
 
 
   masonry(:cols='{default: 2, 959: 1}' :gutter='20')
