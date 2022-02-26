@@ -32,6 +32,7 @@ v-dialog(
             item-value='id'
             hide-details
             :loading='loadingJobs'
+            :rules='rules.job'
           )
 
           v-select(
@@ -44,6 +45,7 @@ v-dialog(
             item-value='id'
             hide-details
             :loading='loadingContractors'
+            :rules='rules.recipient'
           )
         
         invoice-input(v-model='invoice.items' :orderable='true')
@@ -76,6 +78,8 @@ import { createInvoice } from '@/services/payments'
 import { loadJobs } from '@/services/jobs'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
 import { Job } from '@/types/Jobs'
+import { exists } from '@/util/inputValidation'
+import { loadWorkforce } from '@/services/users'
 
 @Component({
   components: {
@@ -99,6 +103,14 @@ export default class CreateInvoiceDialog extends Vue {
       amount: 0,
     }]
   }
+  rules = {
+    job: [
+      exists('Job is required'),
+    ],
+    recipient: [
+      exists('Recipient is required'),
+    ],
+  }
 
   @Watch('opened')
   async onOpenedChange(val: boolean) {
@@ -112,11 +124,22 @@ export default class CreateInvoiceDialog extends Vue {
       }
 
       if (this.userIsManager) {
-        this.loadingJobs = true
-        await loadJobs(this.$store)
-        this.loadingJobs = false
+        this.loadJobs()
+        this.loadContractors()
       }
     }
+  }
+
+  async loadJobs() {
+    this.loadingJobs = true
+    await loadJobs(this.$store)
+    this.loadingJobs = false
+  }
+
+  async loadContractors() {
+    this.loadingContractors = true
+    await loadWorkforce(this.$store)
+    this.loadingContractors = false
   }
 
   // TODO: Figure out how to add rules prop to InvoiceInput
@@ -133,7 +156,7 @@ export default class CreateInvoiceDialog extends Vue {
   }
 
   get contractors() {
-    return this.jobs.flatMap((job: Job) => job.contractors)
+    return this.$store.getters.contractors
   }
 
   get userIsManager() {

@@ -75,42 +75,42 @@ div
     div(v-if="loadingBalance && !balance.value")
       v-skeleton-loader.my-4(type="heading")
 
-    .text-center(v-else)
+    .text-center.mt-3(v-else)
       .text-h6 Available balance
       .text-h2 {{ balance.value | currency }}
 
-    payments-list(
-      v-if='pendingPayments.length'
-      :payments='pendingPayments'
-      :editable='userIsManager'
-      title='Pending payments'
-      :loading='loadingPayments'
-    )
+    .d-flex.flex-column.gap-small(v-if='pendingPayments.length')
+      payments-list(
+        :payments='pendingPayments'
+        :editable='userIsManager'
+        title='Pending payments'
+        :loading='loadingPayments'
+      )
 
-    .d-flex.justify-center
-      v-btn(
-        text
-        outlined
-        color='primary'
-        @click='loadMorePending'
-        :loading='loadingMorePending'
-      ) View more
+      .d-flex.justify-center
+        v-btn(
+          text
+          outlined
+          color='primary'
+          @click='loadMorePending'
+          :loading='loadingMorePending'
+        ) View more
 
-    payments-list(
-      v-if='completedPayments.length'
-      :payments='completedPayments'
-      title='Completed payments'
-      :loading='loadingPayments'
-    )
+    div(v-if='completedPayments.length')
+      payments-list(
+        :payments='completedPayments'
+        title='Completed payments'
+        :loading='loadingPayments'
+      )
 
-    .d-flex.justify-center
-      v-btn(
-        text
-        outlined
-        color='primary'
-        @click='loadMoreCompleted'
-        :loading='loadingMoreCompleted'
-      ) View more
+      .d-flex.justify-center
+        v-btn(
+          text
+          outlined
+          color='primary'
+          @click='loadMoreCompleted'
+          :loading='loadingMoreCompleted'
+        ) View more
 
 </template>
 
