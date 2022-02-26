@@ -52,6 +52,7 @@ export type Payment = {
   amount: string
   fee: string
   total: string
+  date_created: string
   date_completed: string
   receiver_dwolla_url: string
   receiver: User | Organization

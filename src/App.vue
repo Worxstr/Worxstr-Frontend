@@ -37,6 +37,13 @@ v-app
           :class='{center: $vuetify.breakpoint.mdAndUp}'
           :style="`margin-bottom: ${bottomMargin}px`"
         ) You are offline. Some features may not be available until you reconnect.
+
+      //- Test site watermark
+      - var n = 0
+      .test-site-watermark(v-if='showWatermark')
+        while n < 60
+          span.mr-7 FOR TESTING PURPOSES ONLY
+          - n++
       
       //- Main view
       transition(
@@ -66,6 +73,7 @@ import WorxstrFooter from '@/layouts/Footer.vue'
 import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 import { Capacitor } from '@capacitor/core'
 import { Network } from '@capacitor/network'
+import { environment, sandboxMode } from './services/app'
 
 @Component({
   metaInfo: {
@@ -105,6 +113,11 @@ export default class App extends Vue {
 
     Network.addListener('networkStatusChange', status => {
       this.offline = !status.connected
+    })
+
+    this.shouldShowWatermark() // Initialize watermark
+    environment.on('baseUrlChanged', () => {
+      this.shouldShowWatermark()
     })
   }
 
@@ -189,6 +202,14 @@ export default class App extends Vue {
     }
     return this.safeAreaBottom
   }
+
+  showWatermark = false
+  shouldShowWatermark() {
+    const noWatermark = JSON.parse(window.localStorage.getItem('noWatermark') || 'false')
+    const isTestSite = window.location.href.includes('test.worxstr.com')
+    const isSandbox = sandboxMode.getStoredPreference()
+    this.showWatermark = (isTestSite || isSandbox) && !noWatermark
+  }
 }
 </script>
 
@@ -225,5 +246,19 @@ $halfnavwidth: $navwidth / 2;
     left: calc(50% + #{$navwidth});
     transform: translateX(calc(-50% - 10px - #{$halfnavwidth}));
   }
+}
+
+.test-site-watermark {
+  transform: rotate(-6deg) scale(1.4) translateX(-5%);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,0,0,.05);
+  z-index: 9999;
+  font-size: 3em;
+  text-align: center;
+  color: rgba(128,128,128,.08);
+  font-weight: 800;
+  pointer-events: none;
 }
 </style>

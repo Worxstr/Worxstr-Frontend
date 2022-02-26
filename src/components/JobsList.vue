@@ -1,9 +1,8 @@
 <template lang="pug">
 .jobs-list
 
-  div
-    edit-job-dialog(:opened.sync="editJobDialog" :jobId="selectedJobId")
-    close-job-dialog(:opened.sync="closeJobDialog" :jobId="selectedJobId")
+  edit-job-dialog(:opened.sync="editJobDialog" :jobId="selectedJobId")
+  close-job-dialog(v-if='selectedJobId' :opened.sync="closeJobDialog" :jobId="selectedJobId")
 
   v-list(v-if="jobs.length")
     div(

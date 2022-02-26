@@ -34,7 +34,9 @@ export const baseUrl = {
     const baseUrl = (production || runningCypressTest) ? webProdUrl : localUrl
 
     api.defaults.baseURL = baseUrl
-    if (baseUrl != oldBaseUrl) environment.emit('baseUrlChanged', baseUrl)
+    if (baseUrl != oldBaseUrl) {
+      environment.emit('baseUrlChanged', baseUrl)
+    }
     return baseUrl
   },
   

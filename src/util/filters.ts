@@ -83,7 +83,7 @@ Vue.filter('dateOrTime', (value: (string|number|Date), format?: string) => {
 })
 
 export const currency = (value: string | number) => {
-	if (!value) return 'Invalid value'
+	if (!value && value != 0) return 'Invalid value'
 	const parsed = typeof value === 'string' ? parseFloat(value) : value
 	return '$' + (isNaN(parsed) ? '0.00' : parsed.toFixed(2))
 }

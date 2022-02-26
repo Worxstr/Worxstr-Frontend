@@ -8,38 +8,37 @@ div
   portal(to="toolbarActions")
 
     v-btn(
-      v-if='userIsContractor'
-      color="primary",
-      text
-      :icon='$vuetify.breakpoint.xs'
-      @click='openInvoiceDialog'
-      :disabled='!iAmVerified'
-    )
-      v-icon(:left='!$vuetify.breakpoint.xs') mdi-receipt
-      span(v-if='!$vuetify.breakpoint.xs') Create invoice
-
-    v-btn(
       v-if='userIsManager'
       color="primary",
       text
-      :icon='$vuetify.breakpoint.xs'
+      :icon='$vuetify.breakpoint.smAndDown'
       @click='openAddFundsDialog'
       :disabled='!iAmVerified'
       data-cy='add-funds-button'
     )
-      v-icon(:left='!$vuetify.breakpoint.xs') mdi-cash-plus
-      span(v-if='!$vuetify.breakpoint.xs') Add funds
+      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-cash-plus
+      span(v-if='!$vuetify.breakpoint.smAndDown') Add funds
     
     v-btn(
       color="primary",
       text
-      :icon='$vuetify.breakpoint.xs'
+      :icon='$vuetify.breakpoint.smAndDown'
       @click='openTransferToBankDialog'
       :disabled='!iAmVerified || balance.value == 0'
       data-cy='transfer-to-bank-button'
     )
-      v-icon(:left='!$vuetify.breakpoint.xs') mdi-bank-transfer-in
-      span(v-if='!$vuetify.breakpoint.xs') Transfer to bank
+      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-bank-transfer-in
+      span(v-if='!$vuetify.breakpoint.smAndDown') Transfer to bank
+
+    v-btn(
+      color="primary",
+      text
+      :icon='$vuetify.breakpoint.smAndDown'
+      @click='openInvoiceDialog'
+      :disabled='!iAmVerified'
+    )
+      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-receipt
+      span(v-if='!$vuetify.breakpoint.smAndDown') Create invoice
   
     v-menu(offset-y)
       template(v-slot:activator='{ on, attrs }')
@@ -47,13 +46,13 @@ div
           v-if='userIsManager'
           color='primary'
           text
-          :icon='$vuetify.breakpoint.xs'
+          :icon='$vuetify.breakpoint.smAndDown'
           data-cy='transfer-to-bank-button'
           v-on='on'
           v-bind='attrs'
         )
-          v-icon(:left='!$vuetify.breakpoint.xs') mdi-database-export-outline
-          span(v-if='!$vuetify.breakpoint.xs') Export data
+          v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-database-export-outline
+          span(v-if='!$vuetify.breakpoint.smAndDown') Export data
       v-list
         v-subheader Export data as:
         v-list-item(
@@ -76,33 +75,42 @@ div
     div(v-if="loadingBalance && !balance.value")
       v-skeleton-loader.my-4(type="heading")
 
-    .text-center(v-else)
+    .text-center.mt-3(v-else)
       .text-h6 Available balance
       .text-h2 {{ balance.value | currency }}
 
-    payments-list(
-      v-if='pendingPayments.length'
-      :payments='pendingPayments'
-      :editable='userIsManager'
-      title='Pending payments'
-      :loading='loadingPayments'
-    )
+    .d-flex.flex-column.gap-small(v-if='pendingPayments.length')
+      payments-list(
+        :payments='pendingPayments'
+        :editable='userIsManager'
+        title='Pending payments'
+        :loading='loadingPayments'
+      )
 
-    payments-list(
-      v-if='completedPayments.length'
-      :payments='completedPayments'
-      title='Completed payments'
-      :loading='loadingPayments'
-    )
+      .d-flex.justify-center
+        v-btn(
+          text
+          outlined
+          color='primary'
+          @click='loadMorePending'
+          :loading='loadingMorePending'
+        ) View more
 
-    .d-flex.justify-center
-      v-btn(
-        text
-        outlined
-        color='primary'
-        @click='loadMore'
-        :loading='loadingMore'
-      ) View more
+    div(v-if='completedPayments.length')
+      payments-list(
+        :payments='completedPayments'
+        title='Completed payments'
+        :loading='loadingPayments'
+      )
+
+      .d-flex.justify-center
+        v-btn(
+          text
+          outlined
+          color='primary'
+          @click='loadMoreCompleted'
+          :loading='loadingMoreCompleted'
+        ) View more
 
 </template>
 
@@ -110,13 +118,15 @@ div
 
 import { Component, Vue } from 'vue-property-decorator'
 import PaymentsList from '@/views/payments/PaymentsList.vue'
-import TransferHistory from '@/components/TransferHistory.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import CreateInvoiceDialog from './CreateInvoiceDialog.vue'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
 import { loadBalance, loadPayments, exportPayments } from '@/services/payments'
 import { showToast } from '@/services/app'
 import { Payment } from '@/types/Payments'
+import dayjs from 'dayjs'
+
+const PAGE_SIZE = 2
 
 @Component({
   metaInfo: {
@@ -124,15 +134,15 @@ import { Payment } from '@/types/Payments'
   },
   components: {
     PaymentsList,
-    TransferHistory,
     TransferFundsDialog,
     CreateInvoiceDialog,
   }
 })
 export default class Payments extends Vue {
-  loadingPayments = false
-  loadingMore = false
   loadingBalance = false
+  loadingPayments = false
+  loadingMorePending = false
+  loadingMoreCompleted = false
   breaks = [{}]
   transferFundsDialog: string | null = null
   createInvoiceDialog = false
@@ -179,14 +189,26 @@ export default class Payments extends Vue {
   }
 
   async loadPayments() {
-    await loadPayments(this.$store)
+    await loadPayments(this.$store, 0, PAGE_SIZE, { pending: true })
+    await loadPayments(this.$store, 0, PAGE_SIZE, { pending: false })
   }
 
-  async loadMore() {
-    this.loadingMore = true
-    const lastPageLoaded = this.$store.state.payments.lastPageLoaded
-    await loadPayments(this.$store, (lastPageLoaded + 1) ?? 0)
-    this.loadingMore = false
+  async loadMorePending() {
+    this.loadingMorePending = true
+    const lastPageLoaded = this.$store.state.payments.lastPageLoadedPending
+    await loadPayments(this.$store, (lastPageLoaded + 1) ?? 0, PAGE_SIZE, {
+      pending: true,
+    })
+    this.loadingMorePending = false
+  }
+
+  async loadMoreCompleted() {
+    this.loadingMoreCompleted = true
+    const lastPageLoaded = this.$store.state.payments.lastPageLoadedCompleted
+    await loadPayments(this.$store, (lastPageLoaded + 1) ?? 0, PAGE_SIZE, {
+      pending: false,
+    })
+    this.loadingMoreCompleted = false
   }
 
   get me() {
@@ -198,11 +220,15 @@ export default class Payments extends Vue {
   }
 
   get pendingPayments() {
-    return this.$store.getters.payments.filter((p: Payment) => !p.date_completed)
+    return this.$store.getters.payments
+      .filter((p: Payment) => !p.date_completed)
+      .sort((a: Payment, b: Payment) => dayjs(a.date_created).diff(dayjs(b.date_created)))
   }
 
   get completedPayments() {
-    return this.$store.getters.payments.filter((p: Payment) => !!p.date_completed)
+    return this.$store.getters.payments
+      .filter((p: Payment) => !!p.date_completed)
+      .sort((a: Payment, b: Payment) => dayjs(a.date_created).diff(dayjs(b.date_created)))
   }
 
   get userIsContractor() {

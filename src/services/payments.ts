@@ -5,10 +5,18 @@ import { ClockEvent } from '@/types/Jobs'
 import { baseUrl, showToast } from '@/services/app'
 import { download } from '@/util/helpers'
 
-export async function loadPayments({ commit }: any, offset = 0, limit = 2) {
+export async function loadPayments({ commit }: any, offset = 0, limit = 10, filter?: {
+  pending?: boolean
+}) {
 
-  console.log(offset)
-  commit('SET_LAST_PAGE_LOADED', offset)
+  if (filter?.pending !== undefined) {
+    if (filter.pending) {
+      commit('SET_LAST_PAGE_LOADED_PENDING', offset)
+    }
+    else {
+      commit('SET_LAST_PAGE_LOADED_COMPLETED', offset)
+    }
+  }
 
   const { data } = await api({
     method: 'GET',
@@ -16,6 +24,7 @@ export async function loadPayments({ commit }: any, offset = 0, limit = 2) {
     params: {
       offset,
       limit,
+      ...filter,
     }
   })
   data.payments.forEach((payment: Payment) => {
