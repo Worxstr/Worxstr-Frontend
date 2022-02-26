@@ -6,7 +6,7 @@ v-list
   v-list-item(two-line)
     v-list-item-content
       v-list-item-subtitle.mb-2 Name
-      v-list-item-title {{ me | fullName }}
+      v-list-item-title {{ me.name }}
     v-list-item-action
       v-btn(text, color="primary", @click="signOut") Sign out
 

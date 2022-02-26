@@ -13,7 +13,7 @@ v-dialog(
       v-model='isValid'
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ payment.receiver | fullName }}'s payment
+        v-toolbar-title.text-h6 {{ payment.receiver.name }}'s payment
         v-spacer
         .text-h6.font-weight-black.green--text
           | {{ total | currency }}

@@ -18,7 +18,7 @@ v-dialog(
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title.text-h6
           | {{ editMode ? 'Edit' : 'Add' }}&nbsp;
-          span(v-if='editedUser.first_name && editedUser.last_name') {{ editedUser | fullName }}
+          span(v-if='editedUser.first_name && editedUser.last_name') {{ editedUser.name }}
           span(v-else) {{ userIsManager ? 'manager' : userIsContractor ? 'contractor' : 'user' }}
 
       v-card-text

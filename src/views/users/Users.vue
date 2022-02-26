@@ -20,13 +20,13 @@ v-container
       @click:row="openUser"
     )
       template(v-slot:item.name="{ item }")
-        span {{ item | fullName }}
+        span {{ item.name }}
 
       template(v-slot:item.phone="{ item }")
         span {{ item.phone | phone }}
 
       template(v-slot:item.manager_id="{ item }")
-        span {{ user(item.id) | fullName }}
+        span {{ user(item.id).name }}
 
       template(v-slot:item.roles="{ item }")
         roles(:roles='item.roles' small)

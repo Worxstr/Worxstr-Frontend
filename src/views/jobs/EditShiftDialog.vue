@@ -48,7 +48,7 @@ v-dialog(
         //- Contractor selector
 
         //- Single selection for editing
-        v-select(
+        v-autocomplete(
           v-if='shiftId'
           v-model='editedShift.contractor_id'
           :items='contractors'
@@ -56,12 +56,11 @@ v-dialog(
           item-value='id'
           outlined
           dense
-          required
           label='Contractor'
           data-cy='shift-contractor'
         )
         //- Multi selection for creating
-        v-select(
+        v-autocomplete(
           v-else
           v-model='editedShift.contractor_ids'
           :items='contractors'
@@ -69,7 +68,6 @@ v-dialog(
           item-value='id'
           outlined
           dense
-          required
           multiple
           label='Contractors'
           data-cy='shift-contractors'
@@ -82,7 +80,7 @@ v-dialog(
               v-list-item-content
                 v-list-item-title
                   v-row(no-gutters align='center')
-                    span(v-if='item.id > 0') {{ item | fullName }}
+                    span(v-if='item.id > 0') {{ item.name }}
                     span(v-else) Unassigned {{ -item.id }}
                     v-spacer
                     v-chip(small v-if='!item.direct && item.id > 0') {{ !item.direct && 'Indirect' }}
@@ -285,12 +283,13 @@ export default class EditShiftDialog extends Vue {
 
   get contractors() {
     const jobId = this.jobId ?? this.selectedJob
-    return this.$store.getters.job(jobId)?.contractors ?? []
 
-    // TODO: Sort
-    // return this.contractors.sort((a: any, b: any) => {
-    //   return (a.direct === b.direct) ? 0 : (a.direct ? -1 : 1)
-    // })
+    const contractors = this.$store.getters.job(jobId)?.contractors ?? []
+
+    return contractors.sort((a: User, b: User) => {
+      if (!a.name || !b.name) return 0
+      return a.name > b.name ? 1 : -1
+    })
   }
 
   contractorName(contractorId: number) {

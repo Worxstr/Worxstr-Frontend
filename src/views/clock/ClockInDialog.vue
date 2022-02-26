@@ -19,7 +19,7 @@ v-dialog(
 
   v-card.d-flex.flex-column
 
-    .flex-grow-1.d-flex.align-center.justify-center(v-if='!job || !job.id || loadingJob')
+    .flex-grow-1.d-flex.align-center.justify-center.py-10(v-if='!job || !job.id || loadingJob')
       v-progress-circular(indeterminate)
 
     v-form.d-flex.flex-column.fill-height.flex-grow-1(

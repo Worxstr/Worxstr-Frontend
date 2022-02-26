@@ -131,8 +131,11 @@
               |     item.time_clocks[item.time_clocks.length - 1].time
               |   )
               | }}
-            span.flex-grow-0.px-2.font-weight-bold(:class="{'green--text': isDebit(item)}")
-              | {{ isDebit(item) ? '+' : '-' }}{{ item.total | currency }}
+            .d-flex.flex-column.align-end.px-2
+              span.flex-grow-0.font-weight-bold(:class="{'green--text': isDebit(item)}")
+                | {{ isDebit(item) ? '+' : '-' }}{{ item.amount | currency }}
+
+              span.text-caption(v-if='userIsManager && parseFloat(item.fee)') {{ item.fee | currency }} fee
         
           v-list-item-action.mx-0
             v-btn(
@@ -140,7 +143,6 @@
               :to="{name: 'payment', params: {paymentId: item.id}}"
             )
               v-icon mdi-chevron-right
-
 </template>
 
 <script lang="ts">
@@ -173,6 +175,7 @@ export default class PaymentsList extends Vue {
   approveDialog = false
   denyDialog = false
   paymentDialog = false
+  loadingMore = false
 
   @Prop({ required: true }) payments!: Payment[]
   @Prop({ default: false }) editable!: boolean

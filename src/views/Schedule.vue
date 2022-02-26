@@ -132,7 +132,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
                     )
                   
                   v-list-item-content
-                    v-list-item-title {{ user | fullName }}
+                    v-list-item-title {{ user.name }}
                   
           v-menu(:close-on-content-click='false' v-if='userIsManager')
             template(v-slot:activator='{ on, attrs }')
@@ -182,7 +182,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
               v-list-item-content
                 v-list-item-title
                   router-link.alt-style(:to="{ name: 'user', params: { userId: user.id } }")
-                    | {{ user | fullName }}
+                    | {{ user.name }}
         
           v-subheader Jobs
           v-list-item(v-for='(job, index) in jobs' :key='job.id')

@@ -10,7 +10,7 @@ v-dialog(
 )
   v-card.d-flex.flex-column
     v-card-title.headline
-      span Delete {{ user | fullName }}?
+      span Delete {{ user.name }}?
 
     v-card-text This user will be permanently deactivated.
 

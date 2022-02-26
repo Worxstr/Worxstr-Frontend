@@ -45,7 +45,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
       span(v-if='!$vuetify.breakpoint.xs') Deny
   
   div(v-if='payment')
-    h3.text-h3(:class="{isDebit: 'green--text'}")
+    h3.text-h3(:class="{'green--text': isDebit}")
       | {{ isDebit ? '+' : '-' }}{{ payment.amount | currency }}
       
     h6.text-h6
@@ -97,14 +97,14 @@ v-container.d-flex.flex-column.pt-6.gap-small
           
           v-divider
 
-          v-list-item
+          v-list-item(v-if='userIsManager')
             v-list-item-content
               v-list-item-title Subtotal
             
             v-list-item-action
               .text-subtitle-1 {{ payment.amount | currency }}
 
-          v-list-item
+          v-list-item(v-if='userIsManager')
             v-list-item-content
               v-list-item-title Fee payment
             
@@ -116,7 +116,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
               v-list-item-title.font-weight-bold Total
             
             v-list-item-action
-              .text-h6.font-weight-black.green--text {{ payment.total | currency }}
+              .text-h6.font-weight-black.green--text {{ (userIsManager ? payment.total : payment.amount) | currency }}
 
     .mb-4.d-flex.flex-column.gap-small(v-if='shift && shift.id')
       h5.text-h5 Shift details
@@ -271,7 +271,6 @@ export default class Payment extends Vue {
   get receiverIsUser() {
     return isUser(this.payment.receiver)
   }
-
 
   goBack() {
     this.$router.push({ name: 'payments' })

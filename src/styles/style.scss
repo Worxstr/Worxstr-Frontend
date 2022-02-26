@@ -154,8 +154,13 @@ $flex: (1,
     }
 }
 
-.v-select.fit {
-    width: min-content;
+.v-select, .v-text-field {
+    &.fit {
+        width: min-content;
+    }
+    input {
+        width: min-content;
+    }
 }
 
 .v-select.fit .v-select__selection--comma {

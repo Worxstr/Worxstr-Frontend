@@ -30,7 +30,7 @@
             .text-caption(:class='`${textColor(markerColor)}--text`')
               .font-weight-bold
                 span(v-if='isDeviceLocation') Your location
-                span(v-else-if='user') {{ user | fullName }}
+                span(v-else-if='user') {{ user.name }}
 
               div {{ lastUpdated | timeAgo }}
               div.text-xs Accuracy: {{ markerAccuracy | numberFormat }}m

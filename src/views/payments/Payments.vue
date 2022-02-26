@@ -71,27 +71,38 @@ div
             v-list-item-subtitle {{format.description}}
 
 
-  v-container.d-flex.flex-column.justify-center
+  v-container.d-flex.flex-column.justify-center.gap-small
     //- Balance display
     div(v-if="loadingBalance && !balance.value")
       v-skeleton-loader.my-4(type="heading")
 
-    .text-center.my-5(v-else)
+    .text-center(v-else)
       .text-h6 Available balance
       .text-h2 {{ balance.value | currency }}
 
-    payments-list.mb-5(
+    payments-list(
+      v-if='pendingPayments.length'
       :payments='pendingPayments'
       :editable='userIsManager'
       title='Pending payments'
       :loading='loadingPayments'
     )
 
-    payments-list.mb-5(
+    payments-list(
+      v-if='completedPayments.length'
       :payments='completedPayments'
       title='Completed payments'
       :loading='loadingPayments'
     )
+
+    .d-flex.justify-center
+      v-btn(
+        text
+        outlined
+        color='primary'
+        @click='loadMore'
+        :loading='loadingMore'
+      ) View more
 
 </template>
 
@@ -120,10 +131,12 @@ import { Payment } from '@/types/Payments'
 })
 export default class Payments extends Vue {
   loadingPayments = false
+  loadingMore = false
   loadingBalance = false
   breaks = [{}]
   transferFundsDialog: string | null = null
   createInvoiceDialog = false
+
   exportFormats: any = [
     {
       name: 'csv',
@@ -156,13 +169,24 @@ export default class Payments extends Vue {
     this.loadingBalance = true
 
     try {
-      await loadPayments(this.$store)
+      await this.loadPayments()
       await loadBalance(this.$store)
     }
     finally {
       this.loadingPayments = false
       this.loadingBalance = false
     }
+  }
+
+  async loadPayments() {
+    await loadPayments(this.$store)
+  }
+
+  async loadMore() {
+    this.loadingMore = true
+    const lastPageLoaded = this.$store.state.payments.lastPageLoaded
+    await loadPayments(this.$store, (lastPageLoaded + 1) ?? 0)
+    this.loadingMore = false
   }
 
   get me() {

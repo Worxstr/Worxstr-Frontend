@@ -21,7 +21,7 @@
 				span(v-if='!$vuetify.breakpoint.xs') Edit
 
 			v-btn(
-				v-if='userIsOrgManager && user.id != me.id'
+				v-if='currentUserIsOrgManager && user.id != me.id'
 				text
 				color='error'
 				@click='deleteUserDialog = true'
@@ -33,7 +33,7 @@
 		v-container.d-flex.flex-column.justify-center
 			v-card.soft-shadow(outlined)
 				.py-5.px-4
-					h4.text-h4 {{ user | fullName }}
+					h4.text-h4 {{ user.name }}
 					h6.text-h6
 						a(:href='`mailto:${user.email}`' target="_blank") {{ user.email }}
 					h6.text-h6
@@ -42,10 +42,12 @@
 					roles.mt-3(:roles='user.roles')
 
 				v-list.pb-0(color='transparent')
-					v-list-item(v-if='user.manager_id')
+					v-list-item(v-if='manager')
 						v-list-item-content
 							v-list-item-subtitle Manager
-							v-list-item-title {{ user.manager_id }}
+							v-list-item-title
+								router-link.alt-style(:to="{ name: 'user', params: { userId: manager.id }}")
+									| {{ manager.name }}
 
 					v-list-item(v-if='user.manager_info')
 						v-list-item-content
@@ -121,16 +123,19 @@ export default class User extends Vue {
     return this.$store.getters.me
   }
 
-  get userIsManager() {
-    return userIs(this.user, ...Managers)
-  }
+	get manager() {
+		if (this.user.manager_id) {
+			return this.$store.getters.user(this.user.manager_id)
+		}
+		return null
+	}
 
-	get userIsOrgManager() {
+	get currentUserIsOrgManager() {
 		return currentUserIs(UserRole.OrganizationManager)
 	}
 
 	get userIsContractor() {
-		return currentUserIs(UserRole.Contractor)
+		return userIs(this.user, UserRole.Contractor)
 	}
 }
 </script>

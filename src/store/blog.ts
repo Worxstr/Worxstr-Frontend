@@ -27,7 +27,7 @@ export const initialState = (): BlogState => ({
         name: 'Alex Wohlbruck',
         image: require('@/assets/images/team/alex.jpg'),
       },
-      content: '### 0.4.0\n- Shift lists now support multiselect for deleting batch shifts\n- Contractors can now create invoice payments to be approved by their managers.\n- Payments now have detailed standalone page where users can see all information related to a payment and its invoice item list.\n- Payments view now loads much faster.\n<br>'
+      content: '### 0.4.0\n- Shift lists now support multiselect for deleting batch shifts\n- Contractors can now create invoice payments to be approved by their managers.\n- Payments now have detailed standalone page where users can see all information related to a payment and its invoice item list.\n- Payments view now loads much faster.\n- Payment data can be exported as a file in CSV or JSON format.\n<br>'
     },
     {
       id: 'release-0.3',

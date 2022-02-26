@@ -33,6 +33,7 @@ function addUser(state: UsersState, user: User) {
   Vue.set(state.byId, user.id, {
     ...state.byId[user.id],
     ...user,
+    name: `${user?.first_name} ${user?.last_name}`,
   })
   if (!state.all.includes(user.id)) state.all.push(user.id)
 }

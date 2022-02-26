@@ -138,7 +138,7 @@ div(v-else)
               router-link.alt-style(
                 :to="{name: 'user', params: {userId: job.organization_manager.id}}"
               )
-                | {{ job.organization_manager | fullName }}
+                | {{ job.organization_manager.name }}
 
           .flex-grow-1(v-if='job.contractor_manager')
             p.text-subtitle-2.mb-1 Contractor manager
@@ -146,7 +146,7 @@ div(v-else)
               router-link.alt-style(
                 :to="{name: 'user', params: {userId: job.contractor_manager.id}}"
               )
-                | {{ job.contractor_manager | fullName }}
+                | {{ job.contractor_manager.name }}
 
           .flex-grow-1(v-if='job.consultant_name && job.consultant_email && job.consultant_phone')
             p.text-subtitle-2.mb-1 Consultant
