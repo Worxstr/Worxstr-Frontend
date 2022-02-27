@@ -97,7 +97,6 @@ v-dialog(
             data-cy='payment-time-out'
           )
 
-
       div
         v-divider
         v-subheader Invoice
@@ -349,6 +348,7 @@ export default class EditPaymentDialog extends Vue {
 
       if (this.paymentId) {
         // Editing a payment
+        this.editedInvoice = deepCopy(this.payment.invoice)
         this.editedInvoice.recipient_id = this.payment?.receiver?.id
         this.editedInvoice.job_id = this.payment?.invoice?.job_id
       }
@@ -423,7 +423,7 @@ export default class EditPaymentDialog extends Vue {
       if (this.paymentId) {
         // Editing a payment
 
-        if (this.timeSheet) {
+        if (this.hasAssociatedTimecard) {
           // Payment has a time sheet, create new clock events
           const newTimeclockEvents: ClockEvent[] = []
           newTimeclockEvents.push(this.timeSheet.timeIn)
