@@ -4,7 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { User } from '@/types/Users'
 import { Conversation } from '@/types/Messages'
-import { isUser } from '@/types/Payments'
+import { isUser, isDebit, Payment } from '@/types/Payments'
 
 dayjs.extend(relativeTime)
 
@@ -112,15 +112,24 @@ export const fullName = (user: User) => {
 }
 Vue.filter('fullName', fullName)
 
-export const userOrOrgName = (account: any) => {
+export const paymentRecipientName = (payment: Payment) => {
+	if (!payment) return 'Invalid payment'
+
+	if (payment.bank_transfer) {
+		return payment.bank_transfer.bank_name
+	}
+	
+	const account = isDebit(payment) ? payment.sender : payment.receiver
+
 	if (!account) return 'Invalid account'
+
 	if (isUser(account)) {
 		return `${account.first_name} ${account.last_name}`
 	} else {
 		return account.name
 	}
 }
-Vue.filter('userOrOrgName', userOrOrgName)
+Vue.filter('paymentRecipientName', paymentRecipientName)
 
 // Create a string that lists users names from an array of users, filtering the authenticated user
 // [{first: 'Bob', last: 'Vance'}, {first: 'Ada', last: 'Lovelace'}]								-> 'Ada Lovelace'

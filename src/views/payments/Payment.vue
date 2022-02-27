@@ -53,9 +53,9 @@ v-container.d-flex.flex-column.pt-6.gap-small
       | {{ isDebit ? 'From' : 'To' }} &nbsp;
 
       router-link.alt-style(v-if='receiverIsUser' :to="{name: 'user', params: {userId: payment.receiver.id}}")
-        | {{ (isDebit ? payment.sender : payment.receiver) | userOrOrgName }}
+        | {{ payment | paymentRecipientName }}
 
-      span(v-else) {{ (isDebit ? payment.sender : payment.receiver) | userOrOrgName }}
+      span(v-else) {{ payment | paymentRecipientName }}
     
     .my-2.d-flex.align-center
       v-chip.mr-3(
@@ -260,7 +260,7 @@ export default class Payment extends Vue {
   get workTime() {
     if (!this.shift) return null
     return workTime(this.history)
-  }
+}
 
   get clockedTime() {
     if (!this.shift) return null

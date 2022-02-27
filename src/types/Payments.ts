@@ -114,6 +114,11 @@ export function isUser(account: User | Organization): account is User {
 
 // Determine if payment is inbound (debit) or outbound (credit), e.g. "From" or "To"
 export function isDebit(payment: Payment) {
+
+  if (payment.bank_transfer) {
+    return payment.bank_transfer.transaction_type === 'debit'
+  }
+
   if (isUser(payment.receiver)) {
     // Receiver is a user
     return payment.receiver.id === usersStore.getters.me(usersStore.state)?.id

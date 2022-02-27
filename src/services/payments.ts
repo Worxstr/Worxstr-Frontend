@@ -219,6 +219,7 @@ export async function addToBalance({ commit }: any, transfer: { amount: number; 
     url: 'payments/balance/add',
     data: transfer,
   })
+  // TODO: Change this to add payment to payments list
   commit('ADD_TRANSFER', transfer)
   showToast({ commit }, { text: 'Hang tight, your transfer is being processed.' })
   return data
