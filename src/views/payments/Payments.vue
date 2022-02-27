@@ -126,7 +126,7 @@ import { showToast } from '@/services/app'
 import { Payment } from '@/types/Payments'
 import dayjs from 'dayjs'
 
-const PAGE_SIZE = 2
+const PAGE_SIZE = 10
 
 @Component({
   metaInfo: {
