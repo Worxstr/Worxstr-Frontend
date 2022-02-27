@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import { FundingSource, Payment } from '@/types/Payments'
 import shiftsStore from './shifts'
+import jobsStore from './jobs'
 
 export interface PaymentsState {
   all: number[]
@@ -73,6 +74,12 @@ const mutations = {
       shiftsStore.mutations.ADD_SHIFT(shiftsStore.state, payment.invoice.timecard.shift)
       payment.invoice.timecard.shift_id = payment.invoice.timecard.shift.id
       delete payment.invoice.timecard.shift
+    }
+
+    if (payment?.invoice?.job) {
+      jobsStore.mutations.ADD_JOB(jobsStore.state, payment.invoice.job)
+      payment.invoice.job_id = payment.invoice.job.id
+      delete payment.invoice.job
     }
     
     Vue.set(state.byId, payment.id, payment)

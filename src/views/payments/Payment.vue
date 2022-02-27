@@ -234,8 +234,8 @@ export default class Payment extends Vue {
   }
 
   get job() {
-    if (!this.shift) return null
-    return this.$store.getters.job(this.shift.job_id)
+    const jobId = this.shift?.job_id || this.payment?.invoice?.job_id
+    return this.$store.getters.job(jobId)
   }
 
   get balance() {

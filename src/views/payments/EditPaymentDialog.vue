@@ -23,38 +23,43 @@ v-dialog(
 
       v-divider
 
-      v-card-text.d-flex.flex-column.gap-small
-        .d-flex.flex-column.flex-sm-row.gap-small(v-if='userIsManager')
-          v-select(
-            :autofocus='!paymentId'
-            label='Attach to job'
-            outlined
-            dense
-            v-model='editedInvoice.job_id'
-            :items='jobs'
-            item-text='name'
-            item-value='id'
-            hide-details
-            :loading='loadingJobs'
-            :readonly='!!paymentId'
-          )
-          v-select(
-            label='Recipient'
-            outlined
-            dense
-            v-model='editedInvoice.recipient_id'
-            :items='contractors'
-            item-text='name'
-            item-value='id'
-            hide-details
-            :loading='loadingContractors'
-            :rules='rules.recipient'
-            :readonly='!!paymentId'
-          )
+      div(v-if='userIsManager')
+        v-subheader Job & recipient
+        v-card-text.pt-0
+          .d-flex.flex-column.flex-sm-row.gap-small
+            v-select(
+              :autofocus='!paymentId'
+              label='Attach to job'
+              outlined
+              dense
+              v-model='editedInvoice.job_id'
+              :items='jobs'
+              item-text='name'
+              item-value='id'
+              hide-details
+              :loading='loadingJobs'
+              :readonly='!!paymentId'
+            )
+            v-select(
+              label='Recipient'
+              outlined
+              dense
+              v-model='editedInvoice.recipient_id'
+              :items='contractors'
+              item-text='name'
+              item-value='id'
+              hide-details
+              :loading='loadingContractors'
+              :rules='rules.recipient'
+              :readonly='!!paymentId'
+            )
 
       div(v-if='hasAssociatedTimecard')
         v-divider
-        v-card-text.d-flex.flex-column
+
+        v-subheader Time sheet
+
+        v-card-text.pt-0.d-flex.flex-column
 
           datetime-input(
             :autofocus='!!paymentId'
@@ -92,19 +97,21 @@ v-dialog(
             data-cy='payment-time-out'
           )
 
-      v-divider
 
-      v-card-text
-        //- // TODO: Make reorderable work
-        invoice-input(
-          v-model='editedInvoice.items'
-          :fixedLineitems='hasAssociatedTimecard ? [timeSheetPayment] : []'
-          :orderable='false'
-        )
-        richtext-field(
-          placeholder='Description'
-          v-model='editedInvoice.description'
-        )
+      div
+        v-divider
+        v-subheader Invoice
+        v-card-text.pt-0
+          //- // TODO: Make reorderable work
+          invoice-input(
+            v-model='editedInvoice.items'
+            :fixedLineitems='hasAssociatedTimecard ? [timeSheetPayment] : []'
+            :orderable='false'
+          )
+          richtext-field(
+            placeholder='Description'
+            v-model='editedInvoice.description'
+          )
 
       v-spacer
       
