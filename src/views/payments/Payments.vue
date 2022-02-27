@@ -160,18 +160,18 @@ export default class Payments extends Vue {
       description: 'Javascript object notation',
       disabled: false
     },
-    {
-      name: 'xlsx',
-      icon: 'mdi-microsoft-office',
-      description: 'Excel spreadsheet',
-      disabled: true
-    },
-    {
-      name: 'pdf',
-      icon: 'mdi-file-pdf-box',
-      description: 'Adobe PDF',
-      disabled: true
-    },
+    // {
+    //   name: 'xlsx',
+    //   icon: 'mdi-microsoft-office',
+    //   description: 'Excel spreadsheet',
+    //   disabled: true
+    // },
+    // {
+    //   name: 'pdf',
+    //   icon: 'mdi-file-pdf-box',
+    //   description: 'Adobe PDF',
+    //   disabled: true
+    // },
   ]
 
   async mounted() {

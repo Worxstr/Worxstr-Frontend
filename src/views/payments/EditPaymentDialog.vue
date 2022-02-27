@@ -13,7 +13,7 @@ v-dialog(
     )
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title.text-h6
-          | {{ paymentId ? 'Editing' : 'Creating' }} &nbsp;
+          | {{ paymentId ? 'Editing' : (userIsContractor ? 'Requesting' : 'Creating') }} &nbsp;
           span(v-if='payment && payment.receiver.name') {{ payment.receiver.name }}'s payment
           span(v-else) payment
 
@@ -21,9 +21,9 @@ v-dialog(
         .text-h6.font-weight-black.green--text
           | {{ total | currency }}
 
-      v-divider
 
       div(v-if='userIsManager')
+        v-divider
         v-subheader Job & recipient
         v-card-text.pt-0
           .d-flex.flex-column.flex-sm-row.gap-small

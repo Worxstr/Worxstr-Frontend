@@ -179,7 +179,7 @@ export default class EditUserDialog extends Vue {
     else {
       Vue.set(this.editedUser, 'roles', [
         {
-          id: UserRole.ContractorManager,
+          id: UserRole.Supervisor,
           name: 'contractor_manager',
         },
       ])

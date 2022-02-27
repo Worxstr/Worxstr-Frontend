@@ -144,7 +144,7 @@ div(v-else)
         v-card-text.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between
         
           .flex-grow-1(v-if='job.organization_manager')
-            p.text-subtitle-2.mb-1 Organization manager
+            p.text-subtitle-2.mb-1 Admin
             p
               router-link.alt-style(
                 :to="{name: 'user', params: {userId: job.organization_manager.id}}"
@@ -152,7 +152,7 @@ div(v-else)
                 | {{ job.organization_manager | fullName }}
 
           .flex-grow-1(v-if='job.contractor_manager')
-            p.text-subtitle-2.mb-1 Contractor manager
+            p.text-subtitle-2.mb-1 Supervisor
             p
               router-link.alt-style(
                 :to="{name: 'user', params: {userId: job.contractor_manager.id}}"
@@ -238,7 +238,7 @@ export default class JobView extends Vue {
   }
 
   get userIsOrgManager() {
-    return currentUserIs(UserRole.OrganizationManager)
+    return currentUserIs(UserRole.Admin)
   }
 
   openQrCodeDialog() {

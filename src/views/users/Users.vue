@@ -96,7 +96,7 @@ export default class Users extends Vue {
   }
 
   get userIsOrgManager() {
-    return currentUserIs(UserRole.OrganizationManager)
+    return currentUserIs(UserRole.Admin)
   }
 
   user(userId: number) {

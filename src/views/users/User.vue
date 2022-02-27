@@ -131,7 +131,7 @@ export default class User extends Vue {
 	}
 
 	get currentUserIsOrgManager() {
-		return currentUserIs(UserRole.OrganizationManager)
+		return currentUserIs(UserRole.Admin)
 	}
 
 	get userIsContractor() {
