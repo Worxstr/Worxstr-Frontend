@@ -6,7 +6,7 @@
 
   v-list(v-if="jobs.length")
     div(
-      v-for="(job, i) in jobs"
+      v-for="(job, i) in jobsSorted"
       :key="job.id"
     )
       v-list-item
@@ -65,6 +65,14 @@ export default class JobsList extends Vue {
   editJobDialog = false
   closeJobDialog = false
   selectedJobId: number | null = null
+
+  get jobsSorted() {
+    return this.jobs.sort((a, b) => {
+      if (a.name < b.name) return -1
+      if (a.name > b.name) return 1
+      return 0
+    })
+  }
 
   openEditJobDialog(jobId: number) {
     this.selectedJobId = jobId
