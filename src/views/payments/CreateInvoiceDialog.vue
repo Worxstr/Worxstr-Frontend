@@ -33,7 +33,6 @@ v-dialog(
             item-value='id'
             hide-details
             :loading='loadingJobs'
-            :rules='rules.job'
           )
 
           v-select(
@@ -106,9 +105,6 @@ export default class CreateInvoiceDialog extends Vue {
     }]
   }
   rules = {
-    job: [
-      exists('Job is required'),
-    ],
     recipient: [
       exists('Recipient is required'),
     ],

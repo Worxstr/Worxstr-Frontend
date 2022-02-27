@@ -2,7 +2,7 @@
 div
 
   transfer-funds-dialog(:opened.sync='transferFundsDialog' :action='transferFundsDialog')
-  create-invoice-dialog(:opened.sync='createInvoiceDialog')
+  edit-payment-dialog(:opened.sync='createInvoiceDialog')
 
   //- Toolbar buttons
   portal(to="toolbarActions")
@@ -96,7 +96,7 @@ div
           :loading='loadingMorePending'
         ) View more
 
-    div(v-if='completedPayments.length')
+    .d-flex.flex-column.gap-small(v-if='completedPayments.length')
       payments-list(
         :payments='completedPayments'
         title='Completed payments'
@@ -119,7 +119,7 @@ div
 import { Component, Vue } from 'vue-property-decorator'
 import PaymentsList from '@/views/payments/PaymentsList.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
-import CreateInvoiceDialog from './CreateInvoiceDialog.vue'
+import EditPaymentDialog from '@/views/payments/EditPaymentDialog.vue'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
 import { loadBalance, loadPayments, exportPayments } from '@/services/payments'
 import { showToast } from '@/services/app'
@@ -135,7 +135,7 @@ const PAGE_SIZE = 2
   components: {
     PaymentsList,
     TransferFundsDialog,
-    CreateInvoiceDialog,
+    EditPaymentDialog,
   }
 })
 export default class Payments extends Vue {

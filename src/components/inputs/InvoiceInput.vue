@@ -17,7 +17,7 @@
             v-model='lineitem.description'
             :label='`Item ${i + 1}`'
             placeholder='Item description'
-            :autofocus='autofocus && i === 0'
+            :autofocus='autofocus'
             outlined
             dense
             hide-details
