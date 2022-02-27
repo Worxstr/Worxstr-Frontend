@@ -84,9 +84,9 @@ Cypress.Commands.add('createJob', (job) => {
   cy.wait(1000)
   cy.contains('Address').parent().type('{downarrow}{enter}')
 
-  // cy.contains('Organizational manager').parent().type('{downarrow}{enter}')
-  cy.selectField('job-org-manager', 0, false, true)
-  cy.selectField('job-contractor-manager', 0, false, true)
+  // cy.contains('Admin').parent().type('{downarrow}{enter}')
+  cy.selectField('job-admin', 0, false, true)
+  cy.selectField('job-supervisor', 0, false, true)
 
   cy.textField('job-consultant-name', job.consultantName, true)
   cy.textField('job-consultant-phone', job.consultantPhone, true)

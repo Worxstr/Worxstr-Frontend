@@ -84,7 +84,7 @@ export default class JobsView extends Vue {
   }
 
   get userIsOrgManager() {
-    return currentUserIs(UserRole.OrganizationManager)
+    return currentUserIs(UserRole.Admin)
   }
 }
 </script>

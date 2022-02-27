@@ -193,7 +193,7 @@ export default class Payments extends Vue {
 	}
 
   get showBeneficialOwnersForm() {
-    return currentUserIs(UserRole.OrganizationManager) &&
+    return currentUserIs(UserRole.Admin) &&
       !this.loadingFundingSources && 
       !this.$store.state.payments.beneficialOwnersCertified
   }

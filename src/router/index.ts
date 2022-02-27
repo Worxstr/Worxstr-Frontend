@@ -354,7 +354,7 @@ const routes = [
         component: SettingsOrganization,
         meta: {
           icon: 'mdi-account-group',
-          restrict: [UserRole.OrganizationManager],
+          restrict: [UserRole.Admin],
         }
       },
       {

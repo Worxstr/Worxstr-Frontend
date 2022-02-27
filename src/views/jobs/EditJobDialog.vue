@@ -57,8 +57,8 @@ v-dialog(
             outlined
             dense
             required
-            label="Organizational manager"
-            data-cy='job-org-manager'
+            label="Admin"
+            data-cy='job-admin'
           )
           v-select(
             v-if="managers.contractor && managers.contractor.length"
@@ -69,8 +69,8 @@ v-dialog(
             outlined
             dense
             required
-            label="Contractor manager"
-            data-cy='job-contractor-manager'
+            label="Supervisor"
+            data-cy='job-supervisor'
           )
         v-subheader Client info (optional)
         .d-flex.flex-column.flex-sm-row
