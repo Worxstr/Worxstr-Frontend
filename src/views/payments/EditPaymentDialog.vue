@@ -8,23 +8,61 @@ v-dialog(
   v-card.d-flex.flex-column
     v-form.flex-grow-1.d-flex.flex-column(
       ref='form'
-      v-if='payment'
       @submit.prevent='updatePayment'
       v-model='isValid'
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ payment.receiver.name }}'s payment
+        v-toolbar-title.text-h6
+          | {{ paymentId ? 'Editing' : 'Creating' }} &nbsp;
+          span(v-if='payment && payment.receiver.name') {{ payment.receiver.name }}'s payment
+          span(v-else) payment
+
         v-spacer
         .text-h6.font-weight-black.green--text
           | {{ total | currency }}
 
       v-divider
 
+      div(v-if='userIsManager')
+        v-subheader Job & recipient
+        v-card-text.pt-0
+          .d-flex.flex-column.flex-sm-row.gap-small
+            v-select(
+              :autofocus='!paymentId'
+              label='Attach to job'
+              outlined
+              dense
+              v-model='editedInvoice.job_id'
+              :items='jobs'
+              item-text='name'
+              item-value='id'
+              hide-details
+              :loading='loadingJobs'
+              :readonly='!!paymentId'
+            )
+            v-select(
+              label='Recipient'
+              outlined
+              dense
+              v-model='editedInvoice.recipient_id'
+              :items='contractors'
+              item-text='name'
+              item-value='id'
+              hide-details
+              :loading='loadingContractors'
+              :rules='rules.recipient'
+              :readonly='!!paymentId'
+            )
+
       div(v-if='hasAssociatedTimecard')
+        v-divider
+
         v-subheader Time sheet
 
-        v-card-text(v-if='timeSheet && timeSheet.timeIn && timeSheet.timeOut')
+        v-card-text.pt-0.d-flex.flex-column
+
           datetime-input(
+            :autofocus='!!paymentId'
             v-model='timeSheet.timeIn.time'
             outlined
             label='Time in'
@@ -59,21 +97,20 @@ v-dialog(
             data-cy='payment-time-out'
           )
 
+      div
         v-divider
-
-      v-subheader Invoice details
-
-      v-card-text
-        //- // TODO: Make reorderable work
-        invoice-input(
-          v-model='editedInvoice.items'
-          :fixedLineitems='hasAssociatedTimecard ? [timeSheetPayment] : []'
-          :orderable='false'
-        )
-        richtext-field(
-          placeholder='Invoice description'
-          v-model='editedInvoice.description'
-        )
+        v-subheader Invoice
+        v-card-text.pt-0
+          //- // TODO: Make reorderable work
+          invoice-input(
+            v-model='editedInvoice.items'
+            :fixedLineitems='hasAssociatedTimecard ? [timeSheetPayment] : []'
+            :orderable='false'
+          )
+          richtext-field(
+            placeholder='Description'
+            v-model='editedInvoice.description'
+          )
 
       v-spacer
       
@@ -93,6 +130,7 @@ v-dialog(
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import dayjs from 'dayjs'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
@@ -105,6 +143,10 @@ import { ClockAction, ClockEvent, clockedTime } from '@/types/Jobs'
 import { Invoice, Payment } from '@/types/Payments'
 import { exists } from '@/util/inputValidation'
 import { deepCopy } from '@/util/helpers'
+import { currentUserIs, Managers, UserRole } from '@/types/Users'
+import { loadWorkforce } from '@/services/users'
+import { loadJobs } from '@/services/jobs'
+import { createInvoice } from '@/services/payments'
 
 dayjs.extend(isSameOrAfter)
 
@@ -123,6 +165,8 @@ dayjs.extend(duration)
 export default class EditPaymentDialog extends Vue {
   
   loading = false
+  loadingJobs = false
+  loadingContractors = false
   isValid = false
   timeSheet: any = {
     timeIn: null,
@@ -134,6 +178,9 @@ export default class EditPaymentDialog extends Vue {
     description: ''
   }
   rules = {
+    recipient: [
+      exists('Recipient is required'),
+    ],
     timeIn: [exists('Time in required')],
     breakStart: (i: number) => [
       exists('Break start required'),
@@ -194,8 +241,9 @@ export default class EditPaymentDialog extends Vue {
     ],
   }
 
-  @Prop({ default: false }) opened!: boolean
-  @Prop({ type: Number }) paymentId!: number
+  @Prop({ default: false }) readonly opened!: boolean
+  @Prop({ type: Number }) readonly paymentId?: number
+  @Prop({ type: Number }) readonly jobId?: number
 
   get payment() {
     const payment = this.$store.getters.payment(this.paymentId)
@@ -203,7 +251,7 @@ export default class EditPaymentDialog extends Vue {
   }
 
   get hasAssociatedTimecard() {
-    return !!this.payment?.invoice?.timecard
+    return this.paymentId && !!this.payment?.invoice?.timecard && this.timeSheet
   }
 
   get calculatedPay() {
@@ -243,6 +291,34 @@ export default class EditPaymentDialog extends Vue {
     )
   }
 
+  async loadJobs() {
+    this.loadingJobs = true
+    await loadJobs(this.$store)
+    this.loadingJobs = false
+  }
+
+  get jobs() {
+    return this.$store.getters.jobs
+  }
+
+  async loadContractors() {
+    this.loadingContractors = true
+    await loadWorkforce(this.$store)
+    this.loadingContractors = false
+  }
+
+  get contractors() {
+    return this.$store.getters.contractors
+  }
+
+  get userIsManager() {
+    return currentUserIs(...Managers)
+  }
+
+  get userIsContractor() {
+    return currentUserIs(UserRole.Contractor)
+  }
+
   @Watch('payment')
   onPaymentChange(payment: Payment) {
     if (!payment.invoice) return
@@ -261,8 +337,40 @@ export default class EditPaymentDialog extends Vue {
   }
 
   @Watch('opened')
-  onOpened(opened: boolean) {
-    if (opened) this.calculateFormValues()
+  async onOpenedChange(val: boolean) {
+    if (val) {
+      this.calculateFormValues()
+
+      if (this.userIsManager) {
+        this.loadJobs()
+        this.loadContractors()
+      }
+
+      if (this.paymentId) {
+        // Editing a payment
+        this.editedInvoice = deepCopy(this.payment.invoice)
+        this.editedInvoice.recipient_id = this.payment?.receiver?.id
+        this.editedInvoice.job_id = this.payment?.invoice?.job_id
+      }
+      else {
+        // Creating a new payment
+        this.editedInvoice = {
+          description: '',
+          items: [{
+            description: '',
+            amount: 0,
+          }]
+        }
+
+        if (this.jobId) {
+          this.editedInvoice.job_id = this.jobId
+        }
+
+        if (this.userIsContractor) {
+          this.editedInvoice.recipient_id = this.$store.getters.me.id
+        }
+      }
+    }
   }
 
   closeDialog() {
@@ -308,23 +416,42 @@ export default class EditPaymentDialog extends Vue {
 
   async updatePayment() {
 
-    // Reconstruct the original clock events array format
-    const newTimeclockEvents: ClockEvent[] = []
-    newTimeclockEvents.push(this.timeSheet.timeIn)
-    this.timeSheet.breaks.forEach((breakItem: { start: ClockEvent; end: ClockEvent }) => {
-      newTimeclockEvents.push(breakItem.start)
-      newTimeclockEvents.push(breakItem.end)
-    })
-    newTimeclockEvents.push(this.timeSheet.timeOut)
-
     this.loading = true
 
     try {
-      const params: [any, number, any, ClockEvent[]?] = [this.$store, this.paymentId, this.editedInvoice]
-      if (this.hasAssociatedTimecard) params.push(newTimeclockEvents)
+      // Reconstruct the original clock events array format
+      if (this.paymentId) {
+        // Editing a payment
 
-      await payments.updatePayment(...params)
-      
+        if (this.hasAssociatedTimecard) {
+          // Payment has a time sheet, create new clock events
+          const newTimeclockEvents: ClockEvent[] = []
+          newTimeclockEvents.push(this.timeSheet.timeIn)
+          this.timeSheet.breaks.forEach((breakItem: { start: ClockEvent; end: ClockEvent }) => {
+            newTimeclockEvents.push(breakItem.start)
+            newTimeclockEvents.push(breakItem.end)
+          })
+          newTimeclockEvents.push(this.timeSheet.timeOut)
+
+          await payments.updatePayment(this.$store, this.paymentId, this.editedInvoice, newTimeclockEvents)
+        }
+        else {
+          await payments.updatePayment(this.$store, this.paymentId, this.editedInvoice)
+        }
+      }
+      else {
+        // Creating a new payment
+        const payment = await createInvoice(this.$store, this.editedInvoice);
+        (this.$refs.form as HTMLFormElement)?.reset()
+
+        this.$router.push({
+          name: 'payment',
+          params: {
+            paymentId: payment.id,
+          }
+        })
+      }
+
       this.closeDialog()
       this.$emit('saved')
     } finally {

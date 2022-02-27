@@ -18,7 +18,7 @@ div(v-else)
       :opened.sync='qrCodeDialog'
       :code='job.consultant_code'
     )
-    create-invoice-dialog(:opened.sync='createInvoiceDialog' :job-id="job.id")
+    edit-payment-dialog(:opened.sync='createInvoiceDialog' :job-id="job.id")
 
     portal(to="toolbarActions")
       v-btn(
@@ -149,7 +149,7 @@ div(v-else)
               router-link.alt-style(
                 :to="{name: 'user', params: {userId: job.organization_manager.id}}"
               )
-                | {{ job.organization_manager.name }}
+                | {{ job.organization_manager | fullName }}
 
           .flex-grow-1(v-if='job.contractor_manager')
             p.text-subtitle-2.mb-1 Contractor manager
@@ -157,10 +157,10 @@ div(v-else)
               router-link.alt-style(
                 :to="{name: 'user', params: {userId: job.contractor_manager.id}}"
               )
-                | {{ job.contractor_manager.name }}
+                | {{ job.contractor_manager | fullName }}
 
           .flex-grow-1(v-if='job.consultant_name && job.consultant_email && job.consultant_phone')
-            p.text-subtitle-2.mb-1 Consultant
+            p.text-subtitle-2.mb-1 Client info
             .d-flex.flex-column.gap
               span.mb-0 {{ job.consultant_name }}
               a.mb-0(target='_blank' :href='`mailto:${job.consultant_email}`') {{ job.consultant_email }}
@@ -178,7 +178,7 @@ import EditJobDialog from './EditJobDialog.vue'
 import CloseJobDialog from './CloseJobDialog.vue'
 import EditShiftDialog from './EditShiftDialog.vue'
 import QrCodeDialog from './QrCodeDialog.vue'
-import CreateInvoiceDialog from '@/views/payments/CreateInvoiceDialog.vue'
+import EditPaymentDialog from '@/views/payments/EditPaymentDialog.vue'
 
 import GMap from '@/components/GMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
@@ -196,7 +196,7 @@ import { loadJob, refreshClockInCode } from '@/services/jobs'
     CloseJobDialog,
     EditShiftDialog,
     QrCodeDialog,
-    CreateInvoiceDialog,
+    EditPaymentDialog,
     GMap,
     ClockEvents,
     ClipboardCopy,

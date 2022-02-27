@@ -31,6 +31,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
       :icon='$vuetify.breakpoint.xs'
       color='success'
       @click='completePaymentsDialog = true'
+      :disabled='!hasSufficientBalance'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-check
       span(v-if='!$vuetify.breakpoint.xs') Complete
@@ -70,7 +71,6 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
         span(v-if='payment.date_completed')
           | Completed {{ payment.date_completed | date('MMM D, YYYY') }}, {{ payment.date_completed | time }}
-
 
   masonry(:cols='{default: 2, 959: 1}' :gutter='20')
 
@@ -234,8 +234,16 @@ export default class Payment extends Vue {
   }
 
   get job() {
-    if (!this.shift) return null
-    return this.$store.getters.job(this.shift.job_id)
+    const jobId = this.shift?.job_id || this.payment?.invoice?.job_id
+    return this.$store.getters.job(jobId)
+  }
+
+  get balance() {
+    return this.$store.state.payments.balance
+  }
+
+  get hasSufficientBalance() {
+    return this.balance.value >= this.payment.total
   }
 
   get history() {

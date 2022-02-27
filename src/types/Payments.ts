@@ -1,4 +1,4 @@
-import { ClockEvent } from './Jobs'
+import { ClockEvent, Job } from './Jobs'
 import { Organization } from './Organizations'
 import { Shift } from './Jobs'
 import { User } from './Users'
@@ -36,6 +36,8 @@ export type Invoice = {
   items: InvoiceItem[]
   timecard_id?: number
   timecard?: Timecard
+  job_id?: number
+  job?: Job
 }
 
 export type BankTransfer = {
