@@ -6,6 +6,8 @@ v-app
   
   nav-drawer(v-if="showNavDrawer" v-model="drawer")
 
+  app-update-dialog(:opened.sync='appUpdateDialog')
+
   v-main#main(
     :class="{ white: !$vuetify.theme.dark, 'lighten-3': !$vuetify.theme.dark }"
     :style="`padding-top: ${topMargin}px; padding-bottom: ${bottomMargin}px`"
@@ -74,6 +76,7 @@ import MessageSnackbar from '@/layouts/MessageSnackbar.vue'
 import { Capacitor } from '@capacitor/core'
 import { Network } from '@capacitor/network'
 import { environment, sandboxMode } from './services/app'
+import AppUpdateDialog from '@/views/AppUpdateDialog.vue'
 
 @Component({
   metaInfo: {
@@ -90,6 +93,7 @@ import { environment, sandboxMode } from './services/app'
     NavDrawer,
     WorxstrFooter,
     MessageSnackbar,
+    AppUpdateDialog,
   },
 })
 export default class App extends Vue {
@@ -201,6 +205,10 @@ export default class App extends Vue {
       return this.headerHeight + this.safeAreaBottom
     }
     return this.safeAreaBottom
+  }
+
+  get appUpdateDialog() {
+    return this.$store.state.app.appUpdateDialog
   }
 
   showWatermark = false

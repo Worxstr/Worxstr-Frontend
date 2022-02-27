@@ -5,7 +5,9 @@ import router from './router'
 import store from './store'
 import vuetify from './util/vuetify'
 import { App as CapacitorApp } from '@capacitor/app'
+import { Capacitor } from '@capacitor/core'
 import { SplashScreen } from '@capacitor/splash-screen'
+import { AppUpdate, AppUpdateAvailability } from '@robingenz/capacitor-app-update'
 
 import './styles/style.scss'
 import './util/filters'
@@ -87,6 +89,15 @@ function configureBackButtonPress() {
   })
 }
 
+async function checkUpdate() {
+  if (!Capacitor.isPluginAvailable('AppUpdate')) return
+  
+  const appUpdateInfo = await AppUpdate.getAppUpdateInfo()
+  if (appUpdateInfo.updateAvailability === AppUpdateAvailability.UPDATE_AVAILABLE) {
+    store.commit('SET_UPDATE_DIALOG_VISIBLE', true)
+  }
+}
+
 async function init() {
   Vue.config.productionTip = false
 
@@ -106,6 +117,7 @@ async function init() {
   await SplashScreen.hide()
   configureBackButtonPress()
   configureDwolla(store)
+  checkUpdate()
 }
 
 init()

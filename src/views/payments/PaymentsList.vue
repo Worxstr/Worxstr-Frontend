@@ -119,7 +119,7 @@
                   :to="{name: 'payment', params: {paymentId: item.id}}"
                 )
                   | {{ isDebit(item) ? 'From' : 'To' }}
-                  | {{ (isDebit(item) ? item.sender : item.receiver) | userOrOrgName }}
+                  | {{ item | paymentRecipientName }}
           
           v-list-item-action.align-self-center.flex-row
             span.flex-grow-0.px-2(
