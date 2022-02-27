@@ -70,11 +70,8 @@ div
             color='primary'
             type='submit'
             :disabled='!isValid'
+            :loading='loading'
           ) Sign up
-
-      v-fade-transition
-        v-overlay(absolute opacity='0.2' v-if='loading')
-          v-progress-circular(indeterminate)
 
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>

@@ -38,7 +38,6 @@ v-dialog(
               item-value='id'
               hide-details
               :loading='loadingJobs'
-              :readonly='!!paymentId'
             )
             v-select(
               label='Recipient'
