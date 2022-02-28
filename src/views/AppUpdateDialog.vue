@@ -15,7 +15,7 @@ v-dialog(
         v-icon mdi-close
 
     
-    v-card-text.mt-2 Worxstr is still in development, so some features may not work with an older app version.
+    v-card-text.mt-4 Worxstr is still in development, so some features may not work with an older app version.
 
     v-card-text Current version: {{ currentVersion }}
 

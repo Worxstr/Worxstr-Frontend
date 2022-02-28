@@ -5,9 +5,9 @@ import Meta from 'vue-meta'
 import { Capacitor } from '@capacitor/core'
 import { App, URLOpenListenerEvent } from '@capacitor/app'
 
-
 import * as MessagesTypes from '@/types/Messages'
-import { fullName, groupNameList } from '@/util/filters'
+import { fullName, groupNameList, paymentRecipientName } from '@/util/filters'
+import { isDebit } from '@/types/Payments'
 import usersStore from '@/store/users'
 
 import Home from '@/views/landing/Home.vue'
@@ -263,9 +263,9 @@ const routes = [
         param: 'paymentId',
         store: 'payments',
         propBuilder(payment: PaymentTypes.Payment) {
-          const account = payment.receiver
-          const name = (PaymentTypes.isUser(account)) ? account.first_name : account.name
-          return `${currency(payment.amount)} to ${name}`
+          const name = paymentRecipientName(payment, true)
+          const toFrom = isDebit(payment) ? 'from' : 'to'
+          return `${currency(payment.amount)} ${toFrom} ${name}`
         },
       }]
     }

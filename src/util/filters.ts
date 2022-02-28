@@ -112,7 +112,7 @@ export const fullName = (user: User) => {
 }
 Vue.filter('fullName', fullName)
 
-export const paymentRecipientName = (payment: Payment) => {
+export const paymentRecipientName = (payment: Payment, shortName = false) => {
 	if (!payment) return 'Invalid payment'
 
 	if (payment.bank_transfer) {
@@ -124,7 +124,7 @@ export const paymentRecipientName = (payment: Payment) => {
 	if (!account) return 'Invalid account'
 
 	if (isUser(account)) {
-		return `${account.first_name} ${account.last_name}`
+		return shortName ? account.first_name : `${account.first_name} ${account.last_name}`
 	} else {
 		return account.name
 	}

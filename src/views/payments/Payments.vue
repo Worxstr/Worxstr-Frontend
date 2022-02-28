@@ -84,6 +84,7 @@ div
         :payments='pendingPayments'
         :editable='userIsManager'
         title='Pending payments'
+        short-title='Pending'
         :loading='loadingPayments'
       )
 
@@ -100,6 +101,7 @@ div
       payments-list(
         :payments='completedPayments'
         title='Completed payments'
+        short-title='Completed'
         :loading='loadingPayments'
       )
 
