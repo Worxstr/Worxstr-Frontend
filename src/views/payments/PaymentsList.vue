@@ -33,7 +33,7 @@
       )
         template(#title)
           span(v-if='$vuetify.breakpoint.smAndUp') {{ title }}
-          span(v-else) Pending
+          span(v-else) {{ shortTitle || title }}
           v-chip.mx-3.pa-2.font-weight-bold(small) {{ payments.length }}
         
         template(#actions v-if='editable')
@@ -180,6 +180,7 @@ export default class PaymentsList extends Vue {
   @Prop({ required: true }) payments!: Payment[]
   @Prop({ default: false }) editable!: boolean
   @Prop({ type: String, required: true }) title!: string
+  @Prop({ type: String }) shortTitle?: string
   @Prop({ default: false }) loading!: boolean
   
   clearSelection() {

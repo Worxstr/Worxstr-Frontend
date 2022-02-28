@@ -74,7 +74,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
   masonry(:cols='{default: 2, 959: 1}' :gutter='20')
 
-    .mb-4.d-flex.flex-column.gap-small(v-if='payment && payment.invoice')
+    .mb-4.d-flex.flex-column.gap-small(v-if='payment')
       h5.text-h5 Invoice
       v-sheet(outlined rounded)
 
@@ -86,18 +86,23 @@ v-container.d-flex.flex-column.pt-6.gap-small
           v-divider
 
         v-list
-          v-list-item(v-if='shift && payment && payment.invoice && payment.invoice.timecard')
-            v-list-item-content.primary--text.font-weight-bold.d-flex
-              router-link.alt-style(:to="{name: 'shift', params: {shiftId: shift.id, jobId: shift.job_id}}")
-                | Payment for {{ shift.site_location }}
-            v-list-item-action.text-subtitle-1 {{ payment.invoice.timecard.wage_payment | currency }}
+          v-list-item(v-if='payment.bank_transfer')
+            v-list-item-content.font-weight-bold.d-flex Bank transfer
+            v-list-item-action.text-subtitle-1 {{ payment.bank_transfer.amount | currency }}
 
-          v-list-item(v-for='item in payment.invoice.items')
-            v-list-item-content
-              v-list-item-title(:class="{'primary--text': item.bold, 'font-weight-medium': item.bold}") {{ item.description }}
-            
-            v-list-item-action
-              .text-subtitle-1 {{ item.amount | currency }}
+          div(v-if='shift && payment && payment.invoice')
+            v-list-item(v-if='payment.invoice.timecard')
+              v-list-item-content.primary--text.font-weight-bold.d-flex
+                router-link.alt-style(:to="{name: 'shift', params: {shiftId: shift.id, jobId: shift.job_id}}")
+                  | Payment for {{ shift.site_location }}
+              v-list-item-action.text-subtitle-1 {{ payment.invoice.timecard.wage_payment | currency }}
+
+            v-list-item(v-for='item in payment.invoice.items')
+              v-list-item-content
+                v-list-item-title(:class="{'primary--text': item.bold, 'font-weight-medium': item.bold}") {{ item.description }}
+              
+              v-list-item-action
+                .text-subtitle-1 {{ item.amount | currency }}
           
           v-divider
 
