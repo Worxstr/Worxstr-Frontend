@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Vue from 'vue'
 import { Shift, Task } from '@/types/Jobs'
-import { ClockAction, ClockEvent } from '@/types/Clock'
+import { ClockAction, ClockEvent } from '@/types/Jobs'
 import jobsStore from '@/store/jobs'
 
 // TODO ---------------------
@@ -126,6 +126,12 @@ const getters = {
     }
 
     return shift
+  },
+
+  shifts: (_state: ShiftsState, getters: any) => (ids: number[]) => {
+    return ids.map((id: number) => {
+      return getters.shift(id)
+    })
   },
 
   upcomingShifts: (state: ShiftsState) => {

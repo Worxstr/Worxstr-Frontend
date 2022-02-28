@@ -16,7 +16,7 @@ v-timeline(align-top, dense)
 </template>
 
 <script>
-import { ClockAction } from "@/types/Clock";
+import { ClockAction } from "@/types/Jobs"
 
 export default {
   name: "clockEvents",

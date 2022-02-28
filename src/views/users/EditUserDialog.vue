@@ -18,7 +18,7 @@ v-dialog(
       v-toolbar.flex-grow-0(flat)
         v-toolbar-title.text-h6
           | {{ editMode ? 'Edit' : 'Add' }}&nbsp;
-          span(v-if='editedUser.first_name && editedUser.last_name') {{ editedUser | fullName }}
+          span(v-if='editedUser.first_name && editedUser.last_name') {{ editedUser.name }}
           span(v-else) {{ userIsManager ? 'manager' : userIsContractor ? 'contractor' : 'user' }}
 
       v-card-text
@@ -131,6 +131,7 @@ import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
 import { addManager, loadManagers, updateContractor } from '@/services/users'
 import { showToast } from '@/services/app'
+import { deepCopy } from '@/util/helpers'
 
 @Component({
   components: {
@@ -170,7 +171,7 @@ export default class EditUserDialog extends Vue {
     
     if (this.user) {
       this.editMode = true
-      this.editedUser = JSON.parse(JSON.stringify(this.user)) // Deep copy object
+      this.editedUser = deepCopy(this.user)
       // this.editedUser = {
       //   ...this.user,
       // }
@@ -178,7 +179,7 @@ export default class EditUserDialog extends Vue {
     else {
       Vue.set(this.editedUser, 'roles', [
         {
-          id: UserRole.ContractorManager,
+          id: UserRole.Supervisor,
           name: 'contractor_manager',
         },
       ])

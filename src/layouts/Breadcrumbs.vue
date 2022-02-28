@@ -59,6 +59,7 @@ export default class Breadcrumbs extends Vue {
       .split('/')
 
     return segments.map((pathSegment, i) => {
+
       let dynamicName
       try {
         // Extract the param name
@@ -81,6 +82,7 @@ export default class Breadcrumbs extends Vue {
       catch (e) {
         dynamicName = pathSegment
       }
+
 
       // Build link text and path
       const text = matched[i]?.includes(':') ? dynamicName : pathSegment

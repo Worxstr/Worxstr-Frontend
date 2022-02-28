@@ -17,12 +17,16 @@ export const matches = (errorMessage: string) => (val1: string, val2: string) =>
 
 // TODO: Use a library for these regex rules
 
-export const emailRules = [
-  (value: string) => !!value || "Email required",
+export const emailRulesOptional = [
   (value: string) => {
+    if (!value) return true
     const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return pattern.test(value) || "Invalid email"
   },
+]
+export const emailRules = [
+  ...emailRulesOptional,
+  (value: string) => !!value || "Email required",
 ]
 
 export const passwordRules = [

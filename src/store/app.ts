@@ -18,6 +18,7 @@ export interface AppState {
     darkMode: DarkPreference
     miniNav: boolean
   }
+  appUpdateDialog: boolean
 }
 
 export const initialState = (): AppState => ({
@@ -29,7 +30,8 @@ export const initialState = (): AppState => ({
   preferences: {
     darkMode: theme.getStoredPreference(),
     miniNav: miniNav.getStoredPreference(),
-  }
+  },
+  appUpdateDialog: false,
 })
 
 const mutations = {
@@ -52,6 +54,10 @@ const mutations = {
 
   SET_MINI_NAV(state: AppState, mini: boolean) {
     state.preferences.miniNav = mini
+  },
+
+  SET_UPDATE_DIALOG_VISIBLE(state: AppState, visible: boolean) {
+    state.appUpdateDialog = visible
   },
 }
 

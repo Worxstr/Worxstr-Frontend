@@ -98,3 +98,18 @@ export function lookup(obj: any, path: string, defaultVal?: any): any {
 export function mapProps(object: any, path: string, defaultVal?: any) {
   return object.map((o: any) => lookup(o, path, defaultVal))
 }
+
+// Deep copy an object using JSON stringify/parse
+export function deepCopy(obj: any) {
+  return JSON.parse(JSON.stringify(obj))
+}
+
+export function download(url: string, name: string) {
+  // Download file at url
+  const link = document.createElement('a')
+  link.href = url
+  link.download = name
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}

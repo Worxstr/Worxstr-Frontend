@@ -5,6 +5,7 @@ export type User = {
 	id: number
 	first_name: string
 	last_name: string
+	name?: string
 	email: string
 	roles: Role[]
 	location?: Position
@@ -33,8 +34,8 @@ export type Role = {
 
 export enum UserRole {
 	Contractor = 1,
-	ContractorManager = 2,
-	OrganizationManager = 3,
+	Supervisor = 2,
+	Admin = 3,
 }
 
 export const userRoles = Object
@@ -48,8 +49,8 @@ export const userRoles = Object
 
 
 export const Managers = [
-	UserRole.ContractorManager,
-	UserRole.OrganizationManager,
+	UserRole.Supervisor,
+	UserRole.Admin,
 ]
 
 export function isAuthenticated() {
@@ -76,8 +77,8 @@ export function defaultRoute() {
 	switch (user?.roles[0]?.id) {
 		case UserRole.Contractor:
 			return 'dashboard'
-		case UserRole.ContractorManager:
-		case UserRole.OrganizationManager:
+		case UserRole.Supervisor:
+		case UserRole.Admin:
 			return 'jobs'
 		default:
 			return 'schedule'

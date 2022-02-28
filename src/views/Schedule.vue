@@ -6,7 +6,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
   )
   edit-shift-dialog(
     :opened.sync='editShiftDialog'
-    :shift.sync='selectedShift'
+    :shiftId='selectedShift ? selectedShift.id : null'
     :editing='true'
   )
 
@@ -132,7 +132,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
                     )
                   
                   v-list-item-content
-                    v-list-item-title {{ user | fullName }}
+                    v-list-item-title {{ user.name }}
                   
           v-menu(:close-on-content-click='false' v-if='userIsManager')
             template(v-slot:activator='{ on, attrs }')
@@ -182,7 +182,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
               v-list-item-content
                 v-list-item-title
                   router-link.alt-style(:to="{ name: 'user', params: { userId: user.id } }")
-                    | {{ user | fullName }}
+                    | {{ user.name }}
         
           v-subheader Jobs
           v-list-item(v-for='(job, index) in jobs' :key='job.id')
@@ -311,7 +311,7 @@ import { Job, Shift } from '@/types/Jobs'
 import { textColor } from '@/util/helpers'
 
 import * as schedule from '@/services/schedule'
-import { updateShift, deleteShift } from '@/services/shifts'
+import { updateShift, deleteShifts } from '@/services/shifts'
 import { loadJobs } from '@/services/jobs'
 import { loadWorkforce } from '@/services/users'
 
@@ -714,7 +714,7 @@ export default class Schedule extends Vue {
   async deleteShift(shift: Shift) {
     this.deletingShift = true
     try {
-      await deleteShift(this.$store, shift.id, shift.job_id)
+      await deleteShifts(this.$store, [shift.id])
     }
     finally {
       this.deletingShift = false

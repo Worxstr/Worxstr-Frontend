@@ -4,6 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { User } from '@/types/Users'
 import { Conversation } from '@/types/Messages'
+import { isUser, isDebit, Payment } from '@/types/Payments'
 
 dayjs.extend(relativeTime)
 
@@ -38,6 +39,42 @@ export const timeAgo = (value: (string|number|Date)) => {
 }
 Vue.filter('timeAgo', timeAgo)
 
+// Duration in human readable format, eg. 1 day, 2 hours, 3 minutes
+export const duration = (valueMs: number, short = true) => {
+	const msPerMinute = 60 * 1000
+	const msPerHour = msPerMinute * 60
+	const msPerDay = msPerHour * 24
+	const msPerWeek = msPerDay * 7
+	const string = []
+
+	if (valueMs >= msPerWeek) {
+		string.push(Math.round(valueMs / msPerWeek) + (short ? 'w' : ' week'))
+		valueMs %= msPerWeek
+	}
+
+	if (valueMs >= msPerDay) {
+		string.push(Math.round(valueMs / msPerDay) + (short ? 'd' : ' day'))
+		valueMs %= msPerDay
+	}
+
+	if (valueMs >= msPerHour) {
+		string.push(Math.round(valueMs / msPerHour) + (short ? 'h' : ' hour'))
+		valueMs %= msPerHour
+	}
+
+	if (valueMs >= msPerMinute) {
+		string.push(Math.round(valueMs / msPerMinute) + (short ? 'm' : ' minute'))
+		valueMs %= msPerMinute
+	}
+
+	if (valueMs > 0) {
+		string.push(Math.round(valueMs / 1000) + (short ? 's' : ' second'))
+	}
+
+	return string.join(', ')
+}
+Vue.filter('duration', duration)
+
 Vue.filter('dateOrTime', (value: (string|number|Date), format?: string) => {
 	if (new Date(value).getTime() < Date.now() - (1000 * 60 * 60 * 24)) {
 		return dayjs(value).format(format || standardDateFormat)
@@ -45,10 +82,12 @@ Vue.filter('dateOrTime', (value: (string|number|Date), format?: string) => {
 	return time(value)
 })
 
-Vue.filter('currency', (value: string) => {
-	const parsed = parseFloat(value)
+export const currency = (value: string | number) => {
+	if (!value && value != 0) return 'Invalid value'
+	const parsed = typeof value === 'string' ? parseFloat(value) : value
 	return '$' + (isNaN(parsed) ? '0.00' : parsed.toFixed(2))
-})
+}
+Vue.filter('currency', currency)
 
 // 1234567890 -> (123) 456-7890
 Vue.filter('phone', (value: string) => {
@@ -72,6 +111,25 @@ export const fullName = (user: User) => {
 	return `${user.first_name} ${user.last_name}`
 }
 Vue.filter('fullName', fullName)
+
+export const paymentRecipientName = (payment: Payment) => {
+	if (!payment) return 'Invalid payment'
+
+	if (payment.bank_transfer) {
+		return payment.bank_transfer.bank_name
+	}
+	
+	const account = isDebit(payment) ? payment.sender : payment.receiver
+
+	if (!account) return 'Invalid account'
+
+	if (isUser(account)) {
+		return `${account.first_name} ${account.last_name}`
+	} else {
+		return account.name
+	}
+}
+Vue.filter('paymentRecipientName', paymentRecipientName)
 
 // Create a string that lists users names from an array of users, filtering the authenticated user
 // [{first: 'Bob', last: 'Vance'}, {first: 'Ada', last: 'Lovelace'}]								-> 'Ada Lovelace'

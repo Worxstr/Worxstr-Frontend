@@ -1,62 +1,102 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
-import * as Plaid from '@/util/plaid'
-import { FundingSource, Timecard, Transfer } from '@/types/Payments'
-import { ClockEvent } from '@/types/Clock'
-import { showToast } from '@/services/app'
+import { FundingSource, Payment, Invoice } from '@/types/Payments'
+import { ClockEvent } from '@/types/Jobs'
+import { baseUrl, showToast } from '@/services/app'
+import { download } from '@/util/helpers'
 
-export async function loadTimecards({ commit }: any) {
+export async function loadPayments({ commit }: any, offset = 0, limit = 10, filter?: {
+  pending?: boolean
+}) {
+
+  if (filter?.pending !== undefined) {
+    if (filter.pending) {
+      commit('SET_LAST_PAGE_LOADED_PENDING', offset)
+    }
+    else {
+      commit('SET_LAST_PAGE_LOADED_COMPLETED', offset)
+    }
+  }
+
   const { data } = await api({
     method: 'GET',
-    url: 'payments/timecards',
+    url: '/payments',
+    params: {
+      offset,
+      limit,
+      ...filter,
+    }
   })
-  data.timecards.forEach((timecard: Timecard) => {
-    // TODO: Normalize nested data
-    commit('ADD_TIMECARD', timecard)
+  data.payments.forEach((payment: Payment) => {
+    commit('ADD_PAYMENT', payment)
   })
+  return data.payments
+}
+
+export async function exportPayments(format: 'csv' | 'json' | 'xlsx' | 'pdf') {
+  const url = `${baseUrl.get()}/payments/export?format=${format}`
+  download(url, `payments-export.${format}`)
+}
+
+export async function loadPayment({ commit }: any, paymentId: string) {
+  const { data } = await api({
+    method: 'GET',
+    url: `/payments/${paymentId}`,
+  })
+  commit('ADD_PAYMENT', data)
   return data
 }
 
-export async function updateTimecard({ commit }: any, timecardId: number, events: ClockEvent[]) {
+export async function createInvoice({ commit }: any, invoice: Invoice) {
+  const { data } = await api({
+    method: 'POST',
+    url: 'payments/invoices',
+    data: invoice,
+  })
+  commit('ADD_PAYMENT', data)
+  return data
+}
+
+export async function updatePayment({ commit }: any, paymentId: number, invoice: Invoice, events?: ClockEvent[]) {
   const { data } = await api({
     method: 'PUT',
-    url: `payments/timecards/${timecardId}`,
+    url: `payments/${paymentId}`,
     data: {
-      changes: events,
+      timecard: events ? {
+        clock_events: events,
+      } : undefined,
+      invoice: invoice,
     },
   })
-  commit('ADD_TIMECARD', data)
+  commit('ADD_PAYMENT', data)
   return data
 }
 
-export async function denyPayments({ commit }: any, timecardIds: number[]) {
+export async function denyPayments({ commit }: any, paymentIds: number[]) {
   const { data } = await api({
     method: 'PUT',
     url: 'payments/deny',
     data: {
-      timecard_ids: timecardIds,
+      payment_ids: paymentIds,
     },
   })
-  timecardIds.forEach((timecardId: number) => {
+  paymentIds.forEach((paymentId: number) => {
     // TODO: Normalize nested data
-    commit('REMOVE_TIMECARD', timecardId)
+    commit('REMOVE_PAYMENT', paymentId)
   })
   return data
 }
 
-export async function completePayments({ commit }: any, timecardIds: number[]) {
+export async function completePayments({ commit }: any, paymentIds: number[]) {
   const { data } = await api({
     method: 'PUT',
     url: 'payments/complete',
     data: {
-      timecard_ids: timecardIds
+      payment_ids: paymentIds
     },
   })
-  timecardIds.forEach((timecardId: number) => {
-    commit('REMOVE_TIMECARD', timecardId)
-  })
-  data.transfers.forEach((transfer: Transfer) => {
-    commit('ADD_TRANSFER', transfer)
+  data.payments.forEach((payment: Payment) => {
+    commit('ADD_PAYMENT', payment)
   })
   commit('SET_BALANCE', data.balance)
 }
@@ -179,6 +219,7 @@ export async function addToBalance({ commit }: any, transfer: { amount: number; 
     url: 'payments/balance/add',
     data: transfer,
   })
+  // TODO: Change this to add payment to payments list
   commit('ADD_TRANSFER', transfer)
   showToast({ commit }, { text: 'Hang tight, your transfer is being processed.' })
   return data
@@ -193,20 +234,5 @@ export async function removeFromBalance({ commit }: any, transfer: { amount: num
   commit('ADD_TRANSFER', data.transfer)
   commit('SET_BALANCE', data.transfer.new_balance)
   showToast({ commit }, { text: 'Hang tight, your transfer is being processed.' })
-  return data
-}
-
-export async function loadTransfers({ commit }: any, { limit=10, offset=0 } = {}) {
-  const { data } = await api({
-    method: 'GET',
-    url: 'payments/transfers',
-    params: {
-      limit,
-      offset,
-    }
-  })
-  data.transfers.forEach((transfer: Transfer) => {
-    commit('ADD_TRANSFER', transfer)
-  })
   return data
 }

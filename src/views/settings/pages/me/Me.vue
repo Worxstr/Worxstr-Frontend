@@ -6,7 +6,7 @@ v-list
   v-list-item(two-line)
     v-list-item-content
       v-list-item-subtitle.mb-2 Name
-      v-list-item-title {{ me | fullName }}
+      v-list-item-title {{ me.name }}
     v-list-item-action
       v-btn(text, color="primary", @click="signOut") Sign out
 
@@ -19,7 +19,7 @@ v-list
     v-list-item-content
       v-list-item-subtitle.mb-2 Organization
       v-list-item-title {{ me.organization_info.name }}
-    v-list-item-action(v-if='userIsOrganizationManager')
+    v-list-item-action(v-if='userIsAdmin')
       v-btn(text, color="primary", :to="{name: 'settings/organization'}") Go to settings
 
   v-list-item(two-line, v-if="me.contractor_info && me.contractor_info.address")
@@ -71,8 +71,8 @@ export default class Me extends Vue {
     return this.$store.getters.me
   }
 
-  get userIsOrganizationManager() {
-    return currentUserIs(UserRole.OrganizationManager)
+  get userIsAdmin() {
+    return currentUserIs(UserRole.Admin)
   }
 
   signOut() {

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { currentUserIs, Managers, User, userIs, UserRole } from '@/types/Users'
+import { Managers, User, userIs, UserRole } from '@/types/Users'
 import { Position } from '@/services/geolocation'
 
 export interface UsersState {
@@ -33,6 +33,7 @@ function addUser(state: UsersState, user: User) {
   Vue.set(state.byId, user.id, {
     ...state.byId[user.id],
     ...user,
+    name: `${user?.first_name} ${user?.last_name}`,
   })
   if (!state.all.includes(user.id)) state.all.push(user.id)
 }
@@ -89,6 +90,12 @@ const getters = {
 
   workforce: (state: UsersState) => {
     return state.workforce.map((userId: number) => state.byId[userId])
+  },
+
+  contractors: (state: UsersState, getters: any) => {
+    return getters.workforce.filter((user: User) => {
+      return userIs(user, UserRole.Contractor)
+    })
   },
 
   // TODO: These two methods could go in types/Users.ts. Or maybe those functions should go here? Idk

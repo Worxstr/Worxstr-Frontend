@@ -1,9 +1,9 @@
 <template lang="pug">
 v-dialog(
   v-if='job'
-  v-model="opened",
-  :fullscreen="$vuetify.breakpoint.smAndDown",
-  max-width="500",
+  v-model='opened'
+  :fullscreen='$vuetify.breakpoint.smAndDown'
+  max-width='500'
   persistent
 )
   v-card.d-flex.flex-column
@@ -14,18 +14,17 @@ v-dialog(
     
     v-card-actions
       v-spacer
-      v-btn(text, @click="closeDialog") Cancel
-      v-btn(text, color="error", @click="closeJob" data-cy="confirm-close-job-button") Yes, close
+      v-btn(text @click='closeDialog') Cancel
+      v-btn(text color='error' @click="closeJob" data-cy='confirm-close-job-button') Yes, close
       
     v-fade-transition
-      v-overlay(v-if="loading", absolute, opacity=".2")
+      v-overlay(v-if='loading' absolute opacity='.2')
         v-progress-circular(indeterminate)
 
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { Job } from '@/types/Jobs'
 import { closeJob } from '@/services/jobs'
 
 @Component
@@ -33,8 +32,11 @@ export default class CloseJobDialog extends Vue {
   loading = false
 
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop(Object) readonly job!: Job
-  @Prop(String) readonly contractorName: string | undefined
+  @Prop({ type: Number, required: true }) readonly jobId!: number
+
+  get job() {
+    return this.$store.getters.job(this.jobId)
+  }
 
   closeDialog() {
     this.$emit('update:opened', false)

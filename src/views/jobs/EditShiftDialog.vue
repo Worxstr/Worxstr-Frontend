@@ -16,13 +16,13 @@ v-dialog(
       v-model='isValid'
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ editing ? 'Editing shift' : (`Assigning new shift${editedShift.contractor_ids.length>1 ? 's' : ''}`) }}
+        v-toolbar-title.text-h6 {{ shiftId ? 'Editing shift' : (`Assigning new shift${editedShift.contractor_ids.length>1 ? 's' : ''}`) }}
 
       v-divider
 
       v-card-text
 
-        div(v-if='!jobId')
+        div(v-if='!jobId && !shiftId')
           v-subheader Job selection
 
           v-select(
@@ -39,7 +39,7 @@ v-dialog(
 
         v-subheader Date and time
 
-        recurring-date-input.my-4(v-model='recurData' :recurrable='!editing' :time='startEndTimes')
+        recurring-date-input.my-4(v-model='recurData' :recurrable='!shiftId' :time='startEndTimes')
 
         v-divider.mb-4
 
@@ -48,20 +48,19 @@ v-dialog(
         //- Contractor selector
 
         //- Single selection for editing
-        v-select(
-          v-if='editing'
+        v-autocomplete(
+          v-if='shiftId'
           v-model='editedShift.contractor_id'
           :items='contractors'
           :item-text="(e) => (e.id > 0 ? `${e.first_name} ${e.last_name}` : `Unassigned ${-e.id}`)"
           item-value='id'
           outlined
           dense
-          required
           label='Contractor'
           data-cy='shift-contractor'
         )
         //- Multi selection for creating
-        v-select(
+        v-autocomplete(
           v-else
           v-model='editedShift.contractor_ids'
           :items='contractors'
@@ -69,7 +68,6 @@ v-dialog(
           item-value='id'
           outlined
           dense
-          required
           multiple
           label='Contractors'
           data-cy='shift-contractors'
@@ -82,7 +80,7 @@ v-dialog(
               v-list-item-content
                 v-list-item-title
                   v-row(no-gutters align='center')
-                    span(v-if='item.id > 0') {{ item | fullName }}
+                    span(v-if='item.id > 0') {{ item.name }}
                     span(v-else) Unassigned {{ -item.id }}
                     v-spacer
                     v-chip(small v-if='!item.direct && item.id > 0') {{ !item.direct && 'Indirect' }}
@@ -101,7 +99,7 @@ v-dialog(
 
         //- Single field for editing
         v-text-field(
-          v-if='editing'
+          v-if='shiftId'
           v-model='editedShift.site_location'
           :rules='rules.location'
           label='Site location'
@@ -139,7 +137,7 @@ v-dialog(
 
         //- pre {{editedShift.tasks}}
         v-subheader Tasks
-        task-list-input.mb-4(v-model='editedShift.tasks' editable :orderable='!editing')
+        task-list-input.mb-4(v-model='editedShift.tasks' editable :orderable='!shiftId')
 
       v-spacer
 
@@ -152,13 +150,11 @@ v-dialog(
           @click='updateShift'
           :disabled='!isValid'
           data-cy='save-shift-button'
-        ) {{ editing ? 'Save' : 'Assign' }}
+        ) {{ shiftId ? 'Save' : 'Assign' }}
 </template>
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/camelcase */
-import dayjs from 'dayjs'
-import { Capacitor } from '@capacitor/core'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { User } from '@/types/Users'
 import { Shift } from '@/types/Jobs'
@@ -188,12 +184,9 @@ interface UnassignedContractor {
 })
 export default class EditShiftDialog extends Vue {
 
-  @Prop({ type: Object   }) readonly shift?: Shift
+  @Prop({ type: Number   }) readonly shiftId?: number
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ default: false }) readonly editing!: boolean
-  // @Prop({ default: []    }) readonly contractors!: (User | UnassignedContractor)[]
-  // If no jobId specified, then we add a job selector to the dialog
-  @Prop({ type: Number    }) readonly jobId!: number
+  @Prop({ type: Number    }) readonly jobId!: number // If no jobId specified, then we add a job selector to the dialog
   @Prop({ type: Object }) readonly time?: {
     start: Date
     end: Date
@@ -208,9 +201,12 @@ export default class EditShiftDialog extends Vue {
     if (this.time) {
       return this.time
     }
-    else if (this.shift) return {
-      start: this.shift.time_begin,
-      end: this.shift.time_end,
+    else if (this.shiftId) {
+      const shift = this.$store.getters.shift(this.shiftId)
+      return {
+        start: shift.time_begin,
+        end: shift.time_end,
+      }
     }
     return undefined
   }
@@ -248,20 +244,14 @@ export default class EditShiftDialog extends Vue {
     this.editedShift = this.initialState()
 
     // Editing existing shift, fill data
-    if (this.editing && this.shift) {
+    if (this.shiftId) {
       this.editedShift = {
-        ...this.shift,
+        ...this.$store.getters.shift(this.shiftId),
       }
     }
     // Creating new shift, prefill fields
     else {
       if (this.contractors.length) this.editedShift.contractor_ids = [this.contractors[0]?.id]
-    }
-
-    if (!this.jobId) {
-      // Pick first job for selector
-      this.selectedJob = this.jobs[0].id ?? null
-      this.onSelectedJob(this.selectedJob)
     }
   }
 
@@ -293,12 +283,13 @@ export default class EditShiftDialog extends Vue {
 
   get contractors() {
     const jobId = this.jobId ?? this.selectedJob
-    return this.$store.getters.job(jobId)?.contractors ?? []
 
-    // TODO: Sort
-    // return this.contractors.sort((a: any, b: any) => {
-    //   return (a.direct === b.direct) ? 0 : (a.direct ? -1 : 1)
-    // })
+    const contractors = this.$store.getters.job(jobId)?.contractors ?? []
+
+    return contractors.sort((a: User, b: User) => {
+      if (!a.name || !b.name) return 0
+      return a.name > b.name ? 1 : -1
+    })
   }
 
   contractorName(contractorId: number) {
@@ -336,8 +327,9 @@ export default class EditShiftDialog extends Vue {
         ...this.recurData
       }
 
-      if (this.editing) {
+      if (this.shiftId) {
         await updateShift(this.$store, editedShift)
+        this.$emit('saved')
       }
       else {
         await createShift(

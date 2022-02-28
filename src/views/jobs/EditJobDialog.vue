@@ -17,7 +17,7 @@ v-dialog(
       v-model='isValid'
     )
       v-toolbar.flex-grow-0(flat)
-        v-toolbar-title.text-h6 {{ create ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
+        v-toolbar-title.text-h6 {{ !jobId ? `Creating ${editedJob.name || 'job'}` : `Editing ${editedJob.name}` }}
       
       v-divider
 
@@ -57,8 +57,8 @@ v-dialog(
             outlined
             dense
             required
-            label="Organizational manager"
-            data-cy='job-org-manager'
+            label="Admin"
+            data-cy='job-admin'
           )
           v-select(
             v-if="managers.contractor && managers.contractor.length"
@@ -69,35 +69,31 @@ v-dialog(
             outlined
             dense
             required
-            label="Contractor manager"
-            data-cy='job-contractor-manager'
+            label="Supervisor"
+            data-cy='job-supervisor'
           )
-        v-subheader Consultant info
+        v-subheader Client info (optional)
         .d-flex.flex-column.flex-sm-row
           v-text-field.mr-sm-4(
             outlined
             dense
-            label="Name",
-            v-model="editedJob.consultant_name"
-            :rules="rules.consultantName"
+            label='Name'
+            v-model='editedJob.consultant_name'
             data-cy='job-consultant-name'
-            required
           )
           phone-input(
             v-model='editedJob.consultant_phone'
             data-cy='job-consultant-phone'
             outlined
-            :required='true'
           )
         v-text-field(
           outlined
           dense
-          label="Email"
-          type="email"
-          v-model="editedJob.consultant_email"
-          :rules="rules.consultantEmail"
+          label='Email'
+          type='email'
+          v-model='editedJob.consultant_email'
+          :rules='rules.consultantEmail'
           data-cy='job-consultant-email'
-          required
         )
 
         v-subheader Presence verification restrictions
@@ -175,7 +171,17 @@ v-dialog(
                 min='20'
                 max='1000'
               )
-              p.mt-1 {{ editedJob.radius | distance }}
+              v-text-field.mb-2(
+                v-model.number="editedJob.radius"
+                outlined
+                dense
+                type='number'
+                min='20'
+                max='1000'
+                hide-details
+                suffix='meters'
+                style='max-width: 132px'
+              )
 
             v-card.soft-shadow
               g-map(:jobs='[editedJob]' jobsDraggable @jobMoved='updateJobLocation')
@@ -192,7 +198,7 @@ v-dialog(
           type="submit"
           data-cy='save-job-button'
         )
-          | {{ create ? 'Create' : 'Save' }}
+          | {{ jobId ? 'Save' : 'Create' }}
 </template>
 
 <script lang="ts">
@@ -200,7 +206,7 @@ v-dialog(
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import { User } from '@/types/Users'
 import { Job } from '@/types/Jobs';
-import { exists, phoneRules, emailRules } from '@/util/inputValidation'
+import { exists, phoneRules, emailRules, phoneRulesOptional, emailRulesOptional } from '@/util/inputValidation'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import GMap from '@/components/GMap.vue'
@@ -217,10 +223,8 @@ import { hashColor } from '@/util/helpers'
 })
 export default class EditJobDialog extends Vue {
 
+  @Prop({ type: Number }) readonly jobId?: number
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ default: false }) readonly create!: boolean
-  @Prop(Object) readonly job: Job | undefined
-
 
   editedJob: any = {
     color: hashColor(Date.now()),
@@ -239,9 +243,8 @@ export default class EditJobDialog extends Vue {
   rules = {
     name: [exists("Job name required")],
     address: [exists("Address required")],
-    consultantName: [exists("Consultant name required")],
-    consultantPhone: phoneRules,
-    consultantEmail: emailRules,
+    consultantPhone: phoneRulesOptional,
+    consultantEmail: emailRulesOptional,
     restrictByTimeWindow: [
       exists("Time window required"),
       (value: string) => !isNaN(parseInt(value)) || 'Time window must be a number',
@@ -256,11 +259,8 @@ export default class EditJobDialog extends Vue {
   @Watch('opened')
   onOpened(newVal: boolean) {
     if (newVal) {
-      if (this.create) (this.$refs.form as HTMLFormElement)?.reset()
+      if (this.jobId) this.editedJob = this.$store.getters.job(this.jobId)
     }
-
-    if (newVal && this.job)
-      this.editedJob = Object.assign({}, this.job);
   }
 
   get showMap() {
@@ -298,8 +298,11 @@ export default class EditJobDialog extends Vue {
   async updateJob() {
     this.loading = true
     try {
-      if (this.create) await createJob(this.$store, this.editedJob)
-      else await updateJob(this.$store, this.editedJob)
+      if (this.jobId)
+        await updateJob(this.$store, this.editedJob)
+      else
+        await createJob(this.$store, this.editedJob)
+
       this.closeDialog()
     }
     finally {

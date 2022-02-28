@@ -5,12 +5,11 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
     :editing='true'
     :shift.sync='shift'
     :opened.sync='editShiftDialog'
-    :job-id='shift.job_id'
+    :shift-id='shift.id'
   )
   delete-shift-dialog(
     :opened.sync='deleteShiftDialog'
-    :shift.sync='shift'
-    :contractorName="contractor ? contractor.first_name : 'This contractor'"
+    :shiftIds='[shift.id]'
   )
   
   portal(to='toolbarActions')
@@ -37,7 +36,7 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-delete
       span(v-if='!$vuetify.breakpoint.xs') Delete
 
-  .mt-8 
+  div
     //- Loader
     div(
       v-if='!(shift && shift.time_begin && shift.time_end)'
@@ -67,34 +66,17 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
           router-link.alt-style(
             v-if='!isMyShift && contractor'
             :to="{name: 'user', params: { userId: contractor.id }}"
-          ) {{ contractor | fullName }}
+          ) {{ contractor.name }}
 
         .text-body-2 {{ shift.time_begin | time }} - {{ shift.time_end | time }}
         .text-body-2 {{ shift.time_begin | date('MMM D, YYYY') }} - {{ shift.time_end | date('MMM D, YYYY') }}
 
-      .d-flex.flex-column.align-md-end.gap-small
+      .d-flex.flex-column.align-md-end.justify-center.gap-small
         clock-buttons(v-if='isMyShift' :shift='shift' large)
-
-        .d-flex.flex-md-column.align-stretch.gap-small
-          v-btn(
-            text
-            outlined
-            color='primary'
-            :to="{name: 'job', params: {jobId: shift.job_id}}"
-            exact
-          ) View job details
-
-          v-btn(
-            v-if='userIsManager && contractor'
-            text
-            outlined
-            color='primary'
-            :to="{name: 'user', params: {userId: shift.contractor_id}}"
-          ) View {{ contractor.first_name }}'s profile
        
   
   //- // TODO: Use better masonry library
-  masonry(:cols='{default: 2, 959: 1}' :gutter='30')
+  masonry(:cols='{default: 2, 959: 1}' :gutter='20')
 
     //- Shift notes
     .mb-4.d-flex.flex-column.gap-small(v-if='job.notes || shift.notes')
@@ -118,12 +100,21 @@ v-container.shift.pa-6.d-flex.flex-column.align-stretch.gap-medium(v-if='job')
           | {{tasksComplete}}/{{totalTasks}} completed
 
       task-list(:tasks='tasks')
+
+    .mb-4.d-flex.flex-column.gap-small(v-if='job && job.id')
+      h5.text-h5 Job details
+      v-sheet(outlined rounded)
+        job-preview(:job='job')
+
+    .mb-4.d-flex.flex-column.gap-small(v-if='contractor && contractor.id && !isMyShift')
+      h5.text-h5 Assignee
+      v-sheet(outlined rounded)
+        user-preview(:user='contractor')
     
     //- Shift history
     .mb-4.d-flex.flex-column.gap-small(v-if='history.length')
       h5.text-h5 History
-
-      v-card(outlined flat)
+      v-sheet(outlined rounded)
         clock-events(:events='history')
       
 </template>
@@ -135,11 +126,13 @@ import * as jobs from '@/services/jobs'
 import * as shifts from '@/services/shifts'
 import { Managers, currentUserIs } from '@/types/Users'
 import { Task } from '@/types/Jobs'
-import { ClockEvent, ClockAction } from '@/types/Clock'
+import { ClockEvent, ClockAction } from '@/types/Jobs'
 
 import EditShiftDialog from '@/views/jobs/EditShiftDialog.vue'
 import DeleteShiftDialog from '@/views/jobs/DeleteShiftDialog.vue'
 import TaskList from '@/components/TaskList.vue'
+import JobPreview from '@/components/JobPreview.vue'
+import UserPreview from '@/components/UserPreview.vue'
 import ClockButtons from '@/components/ClockButtons.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
 
@@ -166,13 +159,12 @@ function timeBetween(time: Date) {
 }
 
 @Component({
-  metaInfo: {
-    title: 'Clock'
-  },
   components: {
     EditShiftDialog,
     DeleteShiftDialog,
     TaskList,
+    JobPreview,
+    UserPreview,
     ClockButtons,
     ClockEvents,
   },
@@ -190,6 +182,8 @@ export default class Shift extends Vue {
 
   async mounted() {
     const shift = await this.loadShift()
+
+    console.log(shift)
 
     if (shift?.job_id) {
       this.loadJob(shift.job_id)
@@ -209,6 +203,12 @@ export default class Shift extends Vue {
   @Watch('clockInTime')
   onClockInTimeChange() {
     this.computeTimeSinceClockIn()
+  }
+
+  metaInfo(): any {
+    return {
+      title: this.shift ? this.shift.site_location : 'Shift'
+    }
   }
 
   // User info
@@ -314,7 +314,7 @@ export default class Shift extends Vue {
   async loadShift() {
     this.loadingShift = true
     try {
-      return shifts.getShift(this.$store, parseInt(this.$route.params.shiftId))
+      return shifts.loadShift(this.$store, parseInt(this.$route.params.shiftId))
     }
     finally {
       this.loadingShift = false

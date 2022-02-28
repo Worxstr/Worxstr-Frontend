@@ -6,8 +6,8 @@ v-dialog(
   persistent
 )
   v-card.d-flex.flex-column
-    v-card-title.headline Delete shift {{shift.id}}?
-    v-card-text {{ contractorName }} will no longer work this shift.
+    v-card-title.headline Delete {{ shifts.length == 1 ? shiftName : `${shifts.length} shifts` }}?
+    v-card-text {{ uniquePeople > 1 ? `${uniquePeople} people` : contractorName }} will no longer work {{ shifts.length == 1 ? 'this shift' : 'these shifts'}}.
 
     v-spacer
     
@@ -30,37 +30,59 @@ v-dialog(
 <script lang="ts">
 import { Shift } from '@/types/Jobs';
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { deleteShift } from '@/services/shifts'
+import { deleteShifts } from '@/services/shifts'
 
 @Component
 export default class DeleteShiftDialog extends Vue {
   loading = false
 
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop(Object) readonly shift: Shift | undefined
-  @Prop(String) readonly contractorName: string | undefined
+  @Prop(Array) readonly shiftIds!: number[]
+
+  get shifts(): Shift[] {
+    return this.$store.getters.shifts(this.shiftIds)
+  }
+
+  get shiftName(): string {
+    const first = this.shifts[0]
+    if (!first) return ''
+    return first.site_location
+  }
+
+  get contractorName(): string {
+    const first = this.shifts[0]
+    if (!first) return ''
+    return this.$store.getters.user(first.contractor_id)?.first_name || ''
+  }
+
+  get uniquePeople(): number {
+    return this.shifts.reduce((acc: any[], shift: Shift) => {
+      if (acc.indexOf(shift.contractor_id) === -1) {
+        acc.push(shift.contractor_id)
+      }
+      return acc
+    }, []).length
+  }
 
   closeDialog() {
-    this.$emit("update:opened", false);
+    this.$emit("update:opened", false)
   }
   
   async deleteShift() {
     this.loading = true
-    if (this.shift) {
-      try {
-        const jobId = this.shift.job_id
-        await deleteShift(
-          this.$store,
-          this.shift.id,
-          jobId,
-        )
-        this.closeDialog()
-        if (this.$route.name === 'shift')
-          this.$router.push({name: 'job', params: {jobId: jobId.toString()}})
-      }
-      finally {
-        this.loading = false
-      }
+    try {
+      await deleteShifts(
+        this.$store,
+        this.shiftIds,
+      )
+      this.closeDialog()
+      this.$emit('deleted')
+      // TODO:
+      // if (this.$route.name === 'shift')
+      //   this.$router.push({name: 'job', params: {jobId: jobId.toString()}})
+    }
+    finally {
+      this.loading = false
     }
   }
 }

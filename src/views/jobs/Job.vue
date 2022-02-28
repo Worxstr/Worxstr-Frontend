@@ -12,19 +12,25 @@ v-container(v-if="loading && !job")
 div(v-else)
 
   v-container.approvals.mb-16(v-if="job")
-    edit-job-dialog(:opened.sync="editJobDialog" :job.sync="job")
-    close-job-dialog(:opened.sync="closeJobDialog" :job.sync="job")
-    edit-shift-dialog(
-      :opened.sync='createShiftDialog',
-      :contractors='job.contractors'
-      :job-id='job.id'
-    )
+    edit-job-dialog(:opened.sync="editJobDialog" :job-id="job.id")
+    close-job-dialog(:opened.sync="closeJobDialog" :job-id="job.id")
     qr-code-dialog(
       :opened.sync='qrCodeDialog'
       :code='job.consultant_code'
     )
+    edit-payment-dialog(:opened.sync='createInvoiceDialog' :job-id="job.id")
 
     portal(to="toolbarActions")
+      v-btn(
+        color="primary",
+        text
+        :icon='$vuetify.breakpoint.xs'
+        @click='createInvoiceDialog = true'
+        :disabled='!iAmVerified'
+      )
+        v-icon(:left='!$vuetify.breakpoint.xs') mdi-receipt
+        span(v-if='!$vuetify.breakpoint.xs') Create invoice
+
       v-btn(
         v-if="userIsOrgManager",
         text,
@@ -138,7 +144,7 @@ div(v-else)
         v-card-text.px-5.flex-column.flex-sm-row.flex-lg-column.justify-space-between
         
           .flex-grow-1(v-if='job.organization_manager')
-            p.text-subtitle-2.mb-1 Organization manager
+            p.text-subtitle-2.mb-1 Admin
             p
               router-link.alt-style(
                 :to="{name: 'user', params: {userId: job.organization_manager.id}}"
@@ -146,7 +152,7 @@ div(v-else)
                 | {{ job.organization_manager | fullName }}
 
           .flex-grow-1(v-if='job.contractor_manager')
-            p.text-subtitle-2.mb-1 Contractor manager
+            p.text-subtitle-2.mb-1 Supervisor
             p
               router-link.alt-style(
                 :to="{name: 'user', params: {userId: job.contractor_manager.id}}"
@@ -154,31 +160,13 @@ div(v-else)
                 | {{ job.contractor_manager | fullName }}
 
           .flex-grow-1(v-if='job.consultant_name && job.consultant_email && job.consultant_phone')
-            p.text-subtitle-2.mb-1 Consultant
+            p.text-subtitle-2.mb-1 Client info
             .d-flex.flex-column.gap
               span.mb-0 {{ job.consultant_name }}
               a.mb-0(target='_blank' :href='`mailto:${job.consultant_email}`') {{ job.consultant_email }}
               a(target='_blank' :href='`tel:${job.consultant_phone}`')    {{ job.consultant_phone | phone }}
-
-
-    v-toolbar(flat color="transparent")
-      v-toolbar-title.text-h6 Upcoming shifts
-      v-spacer
-      v-btn(
-        v-if='userIsManager'
-        text
-        color='primary'
-        @click='createShiftDialog = true'
-        :disabled='!job.id'
-        data-cy='assign-shift-button'
-      )
-        v-icon(left) mdi-clipboard-plus-outline
-        span Assign shift
-
-    p.text-body-2.text-center.mt-3(v-if="(!job.shifts || !job.shifts.length) && !loading")
-      | There aren't any shifts for this job.
     
-    shift-list(v-else :shifts='job.shifts' :loading='loading')
+    shift-list(:shifts='job.shifts' :loading='loading' :job-id='job.id')
 
 </template>
 
@@ -190,6 +178,7 @@ import EditJobDialog from './EditJobDialog.vue'
 import CloseJobDialog from './CloseJobDialog.vue'
 import EditShiftDialog from './EditShiftDialog.vue'
 import QrCodeDialog from './QrCodeDialog.vue'
+import EditPaymentDialog from '@/views/payments/EditPaymentDialog.vue'
 
 import GMap from '@/components/GMap.vue'
 import ClockEvents from '@/components/ClockEvents.vue'
@@ -207,6 +196,7 @@ import { loadJob, refreshClockInCode } from '@/services/jobs'
     CloseJobDialog,
     EditShiftDialog,
     QrCodeDialog,
+    EditPaymentDialog,
     GMap,
     ClockEvents,
     ClipboardCopy,
@@ -220,6 +210,7 @@ export default class JobView extends Vue {
   closeJobDialog = false
   createShiftDialog = false
   qrCodeDialog = false
+  createInvoiceDialog = false
   refreshingClockInCode = false
   shifts = []
 
@@ -247,7 +238,7 @@ export default class JobView extends Vue {
   }
 
   get userIsOrgManager() {
-    return currentUserIs(UserRole.OrganizationManager)
+    return currentUserIs(UserRole.Admin)
   }
 
   openQrCodeDialog() {
@@ -256,6 +247,10 @@ export default class JobView extends Vue {
 
   get userLocation() {
     return this.$store.state.users.userLocation
+  }
+
+  get iAmVerified() {
+    return this.$store.getters.iAmVerified
   }
 
   get navigationUrl() {
