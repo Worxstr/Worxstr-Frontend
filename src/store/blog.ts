@@ -18,6 +18,18 @@ export interface BlogState {
 export const initialState = (): BlogState => ({
   posts: [
     {
+      id: '14-more-hours',
+      title: 'What could you do with 14 more hours?',
+      description: 'Grow your business and save time doing it. Worxstr has automated invoice collection and payment processing to save you 14 or more hours a week.',
+      image: '',
+      date: '2022-03-02',
+      author: {
+        name: 'Sam Cheatham',
+        image: require('@/assets/images/team/sam.jpg'),
+      },
+      content: `Don’t have enough hours in a day to grow your business? Save 14 hours every week by letting Worxstr help with payments and invoicing.\n\nFor those who manage independent contractor labor, one of the biggest expenditures of time is collecting invoices and processing payments. According to Quickbooks, 65% of businesses said that they spent a shocking 14 hours per week on average completing administrative tasks related to processing invoices and processing payments. That's almost two days of work that could have been spent selling or servicing customers each week. Quickbooks also indicates that the businesses using contractor labor often use more time than that average. If your small business spends too much time on these processes, let the folks at Worxstr give you back that 14 hours per week.\n\nWorxstr’s software is designed to simplify. Our software automatically collects and tallies all the tickets you create, whether you pay by the hour or pay by the job, and stores them for you to make invoicing easier. We also have a built-in payment processor. Simply go to the Worxstr dashboard, approve the contractor’s completed job or shift, and pay it out to them. The payment will be received on the contractor’s Worxstr app and they can transfer the funds to an attached bank account. The invoicing and payment process can be frustrating and time consuming, but with Worxstr’s help, you can cross that potential headache off your list as a small business owner or manager. To check out a short video demo of how the system works, visit our [about page](/about).\n`,
+    },
+    {
       id: 'release-0.4',
       title: 'Payments release (0.4)',
       description: 'Payments are getting a big update! Invoicing, data exporting, 2FA, and more coming soon.',
