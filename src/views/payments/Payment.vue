@@ -74,7 +74,7 @@ v-container.d-flex.flex-column.pt-6.gap-small
 
   masonry(:cols='{default: 2, 959: 1}' :gutter='20')
 
-    .mb-4.d-flex.flex-column.gap-small(v-if='payment')
+    .mb-4.d-flex.flex-column.gap-small(v-if='payment && (!userIsContractor || payment.bank_transfer)')
       h5.text-h5 Invoice
       v-sheet(outlined rounded)
 
@@ -195,7 +195,7 @@ import { clockedTime, breakTime, workTime, ClockEvent } from '@/types/Jobs'
 import EditPaymentDialog from './EditPaymentDialog.vue'
 import CompletePaymentsDialog from './CompletePaymentsDialog.vue'
 import DenyPaymentsDialog from './DenyPaymentsDialog.vue'
-import { currentUserIs, Managers } from '@/types/Users'
+import { currentUserIs, Managers, UserRole } from '@/types/Users'
 
 @Component({
   metaInfo: {
@@ -283,6 +283,10 @@ export default class Payment extends Vue {
 
   get userIsManager() {
     return currentUserIs(...Managers)
+  }
+
+  get userIsContractor() {
+    return currentUserIs(UserRole.Contractor)
   }
 
   get receiverIsUser() {
