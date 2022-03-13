@@ -24,7 +24,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import ShiftList from '@/components/ShiftList.vue'
 import { loadUpcomingShifts } from '@/services/shifts'
-import { Shift } from '@/types/Jobs'
+import { ClockAction, Shift } from '@/types/Jobs'
 
 @Component({
   components: {
@@ -43,8 +43,9 @@ export default class UpcomingShiftList extends Vue {
   get upcomingShifts() {
     return this.$store.getters.upcomingShifts.filter((shift: Shift) => {
       if (!shift) return false
-      // TODO: Add some type of watcher for when a shift ends, and update this computed value.
-      return (new Date(shift.time_end)) > (new Date())
+      const isInFuture = (new Date(shift.time_end)) > (new Date())
+      const isClockedIn = shift.clock_state !== ClockAction.ClockOut && shift.clock_state !== null
+      return isInFuture || isClockedIn
     })
   }
 
