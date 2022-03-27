@@ -60,7 +60,9 @@ export default class Blog extends Vue {
   }
 
   get posts() {
-    return this.$store.getters.blogPosts
+    return this.$store.getters.blogPosts.sort((a: any, b: any) => {
+      return (new Date(b.attributes.createdAt).getTime() - new Date(a.attributes.createdAt).getTime())
+    })
   }
 
 }
