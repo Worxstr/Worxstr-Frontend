@@ -1,8 +1,8 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.worxstr.worxstr"
-4    android:versionCode="23"
-5    android:versionName="0.4.0" > <!-- For background location: -->
+4    android:versionCode="24"
+5    android:versionName="0.4.1" > <!-- For background location: -->
 6    <!-- https://developer.android.com/training/location/permissions#background -->
 7    <uses-sdk
 8        android:minSdkVersion="21"
@@ -78,8 +78,8 @@
 40-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\owner\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:44:9-33
 41    <!-- Is required to launch foreground extraction service for targetSdkVersion 28+. -->
 42    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-42-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:8:3-74
-42-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:8:20-72
+42-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:8:3-74
+42-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:8:20-72
 43
 44    <application
 44-->C:\Users\owner\Desktop\Worxstr\Worxstr-Frontend\android\app\src\main\AndroidManifest.xml:5:5-44:19
@@ -338,39 +338,39 @@
 186            android:windowSoftInputMode="stateAlwaysHidden" /> <!-- The activities will be merged into the manifest of the hosting app. -->
 186-->[com.journeyapps:zxing-android-embedded:4.1.0] C:\Users\owner\.gradle\caches\transforms-3\ee7262c985225b72b72f26e2444132b3\transformed\jetified-zxing-android-embedded-4.1.0\AndroidManifest.xml:53:13-60
 187        <activity
-187-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:5-271
+187-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:5-271
 188            android:name="com.google.android.play.core.missingsplits.PlayCoreMissingSplitsActivity"
-188-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:15-102
+188-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:15-102
 189            android:enabled="false"
-189-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:103-126
+189-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:103-126
 190            android:exported="false"
-190-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:127-151
+190-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:127-151
 191            android:launchMode="singleInstance"
-191-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:204-239
+191-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:204-239
 192            android:process=":playcore_missing_splits_activity"
-192-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:152-203
+192-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:152-203
 193            android:stateNotNeeded="true" />
-193-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:240-269
+193-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:12:240-269
 194        <activity
-194-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:5-226
+194-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:5-226
 195            android:name="com.google.android.play.core.common.PlayCoreDialogWrapperActivity"
-195-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:15-95
+195-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:15-95
 196            android:enabled="false"
-196-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:96-119
+196-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:96-119
 197            android:exported="false"
-197-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:120-144
+197-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:120-144
 198            android:stateNotNeeded="true"
-198-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:145-174
+198-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:145-174
 199            android:theme="@style/Theme.PlayCore.Transparent" /> <!-- The service will be merged into the manifest of the hosting app. -->
-199-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:175-224
+199-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:13:175-224
 200        <service
-200-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:16:5-145
+200-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:16:5-145
 201            android:name="com.google.android.play.core.assetpacks.AssetPackExtractionService"
-201-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:16:14-95
+201-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:16:14-95
 202            android:enabled="false"
-202-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:16:96-119
+202-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:16:96-119
 203            android:exported="true" />
-203-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\4615ba81d2f734a12e54569757b70280\transformed\jetified-core-1.9.0\AndroidManifest.xml:16:120-143
+203-->[com.google.android.play:core:1.9.0] C:\Users\owner\.gradle\caches\transforms-3\8c2164f00175738442365226409e9568\transformed\jetified-core-1.9.0\AndroidManifest.xml:16:120-143
 204    </application>
 205
 206</manifest>

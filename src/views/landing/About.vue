@@ -56,18 +56,18 @@
           md="4",
           lg="3"
           xl='2'
-          v-for="(member, i) in team"
-          :key='i'
+          v-for="member in team"
+          :key='member.id'
         )
           v-card.soft-shadow(rounded='lg' outlined @click='viewMember(member)')
             v-card-text.pa-4.d-flex.flex-column.justify-start.align-center
               v-avatar.mb-7(size="120", elevation="15")
                 img(
-                  :src="require(`@/assets/images/team/${member.photo}`)",
+                  :src='member.attributes.photo.data.attributes.url'
                   :alt="member.name"
                 )
-              span.text-center.mb-1.text-h5.font-weight-bold {{ member.name }}
-              span.text-center.font-weight-medium {{ member.title }}
+              span.text-center.mb-1.text-h5.font-weight-bold {{ member.attributes.name }}
+              span.text-center.font-weight-medium {{ member.attributes.title }}
 
   //- Member dialog
   v-dialog(v-model='memberDialog' max-width='500')
@@ -80,189 +80,49 @@
       v-card-text.pa-4.d-flex.flex-column.justify-start.align-center
         v-avatar.mb-7(size="180", elevation="15")
           img(
-            :src="require(`@/assets/images/team/${selectedMember.photo}`)",
+            :src='selectedMember.attributes.photo.data.attributes.url',
             :alt="selectedMember.name"
           )
-        span.text-center.mb-1.text-h5.font-weight-bold {{ selectedMember.name }}
-        span.text-center.mb-3.text-subtitle-1.font-weight-medium {{ selectedMember.title }}
-        span.text-center.mb-3 {{ selectedMember.description }}
+        span.text-center.mb-1.text-h5.font-weight-bold {{ selectedMember.attributes.name }}
+        span.text-center.mb-3.text-subtitle-1.font-weight-medium {{ selectedMember.attributes.title }}
+        span.text-center.mb-3 {{ selectedMember.attributes.about }}
         .mb-3
-          v-btn(v-for='(social, i) in selectedMember.socials' :key='i' icon :href='social.link' target="_blank" rel="noreferrer")
+          v-btn(v-for='social in selectedMember.attributes.socials' :key='social.id' icon :href='social.url' target="_blank" rel="noreferrer")
             v-icon(size='24px') {{ social.icon }}
   
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 0')
 
 </template>
 
-<script>
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
 import Arrows from '@/components/Arrows.vue'
+import { getTeamMembers } from '@/services/cms'
 
-export default {
-  name: "about",
+@Component({
   metaInfo: {
-    title: "About us",
-  },
-  methods: {
-    viewMember(member) {
-      this.memberDialog = true
-      this.selectedMember = member;
-    }
+    title: 'About us',
   },
   components: {
-    Arrows
+    Arrows,
   },
-  data: () => ({
-    memberDialog: false,
-    selectedMember: null,
-    team: [
-      {
-        name: "Jackson Sippe",
-        title: "Co-Founder / Head of Product and Development",
-        photo: "jackson.jpg",
-        description: "Jackson Sippe is a second-generation operator of his family’s construction business with extensive experience managing contract labor. He is a software developer with experience working for a major Point-Of-Sale system provider in the retail industry. Jackson is also an MBA student at Appalachian State University with an undergraduate degree in Computer Science.",
-        socials: [
-          {
-            link: 'mailto:jackson@worxstr.com',
-            icon: 'mdi-email-outline',
-          },
-          {
-            link: 'https://github.com/sippejw',
-            icon: 'mdi-github',
-          },
-          {
-            link: 'https://www.linkedin.com/in/jackson-sippe-628392159/',
-            icon: 'mdi-linkedin'
-          },
-        ]
-      },
-      {
-        name: "James Wheeler",
-        title: "Co-Founder / Head of Sales and Marketing",
-        photo: "james.jpg",
-        description: "James Wheeler is a third-generation businessman having grown up in a business family and has experience as a national accounts manager at a logistics company based in Hickory, NC. He also has extensive insight into the management for gig labor through his work within the liquidation advertising industry. James is currently working on an MBA from Appalachian State University with two prior undergraduate degrees in Advertising and Computer Information Systems. ",
-        socials: [
-          {
-            link: 'mailto:james@worxstr.com',
-            icon: 'mdi-email-outline',
-          },
-          {
-            link: 'https://www.linkedin.com/in/jameswheeler94/',
-            icon: 'mdi-linkedin'
-          },
-        ]
-      },
-      {
-        name: "Alex Wohlbruck",
-        title: "Vice President of Engineering",
-        photo: "alex.jpg",
-        description: "Alex Wohlbruck is a web developer at heart and has experience doing contract work for various organizations. He loves cats, and he is an undergrad student at Appalachian State University, studying for a B.S. in computer science.",
-        socials: [
-          {
-            link: 'https://alex.wohlbruck.com',
-            icon: 'mdi-web'
-          },
-          {
-            link: 'mailto:alexwohlbruck@gmail.com',
-            icon: 'mdi-email-outline',
-          },
-          {
-            link: 'https://github.com/alexwohlbruck',
-            icon: 'mdi-github',
-          },
-          {
-            link: 'https://www.linkedin.com/in/alexwohlbruck/',
-            icon: 'mdi-linkedin'
-          },
-        ]
-      },
-      {
-        name: 'Austin Cockerham',
-        title: "Director of Sales / Southeast",
-        photo: 'austin.jpg',
-        socials: [
-          {
-            link: 'mailto:austin@worxstr.com',
-            icon: 'mdi-email-outline',
-          },
-          {
-            link: 'https://www.linkedin.com/in/austin-cockerham-5b3025206/',
-            icon: 'mdi-linkedin'
-          },
-        ]
-      },
-      // {
-      //   name: 'Andrew Thorp',
-      //   title: "Lead Backend Developer / DevOps engineer",
-      //   photo: 'andrew.jpg',
-      //   socials: [
-      //     {
-      //       link: 'https://thorp.dev/',
-      //       icon: 'mdi-web'
-      //     },
-      //     {
-      //       link: 'https://github.com/aThorp96',
-      //       icon: 'mdi-github',
-      //     },
-      //     {
-      //       link: 'https://www.linkedin.com/in/aThorp96',
-      //       icon: 'mdi-linkedin'
-      //     },
-      //   ]
-      // },
-      {
-        name: 'Sam Cheatham',
-        title: "Sales representative",
-        photo: 'sam.jpg',
-        description: 'Sam Cheatham is a senior at Appalachian State University majoring in Marketing and Professional Selling. He has worked in sales for a variety of organizations and is passionate about customer success. In his free time, Sam likes to play chess and manages the university\'s solar vehicle team.',
-        socials: [
-          {
-            link: 'mailto:sam@worxstr.com',
-            icon: 'mdi-email-outline',
-          },
-          {
-            link: 'https://www.linkedin.com/in/samcheatham',
-            icon: 'mdi-linkedin'
-          },
-        ]
-      },
-      {
-        name: 'Kale McIntosh',
-        title: "Sales representative",
-        photo: 'kale.jpg',
-        description: 'Kale is a Business Management major at Appalachian State University, and the President of Alpha Sigma Phi, Epsilon Rho Chapter.',
-        socials: [
-          {
-            link: 'mailto:kale@worxstr.com',
-            icon: 'mdi-email-outline',
-          },
-          {
-            link: 'https://www.linkedin.com/in/kalemcintosh',
-            icon: 'mdi-linkedin'
-          },
-        ]
-      },
-      {
-        name: 'Victoria DiMarco',
-        title: "Marketing Designer",
-        photo: 'victoria.jpg',
-        socials: [
-          {
-            link: 'mailto:victoriadimarco99@gmail.com',
-            icon: 'mdi-email-outline',
-          },
-          {
-            link: 'https://www.linkedin.com/in/victoriadimarco',
-            icon: 'mdi-linkedin'
-          },
-          {
-            link: 'https://www.instagram.com/designdimarco',
-            icon: 'mdi-instagram'
-          },
-        ]
-      },
-    ],
-  }),
-};
+})
+export default class About extends Vue {
+
+  team: any[] = []
+
+  async mounted() {
+    this.team = await getTeamMembers()
+  }
+
+  memberDialog = false
+  selectedMember = null
+  
+  viewMember(member: any) {
+    this.memberDialog = true
+    this.selectedMember = member;
+  }
+}
 </script>
 
 <style lang="scss">
