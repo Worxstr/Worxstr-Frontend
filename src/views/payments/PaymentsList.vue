@@ -264,7 +264,6 @@ export default class PaymentsList extends Vue {
   }
 
   openPaymentDialog(paymentId: number) {
-    // this.selectTimecards()
     if (paymentId) this.selectedPaymentIds = [paymentId]
     else if (!this.selectedPaymentIds.length) this.selectAll()
     this.paymentDialog = true

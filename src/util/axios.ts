@@ -10,6 +10,13 @@ export const api = axios.create({
   withCredentials: true,
 })
 
+export const cms = axios.create({
+  baseURL: 'https://cms.worxstr.com/api',
+  headers: {
+    'Authorization': `Bearer ${process.env.VUE_APP_CMS_TOKEN}`,
+  }
+})
+
 async function checkOnline(config: any) {
   // If user tries to perform action while offline, send a toast
   if (config.method !== 'get') {

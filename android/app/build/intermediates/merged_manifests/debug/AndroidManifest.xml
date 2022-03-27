@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.worxstr.worxstr"
-    android:versionCode="23"
-    android:versionName="0.4.0" > <!-- For background location: -->
+    android:versionCode="24"
+    android:versionName="0.4.1" > <!-- For background location: -->
     <!-- https://developer.android.com/training/location/permissions#background -->
     <uses-sdk
         android:minSdkVersion="21"
