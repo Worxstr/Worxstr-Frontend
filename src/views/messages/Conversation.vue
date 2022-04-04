@@ -122,11 +122,12 @@ export default class Conversation extends Vue {
 
   async sendMessage() {
     if (!this.message) return
-    this.sendingMessage = true
 
     // Split the message into chunks of 500 characters
-
     const chunks = this.message.match(/.{1,500}/g)
+    if (!chunks) return
+
+    this.sendingMessage = true
     for (const chunk of chunks) {
       if (!chunk) continue
       
