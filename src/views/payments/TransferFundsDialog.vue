@@ -63,7 +63,7 @@ v-dialog(
                   span(v-else-if='achFee === null') Calculating fee...
                   span(v-else) {{ achFee | currency }} fee
               
-          v-radio(value='next_available')
+          v-radio(value='next-available')
             template(v-slot:label)
               .d-flex.flex-column
                 div Same-day {{action == 'add' ? 'transfer' : 'withdrawal'}}
