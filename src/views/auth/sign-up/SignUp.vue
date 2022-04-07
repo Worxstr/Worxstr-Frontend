@@ -119,9 +119,15 @@ export default class SignUp extends Vue {
   }
 
   async mounted() {
+    if (this.$route.query.manager_reference) {
+      // Continue to sign up as contractor
+      this.accountType = 'contractor'
+      this.step = 1
+    }
+
     if (this.$route.params.subscriptionTier) {
       this.accountType = 'org'
-      this.step++
+      this.step = 1
       this.form.subscription_tier = this.$route.params.subscriptionTier
     }
 
