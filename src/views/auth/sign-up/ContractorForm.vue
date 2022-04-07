@@ -168,9 +168,15 @@ export default class ContractorForm extends Vue {
 
   @Prop({ default: false }) retry!: boolean
   
-  form = {}
+  form: any = {}
   showPassword = false
   states = ['AL','AK','AS','AZ','AR','CA','CO','CT','DE','DC','FM','FL','GA','GU','HI','ID','IL','IN','IA','KS','KY','LA','ME','MH','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','MP','OH','OK','OR','PW','PA','PR','RI','SC','SD','TN','TX','UT','VT','VI','VA','WA','WV','WI','WY']
+
+  mounted() {
+    if (this.$route.query.manager_reference) {
+      this.form.manager_reference = this.$route.query.manager_reference
+    }
+  }
 
   get rules() {
     return {
