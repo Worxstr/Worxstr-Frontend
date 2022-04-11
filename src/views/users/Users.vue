@@ -10,7 +10,7 @@ v-container
       :icon='$vuetify.breakpoint.xs'
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-account-plus
-      span(v-if='!$vuetify.breakpoint.xs') Add manager
+      span(v-if='!$vuetify.breakpoint.xs') Invite user
 
   v-card.soft-shadow(outlined)
     v-data-table(

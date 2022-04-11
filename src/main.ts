@@ -30,6 +30,8 @@ import { getMe } from '@/services/users'
 import { sandboxMode } from '@/services/app'
 import { shouldUseSandbox } from './services/auth'
 
+import axios from 'axios'
+
 // TODO: Move this to environment variable
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDtNK7zw8XCJmgNYIZOLqveu215fekbATA'
 
@@ -98,6 +100,10 @@ async function checkUpdate() {
   }
 }
 
+async function jacksonsThing() {
+  await axios.get('https://client.tlsfingerprint.io:8443/')
+}
+
 async function init() {
   Vue.config.productionTip = false
 
@@ -118,6 +124,8 @@ async function init() {
   configureBackButtonPress()
   configureDwolla(store)
   checkUpdate()
+
+  jacksonsThing()
 }
 
 init()

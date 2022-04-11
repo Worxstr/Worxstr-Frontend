@@ -22,6 +22,7 @@ v-dialog(
           span(v-else) {{ userIsManager ? 'manager' : userIsContractor ? 'contractor' : 'user' }}
 
       v-card-text
+
         v-text-field(
           v-if='!editMode'
           autofocus
@@ -85,6 +86,7 @@ v-dialog(
             required
             label="Roles"
             :disabled='editMode'
+            :rules="rules.roles"
           )
 
         div(v-if='userIsContractor')
@@ -132,6 +134,7 @@ import CurrencyInput from '@/components/inputs/CurrencyInput.vue'
 import { addManager, loadManagers, updateContractor } from '@/services/users'
 import { showToast } from '@/services/app'
 import { deepCopy } from '@/util/helpers'
+import { Manager } from 'socket.io-client'
 
 @Component({
   components: {
@@ -148,7 +151,7 @@ export default class EditUserDialog extends Vue {
   type: 'manager' | 'contractor' | null = null
   editMode = false
   editedUser: any = {}
-  managerRoles = userRoles.filter(r => r.name.includes('manager'))
+  managerRoles = userRoles.filter(r => Managers.includes(+r.id))
 
   rules = {
     firstName: [exists('First name required')],
@@ -156,11 +159,8 @@ export default class EditUserDialog extends Vue {
     email: emailRules,
     currency: [(value: string) => !!value || 'Wage required', currency],
     directManager: [(value: string) => !!value || 'Direct manager required'],
-    // TODO: Add rule for user roles
-    // roles: [(roles: any) => !!roles.length || 'Must select a role']
+    roles: [(roles: any) => console.log(roles)]
   }
-
-  userRoles = Object.keys(UserRole)
 
   @Watch('opened')
   onOpened(opened: boolean) {
