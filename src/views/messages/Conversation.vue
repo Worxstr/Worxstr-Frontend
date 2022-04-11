@@ -39,9 +39,10 @@
       dense
       placeholder="Type a message..."
       data-cy='message-input'
+      :readonly='sendingMessage'
     )
 
-    v-btn.ml-3(color="primary", icon, type="submit")
+    v-btn.ml-3(color='primary' icon type='submit' :loading='sendingMessage')
       v-icon mdi-send
 </template>
 
@@ -55,6 +56,7 @@ import { User } from '@/types/Users'
 @Component
 export default class Conversation extends Vue {
   message = ''
+  sendingMessage = false
 
   metaInfo(): any {
     return {
@@ -120,7 +122,22 @@ export default class Conversation extends Vue {
 
   async sendMessage() {
     if (!this.message) return
-    await messages.sendMessage(this.$store, { body: this.message }, parseInt(this.$route.params.conversationId))
+
+    // Split the message into chunks of 500 characters
+    const chunks = this.message.match(/.{1,500}/g)
+    if (!chunks) return
+
+    this.sendingMessage = true
+    for (const chunk of chunks) {
+      if (!chunk) continue
+      
+      await messages.sendMessage(
+        this.$store,
+        { body: chunk },
+        parseInt(this.$route.params.conversationId)
+      )
+    }
+    this.sendingMessage = false
     this.message = ''
   }
 

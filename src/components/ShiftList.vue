@@ -80,8 +80,10 @@ div
           )
             | {{ getContractor(item.contractor_id).name }}
 
+          span(v-if='item.contractor_id && userIsManager && item.clock_history.length') &nbsp;-&nbsp;
+
           span(v-if='item.clock_history.length')
-            | &nbsp;- {{ item.clock_history.length }} {{ item.clock_history.length == 1 ? 'event' : 'events'}}
+            | {{ item.clock_history.length }} {{ item.clock_history.length == 1 ? 'event' : 'events'}}
         
 
       v-list-item-action.mr-2(v-if='userIsContractor ? !shiftIsActive(item) : !$vuetify.breakpoint.xs')
