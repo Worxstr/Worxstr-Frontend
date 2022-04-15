@@ -1,6 +1,7 @@
 <template lang="pug">
 v-container
   edit-user-dialog(:opened.sync="editUserDialog")
+  invite-users-dialog(:opened.sync="inviteUsersDialog")
 
   portal(to="toolbarActions")
     v-btn(
@@ -11,6 +12,15 @@ v-container
     )
       v-icon(:left='!$vuetify.breakpoint.xs') mdi-account-plus
       span(v-if='!$vuetify.breakpoint.xs') Add manager
+    
+    v-btn(
+      text
+      color='primary'
+      @click='inviteUsersDialog = true'
+      :icon='$vuetify.breakpoint.xs'
+    )
+      v-icon(:left='!$vuetify.breakpoint.xs') mdi-account-multiple-plus
+      span(v-if='!$vuetify.breakpoint.xs') Invite contractors
 
   v-card.soft-shadow(outlined)
     v-data-table(
@@ -43,6 +53,7 @@ v-container
 import { Component, Vue } from 'vue-property-decorator'
 import { currentUserIs, User, UserRole } from '@/types/Users'
 import EditUserDialog from './EditUserDialog.vue'
+import InviteUsersDialog from './InviteUsersDialog.vue'
 import Roles from '@/components/Roles.vue'
 import { loadWorkforce } from '@/services/users'
 
@@ -52,12 +63,14 @@ import { loadWorkforce } from '@/services/users'
   },
   components: {
     EditUserDialog,
+    InviteUsersDialog,
     Roles,
   },
 })
 export default class Users extends Vue {
   loading = false
   editUserDialog = false
+  inviteUsersDialog = false
   headers = [
     {
       text: 'Name',
