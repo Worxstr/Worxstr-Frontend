@@ -55,12 +55,13 @@
               v-if='!link.hide'
               text
               :to="{name: link.to}"
-              @mouseover='openSubmenu(i)'
+              @pointerenter='openSubmenu($event, i)'
+              @pointerleave='closeSubmenu($event)'
             ) {{ link.text }}
           
-          v-card(style='position: absolute')
+          v-card.transition(style='position: absolute' ref='submenu')
             v-card-text
-              v-window(v-model='submenu' reverse)
+              v-window(v-model='submenu')
                 v-window-item(v-for='(menu, i) in links' :key='i')
                   p content {{i}}
 
@@ -118,8 +119,17 @@ export default class Toolbar extends Vue {
   menu = false
   submenu: number | null = null
 
-  openSubmenu(i: number) {
-    this.submenu = i
+  openSubmenu(event: any, i: number) {
+    // Shift menu over to match the target
+    if (i === this.submenu) {
+      return
+    }
+    this.submenu = i;
+    (this.$refs.submenu as any).$el.style.left = `${event.target.offsetLeft}px`
+  }
+
+  closeSubmenu(event: any) {
+    this.submenu = null;
   }
   
   get bottomToolbar() {
@@ -196,5 +206,10 @@ export default class Toolbar extends Vue {
 }
 .mobile-nav-items {
   padding-top: max(env(safe-area-inset-top), 10px) !important;
+}
+
+.transition {
+  left: 0;
+  transition: all 0.3s ease-in-out !important;
 }
 </style>
