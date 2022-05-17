@@ -16,6 +16,7 @@
       )
         v-icon mdi-menu
       
+      //- Logotype
       router-link.mb-2.mr-2(
         to="/"
         style="text-decoration: none"
@@ -27,23 +28,76 @@
             alt="Worxstr logo"
           )
 
+      //- Breadcrumb nav items
       breadcrumbs
 
+      //- Left portal
       portal-target.d-flex.align-center(name="toolbarTitle")
 
       v-spacer
 
+      //- Right portal
       portal-target.d-flex.align-center(name="toolbarActions")
 
+      //- Landing page nav items
       div(v-if="$route.meta.landing")
-        v-btn(v-if='mobileLayout' icon @click='menu = true')
+        v-btn(
+          v-if='mobileLayout'
+          icon 
+          @click='menu = true'
+        )
           v-icon mdi-menu
+        
         div(v-else)
-          v-btn(v-for="(link, i) in links" :key='i' text :to="{name: link.to}" v-if='!link.hide') {{ link.text }}
+          div
+            v-btn(
+              v-for="(link, i) in links"
+              v-if='!link.hide'
+              text
+              :to="{name: link.to}"
+              @mouseover='openSubmenu(i)'
+            ) {{ link.text }}
+          
+          v-card(style='position: absolute')
+            v-card-text
+              v-window(v-model='submenu' reverse)
+                v-window-item(v-for='(menu, i) in links' :key='i')
+                  p content {{i}}
 
+          //- v-menu(
+          //-   v-for="(link, i) in links"
+          //-   v-if='!link.hide'
+          //-   :key='i'
+          //-   offset-y
+          //-   open-on-hover
+          //- )
+          //-   template(v-slot:activator='{ on, attrs }')
+          //-     v-btn(
+          //-       v-bind='attrs'
+          //-       v-on='on'
+          //-       text
+          //-       :to="{name: link.to}"
+          //-     ) {{ link.text }}
+            
+          //-   v-list
+          //-     v-list-item
+          //-       v-list-item-title Test item 1
+          //-     v-list-item
+          //-       v-list-item-title Test item 2
+          //-     v-list-item
+          //-       v-list-item-title Test item 3
+
+    //- Right nav drawer for landing page
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
       v-list.mobile-nav-items(nav)
-        v-list-item(v-for="(link, i) in links" :key='i' text :to="{name: link.to}" link v-if='!link.hide')
+        v-list-item(
+          v-for="(link, i) in links"
+          :key='i'
+          text
+          :to="{name: link.to}"
+          link
+          v-if='!link.hide'
+        )
           v-list-item-content
             v-list-item-title {{ link.text }}
 </template>
@@ -62,6 +116,11 @@ export default class Toolbar extends Vue {
   @Prop({ default: false }) drawer!: boolean
   
   menu = false
+  submenu: number | null = null
+
+  openSubmenu(i: number) {
+    this.submenu = i
+  }
   
   get bottomToolbar() {
     return this.mediumLayout && !this.$route.meta?.landing
