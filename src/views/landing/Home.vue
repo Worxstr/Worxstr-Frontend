@@ -13,6 +13,8 @@
               span.gradient-text(:class="$vuetify.theme.dark ? 'gradient-secondary' : 'gradient-tertiary'") adaptive
               | &nbsp;solution to contract labor management
 
+            h6.text-h6 The easy way to schedule, track, and pay contractors.
+
           div(v-if='me')
             v-btn.mr-3.black--text(
               elevation='0'

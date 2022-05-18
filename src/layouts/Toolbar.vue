@@ -92,16 +92,42 @@
     //- Right nav drawer for landing page
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
       v-list.mobile-nav-items(nav)
-        v-list-item(
+        div(
           v-for="(link, i) in links"
           :key='i'
-          text
-          :to="{name: link.to}"
-          link
           v-if='!link.hide'
         )
-          v-list-item-content
-            v-list-item-title {{ link.label }}
+          v-list-group(v-if='link.submenu')
+            template(v-slot:activator)
+              v-list-item-title {{ link.label }}
+            
+            v-list-item(
+              v-if='link.submenu === "cms"'
+              link
+              v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+              :key='j'
+              :to="{name: sublink.to}"
+            )
+              v-list-item-title {{ sublink.label }}
+            
+            v-list-item(
+              v-else
+              link
+              v-for='(sublink, j) in link.submenu'
+              :key='j'
+              :to="{name: sublink.to}"
+            )
+              v-list-item-title {{ sublink.label }}
+              
+
+          v-list-item(
+            link
+            v-else
+            :to="{name: link.to}"
+          )
+            v-list-item-content
+              v-list-item-title {{ link.label }}
+
 </template>
 
 <script lang="ts">
@@ -218,8 +244,7 @@ export default class Toolbar extends Vue {
   padding-top: max(env(safe-area-inset-top), 10px) !important;
 }
 
-.transition {
-  left: 0;
-  transition: all 0.3s ease-in-out !important;
+.v-list-group__header {
+  margin-bottom: 0 !important;
 }
 </style>
