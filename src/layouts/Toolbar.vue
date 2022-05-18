@@ -12,7 +12,7 @@
       v-btn(
         icon
         @click="$emit('toggleDrawer')"
-        v-if='mediumLayout && !$route.meta.landing'
+        v-if='mobileLayout && !$route.meta.landing'
       )
         v-icon mdi-menu
       
