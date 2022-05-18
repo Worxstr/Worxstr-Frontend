@@ -12,7 +12,7 @@
       v-btn(
         icon
         @click="$emit('toggleDrawer')"
-        v-if='mediumLayout && !$route.meta.landing'
+        v-if='mobileLayout && !$route.meta.landing'
       )
         v-icon mdi-menu
       
@@ -163,7 +163,7 @@ export default class Toolbar extends Vue {
   }
   
   get bottomToolbar() {
-    return this.mediumLayout && !this.$route.meta?.landing
+    return this.mobileLayout && !this.$route.meta?.landing
   }
 
   get logo() {
