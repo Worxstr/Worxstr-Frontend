@@ -64,17 +64,21 @@
                   v-bind='attrs'
                   v-on='on'
                   text
-                ) {{ link.label }}
+                )
+                  | {{ link.label }}
+                  v-icon(right) mdi-chevron-down
               
               v-list
                 div(v-if='link.submenu === "cms"')
-                  v-list-item(
-                    v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
-                    :key='j'
-                    :to="{name: sublink.to}"
-                  )
-                    v-list-item-title {{ sublink.label }}
-                  
+                  div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
+                    v-list-item(
+                      v-if='cmsMenuItems[link.label]'
+                      v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                      :key='j'
+                      :to="{name: sublink.to}"
+                    )
+                      v-list-item-title {{ sublink.label }}
+                    
                 div(v-else)
                   v-list-item(
                     v-for='(sublink, j) in link.submenu'
@@ -92,16 +96,43 @@
     //- Right nav drawer for landing page
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
       v-list.mobile-nav-items(nav)
-        v-list-item(
+        div(
           v-for="(link, i) in links"
           :key='i'
-          text
-          :to="{name: link.to}"
-          link
           v-if='!link.hide'
         )
-          v-list-item-content
-            v-list-item-title {{ link.label }}
+          v-list-group(v-if='link.submenu')
+            template(v-slot:activator)
+              v-list-item-title {{ link.label }}
+              
+            div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
+              v-list-item(
+                v-if='link.submenu === "cms"'
+                link
+                v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                :key='j'
+                :to="{name: sublink.to}"
+              )
+                v-list-item-title {{ sublink.label }}
+              
+              v-list-item(
+                v-else
+                link
+                v-for='(sublink, j) in link.submenu'
+                :key='j'
+                :to="{name: sublink.to}"
+              )
+                v-list-item-title {{ sublink.label }}
+                
+
+          v-list-item(
+            link
+            v-else
+            :to="{name: link.to}"
+          )
+            v-list-item-content
+              v-list-item-title {{ link.label }}
+
 </template>
 
 <script lang="ts">
@@ -163,17 +194,26 @@ export default class Toolbar extends Vue {
         to: 'about',
       },
       {
-        label: 'Blog',
-        to: 'blog',
-      },
-      {
-        label: 'Contact us',
-        to: 'contact',
-      },
-      {
-        label: 'Submenu',
+        label: 'Features',
         submenu: 'cms',
       },
+      {
+        label: 'Industries',
+        submenu: 'cms',
+      },
+      {
+        label: 'Resources',
+        submenu: 'cms',
+      },
+      {
+        label: 'Pricing',
+        to: 'pricing',
+        hide: Capacitor.isNativePlatform(),
+      },
+      // {
+      //   label: 'Contact us',
+      //   to: 'contact',
+      // },
       // {
       //   label: 'Submenu hardcoded',
       //   submenu: [
@@ -187,11 +227,6 @@ export default class Toolbar extends Vue {
       //   label: "Support",
       //   to: "support",
       // },
-      {
-        label: 'Pricing',
-        to: 'pricing',
-        hide: Capacitor.isNativePlatform(),
-      },
       {
         label: 'Sign in',
         to: 'signIn',
@@ -218,8 +253,7 @@ export default class Toolbar extends Vue {
   padding-top: max(env(safe-area-inset-top), 10px) !important;
 }
 
-.transition {
-  left: 0;
-  transition: all 0.3s ease-in-out !important;
+.v-list-group__header {
+  margin-bottom: 0 !important;
 }
 </style>
