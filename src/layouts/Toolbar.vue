@@ -16,6 +16,7 @@
       )
         v-icon mdi-menu
       
+      //- Logotype
       router-link.mb-2.mr-2(
         to="/"
         style="text-decoration: none"
@@ -27,23 +28,65 @@
             alt="Worxstr logo"
           )
 
+      //- Breadcrumb nav items
       breadcrumbs
 
+      //- Left portal
       portal-target.d-flex.align-center(name="toolbarTitle")
 
       v-spacer
 
+      //- Right portal
       portal-target.d-flex.align-center(name="toolbarActions")
 
+      //- Landing page nav items
       div(v-if="$route.meta.landing")
-        v-btn(v-if='mobileLayout' icon @click='menu = true')
+        v-btn(
+          v-if='mobileLayout'
+          icon 
+          @click='menu = true'
+        )
           v-icon mdi-menu
-        div(v-else)
-          v-btn(v-for="(link, i) in links" :key='i' text :to="{name: link.to}" v-if='!link.hide') {{ link.text }}
+        
+        .d-flex(v-else)
+          div(
+            v-for="(link, i) in links"
+            v-if='!link.hide'
+            :key='i'
+          )
+            v-btn(
+              v-if='!link.submenu'
+              text
+              :to="{name: link.to}"
+            ) {{ link.text }}
 
+            v-menu(
+              v-else
+              offset-y
+              open-on-hover
+            )
+              template(v-slot:activator='{ on, attrs }')
+                v-btn(
+                  v-bind='attrs'
+                  v-on='on'
+                  text
+                ) {{ link.text }}
+              
+              v-list
+                v-list-item(v-for='(sublink, j) in link.submenu' :key='j' :to="{name: sublink.to}")
+                  v-list-item-title {{ sublink.text }}
+
+    //- Right nav drawer for landing page
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
       v-list.mobile-nav-items(nav)
-        v-list-item(v-for="(link, i) in links" :key='i' text :to="{name: link.to}" link v-if='!link.hide')
+        v-list-item(
+          v-for="(link, i) in links"
+          :key='i'
+          text
+          :to="{name: link.to}"
+          link
+          v-if='!link.hide'
+        )
           v-list-item-content
             v-list-item-title {{ link.text }}
 </template>
@@ -104,6 +147,15 @@ export default class Toolbar extends Vue {
         text: 'Contact us',
         to: 'contact',
       },
+      {
+        text: 'Submenu',
+        submenu: [
+          {
+            text: 'Pricing',
+            to: 'pricing',
+          }
+        ]
+      },
       // {
       //   text: "Support",
       //   to: "support",
@@ -137,5 +189,10 @@ export default class Toolbar extends Vue {
 }
 .mobile-nav-items {
   padding-top: max(env(safe-area-inset-top), 10px) !important;
+}
+
+.transition {
+  left: 0;
+  transition: all 0.3s ease-in-out !important;
 }
 </style>
