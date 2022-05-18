@@ -48,45 +48,39 @@
         )
           v-icon mdi-menu
         
-        div(v-else)
-          div
+        .d-flex(v-else)
+          div(
+            v-for="(link, i) in links"
+            v-if='!link.hide'
+            :key='i'
+          )
             v-btn(
-              v-for="(link, i) in links"
-              v-if='!link.hide'
+              v-if='!link.submenu'
               text
               :to="{name: link.to}"
-              @pointerenter='openSubmenu($event, i)'
-              @pointerleave='closeSubmenu($event)'
             ) {{ link.text }}
-          
-          v-card.transition(style='position: absolute' ref='submenu')
-            v-card-text
-              v-window(v-model='submenu')
-                v-window-item(v-for='(menu, i) in links' :key='i')
-                  p content {{i}}
 
-          //- v-menu(
-          //-   v-for="(link, i) in links"
-          //-   v-if='!link.hide'
-          //-   :key='i'
-          //-   offset-y
-          //-   open-on-hover
-          //- )
-          //-   template(v-slot:activator='{ on, attrs }')
-          //-     v-btn(
-          //-       v-bind='attrs'
-          //-       v-on='on'
-          //-       text
-          //-       :to="{name: link.to}"
-          //-     ) {{ link.text }}
-            
-          //-   v-list
-          //-     v-list-item
-          //-       v-list-item-title Test item 1
-          //-     v-list-item
-          //-       v-list-item-title Test item 2
-          //-     v-list-item
-          //-       v-list-item-title Test item 3
+            v-menu(
+              v-else
+              
+              offset-y
+              open-on-hover
+            )
+              template(v-slot:activator='{ on, attrs }')
+                v-btn(
+                  v-bind='attrs'
+                  v-on='on'
+                  text
+                  :to="{name: link.to}"
+                ) {{ link.text }}
+              
+              v-list
+                v-list-item
+                  v-list-item-title Test item 1
+                v-list-item
+                  v-list-item-title Test item 2
+                v-list-item
+                  v-list-item-title Test item 3
 
     //- Right nav drawer for landing page
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
@@ -117,20 +111,6 @@ export default class Toolbar extends Vue {
   @Prop({ default: false }) drawer!: boolean
   
   menu = false
-  submenu: number | null = null
-
-  openSubmenu(event: any, i: number) {
-    // Shift menu over to match the target
-    if (i === this.submenu) {
-      return
-    }
-    this.submenu = i;
-    (this.$refs.submenu as any).$el.style.left = `${event.target.offsetLeft}px`
-  }
-
-  closeSubmenu(event: any) {
-    this.submenu = null;
-  }
   
   get bottomToolbar() {
     return this.mediumLayout && !this.$route.meta?.landing
@@ -172,6 +152,15 @@ export default class Toolbar extends Vue {
       {
         text: 'Contact us',
         to: 'contact',
+      },
+      {
+        text: 'Submenu',
+        submenu: [
+          {
+            text: 'Sbmenu item 1',
+            to: 'submenu-1',
+          }
+        ]
       },
       // {
       //   text: "Support",
