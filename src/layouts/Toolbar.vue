@@ -54,14 +54,8 @@
             v-if='!link.hide'
             :key='i'
           )
-            v-btn(
-              v-if='!link.submenu'
-              text
-              :to="{name: link.to}"
-            ) {{ link.text }}
-
             v-menu(
-              v-else
+              v-if='link.submenu'
               offset-y
               open-on-hover
             )
@@ -70,11 +64,30 @@
                   v-bind='attrs'
                   v-on='on'
                   text
-                ) {{ link.text }}
+                ) {{ link.label }}
               
               v-list
-                v-list-item(v-for='(sublink, j) in link.submenu' :key='j' :to="{name: sublink.to}")
-                  v-list-item-title {{ sublink.text }}
+                div(v-if='link.submenu === "cms"')
+                  v-list-item(
+                    v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                    :key='j'
+                    :to="{name: sublink.to}"
+                  )
+                    v-list-item-title {{ sublink.label }}
+                  
+                div(v-else)
+                  v-list-item(
+                    v-for='(sublink, j) in link.submenu'
+                    :key='j'
+                    :to="{name: sublink.to}"
+                  )
+                    v-list-item-title {{ sublink.label }}
+
+            v-btn(
+              v-else
+              text
+              :to="{name: link.to}"
+            ) {{ link.label }}
 
     //- Right nav drawer for landing page
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
@@ -88,13 +101,14 @@
           v-if='!link.hide'
         )
           v-list-item-content
-            v-list-item-title {{ link.text }}
+            v-list-item-title {{ link.label }}
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
 import { Capacitor } from '@capacitor/core'
+import { getMenuItems } from '@/services/cms'
 
 @Component({
   components: {
@@ -105,6 +119,15 @@ export default class Toolbar extends Vue {
   @Prop({ default: false }) drawer!: boolean
   
   menu = false
+  cmsMenuItems: any = {}
+
+  async mounted() {
+    const menuItems = await getMenuItems()
+    menuItems.forEach(item => {
+      this.cmsMenuItems[item.attributes.label] = item.attributes
+      this.$forceUpdate()
+    })
+  }
   
   get bottomToolbar() {
     return this.mediumLayout && !this.$route.meta?.landing
@@ -131,47 +154,51 @@ export default class Toolbar extends Vue {
   get links() {
     return [
       {
-        text: 'Home',
+        label: 'Home',
         to: 'home',
         hide: !this.mobileLayout,
       },
       {
-        text: 'About',
+        label: 'About',
         to: 'about',
       },
       {
-        text: 'Blog',
+        label: 'Blog',
         to: 'blog',
       },
       {
-        text: 'Contact us',
+        label: 'Contact us',
         to: 'contact',
       },
       {
-        text: 'Submenu',
-        submenu: [
-          {
-            text: 'Pricing',
-            to: 'pricing',
-          }
-        ]
+        label: 'Submenu',
+        submenu: 'cms',
       },
       // {
-      //   text: "Support",
+      //   label: 'Submenu hardcoded',
+      //   submenu: [
+      //     {
+      //       label: 'Pricing',
+      //       to: 'pricing',
+      //     }
+      //   ]
+      // },
+      // {
+      //   label: "Support",
       //   to: "support",
       // },
       {
-        text: 'Pricing',
+        label: 'Pricing',
         to: 'pricing',
         hide: Capacitor.isNativePlatform(),
       },
       {
-        text: 'Sign in',
+        label: 'Sign in',
         to: 'signIn',
         hide: this.authenticated,
       },
       {
-        text: 'Sign up',
+        label: 'Sign up',
         to: 'signUp',
         hide: !this.mobileLayout || this.authenticated,
       },

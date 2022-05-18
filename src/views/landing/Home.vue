@@ -45,30 +45,6 @@
             )
               span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") Sign in
 
-          .d-flex.mt-6.align-center
-            v-btn(
-              color="blue"
-              class="mr-3"
-              href='https://apps.apple.com/us/app/worxstr/id1571853545'
-              target='_blank'
-            )
-              v-icon.white--text mdi-apple
-
-            v-btn(
-              color="green"
-              class="mr-3"
-              href='https://play.google.com/store/apps/details?id=com.worxstr.worxstr'
-              target='_blank'
-            )
-              v-icon.white--text mdi-google-play
-
-            v-btn(
-              :to="{ name: 'about'}"
-              class="mr-3"
-              outlined
-              color='primary'
-            )
-              span Learn more
 
             //- p.mb-0.mr-2.font-weight-medium Get the app:
             //- v-btn(
