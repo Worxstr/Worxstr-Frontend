@@ -64,17 +64,21 @@
                   v-bind='attrs'
                   v-on='on'
                   text
-                ) {{ link.label }}
+                )
+                  | {{ link.label }}
+                  v-icon(right) mdi-chevron-down
               
               v-list
                 div(v-if='link.submenu === "cms"')
-                  v-list-item(
-                    v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
-                    :key='j'
-                    :to="{name: sublink.to}"
-                  )
-                    v-list-item-title {{ sublink.label }}
-                  
+                  div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
+                    v-list-item(
+                      v-if='cmsMenuItems[link.label]'
+                      v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                      :key='j'
+                      :to="{name: sublink.to}"
+                    )
+                      v-list-item-title {{ sublink.label }}
+                    
                 div(v-else)
                   v-list-item(
                     v-for='(sublink, j) in link.submenu'
@@ -100,25 +104,26 @@
           v-list-group(v-if='link.submenu')
             template(v-slot:activator)
               v-list-item-title {{ link.label }}
-            
-            v-list-item(
-              v-if='link.submenu === "cms"'
-              link
-              v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
-              :key='j'
-              :to="{name: sublink.to}"
-            )
-              v-list-item-title {{ sublink.label }}
-            
-            v-list-item(
-              v-else
-              link
-              v-for='(sublink, j) in link.submenu'
-              :key='j'
-              :to="{name: sublink.to}"
-            )
-              v-list-item-title {{ sublink.label }}
               
+            div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
+              v-list-item(
+                v-if='link.submenu === "cms"'
+                link
+                v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                :key='j'
+                :to="{name: sublink.to}"
+              )
+                v-list-item-title {{ sublink.label }}
+              
+              v-list-item(
+                v-else
+                link
+                v-for='(sublink, j) in link.submenu'
+                :key='j'
+                :to="{name: sublink.to}"
+              )
+                v-list-item-title {{ sublink.label }}
+                
 
           v-list-item(
             link
@@ -189,17 +194,26 @@ export default class Toolbar extends Vue {
         to: 'about',
       },
       {
-        label: 'Blog',
-        to: 'blog',
-      },
-      {
-        label: 'Contact us',
-        to: 'contact',
-      },
-      {
-        label: 'Submenu',
+        label: 'Features',
         submenu: 'cms',
       },
+      {
+        label: 'Industries',
+        submenu: 'cms',
+      },
+      {
+        label: 'Resources',
+        submenu: 'cms',
+      },
+      {
+        label: 'Pricing',
+        to: 'pricing',
+        hide: Capacitor.isNativePlatform(),
+      },
+      // {
+      //   label: 'Contact us',
+      //   to: 'contact',
+      // },
       // {
       //   label: 'Submenu hardcoded',
       //   submenu: [
@@ -213,11 +227,6 @@ export default class Toolbar extends Vue {
       //   label: "Support",
       //   to: "support",
       // },
-      {
-        label: 'Pricing',
-        to: 'pricing',
-        hide: Capacitor.isNativePlatform(),
-      },
       {
         label: 'Sign in',
         to: 'signIn',
