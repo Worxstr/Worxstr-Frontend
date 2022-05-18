@@ -3,12 +3,21 @@
 import { BlogPost } from '@/store/blog'
 import { cms } from '@/util/axios'
 
-type blogPostsResponse = {
-  data: BlogPost[]
+type strapiResponse = {
+  data: any[]
+}
+
+export async function getMenuItems() {
+  const { data } = await cms.get<strapiResponse>('/menus', {
+    params: {
+      populate: '*',
+    }
+  })
+  return data.data
 }
 
 export async function getBlogPosts({ commit }: any) {
-  const { data } = await cms.get<blogPostsResponse>('/blog-posts', {
+  const { data } = await cms.get<strapiResponse>('/blog-posts', {
     params: {
       populate: 'authors,image,authors.photo',
     },
@@ -19,7 +28,7 @@ export async function getBlogPosts({ commit }: any) {
 }
 
 export async function getBlogPost({ commit }: any, urlId: string) {
-  const { data } = await cms.get<blogPostsResponse>('/blog-posts', {
+  const { data } = await cms.get<strapiResponse>('/blog-posts', {
     params: {
       populate: 'authors,image,body,authors.photo',
       'filters[url_id][$eq]': urlId,
@@ -29,7 +38,7 @@ export async function getBlogPost({ commit }: any, urlId: string) {
 }
 
 export async function getTeamMembers() {
-  const { data } = await cms.get<blogPostsResponse>('/members', {
+  const { data } = await cms.get<strapiResponse>('/members', {
     params: {
       populate: 'photo,socials'
     },
