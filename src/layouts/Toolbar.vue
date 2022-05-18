@@ -62,7 +62,6 @@
 
             v-menu(
               v-else
-              
               offset-y
               open-on-hover
             )
@@ -71,16 +70,11 @@
                   v-bind='attrs'
                   v-on='on'
                   text
-                  :to="{name: link.to}"
                 ) {{ link.text }}
               
               v-list
-                v-list-item
-                  v-list-item-title Test item 1
-                v-list-item
-                  v-list-item-title Test item 2
-                v-list-item
-                  v-list-item-title Test item 3
+                v-list-item(v-for='(sublink, j) in link.submenu' :key='j' :to="{name: sublink.to}")
+                  v-list-item-title {{ sublink.text }}
 
     //- Right nav drawer for landing page
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
@@ -157,8 +151,8 @@ export default class Toolbar extends Vue {
         text: 'Submenu',
         submenu: [
           {
-            text: 'Sbmenu item 1',
-            to: 'submenu-1',
+            text: 'Pricing',
+            to: 'pricing',
           }
         ]
       },
