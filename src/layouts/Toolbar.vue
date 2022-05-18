@@ -92,6 +92,8 @@
               text
               :to="{name: link.to}"
             ) {{ link.label }}
+          
+          v-btn.ml-2(color='primary' elevation='0' :to="{ name: 'signUp' }") Start now
 
     //- Right nav drawer for landing page
     v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
@@ -171,11 +173,11 @@ export default class Toolbar extends Vue {
   }
 
   get mediumLayout() {
-    return this.$vuetify.breakpoint.smAndDown
+    return this.$vuetify.breakpoint.mdAndDown
   }
 
   get mobileLayout() {
-    return this.$vuetify.breakpoint.xs
+    return this.$vuetify.breakpoint.smAndDown
   }
 
   get authenticated() {
