@@ -163,7 +163,7 @@ export default class Toolbar extends Vue {
   }
   
   get bottomToolbar() {
-    return this.mediumLayout && !this.$route.meta?.landing
+    return this.mobileLayout && !this.$route.meta?.landing
   }
 
   get logo() {
