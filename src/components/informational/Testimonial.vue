@@ -1,6 +1,7 @@
 <template lang="pug">
 v-sheet.testimonial(
   :style='`background-image: url(${imageSrc});`'
+  dark
 )
   v-container.d-flex.flex-column.py-16.gap-small
 
