@@ -1,5 +1,5 @@
 <template lang="pug">
-v-sheet(color='transparent')
+v-sheet(:color='color')
   v-container.py-16.text-center.text-sm-start
     v-row(:class='{ reverse }')
       v-col.d-flex.flex-column.justify-center.align-center.align-sm-start(cols='12' sm='6')

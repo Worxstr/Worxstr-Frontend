@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import Jumbo from '@/components/informational/Jumbo.vue'
 import FeatureList from '@/components/informational/FeatureList.vue'
 import RichText from '@/components/informational/RichText.vue'
@@ -79,7 +79,16 @@ export default class CMSSemanticPage extends Vue {
     }
   }
 
-  async mounted() {
+  @Watch('$route.params.featureId')
+  onRouteChange() {
+    this.init()
+  }
+
+  mounted() {
+    this.init()
+  }
+
+  async init() {
     const { name, body, color }= await getFeature(this.$route.params.featureId)
     
     this.title = name

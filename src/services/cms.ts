@@ -49,7 +49,7 @@ export async function getTeamMembers() {
 export async function getFeature(featureId: string) {
   const { data } = await cms.get<strapiResponse>('/features', {
     params: {
-      url_id: featureId,
+      'filters[url_id][$eq]': featureId,
       populate: 'body.image,body.authorImage,body.featureListItems,body.carouselItems,body.carouselItems.image',
     },
   })
