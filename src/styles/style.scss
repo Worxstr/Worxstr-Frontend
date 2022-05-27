@@ -154,6 +154,10 @@ $flex: (1,
     }
 }
 
+.reverse {
+    flex-direction: row-reverse !important;
+}
+
 .v-select, .v-text-field {
     &.fit {
         width: min-content;
