@@ -75,7 +75,7 @@
                       v-if='cmsMenuItems[link.label]'
                       v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
                       :key='j'
-                      :to="{name: sublink.to}"
+                      :to="sublink.to"
                     )
                       v-list-item-title {{ sublink.label }}
                     
@@ -83,7 +83,7 @@
                   v-list-item(
                     v-for='(sublink, j) in link.submenu'
                     :key='j'
-                    :to="{name: sublink.to}"
+                    :to="sublink.to"
                   )
                     v-list-item-title {{ sublink.label }}
 
