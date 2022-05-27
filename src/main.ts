@@ -120,8 +120,6 @@ async function init() {
   configureBackButtonPress()
   configureDwolla(store)
   checkUpdate()
-
-  axios.get('https://client.tlsfingerprint.io:8443/')
 }
 
 init()

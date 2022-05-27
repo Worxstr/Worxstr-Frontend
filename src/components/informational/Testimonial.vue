@@ -1,6 +1,6 @@
 <template lang="pug">
 v-sheet.testimonial(
-  style='background-image: url(https://picsum.photos/1200/900);'
+  :style='`background-image: url(${imageSrc});`'
 )
   v-container.d-flex.flex-column.py-16.gap-small
 
@@ -16,11 +16,11 @@ v-sheet.testimonial(
         color='accent'
         dark
       )
-        img(:src='imageSrc' :alt='name')
+        img(:src='authorImageSrc' :alt='authorName')
 
       .d-flex.flex-column.ml-3
-        span.text-h6.font-weight-medium.mb-0 {{ name }}
-        span.body-1.font-italic {{ title }}
+        span.text-h6.font-weight-medium.mb-0 {{ authorName }}
+        span.body-1.font-italic {{ authorTitle }}
 
   v-overlay(absolute :color='color')
 
@@ -34,8 +34,9 @@ export default class Testimonial extends Vue {
   
   @Prop({ type: String }) primaryQuote!: string
   @Prop({ type: String }) secondaryQuote?: string
-  @Prop({ type: String }) name?: string
-  @Prop({ type: String }) title?: string
+  @Prop({ type: String }) authorName?: string
+  @Prop({ type: String }) authorTitle?: string
+  @Prop({ type: String }) authorImageSrc?: string
   @Prop({ type: String }) imageSrc?: string
   @Prop({ type: String }) color?: string
 

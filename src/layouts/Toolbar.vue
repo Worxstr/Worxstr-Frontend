@@ -161,7 +161,7 @@ export default class Toolbar extends Vue {
 
   async mounted() {
     const menuItems = await getMenuItems()
-    menuItems.forEach(item => {
+    menuItems.forEach((item: any) => {
       this.cmsMenuItems[item.attributes.label] = item.attributes
       this.$forceUpdate()
     })
