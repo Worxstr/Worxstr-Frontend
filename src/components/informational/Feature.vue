@@ -25,7 +25,10 @@ export default class Feature extends Vue {
   @Prop({ type: String }) title!: string
   @Prop({ type: String }) description!: string
   @Prop({ type: String }) ctaText!: string
-  @Prop({ type: String }) ctaTo!: string
+  @Prop({ type: Object }) ctaTo?: {
+    name: string
+    params: any
+  }
   @Prop({ type: String }) imageSrc!: string
   @Prop({ default: '' }) color?: string
   @Prop({ default: false }) reverse!: boolean

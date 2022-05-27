@@ -13,7 +13,7 @@ v-container
         v-if='ctaText && ctaTo'
         elevation='0'
         :color='color'
-        :to="{ name: ctaTo }"
+        :to="ctaTo"
         large
       ) {{ ctaText }}
 
@@ -35,7 +35,10 @@ export default class Title extends Vue {
   @Prop({ type: String }) title!: string
   @Prop({ type: String }) subtitle?: string
   @Prop({ type: String }) ctaText?: string
-  @Prop({ type: String }) ctaTo?: string
+  @Prop({ type: Object }) ctaTo?: {
+    name: string
+    params: any
+  }
   @Prop({ type: String }) color!: string
   @Prop({ type: String }) imageSrc?: string
   @Prop({ default: .6 }) ratio!: number

@@ -24,7 +24,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 type Feature = {
   icon: string
   title: string
-  description: string
+  description?: string
   iconColor?: string
 }
 
@@ -47,8 +47,10 @@ export default class FeatureList extends Vue {
       case 1:
         return 12
       case 2:
-      default:
         return 6
+      case 3:
+      default:
+        return 4
     }
   }
 
@@ -59,6 +61,8 @@ export default class FeatureList extends Vue {
         return 12
       case 2:
         return 6
+      case 3:
+        return 4
       case 4:
         return 3
       default:
@@ -72,6 +76,8 @@ export default class FeatureList extends Vue {
         return 12
       case 2:
         return 6
+      case 3:
+        return 4
       case 4:
         return 3
       case 6:
@@ -86,6 +92,8 @@ export default class FeatureList extends Vue {
         return 12
       case 2:
         return 6
+      case 3:
+        return 4
       case 4:
         return 3
       case 6:

@@ -4,7 +4,7 @@ import { BlogPost } from '@/store/blog'
 import { cms } from '@/util/axios'
 
 type strapiResponse = {
-  data: any[]
+  data: any
 }
 
 export async function getMenuItems() {
@@ -22,7 +22,7 @@ export async function getBlogPosts({ commit }: any) {
       populate: 'authors,image,authors.photo',
     },
   })
-  data.data.forEach(post => {
+  data.data.forEach((post: any) => {
     commit('ADD_BLOG_POST', post)
   })
 }
@@ -40,8 +40,18 @@ export async function getBlogPost({ commit }: any, urlId: string) {
 export async function getTeamMembers() {
   const { data } = await cms.get<strapiResponse>('/members', {
     params: {
-      populate: 'photo,socials'
+      populate: 'photo,socials',
     },
   })
   return data.data
+}
+
+export async function getFeature(featureId: string) {
+  const { data } = await cms.get<strapiResponse>('/features', {
+    params: {
+      'filters[url_id][$eq]': featureId,
+      populate: 'body.image,body.authorImage,body.featureListItems,body.carouselItems,body.carouselItems.image',
+    },
+  })
+  return data?.data[0]?.attributes
 }
