@@ -14,7 +14,7 @@ import usersStore from '@/store/users'
 import Home from '@/views/landing/Home.vue'
 import NativeHome from '@/views/landing/NativeHome.vue'
 import About from '@/views/landing/About.vue'
-import Feature from '@/views/landing/Feature.vue'
+import CMSSemanticPage from '@/views/landing/CMSSemanticPage.vue'
 import Pricing from '@/views/landing/Pricing.vue'
 import Contact from '@/views/landing/Contact.vue'
 import Blog from '@/views/landing/Blog.vue'
@@ -96,7 +96,7 @@ const routes = [
   {
     path: '/feature/:featureId',
     name: 'feature',
-    component: Feature,
+    component: CMSSemanticPage,
     meta: {
       landing: true,
     },
