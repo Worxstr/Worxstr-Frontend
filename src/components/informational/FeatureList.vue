@@ -1,10 +1,10 @@
 <template lang="pug">
 v-sheet(:color='color')
-  v-container.py-16
+  v-container.py-16.text-center.text-sm-start
     h4.text-h4.mb-8.font-weight-black {{ title }}
 
     v-row.d-flex
-      v-col.d-flex.flex-column.align-start.gap-xs(
+      v-col.d-flex.flex-column.gap-xs.align-sm-start(
         v-for='(feature, i) in features'
         :cols='cols'
         :sm='sm'

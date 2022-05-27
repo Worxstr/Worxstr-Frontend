@@ -1,8 +1,8 @@
 <template lang="pug">
 v-sheet(:color='color')
-  v-container.py-16
+  v-container.py-16.text-center.text-sm-start
     v-row(:class='{ reverse }')
-      v-col.d-flex.flex-column.justify-center.align-start(cols='12' sm='6')
+      v-col.d-flex.flex-column.justify-center.align-center.align-sm-start(cols='12' sm='6')
         h4.text-h4.mb-3.font-weight-black {{ title }}
         p.body-2 {{ description }}
         v-btn.mr-3(

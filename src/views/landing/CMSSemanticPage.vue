@@ -9,6 +9,7 @@
     cta-text='Start now'
     cta-to='signUp'
     image-src='https://picsum.photos/1201/900'
+    :ratio='.6'
   )
     
   
@@ -71,6 +72,6 @@ import Carousel from '@/components/informational/Carousel.vue'
   },
 })
 export default class CMSSemanticPage extends Vue {
-  color = 'tertiary'
+  color = 'primary'
 }
 </script>

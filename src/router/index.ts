@@ -94,7 +94,7 @@ const routes = [
     },
   },
   {
-    path: '/feature/:featureId',
+    path: '/features/:featureId',
     name: 'feature',
     component: CMSSemanticPage,
     meta: {
