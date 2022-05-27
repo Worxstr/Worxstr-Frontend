@@ -118,7 +118,7 @@
                 link
                 v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
                 :key='j'
-                :to="{name: sublink.to}"
+                :to="sublink.to"
               )
                 v-list-item-title {{ sublink.label }}
               

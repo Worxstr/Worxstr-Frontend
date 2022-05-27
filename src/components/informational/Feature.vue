@@ -1,16 +1,17 @@
 <template lang="pug">
-v-sheet(:color='color')
+v-sheet(:color='color' dark)
   v-container.py-16.text-center.text-sm-start
     v-row(:class='{ reverse }')
       v-col.d-flex.flex-column.justify-center.align-center.align-sm-start(cols='12' sm='6')
         h4.text-h4.mb-3.font-weight-black {{ title }}
         p.body-2 {{ description }}
         v-btn.mr-3(
+          dark
           outlined
           color='accent'
           :to="{ name: ctaTo }"
         )
-          span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") {{ ctaText }}
+          span.white--text {{ ctaText }}
       
       v-col(cols='12' sm='6')
         v-img(:src='imageSrc' width='100%')
