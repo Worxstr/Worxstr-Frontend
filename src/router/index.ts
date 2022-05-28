@@ -94,9 +94,23 @@ const routes = [
     },
   },
   {
-    path: '/features/:featureId',
+    path: '/features/:contentId',
     name: 'feature',
     component: CMSSemanticPage,
+    props: {
+      type: 'feature',
+    },
+    meta: {
+      landing: true,
+    },
+  },
+  {
+    path: '/industries/:contentId',
+    name: 'industry',
+    component: CMSSemanticPage,
+    props: {
+      type: 'industry',
+    },
     meta: {
       landing: true,
     },

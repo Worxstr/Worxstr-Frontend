@@ -55,3 +55,13 @@ export async function getFeature(featureId: string) {
   })
   return data?.data[0]?.attributes
 }
+
+export async function getIndustry(industryId: string) {
+  const { data } = await cms.get<strapiResponse>('/industries', {
+    params: {
+      'filters[url_id][$eq]': industryId,
+      populate: 'body.image,body.authorImage,body.featureListItems,body.carouselItems,body.carouselItems.image',
+    },
+  })
+  return data?.data[0]?.attributes
+}
