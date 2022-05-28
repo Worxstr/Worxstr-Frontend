@@ -1,5 +1,5 @@
 <template lang="pug">
-v-sheet(:color='color' dark)
+v-sheet(:color='color' :dark='dark')
   v-container.py-16.text-center.text-sm-start
     v-row(:class='{ reverse }')
       v-col.d-flex.flex-column.justify-center.align-center.align-sm-start(cols='12' sm='6')
@@ -32,6 +32,7 @@ export default class Feature extends Vue {
   }
   @Prop({ type: String }) imageSrc!: string
   @Prop({ default: '' }) color?: string
+  @Prop({ type: Boolean }) dark?: boolean
   @Prop({ default: false }) reverse!: boolean
 
 }

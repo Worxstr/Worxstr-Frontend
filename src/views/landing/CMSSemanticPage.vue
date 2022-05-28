@@ -13,26 +13,26 @@
     )
 
     feature-list(
-      v-if='item.__component === "semantic.feature-list"'
+      v-else-if='item.__component === "semantic.feature-list"'
       :color='computeColor(item)'
       v-bind='item'
       :features='item.featureListItems'
     )
 
     rich-text(
-      v-if='item.__component === "semantic.rich-text"'
+      v-else-if='item.__component === "semantic.rich-text"'
       :body='item.body'
     )
 
     feature(
-      v-if='item.__component === "semantic.feature"'
+      v-else-if='item.__component === "semantic.feature"'
       :color='computeColor(item)'
       v-bind='item'
       :image-src='imageUrl(item)'
     )
 
     testimonial(
-      v-if='item.__component === "semantic.testimonial"'
+      v-else-if='item.__component === "semantic.testimonial"'
       v-bind='item'
       :author-image-src='imageUrl(item, "authorImage")'
       :image-src='imageUrl(item)'
@@ -40,7 +40,7 @@
     )
 
     carousel(
-      v-if='item.__component === "semantic.carousel"'
+      v-else-if='item.__component === "semantic.carousel"'
       v-bind='item'
       :items="mapCarouselItems(item)"
     )
