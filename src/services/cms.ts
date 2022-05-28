@@ -41,6 +41,7 @@ export async function getTeamMembers() {
   const { data } = await cms.get<strapiResponse>('/members', {
     params: {
       populate: 'photo,socials',
+      sort: 'id',
     },
   })
   return data.data
