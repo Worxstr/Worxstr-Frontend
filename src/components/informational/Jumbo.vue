@@ -3,11 +3,10 @@ v-container
   v-row.py-10
     v-col.my-8.d-flex.flex-column.justify-center.align-start(cols='12' :md='md')
 
-      h3.text-h3.text-md-h2.font-weight-black.mb-2(
+      h3.text-h3.text-md-h2.font-weight-black.pb-2(
         :class='gradient'
       ) {{ title }}
       h6.text-h4.font-weight-black(v-if='subtitle') {{ subtitle }}
-
       
       v-btn.mt-6.mr-3.white--text(
         v-if='ctaText && ctaTo'
@@ -30,7 +29,7 @@ v-container
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component
-export default class Title extends Vue {
+export default class Jumbo extends Vue {
   
   @Prop({ type: String }) title!: string
   @Prop({ type: String }) subtitle?: string
@@ -48,7 +47,8 @@ export default class Title extends Vue {
   }
 
   get gradient() {
-    let color, gradient = false
+    let color
+    let gradient = false
     switch (this.color) {
       case 'primary':
         color = 'secondary'
@@ -58,7 +58,7 @@ export default class Title extends Vue {
         color = 'secondary'
         break
     }
-    return gradient ? `gradient-text gradient-${color}` : `${color}--text`
+    return gradient ? `gradient-text gradient-${color}` : `${this.color}--text`
   }
 
 }

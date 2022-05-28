@@ -6,7 +6,7 @@
 
     jumbo(
       v-if='item.__component === "semantic.jumbo"'
-      :color='color'
+      :color='computeColor(item)'
       v-bind='item'
       :image-src='imageUrl(item)'
       :ratio='.6'
@@ -14,7 +14,7 @@
 
     feature-list(
       v-if='item.__component === "semantic.feature-list"'
-      :color='color'
+      :color='computeColor(item)'
       v-bind='item'
       :features='item.featureListItems'
     )
@@ -26,7 +26,7 @@
 
     feature(
       v-if='item.__component === "semantic.feature"'
-      :color='color'
+      :color='computeColor(item)'
       v-bind='item'
       :image-src='imageUrl(item)'
     )
@@ -49,14 +49,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import Jumbo from '@/components/informational/Jumbo.vue'
 import FeatureList from '@/components/informational/FeatureList.vue'
 import RichText from '@/components/informational/RichText.vue'
 import Feature from '@/components/informational/Feature.vue'
 import Testimonial from '@/components/informational/Testimonial.vue'
 import Carousel from '@/components/informational/Carousel.vue'
-import { getFeature } from '@/services/cms'
+import { getFeature, getIndustry } from '@/services/cms'
 
 @Component({
   components: {
@@ -69,6 +69,9 @@ import { getFeature } from '@/services/cms'
   },
 })
 export default class CMSSemanticPage extends Vue {
+
+  @Prop({ type: String }) type!: string
+
   title = 'Feature'
   color = 'primary'
   body: any[] = []
@@ -79,7 +82,7 @@ export default class CMSSemanticPage extends Vue {
     }
   }
 
-  @Watch('$route.params.featureId')
+  @Watch('$route.params.contentId')
   onRouteChange() {
     this.init()
   }
@@ -89,7 +92,20 @@ export default class CMSSemanticPage extends Vue {
   }
 
   async init() {
-    const { name, body, color }= await getFeature(this.$route.params.featureId)
+
+    let endpoint
+    switch (this.type) {
+      case 'feature':
+        endpoint = getFeature
+        break
+      case 'industry':
+        endpoint = getIndustry
+        break
+    }
+
+    if (!endpoint) return
+
+    const { name, body, color } = await endpoint(this.$route.params.contentId)
     
     this.title = name
     this.body = body
@@ -108,6 +124,10 @@ export default class CMSSemanticPage extends Vue {
         caption: carouselItem.caption,
       }
     })
+  }
+
+  computeColor(item: any) {
+    return item.color === 'default' ? '' : (item.color || this.color)
   }
 }
 </script>

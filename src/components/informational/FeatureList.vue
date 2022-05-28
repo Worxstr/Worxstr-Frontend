@@ -12,7 +12,7 @@ v-sheet(:color='color' dark)
         :lg='lg'
         :xl='xl'
       )
-        v-icon(size='35' :color='feature.iconColor || iconColor || "accent"')
+        v-icon(size='35' :color='computeIconColor(feature)')
           | {{ feature.icon }}
         h6.text-h6 {{ feature.title }}
         p.body-1 {{ feature.description }}
@@ -35,6 +35,10 @@ export default class FeatureList extends Vue {
   @Prop ({ type: Array }) features!: Feature[]
   @Prop ({ type: String }) color!: string
   @Prop ({ type: String }) iconColor?: string
+
+  computeIconColor(feature: Feature) {
+    return this.iconColor === 'default' ? '' : (feature.iconColor || this.iconColor || 'accent')
+  }
 
   // xs screen column span
   get cols() {
