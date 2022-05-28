@@ -91,6 +91,14 @@
                 h3.text-h3.font-weight-black.ma-4 {{ feature.title }}
               p {{ feature.description }}
 
+              v-btn.white--text(
+                v-if='feature.featureId'
+                :to="{ name: 'feature', params: { contentId: feature.featureId } }"
+                color='accent'
+                outlined
+              )
+                span Learn more
+
           v-col.flex-grow-1(style='width: 30%')
             v-img(
               :src='require(`@/assets/images/landing/${feature.image}`)',
@@ -211,6 +219,7 @@ export default class Home extends Vue {
       gradient: 'primary',
       icon: 'mdi-clock-fast',
       title: 'Scheduling',
+      featureId: 'scheduling',
       description:
         'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
       image: 'schedule.svg',
@@ -249,6 +258,7 @@ export default class Home extends Vue {
       gradient: 'secondary',
       icon: 'mdi-cash-lock',
       title: 'Payments',
+      featureId: 'payments',
       description:
         'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
       image: 'approvals.svg',
