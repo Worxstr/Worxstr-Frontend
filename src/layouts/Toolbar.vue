@@ -201,6 +201,11 @@ export default class Toolbar extends Vue {
         to: 'about',
       },
       {
+        label: 'Pricing',
+        to: 'pricing',
+        hide: Capacitor.isNativePlatform(),
+      },
+      {
         label: 'Features',
         submenu: 'cms',
       },
@@ -211,11 +216,6 @@ export default class Toolbar extends Vue {
       {
         label: 'Resources',
         submenu: 'cms',
-      },
-      {
-        label: 'Pricing',
-        to: 'pricing',
-        hide: Capacitor.isNativePlatform(),
       },
       // {
       //   label: 'Contact us',
