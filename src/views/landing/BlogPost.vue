@@ -28,18 +28,18 @@ import ArticleView from '@/components/ArticleView.vue'
 })
 export default class BlogPost extends Vue {
 
+  metaInfo() {
+    return {
+      title: this.blogPost ? `${this.blogPost?.attributes.title} | Blog` : 'Blog post',
+    }
+  }
+
   loadingPost = false
 
   async mounted() {
     this.loadingPost = true
     await getBlogPost(this.$store, this.$route.params.blogPostId)
     this.loadingPost = false
-  }
-
-  metaInfo() {
-    return {
-      title: this.blogPost ? `${this.blogPost?.attributes.title} | Blog` : 'Blog post',
-    }
   }
 
   get blogPost() {

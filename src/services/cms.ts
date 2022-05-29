@@ -37,6 +37,31 @@ export async function getBlogPost({ commit }: any, urlId: string) {
   commit('ADD_BLOG_POST', data.data[0])
 }
 
+export async function getSupportArticle({ commit }: any, urlId: string) {
+  const { data } = await cms.get<strapiResponse>('/support-articles', {
+    params: {
+      populate: 'authors,image,body,authors.photo',
+      'filters[url_id][$eq]': urlId,
+    },
+  })
+  return data.data[0]
+  // TODO:
+  // commit('ADD_SUPPORT_ARTICLE', data.data[0])
+}
+
+export async function getSupportArticles({ commit }: any) {
+  const { data } = await cms.get<strapiResponse>('/support-articles', {
+    params: {
+      populate: 'authors,image,body,authors.photo',
+    },
+  })
+  return data.data
+  // TODO:
+  // data.data.forEach((article: any) => {
+  //   commit('ADD_SUPPORT_ARTICLE', article)
+  // })
+}
+
 export async function getTeamMembers() {
   const { data } = await cms.get<strapiResponse>('/members', {
     params: {
@@ -44,6 +69,7 @@ export async function getTeamMembers() {
       sort: 'id',
     },
   })
+  // TODO: Add to store
   return data.data
 }
 
@@ -54,6 +80,7 @@ export async function getFeature(featureId: string) {
       populate: 'body.image,body.authorImage,body.featureListItems,body.carouselItems,body.carouselItems.image',
     },
   })
+  // TODO: Add to store
   return data?.data[0]?.attributes
 }
 
@@ -64,5 +91,6 @@ export async function getIndustry(industryId: string) {
       populate: 'body.image,body.authorImage,body.featureListItems,body.carouselItems,body.carouselItems.image',
     },
   })
+  // TODO: Add to store
   return data?.data[0]?.attributes
 }
