@@ -1,5 +1,5 @@
 <template lang="pug">
-v-breadcrumbs.nav-breadcrumbs.pl-1.d-flex.flex-nowrap(
+v-breadcrumbs.nav-breadcrumbs.pl-1.py-0.d-flex.flex-nowrap(
   :items='items'
   large
 )

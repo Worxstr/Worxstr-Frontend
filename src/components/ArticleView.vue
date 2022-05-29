@@ -4,18 +4,18 @@
   breadcrumbs(:items='breadcrumbs')
 
   div
-    h4.mt-3.text-h4.font-weight-bold.mb-2 {{ title }}
-    h6.text-body-1.mb-2 {{ description }}
+    h4.mt-3.text-h4.font-weight-black.mb-2 {{ title }}
+    h6.text-body-1.mb-2(v-if='description') {{ description }}
 
-    v-list-item.pl-0.mb-4
-      v-list-item-avatar
+    v-list-item.pl-0(v-if='authorImage || authorName || date')
+      v-list-item-avatar(v-if='authorImage')
         v-img(:src='authorImage')
     
       v-list-item-content
-        v-list-item-title.text-body-2.font-weight-medium {{ authorName }}
-        v-list-item-subtitle.text-caption {{ date | date('MMM DD, YYYY') }}
+        v-list-item-title.text-body-2.font-weight-medium(v-if='authorName') {{ authorName }}
+        v-list-item-subtitle.text-caption(v-if='date') {{ date | date('MMM DD, YYYY') }}
     
-    v-row
+    v-row.mt-2
       v-col(cols='12' md='9')
         v-card.soft-shadow
           v-img(v-if='image' :src='image' max-height='400' position='start center')
@@ -62,11 +62,11 @@ type Link = {
 export default class ArticleView extends Vue {
   
   @Prop(String) title!: string
-  @Prop(String) description!: string
-  @Prop(String) authorName!: string
-  @Prop(String) authorImage!: string
-  @Prop(String) image!: string
-  @Prop(String) date!: string
+  @Prop(String) description?: string
+  @Prop(String) authorName?: string
+  @Prop(String) authorImage?: string
+  @Prop(String) image?: string
+  @Prop(String) date?: string
   @Prop(Object) previousRoute!: any
   @Prop(Array) body!: any[]
   @Prop(Array) links!: Link[]
