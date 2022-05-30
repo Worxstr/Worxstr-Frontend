@@ -92,7 +92,7 @@ function configureBackButtonPress() {
 }
 
 async function checkUpdate() {
-  if (!Capacitor.isPluginAvailable('AppUpdate')) return
+  if (!Capacitor.isNativePlatform()) return
   
   const appUpdateInfo = await AppUpdate.getAppUpdateInfo()
   if (appUpdateInfo.updateAvailability === AppUpdateAvailability.UPDATE_AVAILABLE) {

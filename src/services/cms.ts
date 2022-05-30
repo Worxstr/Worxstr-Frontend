@@ -54,13 +54,13 @@ export async function getSupportTag(tagId: string) {
     },
   })
   // TODO: Add to store
-  return data.data[0]
+  return data.data
 }
 
 export async function getSupportArticle(urlId: string) {
   const { data } = await cms.get<strapiResponse>('/support-articles', {
     params: {
-      populate: 'authors,image,body,authors.photo',
+      populate: '*',
       'filters[url_id][$eq]': urlId,
     },
   })
