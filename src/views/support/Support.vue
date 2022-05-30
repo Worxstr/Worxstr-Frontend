@@ -128,7 +128,7 @@ export default class Support extends Vue {
     this.$router.push({
       name: 'supportArticle',
       params: {
-        contentId: article.id.toString(),
+        articleId: article.attributes.url_id
       }
     })
   }
