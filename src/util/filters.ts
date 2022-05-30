@@ -106,6 +106,10 @@ Vue.filter('snakeToSpace', (value: string) => {
 	return value.replaceAll('_', ' ')
 })
 
+Vue.filter('dashesToSpaces', (value: string) => {
+	return value.replaceAll('-', ' ')
+})
+
 export const fullName = (user: User) => {
 	if (!user) return 'Invalid user'
 	return `${user.first_name} ${user.last_name}`

@@ -38,7 +38,7 @@ div
       v-expansion-panels(v-else accordion flat)
         v-expansion-panel(v-for='(topic, i) in topics' :key='i')
           v-divider
-          v-expansion-panel-header {{ topic.attributes.name | snakeToSpace | capitalize }}
+          v-expansion-panel-header {{ topic.attributes.name | dashesToSpaces | capitalize }}
           v-expansion-panel-content
             .d-flex.flex-column
               router-link.mb-2(
