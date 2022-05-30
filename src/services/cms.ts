@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
-import { BlogPost } from '@/store/blog'
 import { cms } from '@/util/axios'
+import qs from 'qs'
 
 type strapiResponse = {
   data: any
@@ -69,12 +69,27 @@ export async function getSupportArticle(urlId: string) {
   // commit('ADD_SUPPORT_ARTICLE', data.data[0])
 }
 
-export async function searchSupportArticles({ commit }: any, query: string) {
-  const { data } = await cms.get<strapiResponse>('/support-articles', {
-    params: {
-      'filters[title][$containsi]': query,
+export async function searchSupportArticles(query: string) {
+  const q = !query ? '' : qs.stringify({
+    filters: {
+      $or: [
+        {
+          title: {
+            $containsi: query,
+          },
+        },
+        {
+          description: {
+            $containsi: query,
+          },
+        },
+      ],
     },
+  }, {
+    encodeValuesOnly: true,
   })
+  const { data } = await cms.get<strapiResponse>(`/support-articles?${q}`)
+  // TODO: Add to store
   return data.data
 }
 

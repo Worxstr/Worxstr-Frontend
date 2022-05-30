@@ -38,7 +38,7 @@ export default class SupportArticle extends Vue {
 
   async mounted() {
     this.loading = true
-    this.article = (await getSupportArticle(this.$store, this.$route.params.articleId))?.attributes
+    this.article = (await getSupportArticle(this.$route.params.articleId))?.attributes
     this.loading = false
   }
 

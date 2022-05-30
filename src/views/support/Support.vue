@@ -3,26 +3,39 @@ div
   v-sheet.gradient-secondary.overlap
     v-container.py-16
       h3.text-h3.font-weight-black.mb-8 Support
-      
 
   v-container.shift-down
     v-autocomplete.support-search(
+      v-model='query'
       solo
       autofocus
       auto-select-first
       clearable
       placeholder='Search for help...'
-      :items='allArticles'
-      item-text='title'
       style='max-width: 600px'
       return-object
       @change='openArticle'
+      @update:search-input='search'
+      :items='searchResults'
+      item-text='attributes.title'
+      no-data-text='No results found'
+      :filter='filter'
+      :loading='loadingSearch'
     )
+      //- template(v-slot:item='item')
+      //-   v-list-item-content
+      //-     v-list-item-title {{ item.attributes.title }}
+      //-     v-list-item-subtitle {{ item.attributes.description }}
 
     v-card.mt-2.soft-shadow
       v-card-title.text-h6 Browse support topics
 
-      v-expansion-panels(accordion flat)
+      v-progress-linear(
+        v-if='loading'
+        indeterminate
+      )
+
+      v-expansion-panels(v-else accordion flat)
         v-expansion-panel(v-for='(topic, i) in topics' :key='i')
           v-divider
           v-expansion-panel-header {{ topic.attributes.name | snakeToSpace | capitalize }}
@@ -43,7 +56,7 @@ div
 </template>
 
 <script lang="ts">
-import { getSupportTopics } from '@/services/cms'
+import { getSupportTopics, searchSupportArticles } from '@/services/cms'
 import { Component, Vue } from 'vue-property-decorator'
 
 type SupportArticle = {
@@ -80,7 +93,10 @@ type Topic = {
 export default class Support extends Vue {
 
   loading = false
+  loadingSearch = false
   topics: Topic[] = []
+  query = ''
+  searchResults = []
 
   async mounted() {
     this.loading = true
@@ -88,8 +104,33 @@ export default class Support extends Vue {
     this.loading = false
   }
 
+  // Debounce search
+  searchTimeout: any = null
+
+  async search(val: any) {
+    this.loadingSearch = true
+    const nonEmpty = val && val.length
+
+    clearTimeout(this.searchTimeout)
+    this.searchTimeout = setTimeout(async () => {
+      this.searchResults = await searchSupportArticles(nonEmpty ? val : null)
+      this.loadingSearch = false
+    }, nonEmpty ? 250 : 0)
+  }
+
+  filter(item: any, queryText: string, itemText: string) {
+    // Match title or description
+    return item.attributes.title.toLowerCase().includes(queryText.toLowerCase()) ||
+      item.attributes.description.toLowerCase().includes(queryText.toLowerCase())
+  }
+
   openArticle(article: SupportArticle) {
-    this.$router.push({ name: 'supportArticle', params: { articleId: article.id }})
+    this.$router.push({
+      name: 'supportArticle',
+      params: {
+        contentId: article.id.toString(),
+      }
+    })
   }
 }
 </script>
