@@ -42,6 +42,7 @@
     "normalizr": "^3.6.1",
     "portal-vue": "^2.1.7",
     "qrcode": "^1.4.4",
+    "qs": "^6.10.3",
     "register-service-worker": "^1.7.1",
     "rrule": "^2.6.8",
     "socket.io-client": "^4.2.0",

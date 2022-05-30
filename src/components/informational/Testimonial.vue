@@ -13,15 +13,16 @@ v-sheet.testimonial(
 
     .d-flex.flex-row.align-center.justify-center
       v-avatar(
+        v-if='authorImageSrc'
         size='55'
         color='accent'
         dark
       )
-        img(:src='authorImageSrc' :alt='authorName')
+        img(:src='authorImageSrc' :alt='authorName || "Quote source image"')
 
-      .d-flex.flex-column.ml-3
-        span.text-h6.font-weight-medium.mb-0 {{ authorName }}
-        span.body-1.font-italic {{ authorTitle }}
+      .d-flex.flex-column.ml-3(v-if='authorName || authorTitle')
+        span.text-h6.font-weight-medium.mb-0(v-if='authorName') {{ authorName }}
+        span.body-1.font-italic(v-if='authorTitle') {{ authorTitle }}
 
   v-overlay(absolute :color='color')
 

@@ -144,7 +144,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
+import Breadcrumbs from '@/layouts/NavBreadcrumbs.vue'
 import { Capacitor } from '@capacitor/core'
 import { getMenuItems } from '@/services/cms'
 
