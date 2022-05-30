@@ -37,7 +37,27 @@ export async function getBlogPost({ commit }: any, urlId: string) {
   commit('ADD_BLOG_POST', data.data[0])
 }
 
-export async function getSupportArticle({ commit }: any, urlId: string) {
+export async function getSupportTopics() {
+  const { data } = await cms.get<strapiResponse>('/support-tags', {
+    params: {
+      populate: '*',
+    },
+  })
+  return data.data
+  // TODO: Add to store
+}
+
+export async function getSupportTag(tagId: string) {
+  const { data } = await cms.get<strapiResponse>(`/support-tags/${tagId}`, {
+    params: {
+      populate: '*',
+    },
+  })
+  // TODO: Add to store
+  return data.data[0]
+}
+
+export async function getSupportArticle(urlId: string) {
   const { data } = await cms.get<strapiResponse>('/support-articles', {
     params: {
       populate: 'authors,image,body,authors.photo',
@@ -45,8 +65,17 @@ export async function getSupportArticle({ commit }: any, urlId: string) {
     },
   })
   return data.data[0]
-  // TODO:
+  // TODO: Add to store
   // commit('ADD_SUPPORT_ARTICLE', data.data[0])
+}
+
+export async function searchSupportArticles({ commit }: any, query: string) {
+  const { data } = await cms.get<strapiResponse>('/support-articles', {
+    params: {
+      'filters[title][$containsi]': query,
+    },
+  })
+  return data.data
 }
 
 export async function getSupportArticles({ commit }: any) {
@@ -56,7 +85,7 @@ export async function getSupportArticles({ commit }: any) {
     },
   })
   return data.data
-  // TODO:
+  // TODO: Add to store
   // data.data.forEach((article: any) => {
   //   commit('ADD_SUPPORT_ARTICLE', article)
   // })

@@ -1,7 +1,7 @@
 <template lang="pug">
 .article
 
-  breadcrumbs(:items='breadcrumbs')
+  breadcrumbs.mt-2(:items='breadcrumbs')
 
   div
     h4.mt-3.text-h4.font-weight-black.mb-2 {{ title }}
