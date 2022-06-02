@@ -1,6 +1,6 @@
 <template lang="pug">
 v-container.d-flex.flex-column.justify-center.align-center.pt-8
-  div
+  .markdown
     h2.text-center Privacy policy
 
     p
