@@ -26,9 +26,12 @@ div
 
   v-container.approvals(v-else)
         
-    v-card.mb-3.d-flex.flex-column.soft-shadow(outlined)
-      g-map(:jobs='allJobs')
-      jobs-list(:jobs='directJobs')
+    v-card.mb-3.d-flex.flex-column.flex-lg-row.soft-shadow(outlined)
+      g-map(
+        :jobs='allJobs'
+        :style='$vuetify.breakpoint.lgAndUp && `width: 50%`'
+      )
+      jobs-list.flex-grow-1(:jobs='directJobs')
 
     .mb-5(v-if='indirectJobs.length')
       v-toolbar(flat color='transparent')
