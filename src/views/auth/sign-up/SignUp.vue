@@ -74,7 +74,7 @@ div
           ) Sign up
 
       
-    .d-flex.mt-6.align-center
+    .d-flex.mt-6.align-center(v-if='step == 0')
       v-btn(
         color="blue"
         class="mr-3"
