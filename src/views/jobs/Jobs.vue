@@ -29,6 +29,7 @@ div
     v-card.mb-3.d-flex.flex-column.flex-lg-row.soft-shadow(outlined)
       g-map(
         :jobs='allJobs'
+        :users='workforce'
         :style='$vuetify.breakpoint.lgAndUp && `width: 50%`'
       )
       jobs-list.flex-grow-1(:jobs='directJobs')
@@ -47,6 +48,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { currentUserIs, UserRole } from '@/types/Users'
 import { Job } from '@/types/Jobs'
 import { loadJobs } from '@/services/jobs'
+import { loadWorkforce } from '@/services/users'
 
 import GMap from '@/components/GMap.vue'
 import JobsList from '@/components/JobsList.vue'
@@ -68,6 +70,7 @@ export default class JobsView extends Vue {
     this.loading = true
     try {
       await loadJobs(this.$store)
+      await loadWorkforce(this.$store)
     }
     finally {
       this.loading = false
@@ -88,6 +91,10 @@ export default class JobsView extends Vue {
 
   get userIsOrgManager() {
     return currentUserIs(UserRole.Admin)
+  }
+
+  get workforce() {
+    return this.$store.getters.workforce
   }
 }
 </script>
