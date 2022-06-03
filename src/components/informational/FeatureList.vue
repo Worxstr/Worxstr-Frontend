@@ -1,5 +1,5 @@
 <template lang="pug">
-v-sheet(:color='color' dark)
+v-sheet(:color='color' dark style='overflow-x: hidden')
   v-container.py-16.text-center.text-sm-start
     h4.text-h4.mb-8.font-weight-black {{ title }}
 

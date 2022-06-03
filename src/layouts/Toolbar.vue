@@ -101,7 +101,7 @@
           ) Start now
 
     //- Right nav drawer for landing page
-    v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
+    v-navigation-drawer.mobile-nav(v-model='menu' app right disable-resize-watcher)
       v-list.mobile-nav-items(nav)
         div(
           v-for="(link, i) in links"
@@ -256,6 +256,9 @@ export default class Toolbar extends Vue {
   &.app {
     padding-bottom: env(safe-area-inset-bottom);
   }
+}
+.mobile-nav {
+  z-index: 7 !important;
 }
 .mobile-nav-items {
   padding-top: max(env(safe-area-inset-top), 10px) !important;
