@@ -59,7 +59,7 @@ v-app
       //- For some dumbass reason this computed value won't recalculate unless I have this here
       div(style='display: none') {{ safeAreaTop }}
 
-  worxstr-footer(v-if="showFooter")
+  worxstr-footer(v-if='showFooter')
 
   message-snackbar(:bottom-offset='bottomMargin')
 
@@ -160,14 +160,23 @@ export default class App extends Vue {
   footerHeight = 56
 
   get pageHeight() {
+    const viewportHeight =  `calc(100vh - ${this.headerHeight +
+                                            this.safeAreaTop +
+                                            this.safeAreaBottom}px)`
+    this.setCSSVariable('page-height', viewportHeight)
+    
     // Normal view
-    if (!this.$route.meta?.fullHeight || this.$route.meta?.noSkeleton)
+    if (!this.$route.meta?.fullHeight || this.$route.meta?.noSkeleton) {
       return '100%'
+    }
     // Full height, bottom nav hidden
-    else
-      return `calc(100vh - ${this.headerHeight +
-        this.safeAreaTop +
-        this.safeAreaBottom}px)`
+    else {
+      return viewportHeight
+    }
+  }
+
+  setCSSVariable(key: string, val: string) {
+    document.documentElement.style.setProperty(`--${key}`, val)
   }
 
   get mobileLayout() {
@@ -194,9 +203,11 @@ export default class App extends Vue {
 
   get topMargin() {
     if (!this.mobileLayout || this.isLanding) {
-      return this.headerHeight + this.safeAreaTop
+      const val = this.headerHeight + this.safeAreaTop
+      this.setCSSVariable('top-margin', val + 'px')
+      return val
     }
-
+    this.setCSSVariable('top-margin', this.safeAreaTop + 'px')
     return this.safeAreaTop
   }
 

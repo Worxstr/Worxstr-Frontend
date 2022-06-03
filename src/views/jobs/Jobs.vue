@@ -26,9 +26,14 @@ div
 
   v-container.approvals(v-else)
         
-    v-card.mb-3.d-flex.flex-column.soft-shadow(outlined)
-      g-map(:jobs='allJobs')
-      jobs-list(:jobs='directJobs')
+    v-card.mb-3.d-flex.flex-column.flex-lg-row.soft-shadow(outlined)
+      g-map(
+        :jobs='allJobs'
+        :users='workforce'
+        :style='$vuetify.breakpoint.lgAndUp && `width: 50%;`'
+        :class='{"sticky max-full-height": $vuetify.breakpoint.lgAndUp}'
+      )
+      jobs-list.flex-grow-1(:jobs='directJobs')
 
     .mb-5(v-if='indirectJobs.length')
       v-toolbar(flat color='transparent')
@@ -44,6 +49,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { currentUserIs, UserRole } from '@/types/Users'
 import { Job } from '@/types/Jobs'
 import { loadJobs } from '@/services/jobs'
+import { loadWorkforce } from '@/services/users'
 
 import GMap from '@/components/GMap.vue'
 import JobsList from '@/components/JobsList.vue'
@@ -65,6 +71,7 @@ export default class JobsView extends Vue {
     this.loading = true
     try {
       await loadJobs(this.$store)
+      await loadWorkforce(this.$store)
     }
     finally {
       this.loading = false
@@ -85,6 +92,10 @@ export default class JobsView extends Vue {
 
   get userIsOrgManager() {
     return currentUserIs(UserRole.Admin)
+  }
+
+  get workforce() {
+    return this.$store.getters.workforce
   }
 }
 </script>
