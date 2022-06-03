@@ -1,22 +1,31 @@
 <template lang="pug">
 .recurring-date-input
   
-  .d-flex.flex-column.flex-md-row.gap-small
-    //- Start date
-    datetime-input(
-      v-model='start'
-      outlined
-      label='Start'
-      hide-details
-    )
-    //- End date
-    datetime-input(
-      v-model='end'
-      outlined
-      label='End'
-      hide-details
-      :rules='rules.end'
-    )
+  .d-flex.flex-column.gap-small
+    .d-flex.flex-column.flex-md-row.gap-small
+      //- Start date
+      datetime-input(
+        v-model='start'
+        outlined
+        label='Start'
+        hide-details
+      )
+      timezone-input(
+        label='Start time zone'
+      )
+
+    .d-flex.flex-column.flex-md-row.gap-small
+      //- End date
+      datetime-input(
+        v-model='end'
+        outlined
+        label='End'
+        hide-details
+        :rules='rules.end'
+      )
+      timezone-input(
+        label='End time zone'
+      )
 
   //- Recurrence section
   v-checkbox(label='Recurring' v-model='recurring' v-if='recurrable')
@@ -169,6 +178,7 @@ import dayjs from 'dayjs'
 import { RRule } from 'rrule'
 import { exists } from '@/util/inputValidation'
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
+import TimezoneInput from '@/components/inputs/TimezoneInput.vue'
 
 function formatDate(date: Date) {
   return dayjs(date).utc().format('YYYY-MM-DDTHH:mm:ssZ')
@@ -189,6 +199,7 @@ let lastDuration = 60 * 60
 @Component({
   components: {
     DatetimeInput,
+    TimezoneInput,
   },
 })
 export default class RecurringDateInput extends Vue {
