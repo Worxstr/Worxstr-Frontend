@@ -240,16 +240,15 @@ $flex: (1,
 }
 
 
-$toolbarHeightDefault: 64px;
 .full-height {
-    height: var(--page-height, calc(100vh - $toolbarHeightDefault));
+    height: var(--page-height, calc(100vh - 64px));
 }
 
 .max-full-height {
-    height: var(--page-height, calc(100vh - $toolbarHeightDefault));
+    height: var(--page-height, calc(100vh - 64px));
 }
 
 .sticky {
     position: sticky !important;
-    top: var(--top-margin, $toolbarHeightDefault);
+    top: var(--top-margin, 64px);
 }
