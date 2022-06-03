@@ -30,7 +30,8 @@ div
       g-map(
         :jobs='allJobs'
         :users='workforce'
-        :style='$vuetify.breakpoint.lgAndUp && `width: 50%`'
+        :style='$vuetify.breakpoint.lgAndUp && `width: 50%;`'
+        :class='{"sticky max-full-height": $vuetify.breakpoint.lgAndUp}'
       )
       jobs-list.flex-grow-1(:jobs='directJobs')
 
