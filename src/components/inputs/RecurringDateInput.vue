@@ -2,6 +2,7 @@
 .recurring-date-input
   
   .d-flex.flex-column.gap-small
+
     .d-flex.flex-column.flex-md-row.gap-small
       //- Start date
       datetime-input(
@@ -10,11 +11,6 @@
         label='Start'
         hide-details
       )
-      timezone-input(
-        label='Start time zone'
-      )
-
-    .d-flex.flex-column.flex-md-row.gap-small
       //- End date
       datetime-input(
         v-model='end'
@@ -23,9 +19,9 @@
         hide-details
         :rules='rules.end'
       )
-      timezone-input(
-        label='End time zone'
-      )
+    timezone-input(
+      v-model='timezone'
+    )
 
   //- Recurrence section
   v-checkbox(label='Recurring' v-model='recurring' v-if='recurrable')
@@ -211,6 +207,7 @@ export default class RecurringDateInput extends Vue {
     start: Date
     end: Date
   }
+  timezone = ''
 
   // Don't change the end time if the 'time' prop was just modified
   autoChangeEndTime = true
@@ -248,13 +245,18 @@ export default class RecurringDateInput extends Vue {
     lastDuration = this.duration
   }
 
+  @Watch('timezone')
+  timezoneChanged() {
+    this.updateValue()
+  }
+
   @Watch('rrule')
   rruleChanged() {
     this.updateValue()
   }
 
   updateValue() {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const timezone = this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
     const start = dayjs(this.start).format('YYYYMMDDTHHmmss')
     const rrule = `DTSTART;TZID=${timezone}:${start}\n${this.rrule.toString()}`
     
