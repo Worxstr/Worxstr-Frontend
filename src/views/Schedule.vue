@@ -155,9 +155,9 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
                   
                   v-list-item-content {{ job.name }}
                   
-  v-card.flex-1.d-flex.flex-column.flex-md-row.soft-shadow(outlined style='height: 100%')
+  v-card.flex-1.d-flex.flex-row.soft-shadow(outlined style='height: 100%')
     //- View toggle options
-    template(v-if='userIsManager && $vuetify.breakpoint.mdAndUp')
+    template(v-if='$vuetify.breakpoint.mdAndUp')
       v-list.pt-0.d-flex.flex-column
 
         v-date-picker.mr-0(
@@ -167,7 +167,7 @@ v-container.schedule.d-flex.flex-column.align-stretch(fluid)
           no-title
         )
 
-        .pr-4(style='overflow: auto')
+        .pr-4(style='overflow: auto' v-if='userIsManager')
           v-subheader Contractors
           v-list-item(v-for='(user, index) in users' :key='user.id')
             template(v-slot:default='{ active }')
