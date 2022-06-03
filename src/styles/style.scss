@@ -245,7 +245,7 @@ $flex: (1,
 }
 
 .max-full-height {
-    height: var(--page-height, calc(100vh - 64px));
+    max-height: var(--page-height, calc(100vh - 64px));
 }
 
 .sticky {
