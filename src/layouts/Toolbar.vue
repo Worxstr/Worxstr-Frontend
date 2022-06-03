@@ -251,8 +251,9 @@ export default class Toolbar extends Vue {
 
 <style lang='scss'>
 .toolbar {
-  height: auto !important;
+  // height: auto !important;
   z-index: 7 !important;
+  top: initial !important;
   &.app {
     padding-bottom: env(safe-area-inset-bottom);
   }
