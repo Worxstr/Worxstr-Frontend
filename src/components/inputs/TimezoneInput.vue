@@ -16,10 +16,11 @@ v-select.timezone-input(
     v-subheader Recent
 
     v-list-item(
-      v-for='(key, i) in recommended'
-      :key='i'
+      v-for='key in recommended'
+      :key='key'
       dense
       @click='select(key)'
+      :class='{"v-list-item--active primary--text": key === value}'
     )
       v-list-item-title {{ lookup(key).label }}
       v-list-item-action
@@ -53,7 +54,7 @@ export default class TimezoneInput extends Vue {
   currentTimezone = tz.guess()
   timezones = minimalTimezoneSet
   recent: any[] = []
-  value = this.recommended[0]
+  value = ''
 
   @Prop({ type: String }) label?: string
 
@@ -88,7 +89,10 @@ export default class TimezoneInput extends Vue {
   
   // Collect recent time zones and the current one
   get recommended() {
-    return [...this.recent, this.currentTimezone]
+    if (this.recent.includes(this.currentTimezone)) return this.recent
+    const recommendations = [...this.recent, this.currentTimezone]
+    this.value = recommendations[0]
+    return recommendations
   }
 
   // Lookup a time zone by its tzCode
@@ -102,9 +106,9 @@ export default class TimezoneInput extends Vue {
 
     this.recent.unshift(tzCode)
     
-    // Limit length to 5
-    if (this.recent.length > 5) {
-      this.recent = this.recent.slice(0, 5)
+    // Limit length to 4
+    if (this.recent.length > 4) {
+      this.recent = this.recent.slice(0, 4)
     }
 
     localStorage.setItem('recentTimezones', JSON.stringify(this.recent))
