@@ -54,6 +54,7 @@ export default class FileUpload extends Vue {
     try {
       this.uploading = true
       console.log('uploading', this.files.length + ' files')
+      console.log(this.files)
       const data = await uploadFiles(this.files)
       console.log(data)
       this.$emit('input', ['test'])
