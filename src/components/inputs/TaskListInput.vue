@@ -114,7 +114,7 @@ type Task = {
 })
 export default class TaskListInput extends Vue {
 
-  @Prop({ default: [] }) value!: Task[]
+  @Prop({ default: () => [] }) value!: Task[]
   @Prop({ default: false }) editable!: boolean
   @Prop({ default: false }) orderable!: boolean
 
