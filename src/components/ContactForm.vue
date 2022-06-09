@@ -1,117 +1,117 @@
 <template lang="pug">
 v-form.flex-grow-1.d-flex.flex-column(
-  @submit.prevent="submitForm",
-  v-model="isValid",
+  @submit.prevent="submitForm"
+  v-model="isValid"
   style="width: 100%"
 )
   v-text-field(
     v-if="type == 'sales'"
-    autofocus,
-    v-model="form.business_name",
-    label="Business name",
-    required,
-    outlined,
-    dense,
-    :color="color",
+    autofocus
+    v-model="form.business_name"
+    label="Business name"
+    required
+    outlined
+    dense
+    :color="color"
     :filled="filled"
   )
 
   .d-flex.flex-column.flex-md-row
     v-text-field.mr-4(
-      v-if="!me"
-      v-model="form.contact_name",
-      label="Your name",
-      required,
+      v-if='!me'
+      v-model='form.contact_name'
+      label='Your name'
+      required
       :rules='rules.contactName'
-      outlined,
-      dense,
-      :color="color",
-      :filled="filled"
+      outlined
+      dense
+      :color='color'
+      :filled='filled'
     )
     v-text-field(
       :class="{'.ml-2': me}"
       v-if="type == 'sales'"
-      v-model="form.contact_title",
-      label="Job title",
-      outlined,
-      dense,
-      :color="color",
-      :filled="filled"
+      v-model='form.contact_title'
+      label='Job title'
+      outlined
+      dense
+      :color='color'
+      :filled='filled'
     )
 
   .d-flex(v-if='!me')
     phone-input(
-      v-if="usePhone",
-      v-model="form.phone",
+      v-if='usePhone'
+      v-model='form.phone'
       :rules='rules.phone'
-      :required='true',
-      outlined,
-      dense,
-      :color="color",
-      :filled="filled"
+      :required='true'
+      outlined
+      dense
+      :color='color'
+      :filled='filled'
     )
     v-text-field(
-      v-else,
-      v-model="form.email",
+      v-else
+      v-model='form.email'
       :rules='rules.email'
-      type="email",
-      label="Email",
-      required,
-      outlined,
-      dense,
-      :color="color",
-      :filled="filled"
+      type='email'
+      label='Email'
+      required
+      outlined
+      dense
+      :color='color'
+      :filled='filled'
     )
-    v-btn.ml-2.mt-1(text, color="primary", @click="usePhone = !usePhone") Use {{ usePhone ? 'email' : 'phone' }} instead
+    v-btn.ml-2.mt-1(text color='primary' @click='usePhone = !usePhone') Use {{ usePhone ? 'email' : 'phone' }} instead
 
   v-text-field(
     v-if="type == 'sales'"
-    v-model="form.website",
-    label="Business website",
+    v-model='form.website'
+    label='Business website'
     type='url'
     :rules='rules.url'
     placeholder='https://example.com'
-    required,
-    outlined,
-    dense,
-    :color="color",
-    :filled="filled"
+    required
+    outlined
+    dense
+    :color='color'
+    :filled='filled'
   )
 
   .d-flex.flex-column.flex-md-row(v-if="showManagerContractorFields && type == 'sales'")
     v-text-field.mr-2(
-      v-model.number="form.num_managers",
-      label="Number of managers",
-      type="number",
-      min="1",
-      required,
-      outlined,
-      dense,
-      :color="color",
-      :filled="filled"
+      v-model.number="form.num_managers"
+      label='Number of managers'
+      type='number'
+      min='1'
+      required
+      outlined
+      dense
+      :color='color'
+      :filled='filled'
     )
     v-text-field.ml-2(
-      v-model.number="form.num_contractors",
-      label="Number of contractors",
-      type="number",
-      min="1",
-      required,
-      outlined,
-      dense,
-      :color="color",
-      :filled="filled"
+      v-model.number='form.num_contractors'
+      label='Number of contractors'
+      type='number'
+      min='1'
+      required
+      outlined
+      dense
+      :color='color'
+      :filled='filled'
     )
 
   v-textarea(
     v-if="type == 'support'"
-    v-model="form.description"
-    :rules="rules.description"
-    label="Describe your problem"
+    v-model='form.description'
+    :rules='rules.description'
+    label='Describe your problem'
     required 
     outlined
     dense
-    :color="color"
-    :filled="filled"
+    :color='color'
+    :filled='filled'
   )
 
   v-spacer
