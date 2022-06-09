@@ -4,7 +4,7 @@ v-sheet(:color='color' :dark='dark')
     v-row(:class='{ reverse }')
       v-col.d-flex.flex-column.justify-center.align-center.align-sm-start(cols='12' sm='6')
         h4.text-h4.mb-3.font-weight-black {{ title }}
-        p.body-2 {{ description }}
+        p.body-1 {{ description }}
         v-btn.mr-3(
           v-if='ctaText && ctaTo'
           dark
