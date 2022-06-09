@@ -186,11 +186,16 @@ export default class EditShiftDialog extends Vue {
 
   @Prop({ type: Number   }) readonly shiftId?: number
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ type: Number    }) readonly jobId!: number // If no jobId specified, then we add a job selector to the dialog
+  @Prop({ type: Number    }) readonly jobIdOriginal?: number // If no jobId specified, then we add a job selector to the dialog
+  get jobId() {
+    return this.jobIdOriginal ?? this.editedShift.job_id
+  }
+  
   @Prop({ type: Object }) readonly time?: {
     start: Date
     end: Date
   }
+
 
   @Watch('time')
   onTimeChange(time: any) {
@@ -283,8 +288,10 @@ export default class EditShiftDialog extends Vue {
 
   get contractors() {
     const jobId = this.jobId ?? this.selectedJob
-
     const contractors = this.$store.getters.job(jobId)?.contractors ?? []
+
+    console.log(this.jobId, this.selectedJob)
+    console.log({jobId, contractors})
 
     return contractors.sort((a: User, b: User) => {
       if (!a.name || !b.name) return 0
