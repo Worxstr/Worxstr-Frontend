@@ -114,7 +114,7 @@ export default class CMSSemanticPage extends Vue {
 
   imageUrl(item: any, attributeName='image', size = 'medium') {
     const attrs = item[attributeName]?.data?.attributes
-    if (!attrs?.formats) return attrs.url
+    if (!attrs?.formats) return attrs?.url
     return attrs?.formats[size]?.url || attrs?.url
   }
 
