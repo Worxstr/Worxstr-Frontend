@@ -1,5 +1,5 @@
 <template lang="pug">
-v-sheet(:color='color' dark style='overflow-x: hidden')
+v-sheet(:color='color' :dark='dark' style='overflow-x: hidden')
   v-container.py-16.text-center.text-sm-start
     h4.text-h4.mb-8.font-weight-black {{ title }}
 
@@ -35,6 +35,7 @@ export default class FeatureList extends Vue {
   @Prop ({ type: Array }) features!: Feature[]
   @Prop ({ type: String }) color!: string
   @Prop ({ type: String }) iconColor?: string
+  @Prop ({ type: Boolean }) dark?: boolean
 
   computeIconColor(feature: Feature) {
     return this.iconColor === 'default' ? '' : (feature.iconColor || this.iconColor || 'accent')
