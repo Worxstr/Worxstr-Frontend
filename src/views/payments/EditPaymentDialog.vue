@@ -99,12 +99,16 @@ v-dialog(
       div
         v-divider
         v-subheader Invoice
-        v-card-text.pt-0
+        v-card-text.pt-0.d-flex.flex-column.gap-small
           //- // TODO: Make reorderable work
           invoice-input(
             v-model='editedInvoice.items'
             :fixedLineitems='hasAssociatedTimecard ? [timeSheetPayment] : []'
             :orderable='false'
+          )
+          file-upload(
+            v-model='editedInvoice.attachments'
+            multiple
           )
           richtext-field(
             placeholder='Description'
@@ -137,6 +141,7 @@ import duration from 'dayjs/plugin/duration'
 import DatetimeInput from '@/components/inputs/DatetimeInput.vue'
 import InvoiceInput from '@/components/inputs/InvoiceInput.vue'
 import RichtextField from '@/components/inputs/RichtextField.vue'
+import FileUpload from '@/components/inputs/FileUpload.vue'
 import * as payments from '@/services/payments'
 import { ClockAction, ClockEvent, clockedTime } from '@/types/Jobs'
 import { Invoice, Payment } from '@/types/Payments'
@@ -159,6 +164,7 @@ dayjs.extend(duration)
     DatetimeInput,
     InvoiceInput,
     RichtextField,
+    FileUpload,
   },
 })
 export default class EditPaymentDialog extends Vue {
