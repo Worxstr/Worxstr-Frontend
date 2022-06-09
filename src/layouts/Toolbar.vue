@@ -108,28 +108,29 @@
           v-for="(link, i) in links"
           :key='i'
         )
-          v-list-group(v-if='link.submenu')
-            template(v-slot:activator)
-              v-list-item-title {{ link.label }}
-              
-            div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
-              v-list-item(
-                v-if='link.submenu === "cms"'
-                link
-                v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
-                :key='j'
-                :to="sublink.to"
-              )
-                v-list-item-title {{ sublink.label }}
-              
-              v-list-item(
-                v-else
-                link
-                v-for='(sublink, j) in link.submenu'
-                :key='j'
-                :to="{name: sublink.to}"
-              )
-                v-list-item-title {{ sublink.label }}
+          template(v-if='link.submenu')
+            v-list-group(v-if='!(link.submenu === "cms" && !cmsMenuItems[link.label].submenus.length)')
+              template(v-slot:activator)
+                v-list-item-title {{ link.label }}
+                
+              div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
+                v-list-item(
+                  v-if='link.submenu === "cms"'
+                  link
+                  v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                  :key='j'
+                  :to="sublink.to"
+                )
+                  v-list-item-title {{ sublink.label }}
+                
+                v-list-item(
+                  v-else
+                  link
+                  v-for='(sublink, j) in link.submenu'
+                  :key='j'
+                  :to="{name: sublink.to}"
+                )
+                  v-list-item-title {{ sublink.label }}
                 
 
           v-list-item(
