@@ -11,6 +11,7 @@
 		
 		portal(to="toolbarActions")
 			v-btn(
+				v-if='currentUserIsManager'
 				:disabled='!userIsContractor'
 				text
 				color='primary'
@@ -21,7 +22,7 @@
 				span(v-if='!$vuetify.breakpoint.xs') Edit
 
 			v-btn(
-				v-if='currentUserIsOrgManager && user.id != me.id'
+				v-if='currentUserIsAdmin && user.id != me.id'
 				text
 				color='error'
 				@click='deleteUserDialog = true'
@@ -130,8 +131,12 @@ export default class User extends Vue {
 		return null
 	}
 
-	get currentUserIsOrgManager() {
+	get currentUserIsAdmin() {
 		return currentUserIs(UserRole.Admin)
+	}
+
+	get currentUserIsManager() {
+		return currentUserIs(...Managers)
 	}
 
 	get userIsContractor() {
