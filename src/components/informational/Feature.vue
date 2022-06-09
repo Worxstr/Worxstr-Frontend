@@ -12,7 +12,7 @@ v-sheet(:color='color' :dark='dark')
           color='accent'
           :to="{ name: ctaTo }"
         )
-          span.white--text {{ ctaText }}
+          span(:class='buttonTextColor') {{ ctaText }}
       
       v-col.d-flex.flex-column.align-center(cols='12' sm='6')
         v-img.mt-6.mt-md-0(:src='imageSrc' :width="imageWidth")
@@ -37,7 +37,16 @@ export default class Feature extends Vue {
   @Prop({ default: false }) reverse!: boolean
 
   get imageWidth() {
-    return this.imageSrc.includes('svg') ? (this.$vuetify.breakpoint.xs ? '50%' : '65%') : '100%'
+    return this.imageSrc.includes('svg')
+      ? (this.$vuetify.breakpoint.xs ? '50%' : (this.$vuetify.breakpoint.mdAndDown ? '100%' : '65%') )
+      : '100%'
+  }
+
+  get buttonTextColor() {
+    console.log(this.dark, this.$vuetify.theme.dark)
+    return this.dark === null || this.dark === undefined
+      ? (this.$vuetify.theme.dark ? 'white--text' : 'black--text')
+      : (this.dark ? 'white--text' : 'black--text')
   }
 
 }

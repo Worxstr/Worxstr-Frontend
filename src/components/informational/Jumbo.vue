@@ -16,12 +16,12 @@ v-container
         large
       ) {{ ctaText }}
 
-    v-col(
+    v-col.d-flex.flex-column.align-center(
       v-if='imageSrc'
       cols='12'
       :md='12 - md'
     )
-      v-img(:src='imageSrc' width='100%')
+      v-img(:src='imageSrc' :width='imageWidth')
       
 </template>
 
@@ -40,7 +40,7 @@ export default class Jumbo extends Vue {
   }
   @Prop({ type: String }) color!: string
   @Prop({ type: String }) imageSrc?: string
-  @Prop({ default: .6 }) ratio!: number
+  @Prop({ default: .5 }) ratio!: number
 
   get md() {
     return Math.round(12 * this.ratio)
@@ -59,6 +59,13 @@ export default class Jumbo extends Vue {
         break
     }
     return gradient ? `gradient-text gradient-${color}` : `${this.color}--text`
+  }
+
+  get imageWidth() {
+    if (!this.imageSrc) return '100%'
+    return this.$vuetify.breakpoint.smAndDown
+      ? '60%'
+      : (this.$vuetify.breakpoint.mdAndDown ? '100%' : '80%')
   }
 
 }
