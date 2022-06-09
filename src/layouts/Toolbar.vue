@@ -54,38 +54,39 @@
             v-if='!link.hide'
             :key='i'
           )
-            v-menu(
-              v-if='link.submenu'
-              offset-y
-              open-on-hover
-            )
-              template(v-slot:activator='{ on, attrs }')
-                v-btn(
-                  v-bind='attrs'
-                  v-on='on'
-                  text
-                )
-                  | {{ link.label }}
-                  v-icon(right) mdi-chevron-down
-              
-              v-list
-                div(v-if='link.submenu === "cms"')
-                  div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
+            template(v-if='link.submenu')
+              v-menu(
+                v-if='!(link.submenu === "cms" && !cmsMenuItems[link.label].submenus.length)'
+                offset-y
+                open-on-hover
+              )
+                template(v-slot:activator='{ on, attrs }')
+                  v-btn(
+                    v-bind='attrs'
+                    v-on='on'
+                    text
+                  )
+                    | {{ link.label }}
+                    v-icon(right) mdi-chevron-down
+                
+                v-list
+                  div(v-if='link.submenu === "cms"')
+                    div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
+                      v-list-item(
+                        v-if='cmsMenuItems[link.label]'
+                        v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                        :key='j'
+                        :to="sublink.to"
+                      )
+                        v-list-item-title {{ sublink.label }}
+                      
+                  div(v-else)
                     v-list-item(
-                      v-if='cmsMenuItems[link.label]'
-                      v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                      v-for='(sublink, j) in link.submenu'
                       :key='j'
                       :to="sublink.to"
                     )
                       v-list-item-title {{ sublink.label }}
-                    
-                div(v-else)
-                  v-list-item(
-                    v-for='(sublink, j) in link.submenu'
-                    :key='j'
-                    :to="sublink.to"
-                  )
-                    v-list-item-title {{ sublink.label }}
 
             v-btn(
               v-else
@@ -106,7 +107,6 @@
         div(
           v-for="(link, i) in links"
           :key='i'
-          v-if='!link.hide'
         )
           v-list-group(v-if='link.submenu')
             template(v-slot:activator)
