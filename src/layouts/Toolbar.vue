@@ -12,10 +12,11 @@
       v-btn(
         icon
         @click="$emit('toggleDrawer')"
-        v-if='mediumLayout && !$route.meta.landing'
+        v-if='mobileLayout && !$route.meta.landing'
       )
         v-icon mdi-menu
       
+      //- Logotype
       router-link.mb-2.mr-2(
         to="/"
         style="text-decoration: none"
@@ -27,31 +28,126 @@
             alt="Worxstr logo"
           )
 
+      //- Breadcrumb nav items
       breadcrumbs
 
+      //- Left portal
       portal-target.d-flex.align-center(name="toolbarTitle")
 
       v-spacer
 
+      //- Right portal
       portal-target.d-flex.align-center(name="toolbarActions")
 
+      //- Landing page nav items
       div(v-if="$route.meta.landing")
-        v-btn(v-if='mobileLayout' icon @click='menu = true')
+        v-btn(
+          v-if='mobileLayout'
+          icon 
+          @click='menu = true'
+        )
           v-icon mdi-menu
-        div(v-else)
-          v-btn(v-for="(link, i) in links" :key='i' text :to="{name: link.to}" v-if='!link.hide') {{ link.text }}
+        
+        .d-flex(v-else)
+          div(
+            v-for="(link, i) in links"
+            v-if='!link.hide'
+            :key='i'
+          )
+            template(v-if='link.submenu')
+              v-menu(
+                v-if='!(link.submenu === "cms" && !cmsMenuItems[link.label].submenus.length)'
+                offset-y
+                open-on-hover
+              )
+                template(v-slot:activator='{ on, attrs }')
+                  v-btn(
+                    v-bind='attrs'
+                    v-on='on'
+                    text
+                  )
+                    | {{ link.label }}
+                    v-icon(right) mdi-chevron-down
+                
+                v-list
+                  div(v-if='link.submenu === "cms"')
+                    div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
+                      v-list-item(
+                        v-if='cmsMenuItems[link.label]'
+                        v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                        :key='j'
+                        :to="sublink.to"
+                      )
+                        v-list-item-title {{ sublink.label }}
+                      
+                  div(v-else)
+                    v-list-item(
+                      v-for='(sublink, j) in link.submenu'
+                      :key='j'
+                      :to="sublink.to"
+                    )
+                      v-list-item-title {{ sublink.label }}
 
-    v-navigation-drawer(v-model='menu' app right disable-resize-watcher)
+            v-btn(
+              v-else
+              text
+              :to="{name: link.to}"
+            ) {{ link.label }}
+          
+          v-btn.ml-2(
+            v-if='!authenticated'
+            color='primary'
+            elevation='0'
+            :to="{ name: 'signUp' }"
+          ) Start now
+
+    //- Right nav drawer for landing page
+    v-navigation-drawer.mobile-nav(v-model='menu' app right disable-resize-watcher)
       v-list.mobile-nav-items(nav)
-        v-list-item(v-for="(link, i) in links" :key='i' text :to="{name: link.to}" link v-if='!link.hide')
-          v-list-item-content
-            v-list-item-title {{ link.text }}
+        div(
+          v-for="(link, i) in links"
+          :key='i'
+        )
+          template(v-if='link.submenu')
+            v-list-group(v-if='!(link.submenu === "cms" && !cmsMenuItems[link.label].submenus.length)')
+              template(v-slot:activator)
+                v-list-item-title {{ link.label }}
+                
+              div(v-if='cmsMenuItems && cmsMenuItems[link.label]')
+                v-list-item(
+                  v-if='link.submenu === "cms"'
+                  link
+                  v-for='(sublink, j) in cmsMenuItems[link.label].submenus'
+                  :key='j'
+                  :to="sublink.to"
+                )
+                  v-list-item-title {{ sublink.label }}
+                
+                v-list-item(
+                  v-else
+                  link
+                  v-for='(sublink, j) in link.submenu'
+                  :key='j'
+                  :to="{name: sublink.to}"
+                )
+                  v-list-item-title {{ sublink.label }}
+                
+
+          v-list-item(
+            link
+            v-else
+            :to="{name: link.to}"
+          )
+            v-list-item-content
+              v-list-item-title {{ link.label }}
+
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import Breadcrumbs from '@/layouts/Breadcrumbs.vue'
+import Breadcrumbs from '@/layouts/NavBreadcrumbs.vue'
 import { Capacitor } from '@capacitor/core'
+import { getMenuItems } from '@/services/cms'
 
 @Component({
   components: {
@@ -62,9 +158,18 @@ export default class Toolbar extends Vue {
   @Prop({ default: false }) drawer!: boolean
   
   menu = false
+  cmsMenuItems: any = {}
+
+  async mounted() {
+    const menuItems = await getMenuItems()
+    menuItems.forEach((item: any) => {
+      this.cmsMenuItems[item.attributes.label] = item.attributes
+      this.$forceUpdate()
+    })
+  }
   
   get bottomToolbar() {
-    return this.mediumLayout && !this.$route.meta?.landing
+    return this.mobileLayout && !this.$route.meta?.landing
   }
 
   get logo() {
@@ -74,11 +179,11 @@ export default class Toolbar extends Vue {
   }
 
   get mediumLayout() {
-    return this.$vuetify.breakpoint.smAndDown
+    return this.$vuetify.breakpoint.mdAndDown
   }
 
   get mobileLayout() {
-    return this.$vuetify.breakpoint.xs
+    return this.$vuetify.breakpoint.smAndDown
   }
 
   get authenticated() {
@@ -88,38 +193,55 @@ export default class Toolbar extends Vue {
   get links() {
     return [
       {
-        text: 'Home',
+        label: 'Home',
         to: 'home',
         hide: !this.mobileLayout,
       },
       {
-        text: 'About',
+        label: 'About',
         to: 'about',
       },
       {
-        text: 'Blog',
-        to: 'blog',
-      },
-      {
-        text: 'Contact us',
-        to: 'contact',
-      },
-      // {
-      //   text: "Support",
-      //   to: "support",
-      // },
-      {
-        text: 'Pricing',
+        label: 'Pricing',
         to: 'pricing',
         hide: Capacitor.isNativePlatform(),
       },
       {
-        text: 'Sign in',
+        label: 'Features',
+        submenu: 'cms',
+      },
+      {
+        label: 'Industries',
+        submenu: 'cms',
+      },
+      {
+        label: 'Resources',
+        submenu: 'cms',
+      },
+      // {
+      //   label: 'Contact us',
+      //   to: 'contact',
+      // },
+      // {
+      //   label: 'Submenu hardcoded',
+      //   submenu: [
+      //     {
+      //       label: 'Pricing',
+      //       to: 'pricing',
+      //     }
+      //   ]
+      // },
+      // {
+      //   label: "Support",
+      //   to: "support",
+      // },
+      {
+        label: 'Sign in',
         to: 'signIn',
         hide: this.authenticated,
       },
       {
-        text: 'Sign up',
+        label: 'Sign up',
         to: 'signUp',
         hide: !this.mobileLayout || this.authenticated,
       },
@@ -130,12 +252,21 @@ export default class Toolbar extends Vue {
 
 <style lang='scss'>
 .toolbar {
-  height: auto !important;
+  // height: auto !important;
+  z-index: 7 !important;
+  top: initial !important;
   &.app {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
+.mobile-nav {
+  z-index: 7 !important;
+}
 .mobile-nav-items {
   padding-top: max(env(safe-area-inset-top), 10px) !important;
+}
+
+.v-list-group__header {
+  margin-bottom: 0 !important;
 }
 </style>

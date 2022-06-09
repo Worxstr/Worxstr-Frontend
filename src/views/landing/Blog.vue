@@ -57,6 +57,7 @@ export default class Blog extends Vue {
     this.loadingPosts = true
     await getBlogPosts(this.$store)
     this.loadingPosts = false
+    console.log(this.posts)
   }
 
   get posts() {

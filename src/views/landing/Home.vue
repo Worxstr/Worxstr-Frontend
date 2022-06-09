@@ -13,6 +13,8 @@
               span.gradient-text(:class="$vuetify.theme.dark ? 'gradient-secondary' : 'gradient-tertiary'") adaptive
               | &nbsp;solution to contract labor management
 
+            h6.text-h6 Schedule, track, and pay contractors with ease.
+
           div(v-if='me')
             v-btn.mr-3.black--text(
               elevation='0'
@@ -45,30 +47,6 @@
             )
               span(:class="`${$vuetify.theme.dark ? 'white' : 'black'}--text`") Sign in
 
-          .d-flex.mt-6.align-center
-            v-btn(
-              color="blue"
-              class="mr-3"
-              href='https://apps.apple.com/us/app/worxstr/id1571853545'
-              target='_blank'
-            )
-              v-icon.white--text mdi-apple
-
-            v-btn(
-              color="green"
-              class="mr-3"
-              href='https://play.google.com/store/apps/details?id=com.worxstr.worxstr'
-              target='_blank'
-            )
-              v-icon.white--text mdi-google-play
-
-            v-btn(
-              :to="{ name: 'about'}"
-              class="mr-3"
-              outlined
-              color='primary'
-            )
-              span Learn more
 
             //- p.mb-0.mr-2.font-weight-medium Get the app:
             //- v-btn(
@@ -112,6 +90,14 @@
                 v-icon.text-h2 {{ feature.icon }}
                 h3.text-h3.font-weight-black.ma-4 {{ feature.title }}
               p {{ feature.description }}
+
+              v-btn.white--text(
+                v-if='feature.featureId'
+                :to="{ name: 'feature', params: { contentId: feature.featureId } }"
+                color='accent'
+                outlined
+              )
+                span Learn more
 
           v-col.flex-grow-1(style='width: 30%')
             v-img(
@@ -233,6 +219,7 @@ export default class Home extends Vue {
       gradient: 'primary',
       icon: 'mdi-clock-fast',
       title: 'Scheduling',
+      featureId: 'scheduling',
       description:
         'Worxstr’s real time scheduling system decreases the amount of time to fill a schedule and increases transparency between the parties.',
       image: 'schedule.svg',
@@ -271,6 +258,7 @@ export default class Home extends Vue {
       gradient: 'secondary',
       icon: 'mdi-cash-lock',
       title: 'Payments',
+      featureId: 'payments',
       description:
         'Worxstr’s streamlined payment system allows for flexible payment methods to contractors.',
       image: 'approvals.svg',

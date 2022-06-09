@@ -20,7 +20,11 @@
 
     v-scale-transition
       //- Container for scale transition
-      div(v-show='hover')
+      div(
+        v-show='hover'
+        @click='$router.push({name: "user", params: {userId: user.id}})'
+        style='cursor: pointer'
+      )
         v-theme-provider(light)
           .marker-details.px-3.py-1(
             @mouseleave='hover = false'

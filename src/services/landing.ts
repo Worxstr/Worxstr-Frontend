@@ -6,9 +6,9 @@ export async function contactSales({ commit }: any, form: {
   contact_name: string
   contact_title?: string
   phone?: {
-    country_code: string
-    area_code: string
-    phone_number: string
+    countryCode: string
+    areaCode: string
+    phoneNumber: string
   }
   email?: string
   website?: string

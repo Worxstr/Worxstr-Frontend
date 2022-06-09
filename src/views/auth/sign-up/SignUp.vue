@@ -6,7 +6,7 @@ div
   
       v-form(@submit.prevent='signUp' v-model='isValid')
         v-card-title.text-h5
-          span(v-if='!accountType') Sign up
+          span(v-if='!accountType') Get started with Worxstr
           span(v-else) Sign up as a {{ accountType == 'org' ? 'business' : 'contractor' }}
 
         v-card-text.pb-0
@@ -72,6 +72,32 @@ div
             :disabled='!isValid'
             :loading='loading'
           ) Sign up
+
+      
+    .d-flex.mt-6.align-center(v-if='step == 0')
+      v-btn(
+        color="blue"
+        class="mr-3"
+        href='https://apps.apple.com/us/app/worxstr/id1571853545'
+        target='_blank'
+      )
+        v-icon.white--text mdi-apple
+
+      v-btn(
+        color="green"
+        class="mr-3"
+        href='https://play.google.com/store/apps/details?id=com.worxstr.worxstr'
+        target='_blank'
+      )
+        v-icon.white--text mdi-google-play
+
+      v-btn(
+        :to="{ name: 'about'}"
+        class="mr-3"
+        outlined
+        color='primary'
+      )
+        span Learn more
 
   arrows(type='smallGroup' style='position: absolute; bottom: 0; right: 50px')
 </template>

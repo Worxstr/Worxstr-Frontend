@@ -10,9 +10,11 @@ import { fullName, groupNameList, paymentRecipientName } from '@/util/filters'
 import { isDebit } from '@/types/Payments'
 import usersStore from '@/store/users'
 
+// Landing page routes
 import Home from '@/views/landing/Home.vue'
 import NativeHome from '@/views/landing/NativeHome.vue'
 import About from '@/views/landing/About.vue'
+import CMSSemanticPage from '@/views/landing/CMSSemanticPage.vue'
 import Pricing from '@/views/landing/Pricing.vue'
 import Contact from '@/views/landing/Contact.vue'
 import Blog from '@/views/landing/Blog.vue'
@@ -25,6 +27,8 @@ import SignIn from '@/views/auth/SignIn.vue'
 import SignUp from '@/views/auth/sign-up/SignUp.vue'
 import ResetPassword from '@/views/auth/ResetPassword.vue'
 import ConfirmEmail from '@/views/auth/ConfirmEmail.vue'
+
+// App routes
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import Payments from '@/views/payments/Payments.vue'
 import Payment from '@/views/payments/Payment.vue'
@@ -85,6 +89,28 @@ const routes = [
     path: '/about',
     name: 'about',
     component: About,
+    meta: {
+      landing: true,
+    },
+  },
+  {
+    path: '/features/:contentId',
+    name: 'feature',
+    component: CMSSemanticPage,
+    props: {
+      type: 'feature',
+    },
+    meta: {
+      landing: true,
+    },
+  },
+  {
+    path: '/industries/:contentId',
+    name: 'industry',
+    component: CMSSemanticPage,
+    props: {
+      type: 'industry',
+    },
     meta: {
       landing: true,
     },

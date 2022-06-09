@@ -169,9 +169,13 @@ export default class NavDrawer extends Vue {
 </script>
 
 <style lang="scss">
-#nav.v-navigation-drawer--bottom{
-  height: auto !important;
-  max-height: 100%;
+#nav {
+  z-index: 10;
+
+  &.v-navigation-drawer--bottom{
+    height: auto !important;
+    max-height: 100%;
+  }
 }
 
 .secondary-nav-items {

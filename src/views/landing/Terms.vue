@@ -1,7 +1,7 @@
 <template lang="pug">
-v-container.d-flex.flex-column.py-8
-	h4.text-h4.text-center Worxstr Universal Terms and Conditions
-	h6.text-subtitle-1.text-center PLEASE READ THESE TERMS AND CONDITIONS OF USE CAREFULLY
+v-container.markdown.d-flex.flex-column.py-8
+	h2.text-center Worxstr Universal Terms and Conditions
+	strong.text-center PLEASE READ THESE TERMS AND CONDITIONS OF USE CAREFULLY
 	br
 		
 	p This Worxstr Universal Terms and Conditions Agreement (this &quot;Universal Terms&quot;) applies to the services and information (collectively, the &quot;Services&quot;) that Worxstr, L.L.C., a North Carolina limited liability company (&quot;Worxstr,&quot; &quot;Company&quot;), &quot;we,&quot; &quot;our,&quot; or us&quot;) provides to you through any of the products which you currently utilize, which you are contracted to utilize, or which you intend to utilize, including but not limited to our Management Platform and related services (the &quot;Platform&quot;). The Platform and related services are collectively referred to herein as the &quot;Worxstr Product&quot; or &quot;Worxstr Products&quot;. Your use of any one or more of the Worxstr Products explicitly subjects you to these Universal Terms as well as the respective agreement and terms and conditions of each and every Worxstr Product you use, along with any applicable order form for that individual Worxstr Product (referred to herein, collectively, as the &quot;Worxstr Product Agreement(s)&quot;).
@@ -9,21 +9,21 @@ v-container.d-flex.flex-column.py-8
 	
 	ul
 		li
-			strong.text-h6 Scope.
+			h4 Scope.
 		ul
 			li
 				p This Agreement applies to any user of the Platform and the Services (collectively, &quot;you&quot;), including (i) employers who register with us to use the Platform and to otherwise participate in the Services (&quot;Registered Employers&quot;), and (ii) individual staff members who register with us to use the Platform in connection with their services to Registered Employers and to otherwise participate in the Services (&quot;Registered Staff&quot;). The Registered Staff and Registered Employers are collectively referred to as &quot;Registered Users&quot;.
 			li
 				p This Agreement governs (i) your use of the Platform; (ii) your receipt of and participation in the Services; (iii) your submission of, as applicable, information, comments, ideas, and other content, whether in the form of text, graphics, video, sound files, or other format or media (collectively, &quot;Submitted Content&quot;); and (iii) your use of information obtained through the Platform, including information, software, artwork, text, video, audio, pictures, content, trademarks, trade dress, and other intellectual property owned by Worxstr or its licensors and made available to you through the Services (&quot;Worxstr Content&quot;).
 		li
-			strong.text-h6 Acceptance.
+			h4 Acceptance.
 			ul
 				li
 					p This Agreement governs your use of the Platform. Please read this Agreement carefully as it imposes legal obligations on you and us. By accessing and using our Platform, you acknowledge and agree to be legally bound by this Agreement. In addition, for certain activities on the Platform (for example, during your registration) we may further confirm your consent by asking you to click an &quot;I accept&quot; or similar button. If you do not agree with this Agreement, please refrain from using the Platform or any of the Services.
 				li
 					p The term &quot;Authorized Employer Representative&quot; means an agent of the organization on whose behalf you are registering (i.e., the Registered Employer), who has authority to bind the Registered Employer with regard to use of the Platform and participation in the Services. For all purposes in this Agreement, the term &quot;you&quot; means the Registered Employer on whose behalf you are acting. If an Authorized Employer Representative is entering into this agreement on behalf of a Registered Employer, he/she personally represents and warrants that (i) he/she has full legal authority to bind the Registered Employer to this Agreement; (ii) he/she has read and understands this Agreement; and (iii) he/she agrees, on behalf of the Registered Employer, to this Agreement. IF YOU DO NOT HAVE THE LEGAL AUTHORITY TO BIND THE REGISTERED EMPLOYER, YOU MUST NOT ACCESS THE PLATFORM OR OTHERWISE PARTICIPATE IN THE SERVICES. THIS AGREEMENT (AND, IF APPLICABLE, YOUR OTHER WRITTEN AGREEMENTS WITH US) AND ANY ORDER FORM(S) TOGETHER FORM A BINDING LEGAL AGREEMENT.
 		li
-			strong.text-h6 Services and Support.
+			h4 Services and Support.
 			ul
 				li
 					p A subscription allows an authorized user to access the Services. A subscription may be purchased or procured through the Services interface, or in some cases, via an order form entered into between you and us (each, an &quot;Order Form&quot;).
@@ -32,7 +32,7 @@ v-container.d-flex.flex-column.py-8
 				li
 					p Subject to the terms hereof, Worxstr will provide reasonable technical support services in accordance with Worxstr&apos;s standard practice.
 		li
-			strong.text-h6 Rights.
+			h4 Rights.
 			ul
 				li
 					p As Registered Staff, you are granted the right to enter and/or upload information related to you for participation in the Services (&quot;Your Profile&quot;). You may access, view, update or otherwise modify Your Profile through your password-protected access to the Platform. You may not access, view or modify the profiles of other Registered Staff without permission. You may access and view certain other password-protected areas for use solely in conjunction with the Services and as provided in this Agreement, and you may not modify, copy, distribute, or use the Worxstr Content or Services available on the Platform other than as expressly permitted by us.
@@ -55,7 +55,7 @@ v-container.d-flex.flex-column.py-8
 				li
 					p Registered Employer acknowledges and accepts that Worxstr has the right to use Registered Employer&apos;s name and logo to identify Registered Employer as a customer of Worxstr or user of the Services, on Worxstr&apos;s website, marketing materials or otherwise by public announcements. Registered Employer may revoke such right, at any time, by contacting ___________________.
 		li
-			strong.text-h6 Restrictions.
+			h4 Restrictions.
 			ul
 				li
 					p By using the Platform, you agree you shall not:
@@ -77,11 +77,11 @@ v-container.d-flex.flex-column.py-8
 				li
 					p You shall be responsible for obtaining and maintaining any equipment and ancillary services needed to connect to, access or otherwise use the Platform or the Services, including, without limitation, modems, hardware, servers, software, operating systems, networking, web servers and the like (collectively, &quot;Equipment&quot;). You shall also be responsible for maintaining the security of the Equipment, your account, passwords (including but not limited to administrative and user passwords) and files, and for all uses of your account or the Equipment with or without your knowledge or consent.
 		li
-			strong.text-h6 Revocation or Suspension of Use.
+			h4 Revocation or Suspension of Use.
 			ul
 				li You agree that we have the right and discretion to monitor any activity and content associated with our Platform and Services. We may investigate any reported violation of this Agreement or complaints relating to the Platform and Services, and may take any action that we believe is appropriate including, but not limited to, removing materials and terminating/suspending your access to the Platform or applicable Services.
 		li
-			strong.text-h6 Confidential Information.
+			h4 Confidential Information.
 			p The term &quot;Confidential Information&quot; means information disclosed by one party to the other party under this Agreement that is marked as confidential or would normally be considered confidential under the circumstances.
 			ul
 				li
@@ -93,25 +93,25 @@ v-container.d-flex.flex-column.py-8
 				li
 					p Notwithstanding anything to the contrary, Worxstr shall have the right to collect and analyze data and other information relating to the provision, use and performance of various aspects of the Services and related systems and technologies (including, without limitation, information concerning User Data and data derived therefrom) (collectively, &quot;Worxstr Analytics&quot;), and Worxstr will be free (during and after the term hereof) to (i) use such information and data to improve and enhance the Services and for other development, diagnostic and corrective purposes in connection with the Services and other Worxstr offerings, and (ii) disclose such data solely in aggregate or other de-identified form in connection with its business. No rights or licenses are granted except as expressly set forth herein. No compensation will be paid by Worxstr with respect to its use of the Worxstr Analytics.
 		li
-			strong.text-h6 Third-Party Sites.
+			h4 Third-Party Sites.
 			ul
 				li The Platform may contain links or produce search results that reference links to third party websites (collectively &quot;Linked Sites&quot;). Worxstr has no control over Linked Sites or their content and does not assume responsibility or liability for any content, opinions, or materials available on Linked Sites. Worxstr does not endorse the content of any Linked Site, nor does Worxstr warrant that a Linked Site will be free of computer viruses or other harmful code that can impact your computer or other web-access device. By using the Platform to search for or link to another site, you agree and understand that such use is at your own risk.
 		li
-			strong.text-h6 Fees.
+			h4 Fees.
 			ul
 				li
 					p Registered Employers will pay Worxstr the then-applicable fees described in the Order Form or at the Services interface &quot;check-out&quot; for the applicable billing plan in accordance with the terms herein (the &quot;Fees&quot;). Please refer to your account page for a description of the pricing methodology that we use to calculate the Fees based on the applicable billing plan. If Registered Employer&apos;s use of the Services exceeds the Service Capacity set forth on the Order Form or otherwise requires the payment of additional fees (per the terms of this Agreement), you will be billed for such usage and you hereby agree to pay the additional fees in the manner provided herein. Worxstr reserves the right to change the Fees, our pricing methodologies, or applicable charges and to institute new charges and Fees at the end of the Initial Service Term or the then current renewal term. If Registered Employer believes that Worxstr has billed you incorrectly, you must contact Worxstr no later than thirty (30) days after the closing date on the first billing statement in which the error or problem appeared, in order to receive an adjustment or credit. Inquiries should be directed to Worxstr&apos;s customer support department.
 				li
 					p Registered Employer agrees to maintain a valid credit card on file for billing purposes. Worxstr may choose to bill through an invoice, in which case, full payment for invoices issued in any given month must be received by Worxstr ten (10) days after the mailing date of the invoice. Unpaid amounts are subject to a finance charge of 1.5% per month on any outstanding balance, or the maximum permitted by law, whichever is lower, plus all expenses of collection and may result in immediate termination of Service. Registered Employer shall be responsible for all taxes associated with Services other than U.S. taxes based on Worxstr&apos;s net income.
 		li
-			strong.text-h6 Term and Termination.
+			h4 Term and Termination.
 			ul
 				li
 					p Subject to earlier termination as provided below, this Agreement is for the &quot;Initial Service Term&quot; as specified in the Order Form and shall be automatically renewed for additional periods of the same duration as the Initial Service Term (collectively, the &quot;Term&quot;), unless either Registered Employer or Worxstr requests termination at least thirty (30) days prior to the end of the then-current Term. For the avoidance of doubt, the &quot;Term&quot; of this Agreement for Registered Staff is the same Term as the applicable Registered Employer to which such Registered Staff provides services.
 				li
 					p Worxstr may terminate this Agreement immediately and without notice in the case of (i) nonpayment by a Registered Employer, or (ii) a violation of this Agreement by a Registered Staff. Registered Employer will pay in full for the Services up to and including the last day on which the Services are provided. Upon any termination, Worxstr will make all applicable User Data available to Registered Employer for electronic retrieval for a period of thirty (30) days, but thereafter Worxstr may, but is not obligated to, delete stored User Data. All sections of this Agreement which by their nature should survive termination will survive termination, including, without limitation, accrued rights to payment, confidentiality obligations, warranty disclaimers, and limitations of liability. When this Agreement is terminated as between Worxstr and a Registered Employer, this Agreement also terminates as to all Registered Staff of such Registered Employer, except such Registered Staff also providing services to a Registered Employer with respect to which this Agreement has not been terminated.
 		li
-			strong.text-h6 Warranty and Disclaimer.
+			h4 Warranty and Disclaimer.
 			ul
 				li
 					p Worxstr shall use reasonable efforts consistent with prevailing industry standards to maintain the Services in a manner which minimizes errors and interruptions in the Services. Services may be temporarily unavailable for scheduled maintenance or for unscheduled emergency maintenance, either by Worxstr or by third-party providers, or because of other causes beyond Worxstr&apos;s reasonable control, but Worxstr shall use reasonable efforts to provide advance notice in writing or by e-mail of any scheduled service disruption. HOWEVER, WORXSTR DOES NOT WARRANT THAT THE SERVICES WILL BE UNINTERRUPTED OR ERROR FREE; NOR DOES IT MAKE ANY WARRANTY AS TO THE RESULTS THAT MAY BE OBTAINED FROM USE OF THE SERVICES. EXCEPT AS EXPRESSLY SET FORTH IN THIS SECTION, THE SERVICES ARE PROVIDED &quot;AS IS&quot; AND WORXSTR DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE AND NON- INFRINGEMENT.
@@ -120,14 +120,14 @@ v-container.d-flex.flex-column.py-8
 				li
 					p You are solely responsible for your interaction with other Registered Users, both online or offline. We have no obligation to become involved in disputes between Registered Users. If you have a dispute with one or more Registered Users, you release Worxstr (and our officers, directors, agents, employees, subsidiaries, and affiliates) from claims, demands, and damages (actual and consequential) of every kind and nature, known and unknown, arising out of or in any way connected with such dispute.
 		li
-			strong.text-h6 Limitation of Liability.
+			h4 Limitation of Liability.
 			ul
 				li NOTWITHSTANDING ANYTHING TO THE CONTRARY, (I) EXCEPT FOR BODILY INJURY OF A PERSON, WORXSTR AND ITS SUPPLIERS (INCLUDING BUT NOT LIMITED TO ALL EQUIPMENT AND TECHNOLOGY SUPPLIERS), OFFICERS, AFFILIATES, REPRESENTATIVES, CONTRACTORS AND EMPLOYEES SHALL NOT BE RESPONSIBLE OR LIABLE WITH RESPECT TO ANY SUBJECT MATTER OF THIS AGREEMENT OR TERMS AND CONDITIONS RELATED THERETO UNDER ANY CONTRACT, NEGLIGENCE, STRICT LIABILITY OR OTHER THEORY: (A) FOR ERROR OR INTERRUPTION OF USE OR FOR LOSS OR INACCURACY OR CORRUPTION OF DATA OR COST OF PROCUREMENT OF SUBSTITUTE GOODS, SERVICES OR TECHNOLOGY OR LOSS OF BUSINESS; (B) FOR ANY MATTER BEYOND WORXSTR&apos;S REASONABLE CONTROL; OR (C) FOR ANY AMOUNTS THAT, TOGETHER WITH AMOUNTS ASSOCIATED WITH ALL OTHER CLAIMS, EXCEED THE FEES YOU PAID TO WORXSTR FOR THE SERVICES UNDER THIS AGREEMENT IN THE 12 MONTHS PRIOR TO THE ACT THAT GAVE RISE TO THE LIABILITY; AND (II) NEITHER PARTY SHALL, UNDER ANY CIRCUMSTANCES, BE LIABLE TO THE OTHER PARTY FOR LOST PROFITS, CONSEQUENTIAL, INCIDENTAL, SPECIAL, PUNITIVE, OR INDIRECT DAMAGES ARISING OUT OF OR RELATED TO THIS AGREEMENT OR THE TRANSACTIONS CONTEMPLATED HEREUNDER, EVEN IF THE PARTY HAS BEEN APPRISED OF THE LIKELIHOOD OF SUCH DAMAGES.
 		li
-			strong.text-h6 Indemnity.
+			h4 Indemnity.
 			p You agree to defend, indemnify, and hold Worxstr and its subsidiaries, affiliates, officers, directors, agents, and employees harmless from any liability to third parties, including reasonable attorneys&apos; fees, arising from or related to your breach of this Agreement.
 		li
-			strong.text-h6 Covid-19, Disclaimer, Limitation of Liability, and Indemnification.
+			h4 Covid-19, Disclaimer, Limitation of Liability, and Indemnification.
 			ul
 				li
 					p In addition to all disclaimers of warranties contained herein, Worxstr specifically states that WORXSTR DOES NOT WARRANT THAT THE RESPONSES PROVIDED BY ANY REGISTERED USER OR PROSPECTIVE/ACTUAL EMPLOYEE OR CONTRACTOR ANSWERING WORXSTR&apos;S COVID-19 PRE-SHIFT SCREENING, ARE ACCURATE, NOR DOES WORXSTR WARRANT THAT SUCH RESPONSES ARE SUFFICIENT TO MAKE DETERMINATIONS RELATING TO COVID-19 PROCEDURES. FURTHER, WORXSTR DOES NOT WARRANT THAT THOSE RESPONSES PROVIDED BY ANY USER TO A REGISTERED EMPLOYER&apos;S PRE-SHIFT COVID-19 QUESTIONNAIRE ADHERE TO ANY SPECIFIC LOCAL, STATE, OR FEDERAL STATUTE, RULE, REGULATION, PROCEDURE, POLICY, GUIDELINE, OR SIMILAR IMPLEMENTATION RELATIVE TO DETERMINATIONS OF LABOR, EMPLOYMENT, HEALTH, OR SAFETY OF REGISTERED EMPLOYER&apos;S EMPLOYEES, CONTRACTORS, STAFF, CUSTOMERS, VENDORS, OR ANY OTHER INDIVIDUAL. WORXSTR MAKES NO REPRESENTATION TO THE REGISTERED EMPLOYER OR REGISTERED USER OF ANY LOCAL, STATE, OR FEDERAL STATUTE, RULE, REGULATION, PROCEDURE, POLICY, GUIDELINE, OR SIMILAR IMPLEMENTATION RELATIVE TO DETERMINATIONS OF LABOR, EMPLOYMENT, HEALTH, OR SAFETY.
@@ -138,7 +138,7 @@ v-container.d-flex.flex-column.py-8
 				li
 					p You agree to defend, indemnify, and hold Worxstr and its subsidiaries, affiliates, officers, directors, representatives, contractors, agents, and employees harmless from any third party, including but not limited to registered users, any individual providing responses through Worxstr&apos;s Pre-Shift COVID-19 Screening, and any other third party, whether your employee, customer, or otherwise, including reasonable attorney&apos;s fees, which may arise from your use of Worxstr&apos;s Pre-Shift COVID-19 Screening, or any matter resulting therefrom or relating thereto, including without limitation, those matters relating to your failure to adhere to the terms of this agreement or to operate in accordance with local, state, and federal statutes, rules, regulations, procedures, policies, and guidelines relating to labor, employment, health, and safety.
 		li
-			strong.text-h6 Miscellaneous.
+			h4 Miscellaneous.
 			ul
 				li
 					p Severability. If any provision of this Agreement or any individual Worxstr Product Agreement, is found to be unenforceable, illegal, or invalid, in any jurisdiction under any circumstances for any reason: (a) such provision will be reformed to the minimum extent necessary to cause such provision to be valid, enforceable and legal while preserving the intent of the Parties as expressed in, and the benefits to such Parties provided by, such provision; or (b) if such provision cannot be so reformed, such provision will be severed from this Agreement and an equitable adjustment will be made to this Agreement or applicable Worxstr Product Agreement (including addition of necessary further provisions to this Agreement or applicable Worxstr Product Agreement) so as to give effect to the intent as so expressed and the benefits so provided. Such holding will not affect or impair the validity, enforceability or legality of such provision in any other jurisdiction or under any other circumstances. Neither such holding nor such reformation or severance will affect or impair the legality, validity or enforceability of any other provision of this Agreement or applicable Worxstr Product Agreement.
@@ -170,7 +170,7 @@ v-container.d-flex.flex-column.py-8
 					p By using the Worxstr Platform, you certify that you are 18 years of age or older.
 
 		li
-			strong.text-h6 Dwolla.
+			h4 Dwolla.
 			ul
 				li
 					p In order to use the payment functionality of the Worxstr Platform, you must open a “Dwolla Platform” account provided by Dwolla, Inc. and you must accept the Dwolla Terms of Service and Privacy Policy.

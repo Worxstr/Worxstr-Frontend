@@ -92,7 +92,7 @@ function configureBackButtonPress() {
 }
 
 async function checkUpdate() {
-  if (!Capacitor.isPluginAvailable('AppUpdate')) return
+  if (!Capacitor.isNativePlatform()) return
   
   const appUpdateInfo = await AppUpdate.getAppUpdateInfo()
   if (appUpdateInfo.updateAvailability === AppUpdateAvailability.UPDATE_AVAILABLE) {
@@ -120,8 +120,6 @@ async function init() {
   configureBackButtonPress()
   configureDwolla(store)
   checkUpdate()
-
-  axios.get('https://client.tlsfingerprint.io:8443/')
 }
 
 init()
