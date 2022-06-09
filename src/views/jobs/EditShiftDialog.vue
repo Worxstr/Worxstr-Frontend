@@ -22,7 +22,7 @@ v-dialog(
 
       v-card-text
 
-        div(v-if='!jobId && !shiftId')
+        div(v-if='!jobIdComputed && !shiftId')
           v-subheader Job selection
 
           v-select(
@@ -58,6 +58,7 @@ v-dialog(
           dense
           label='Contractor'
           data-cy='shift-contractor'
+          :loading='loadingJob'
         )
         //- Multi selection for creating
         v-autocomplete(
@@ -186,9 +187,9 @@ export default class EditShiftDialog extends Vue {
 
   @Prop({ type: Number   }) readonly shiftId?: number
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ type: Number    }) readonly jobIdOriginal?: number // If no jobId specified, then we add a job selector to the dialog
-  get jobId() {
-    return this.jobIdOriginal ?? this.editedShift.job_id
+  @Prop({ type: Number    }) readonly jobId?: number // If no jobId specified, then we add a job selector to the dialog
+  get jobIdComputed() {
+    return this.jobId ?? this.editedShift.job_id
   }
 
   @Prop({ type: Object }) readonly time?: {
@@ -244,11 +245,18 @@ export default class EditShiftDialog extends Vue {
 
     // Editing existing shift, fill data
     if (this.shiftId) {
-      if (!this.shift?.id) await loadShift(this.$store, this.shiftId)
-
       this.loading = true
-      await loadJob(this.$store, this.jobId || this.shift.job_id)
+      if (!this.shift?.id) {
+        await loadShift(this.$store, this.shiftId)
+      }
       this.loading = false
+
+      this.loadingJob = true
+      // If we don't have the contractor list, load it
+      if (!this.$store.getters.job(this.shift.job_id)?.contractors.length) {
+        await loadJob(this.$store, this.jobIdComputed || this.shift.job_id)
+      }
+      this.loadingJob = false
       
       this.editedShift = { ...this.shift }
     }
@@ -289,7 +297,7 @@ export default class EditShiftDialog extends Vue {
   }
 
   get contractors() {
-    const jobId = this.jobId ?? this.selectedJob
+    const jobId = this.jobIdComputed ?? this.selectedJob
     const contractors = this.$store.getters.job(jobId)?.contractors ?? []
 
     return contractors.sort((a: User, b: User) => {
@@ -341,7 +349,7 @@ export default class EditShiftDialog extends Vue {
         await createShift(
           this.$store,
           editedShift,
-          this.jobId ?? this.selectedJob,
+          this.jobIdComputed ?? this.selectedJob,
         )
       }
 
