@@ -6,6 +6,7 @@ v-sheet(:color='color' :dark='dark')
         h4.text-h4.mb-3.font-weight-black {{ title }}
         p.body-2 {{ description }}
         v-btn.mr-3(
+          v-if='ctaText && ctaTo'
           dark
           outlined
           color='accent'
@@ -13,8 +14,8 @@ v-sheet(:color='color' :dark='dark')
         )
           span.white--text {{ ctaText }}
       
-      v-col(cols='12' sm='6')
-        v-img(:src='imageSrc' width='100%')
+      v-col.d-flex.flex-column.align-center(cols='12' sm='6')
+        v-img.mt-6.mt-md-0(:src='imageSrc' :width="imageWidth")
 </template>
 
 <script lang="ts">
@@ -34,6 +35,10 @@ export default class Feature extends Vue {
   @Prop({ default: '' }) color?: string
   @Prop({ type: Boolean }) dark?: boolean
   @Prop({ default: false }) reverse!: boolean
+
+  get imageWidth() {
+    return this.imageSrc.includes('svg') ? (this.$vuetify.breakpoint.xs ? '50%' : '65%') : '100%'
+  }
 
 }
 </script>
