@@ -245,18 +245,27 @@ export default class EditShiftDialog extends Vue {
 
     // Editing existing shift, fill data
     if (this.shiftId) {
-      this.loading = true
       if (!this.shift?.id) {
-        await loadShift(this.$store, this.shiftId)
+        try {
+          this.loading = true
+          await loadShift(this.$store, this.shiftId)
+        }
+        finally {
+          this.loading = false
+        }
       }
-      this.loading = false
 
-      this.loadingJob = true
-      // If we don't have the contractor list, load it
-      if (!this.$store.getters.job(this.shift.job_id)?.contractors.length) {
-        await loadJob(this.$store, this.jobIdComputed || this.shift.job_id)
+      if (!this.$store.getters.job(this.shift.job_id)?.contractors?.length) {
+        console.log('no contractors')
+        try {
+          // If we don't have the contractor list, load it
+          this.loadingJob = true
+          await loadJob(this.$store, this.jobIdComputed || this.shift.job_id)
+        }
+        finally {
+          this.loadingJob = false
+        }
       }
-      this.loadingJob = false
       
       this.editedShift = { ...this.shift }
     }
