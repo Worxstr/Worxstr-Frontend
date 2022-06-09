@@ -60,7 +60,9 @@ const getters = {
   },
 
   jobs: (state: JobsState, getters: any) => {
-    return state.all.map((id: number) => getters.job(id))
+    return state.all
+      .map((id: number) => getters.job(id))
+      .filter((job: Job) => job.active)
   },
 
   directJobs: (_state: JobsState, getters: any) => {
