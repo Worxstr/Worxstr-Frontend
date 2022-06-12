@@ -10,7 +10,7 @@ v-sheet(:color='color' :dark='dark')
           dark
           outlined
           color='accent'
-          :to="{ name: ctaTo }"
+          :to="ctaTo"
         )
           span(:class='buttonTextColor') {{ ctaText }}
       
