@@ -106,10 +106,10 @@ v-dialog(
             :fixedLineitems='hasAssociatedTimecard ? [timeSheetPayment] : []'
             :orderable='false'
           )
-          file-upload(
-            v-model='editedInvoice.attachments'
-            multiple
-          )
+          //- file-upload(
+          //-   v-model='editedInvoice.attachments'
+          //-   multiple
+          //- )
           richtext-field(
             placeholder='Description'
             v-model='editedInvoice.description'
