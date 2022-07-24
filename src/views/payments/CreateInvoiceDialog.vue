@@ -49,9 +49,9 @@ v-dialog(
           )
         
         invoice-input(v-model='invoice.items' :orderable='true' :autofocus='userIsContractor')
-        
+
         richtext-field(
-          placeholder='What\'s this for?'
+          placeholder='What\'s this payment for?'
           v-model='invoice.description'
         )
 
@@ -75,6 +75,7 @@ v-dialog(
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import InvoiceInput from '@/components/inputs/InvoiceInput.vue'
+import FileUpload from '@/components/inputs/FileUpload.vue'
 import { createInvoice } from '@/services/payments'
 import { loadJobs } from '@/services/jobs'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
@@ -86,6 +87,7 @@ import { loadWorkforce } from '@/services/users'
   components: {
     RichtextField,
     InvoiceInput,
+    FileUpload,
   },
 })
 export default class CreateInvoiceDialog extends Vue {

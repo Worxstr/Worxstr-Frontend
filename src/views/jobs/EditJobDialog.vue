@@ -5,7 +5,7 @@ v-dialog(
   max-width="700"
   persistent
 )
-  v-card.d-flex.flex-column(v-if="editedJob")
+  v-card.d-flex.flex-column(v-if="editedJob" ref='container')
     v-fade-transition
       v-overlay(v-if="loading" absolute opacity=".2")
         v-progress-circular(indeterminate)
@@ -214,6 +214,19 @@ import { loadManagers } from '@/services/users'
 import { createJob, updateJob } from '@/services/jobs'
 import { hashColor } from '@/util/helpers'
 
+function emptyJob() {
+  return {
+    color: hashColor(Date.now()),
+    address: null,
+    radius: 100,
+    notes: '',
+    restrict_by_code: true,
+    restrict_by_location: true,
+    restrict_by_time: true,
+    restrict_by_time_window: 0,
+  } // TODO: add type
+}
+
 @Component({
   components: {
     RichtextField,
@@ -226,16 +239,7 @@ export default class EditJobDialog extends Vue {
   @Prop({ type: Number }) readonly jobId?: number
   @Prop({ default: false }) readonly opened!: boolean
 
-  editedJob: any = {
-    color: hashColor(Date.now()),
-    address: null,
-    radius: 100,
-    notes: '',
-    restrict_by_code: true,
-    restrict_by_location: true,
-    restrict_by_time: true,
-    restrict_by_time_window: 0,
-  } // TODO: add type
+  editedJob: any = emptyJob()
   isValid = false
   loading = false
   place: any
@@ -259,8 +263,21 @@ export default class EditJobDialog extends Vue {
   @Watch('opened')
   onOpened(newVal: boolean) {
     if (newVal) {
-      if (this.jobId) this.editedJob = this.$store.getters.job(this.jobId)
+      this.resetForm()
+      if (this.jobId) {
+        this.editedJob = this.$store.getters.job(this.jobId)
+      }
+      else {
+        this.editedJob = emptyJob()
+      }
     }
+  }
+
+  resetForm() {
+    (this.$refs.form as HTMLFormElement)?.reset();
+    setTimeout(() => {
+      (this.$refs.container as any).$el.parentElement.scrollTop = 0;
+    }, 1)
   }
 
   get showMap() {
