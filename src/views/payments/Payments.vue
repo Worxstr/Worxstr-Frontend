@@ -37,7 +37,7 @@ div
       @click='openInvoiceDialog'
       :disabled='!iAmVerified'
     )
-      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-receipt-text-plus
+      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-receipt
       span(v-if='!$vuetify.breakpoint.smAndDown') Create invoice
   
     v-menu(offset-y)
