@@ -5,7 +5,7 @@ v-dialog(
   max-width="700"
   persistent
 )
-  v-card.d-flex.flex-column(v-if="editedJob" ref='container')
+  v-card.d-flex.flex-column(v-if="editedJob")
     v-fade-transition
       v-overlay(v-if="loading" absolute opacity=".2")
         v-progress-circular(indeterminate)
@@ -214,19 +214,6 @@ import { loadManagers } from '@/services/users'
 import { createJob, updateJob } from '@/services/jobs'
 import { hashColor } from '@/util/helpers'
 
-function emptyJob() {
-  return {
-    color: hashColor(Date.now()),
-    address: null,
-    radius: 100,
-    notes: '',
-    restrict_by_code: true,
-    restrict_by_location: true,
-    restrict_by_time: true,
-    restrict_by_time_window: 0,
-  } // TODO: add type
-}
-
 @Component({
   components: {
     RichtextField,
@@ -239,7 +226,16 @@ export default class EditJobDialog extends Vue {
   @Prop({ type: Number }) readonly jobId?: number
   @Prop({ default: false }) readonly opened!: boolean
 
-  editedJob: any = emptyJob()
+  editedJob: any = {
+    color: hashColor(Date.now()),
+    address: null,
+    radius: 100,
+    notes: '',
+    restrict_by_code: true,
+    restrict_by_location: true,
+    restrict_by_time: true,
+    restrict_by_time_window: 0,
+  } // TODO: add type
   isValid = false
   loading = false
   place: any
@@ -278,7 +274,6 @@ export default class EditJobDialog extends Vue {
     setTimeout(() => {
       (this.$refs.container as any).$el.parentElement.scrollTop = 0;
     }, 1)
-    // Reload google maps search field
   }
 
   get showMap() {
