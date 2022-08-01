@@ -206,7 +206,7 @@ v-dialog(
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import { User } from '@/types/Users'
 import { Job } from '@/types/Jobs';
-import { exists, phoneRules, emailRules, phoneRulesOptional, emailRulesOptional } from '@/util/inputValidation'
+import { exists, phoneRulesOptional, emailRulesOptional } from '@/util/inputValidation'
 import RichtextField from '@/components/inputs/RichtextField.vue'
 import PhoneInput from '@/components/inputs/PhoneInput.vue'
 import GMap from '@/components/GMap.vue'
@@ -263,11 +263,11 @@ export default class EditJobDialog extends Vue {
   @Watch('opened')
   onOpened(newVal: boolean) {
     if (newVal) {
-      this.resetForm()
       if (this.jobId) {
         this.editedJob = this.$store.getters.job(this.jobId)
       }
       else {
+        this.resetForm()
         this.editedJob = emptyJob()
       }
     }
@@ -278,6 +278,7 @@ export default class EditJobDialog extends Vue {
     setTimeout(() => {
       (this.$refs.container as any).$el.parentElement.scrollTop = 0;
     }, 1)
+    // Reload google maps search field
   }
 
   get showMap() {
@@ -300,6 +301,7 @@ export default class EditJobDialog extends Vue {
   closeDialog() {
     this.$emit("update:opened", false)
   }
+
   setPlace(address: any, place: string, id: string) {
     if (this.editedJob) {
       this.editedJob.address = address.name
