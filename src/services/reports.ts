@@ -1,9 +1,8 @@
-import { api } from '@/util/axios'
 import { baseUrl } from '@/services/app'
 import { download } from '@/util/helpers'
 
 export enum ReportType {
-  payments = 'payments'
+  Payments = 'payments'
 }
 
 export enum PaymentsDataExportFormats {
@@ -24,13 +23,4 @@ export async function generateReport(
     url += `&end_date=${endDate}`
   }
   download(url, `payments-export-${startDate}-${endDate}.${format}`)
-}
-
-export async function loadPayment({ commit }: any, paymentId: string) {
-  const { data } = await api({
-    method: 'GET',
-    url: `/payments/${paymentId}`
-  })
-  commit('ADD_PAYMENT', data)
-  return data
 }

@@ -21,6 +21,33 @@ v-dialog(
       v-divider
       
       template(v-if='!downloadStarted')
+
+        v-card-text.pb-0
+        
+          v-select(
+            label='File format'
+            outlined
+            dense
+            v-model='format'
+            :items='exportFormats'
+            :item-text='(i) => i.description + " (." + i.name + ")"'
+            item-value='name'
+            full-width
+          )
+          
+          v-select(
+            label='Report type'
+            outlined
+            dense
+            v-model='type'
+            :items='reportTypes'
+            item-text='description'
+            item-value='name'
+            full-width
+          )
+        
+        v-divider
+
         v-date-picker(
           v-model='dateRange'
           range
@@ -29,17 +56,6 @@ v-dialog(
         )
 
         v-divider
-
-        v-card-text.py-0
-
-          v-radio-group.my-0(v-model='format')
-            v-radio.mb-0(v-for='(format, i) in exportFormats' :key='format.name' :value='format.name')
-              template(v-slot:label)
-                v-icon {{ format.icon }}
-                v-list-item
-                  v-list-item-content
-                    v-list-item-title .{{format.name}}
-                    v-list-item-subtitle {{format.description}}
 
       v-slide-y-transition
         template(v-if='downloadStarted')
@@ -59,7 +75,7 @@ v-dialog(
           color='primary'
           text
           type='submit'
-          data-cy='export-data-button'
+          data-cy='generate-report-button'
         )
           | Download
 </template>
@@ -81,6 +97,7 @@ export default class ExportDataDialog extends Vue {
     dayjs().format('YYYY-MM-DD')
   ]
   format: PaymentsDataExportFormats = PaymentsDataExportFormats.XLSX
+  type: ReportType = ReportType.Payments
   
   @Watch('opened')
   onOpened(newVal: boolean) {
@@ -113,6 +130,13 @@ export default class ExportDataDialog extends Vue {
       name: PaymentsDataExportFormats.JSON,
       icon: 'mdi-code-json',
       description: 'Javascript object notation',
+    },
+  ]
+
+  reportTypes: any = [
+    {
+      name: ReportType.Payments,
+      description: 'Payments report',
     },
   ]
 

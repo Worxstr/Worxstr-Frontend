@@ -3,7 +3,7 @@ div
 
   transfer-funds-dialog(:opened.sync='transferFundsDialog' :action='transferFundsDialog')
   edit-payment-dialog(:opened.sync='createInvoiceDialog')
-  export-data-dialog(:opened.sync='exportDataDialog' report-type='payments')
+  generate-report-dialog(:opened.sync='generateReportDialog' report-type='payments')
 
   //- Toolbar buttons
   portal(to="toolbarActions")
@@ -43,7 +43,7 @@ div
 
     v-btn(
       v-if='userIsManager'
-      @click='openExportDataDialog'
+      @click='openGenerateReportDialog'
       color='primary'
       text
       :icon='$vuetify.breakpoint.smAndDown'
@@ -104,7 +104,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import PaymentsList from './PaymentsList.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
 import EditPaymentDialog from './EditPaymentDialog.vue'
-import ExportDataDialog from './ExportDataDialog.vue'
+import GenerateReportDialog from './GenerateReportDialog.vue'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
 import { loadBalance, loadPayments } from '@/services/payments'
 import { showToast } from '@/services/app'
@@ -121,7 +121,7 @@ const PAGE_SIZE = 10
     PaymentsList,
     TransferFundsDialog,
     EditPaymentDialog,
-    ExportDataDialog,
+    GenerateReportDialog,
   }
 })
 export default class Payments extends Vue {
@@ -132,7 +132,7 @@ export default class Payments extends Vue {
   breaks = [{}]
   transferFundsDialog: string | null = null
   createInvoiceDialog = false
-  exportDataDialog = false
+  generateReportDialog = false
 
   async mounted() {
     this.loadingPayments = true
@@ -236,8 +236,8 @@ export default class Payments extends Vue {
       this.transferFundsDialog = 'remove'
   }
 
-  openExportDataDialog() {
-    this.exportDataDialog = true
+  openGenerateReportDialog() {
+    this.generateReportDialog = true
   }
 }
 </script>
