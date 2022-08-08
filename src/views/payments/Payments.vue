@@ -3,7 +3,7 @@ div
 
   transfer-funds-dialog(:opened.sync='transferFundsDialog' :action='transferFundsDialog')
   edit-payment-dialog(:opened.sync='createInvoiceDialog')
-  generate-report-dialog(:opened.sync='generateReportDialog' report-type='payments')
+  generate-report-dialog(:opened.sync='generateReportDialog')
 
   //- Toolbar buttons
   portal(to="toolbarActions")
