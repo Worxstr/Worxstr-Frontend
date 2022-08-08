@@ -1,4 +1,4 @@
-import { ClockEvent, Job } from './Jobs'
+import { Job } from './Jobs'
 import { Organization } from './Organizations'
 import { Shift } from './Jobs'
 import { User } from './Users'
@@ -104,13 +104,6 @@ export type FundingSource = {
   removed: boolean
   status: string
   type: string
-}
-
-export enum PaymentsDataExportFormats {
-  CSV = 'csv',
-  JSON = 'json',
-  XLSX = 'xlsx',
-  PDF = 'pdf'
 }
 
 // Determine if a payment recipient is an organization or a user

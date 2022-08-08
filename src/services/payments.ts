@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { api } from '@/util/axios'
-import {
-  FundingSource,
-  Payment,
-  Invoice,
-  PaymentsDataExportFormats
-} from '@/types/Payments'
+import { FundingSource, Payment, Invoice } from '@/types/Payments'
 import { ClockEvent } from '@/types/Jobs'
-import { baseUrl, showToast } from '@/services/app'
-import { download } from '@/util/helpers'
+import { showToast } from '@/services/app'
 
 export async function loadPayments(
   { commit }: any,
@@ -39,18 +33,6 @@ export async function loadPayments(
     commit('ADD_PAYMENT', payment)
   })
   return data.payments
-}
-
-export async function exportPayments(
-  startDate: string,
-  endDate: string,
-  format: PaymentsDataExportFormats
-) {
-  let url = `${baseUrl.get()}/payments/export?format=${format}&start_date=${startDate}`
-  if (endDate) {
-    url += `&end_date=${endDate}`
-  }
-  download(url, `payments-export-${startDate}-${endDate}.${format}`)
 }
 
 export async function loadPayment({ commit }: any, paymentId: string) {
