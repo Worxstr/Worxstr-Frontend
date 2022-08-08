@@ -3,7 +3,7 @@ div
 
   transfer-funds-dialog(:opened.sync='transferFundsDialog' :action='transferFundsDialog')
   edit-payment-dialog(:opened.sync='createInvoiceDialog')
-  export-data-dialog(:opened.sync='exportDataDialog')
+  export-data-dialog(:opened.sync='exportDataDialog' report-type='payments')
 
   //- Toolbar buttons
   portal(to="toolbarActions")
@@ -106,7 +106,7 @@ import TransferFundsDialog from './TransferFundsDialog.vue'
 import EditPaymentDialog from './EditPaymentDialog.vue'
 import ExportDataDialog from './ExportDataDialog.vue'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
-import { loadBalance, loadPayments, exportPayments } from '@/services/payments'
+import { loadBalance, loadPayments } from '@/services/payments'
 import { showToast } from '@/services/app'
 import { Payment } from '@/types/Payments'
 import dayjs from 'dayjs'

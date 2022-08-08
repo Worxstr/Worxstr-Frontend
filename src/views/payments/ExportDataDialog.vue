@@ -68,12 +68,12 @@ v-dialog(
 /* eslint-disable @typescript-eslint/camelcase */
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import dayjs from 'dayjs'
-import { exportPayments } from '@/services/payments'
-import { PaymentsDataExportFormats } from '@/types/Payments'
+import { generateReport, PaymentsDataExportFormats, ReportType } from '@/services/reports'
 
 @Component
 export default class ExportDataDialog extends Vue {
   @Prop({ default: false }) readonly opened!: boolean
+  @Prop({ type: String }) readonly reportType!: ReportType
 
   downloadStarted = false
   dateRange = [
@@ -118,7 +118,8 @@ export default class ExportDataDialog extends Vue {
 
   async download() {
     this.downloadStarted = true
-    await exportPayments(
+    await generateReport(
+      this.reportType,
       this.dateRange[0],
       this.dateRange[1],
       this.format
