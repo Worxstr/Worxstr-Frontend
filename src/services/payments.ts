@@ -46,7 +46,10 @@ export async function exportPayments(
   endDate: string,
   format: PaymentsDataExportFormats
 ) {
-  const url = `${baseUrl.get()}/payments/export?format=${format}&start_date=${startDate}&end_date=${endDate}`
+  let url = `${baseUrl.get()}/payments/export?format=${format}&start_date=${startDate}`
+  if (endDate) {
+    url += `&end_date=${endDate}`
+  }
   download(url, `payments-export-${startDate}-${endDate}.${format}`)
 }
 
