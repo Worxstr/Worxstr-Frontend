@@ -39,7 +39,7 @@ v-dialog(
             label='Report type'
             outlined
             dense
-            v-model='type'
+            v-model='reportType'
             :items='reportTypes'
             item-text='label'
             item-value='name'
@@ -89,7 +89,6 @@ import { generateReport, PaymentsDataExportFormats, ReportType } from '@/service
 @Component
 export default class ExportDataDialog extends Vue {
   @Prop({ default: false }) readonly opened!: boolean
-  @Prop({ type: String }) readonly reportType!: ReportType
 
   downloadStarted = false
   dateRange = [
@@ -97,7 +96,7 @@ export default class ExportDataDialog extends Vue {
     dayjs().format('YYYY-MM-DD')
   ]
   format: PaymentsDataExportFormats = PaymentsDataExportFormats.XLSX
-  type: ReportType = ReportType.Payments
+  reportType: ReportType = ReportType.Payments
   
   @Watch('opened')
   onOpened(newVal: boolean) {
