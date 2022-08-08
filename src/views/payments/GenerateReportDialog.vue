@@ -53,6 +53,7 @@ v-dialog(
           range
           full-width
           :landscape='$vuetify.breakpoint.smAndUp'
+          :max='today'
         )
 
         v-divider
@@ -91,9 +92,10 @@ export default class ExportDataDialog extends Vue {
   @Prop({ default: false }) readonly opened!: boolean
 
   downloadStarted = false
+  today = dayjs().format('YYYY-MM-DD')
   dateRange = [
     dayjs().subtract(7, 'day').format('YYYY-MM-DD'),
-    dayjs().format('YYYY-MM-DD')
+    this.today,
   ]
   format: PaymentsDataExportFormats = PaymentsDataExportFormats.XLSX
   reportType: ReportType = ReportType.Payments
