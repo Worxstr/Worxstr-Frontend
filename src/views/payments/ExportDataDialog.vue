@@ -20,25 +20,34 @@ v-dialog(
       
       v-divider
       
-      v-date-picker(
-        v-model='dateRange'
-        range
-        full-width
-        :landscape='$vuetify.breakpoint.smAndUp'
-      )
+      template(v-if='!downloadStarted')
+        v-date-picker(
+          v-model='dateRange'
+          range
+          full-width
+          :landscape='$vuetify.breakpoint.smAndUp'
+        )
 
-      v-divider
+        v-divider
 
-      v-card-text.py-0
+        v-card-text.py-0
 
-        v-radio-group.my-0(v-model='format')
-          v-radio.mb-0(v-for='(format, i) in exportFormats' :key='format.name' :value='format.name')
-            template(v-slot:label)
-              v-icon {{ format.icon }}
-              v-list-item
-                v-list-item-content
-                  v-list-item-title .{{format.name}}
-                  v-list-item-subtitle {{format.description}}
+          v-radio-group.my-0(v-model='format')
+            v-radio.mb-0(v-for='(format, i) in exportFormats' :key='format.name' :value='format.name')
+              template(v-slot:label)
+                v-icon {{ format.icon }}
+                v-list-item
+                  v-list-item-content
+                    v-list-item-title .{{format.name}}
+                    v-list-item-subtitle {{format.description}}
+
+      v-slide-y-transition
+        template(v-if='downloadStarted')
+          v-card-text
+            v-alert(
+              type='success'
+              outlined
+            ) Your download has started
 
       v-spacer
 
@@ -46,6 +55,7 @@ v-dialog(
         v-spacer
         v-btn(text @click='closeDialog') Cancel
         v-btn(
+          :disabled='downloadStarted'
           color='primary'
           text
           type='submit'
@@ -65,17 +75,17 @@ import { PaymentsDataExportFormats } from '@/types/Payments'
 export default class ExportDataDialog extends Vue {
   @Prop({ default: false }) readonly opened!: boolean
 
+  downloadStarted = false
   dateRange = [
     dayjs().subtract(7, 'day').format('YYYY-MM-DD'),
     dayjs().format('YYYY-MM-DD')
   ]
   format: PaymentsDataExportFormats = PaymentsDataExportFormats.XLSX
-
   
   @Watch('opened')
   onOpened(newVal: boolean) {
     if (newVal) {
-      console.log('test')
+      this.downloadStarted = false
     }
   }
 
@@ -107,12 +117,15 @@ export default class ExportDataDialog extends Vue {
   ]
 
   async download() {
-    this.closeDialog()
+    this.downloadStarted = true
     await exportPayments(
       this.dateRange[0],
       this.dateRange[1],
       this.format
     )
+    setTimeout(() => {
+      this.closeDialog()
+    }, 1500)
   }
 }
 </script>
