@@ -3,6 +3,7 @@ div
 
   transfer-funds-dialog(:opened.sync='transferFundsDialog' :action='transferFundsDialog')
   edit-payment-dialog(:opened.sync='createInvoiceDialog')
+  export-data-dialog(:opened.sync='exportDataDialog')
 
   //- Toolbar buttons
   portal(to="toolbarActions")
@@ -37,38 +38,19 @@ div
       @click='openInvoiceDialog'
       :disabled='!iAmVerified'
     )
-      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-receipt
+      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-receipt-text-plus
       span(v-if='!$vuetify.breakpoint.smAndDown') Create invoice
-  
-    v-menu(offset-y)
-      template(v-slot:activator='{ on, attrs }')
-        v-btn(
-          v-if='userIsManager'
-          color='primary'
-          text
-          :icon='$vuetify.breakpoint.smAndDown'
-          data-cy='transfer-to-bank-button'
-          v-on='on'
-          v-bind='attrs'
-        )
-          v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-database-export-outline
-          span(v-if='!$vuetify.breakpoint.smAndDown') Export data
-      v-list
-        v-subheader Export data as:
-        v-list-item(
-          two-line
-          v-for='(format, i) in exportFormats'
-          :key='i'
-          @click="exportPayments(format.name)"
-          :disabled='format.disabled'
-        )
-          v-list-item-icon.mr-3.mb-0.pt-1
-            v-icon {{ format.icon }}
 
-          v-list-item-content
-            v-list-item-title .{{format.name}}
-            v-list-item-subtitle {{format.description}}
-
+    v-btn(
+      v-if='userIsManager'
+      @click='openExportDataDialog'
+      color='primary'
+      text
+      :icon='$vuetify.breakpoint.smAndDown'
+      data-cy='transfer-to-bank-button'
+    )
+      v-icon(:left='!$vuetify.breakpoint.smAndDown') mdi-database-export-outline
+      span(v-if='!$vuetify.breakpoint.smAndDown') Export data
 
   v-container.d-flex.flex-column.justify-center.gap-small
     //- Balance display
@@ -119,9 +101,10 @@ div
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import PaymentsList from '@/views/payments/PaymentsList.vue'
+import PaymentsList from './PaymentsList.vue'
 import TransferFundsDialog from './TransferFundsDialog.vue'
-import EditPaymentDialog from '@/views/payments/EditPaymentDialog.vue'
+import EditPaymentDialog from './EditPaymentDialog.vue'
+import ExportDataDialog from './ExportDataDialog.vue'
 import { currentUserIs, Managers, UserRole } from '@/types/Users'
 import { loadBalance, loadPayments, exportPayments } from '@/services/payments'
 import { showToast } from '@/services/app'
@@ -138,6 +121,7 @@ const PAGE_SIZE = 10
     PaymentsList,
     TransferFundsDialog,
     EditPaymentDialog,
+    ExportDataDialog,
   }
 })
 export default class Payments extends Vue {
@@ -148,33 +132,7 @@ export default class Payments extends Vue {
   breaks = [{}]
   transferFundsDialog: string | null = null
   createInvoiceDialog = false
-
-  exportFormats: any = [
-    {
-      name: 'csv',
-      icon: 'mdi-file-delimited-outline',
-      description: 'Comma-separated values',
-      disabled: false
-    },
-    {
-      name: 'json',
-      icon: 'mdi-code-json',
-      description: 'Javascript object notation',
-      disabled: false
-    },
-    // {
-    //   name: 'xlsx',
-    //   icon: 'mdi-microsoft-office',
-    //   description: 'Excel spreadsheet',
-    //   disabled: true
-    // },
-    // {
-    //   name: 'pdf',
-    //   icon: 'mdi-file-pdf-box',
-    //   description: 'Adobe PDF',
-    //   disabled: true
-    // },
-  ]
+  exportDataDialog = false
 
   async mounted() {
     this.loadingPayments = true
@@ -278,8 +236,8 @@ export default class Payments extends Vue {
       this.transferFundsDialog = 'remove'
   }
 
-  async exportPayments(format: 'csv' | 'json' | 'xlsx' | 'pdf') {
-    await exportPayments(format)
+  openExportDataDialog() {
+    this.exportDataDialog = true
   }
 }
 </script>

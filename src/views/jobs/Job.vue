@@ -28,7 +28,7 @@ div(v-else)
         @click='createInvoiceDialog = true'
         :disabled='!iAmVerified'
       )
-        v-icon(:left='!$vuetify.breakpoint.xs') mdi-receipt
+        v-icon(:left='!$vuetify.breakpoint.xs') mdi-receipt-text-plus
         span(v-if='!$vuetify.breakpoint.xs') Create invoice
 
       v-btn(
