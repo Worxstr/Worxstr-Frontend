@@ -30,7 +30,7 @@ v-dialog(
             dense
             v-model='format'
             :items='exportFormats'
-            :item-text='(i) => i.description + " (." + i.name + ")"'
+            :item-text='(i) => i.label + " (." + i.name + ")"'
             item-value='name'
             full-width
           )
@@ -41,7 +41,7 @@ v-dialog(
             dense
             v-model='type'
             :items='reportTypes'
-            item-text='description'
+            item-text='label'
             item-value='name'
             full-width
           )
@@ -114,30 +114,34 @@ export default class ExportDataDialog extends Vue {
     {
       name: PaymentsDataExportFormats.XLSX,
       icon: 'mdi-microsoft-office',
-      description: 'Excel spreadsheet',
+      label: 'Excel spreadsheet',
     },
     // {
     //   name: PaymentsDataExportFormats.PDF,
     //   icon: 'mdi-file-pdf-box',
-    //   description: 'Adobe PDF',
+    //   label: 'Adobe PDF',
     // },
     {
       name: PaymentsDataExportFormats.CSV,
       icon: 'mdi-file-delimited-outline',
-      description: 'Comma-separated values',
+      label: 'Comma-separated values',
     },
     {
       name: PaymentsDataExportFormats.JSON,
       icon: 'mdi-code-json',
-      description: 'Javascript object notation',
+      label: 'Javascript object notation',
     },
   ]
 
   reportTypes: any = [
     {
       name: ReportType.Payments,
-      description: 'Payments report',
+      label: 'Payments report',
     },
+    {
+      name: ReportType.Time,
+      label: 'Attendance report',
+    }
   ]
 
   async download() {

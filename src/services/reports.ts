@@ -2,7 +2,8 @@ import { baseUrl } from '@/services/app'
 import { download } from '@/util/helpers'
 
 export enum ReportType {
-  Payments = 'payments'
+  Payments = 'payments',
+  Time = 'time'
 }
 
 export enum PaymentsDataExportFormats {
@@ -18,7 +19,7 @@ export async function generateReport(
   endDate: string,
   format: PaymentsDataExportFormats
 ) {
-  let url = `${baseUrl.get()}/payments/export?report_type=${type}&format=${format}&start_date=${startDate}`
+  let url = `${baseUrl.get()}/reports?report_type=${type}&format=${format}&start_date=${startDate}`
   if (endDate) {
     url += `&end_date=${endDate}`
   }
