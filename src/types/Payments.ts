@@ -1,4 +1,4 @@
-import { ClockEvent, Job } from './Jobs'
+import { Job } from './Jobs'
 import { Organization } from './Organizations'
 import { Shift } from './Jobs'
 import { User } from './Users'
@@ -74,22 +74,22 @@ type Links = {
 }
 
 type Link = {
-	href: string
-	type: string
-	'resource-type': 'transfer' | 'account' | 'customer' | 'funding-source'
-	'additional-information'?: {
-		_links: Links
-		bankAccountType: string
-		bankName: string
-		channels: string[]
-		created: string
-		fingerprint: string
-		id: string
-		name: string
-		removed: boolean
-		status: string
-		type: string
-	}
+  href: string
+  type: string
+  'resource-type': 'transfer' | 'account' | 'customer' | 'funding-source'
+  'additional-information'?: {
+    _links: Links
+    bankAccountType: string
+    bankName: string
+    channels: string[]
+    created: string
+    fingerprint: string
+    id: string
+    name: string
+    removed: boolean
+    status: string
+    type: string
+  }
 }
 
 export type FundingSource = {
@@ -114,7 +114,6 @@ export function isUser(account: User | Organization): account is User {
 
 // Determine if payment is inbound (debit) or outbound (credit), e.g. "From" or "To"
 export function isDebit(payment: Payment) {
-
   if (payment.bank_transfer) {
     return payment.bank_transfer.transaction_type === 'debit'
   }
@@ -122,7 +121,6 @@ export function isDebit(payment: Payment) {
   if (isUser(payment.receiver)) {
     // Receiver is a user
     return payment.receiver.id === usersStore.getters.me(usersStore.state)?.id
-
   } else {
     // Receiver is an organization
     return true
