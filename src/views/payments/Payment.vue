@@ -166,7 +166,6 @@ v-container.d-flex.flex-column.pt-6.gap-small
         v-divider
 
         clock-events(:events='history')
-
         
     .mb-4.d-flex.flex-column.gap-small(v-if='job && job.id')
       h5.text-h5 Job details
