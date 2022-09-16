@@ -64,7 +64,7 @@
     "vue-socket.io-extended": "^4.2.0",
     "vue2-gmap-custom-marker": "^6.0.1",
     "vuedraggable": "^2.24.3",
-    "vuetify": "^2.2.11",
+    "vuetify": "^2.6.10",
     "vuetify-google-autocomplete": "^2.0.4",
     "vuex": "^3.4.0"
   },
