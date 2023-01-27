@@ -48,7 +48,7 @@
     "rrule": "^2.6.8",
     "socket.io-client": "^4.2.0",
     "tiptap-vuetify": "^2.24.0",
-    "ua-parser-js": "^0.7.28",
+    "ua-parser-js": "^0.7.33",
     "v-mask": "^2.2.4",
     "vue": "^2.6.11",
     "vue-chat-scroll": "^1.4.0",
