@@ -16,7 +16,7 @@
     "@capacitor-community/fcm": "^2.0.2",
     "@capacitor/android": "^3.0.0-rc.4",
     "@capacitor/app": "^1.0.2",
-    "@capacitor/cli": "latest",
+    "@capacitor/cli": "4.8.0",
     "@capacitor/clipboard": "^1.0.3",
     "@capacitor/core": "^3.0.0-rc.4",
     "@capacitor/dialog": "^1.0.3",
